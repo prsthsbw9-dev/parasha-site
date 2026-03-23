@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>טופס בקשה - פרשת השבוע</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    body{
+      margin:0;
+      font-family:Arial,sans-serif;
+      background:#111;
+      color:#2f2417;
+    }
+
+    .page{
+      max-width:980px;
+      margin:0 auto;
+      padding:12px 10px 28px;
+    }
+
+    .card{
+      background:linear-gradient(180deg,#fbf6e9 0%,#f3e7d0 100%);
+      border:2px solid #d9c08a;
+      border-radius:24px;
+      box-shadow:0 8px 28px rgba(0,0,0,.24);
+      padding:16px 12px 20px;
+    }
+
+    h1,h2,h3{
+      margin:0 0 10px;
+      text-align:center;
+      color:#7a531a;
+      line-height:1.35;
+    }
+
+    .top-blessing{
+      text-align:center;
+      color:#8b6331;
+      line-height:1.8;
+      font-size:clamp(14px,1.8vw,22px);
+      font-weight:bold;
+      margin-bottom:14px;
+    }
+
+    .main-hero{
+      text-align:center;
+      color:#8b5f1b;
+      line-height:1.35;
+      font-size:clamp(18px,3vw,30px);
+      font-weight:bold;
+      margin-bottom:10px;
+    }
+
+    .heart{
+      text-align:center;
+      font-size:clamp(26px,4vw,42px);
+      margin-bottom:10px;
+    }
+
+    .sub-intro{
+      text-align:center;
+      color:#7a5837;
+      line-height:1.7;
+      font-size:clamp(13px,2vw,18px);
+      margin-bottom:18px;
+    }
+
+    .request-box{
+      background:#fffdf8;
+      border:1px solid #e0c892;
+      border-radius:18px;
+      padding:12px;
+      margin-bottom:14px;
+    }
+
+    .request-title{
+      font-weight:bold;
+      color:#7a531a;
+      margin-bottom:10px;
+      font-size:clamp(15px,2vw,20px);
+      text-align:center;
+    }
+
+    .field{
+      margin-bottom:12px;
+    }
+
+    .field label{
+      display:block;
+      margin-bottom:6px;
+      font-weight:bold;
+      color:#6b4b1e;
+      font-size:clamp(13px,1.8vw,16px);
+    }
+
+    .field input,
+    .field select,
+    .field textarea{
+      width:100%;
+      border:1px solid #d7bc86;
+      border-radius:12px;
+      padding:11px 10px;
+      font-size:15px;
+      background:#fffaf1;
+      color:#3c2a12;
+      font-family:Arial,sans-serif;
+    }
+
+    .field textarea{
+      min-height:140px;
+      resize:vertical;
+      line-height:1.8;
+      white-space:pre-wrap;
+    }
+
+    .req-text[readonly]{
+      background:#f7f1e4;
+      cursor:default;
+    }
+
+    .actions-top,
+    .actions-bottom{
+      display:flex;
+      flex-wrap:wrap;
+      justify-content:center;
+      gap:10px;
+      margin-top:14px;
+    }
+
+    .btn{
+      border:none;
+      border-radius:16px;
+      padding:12px 18px;
+      font-size:clamp(14px,1.8vw,18px);
+      font-weight:bold;
+      cursor:pointer;
+      text-decoration:none;
+      text-align:center;
+      display:inline-block;
+    }
+
+    .btn-add{
+      background:#efe0bf;
+      color:#6b4b1e;
+      border:2px solid #d2b173;
+    }
+
+    .btn-remove{
+      background:#ffe8e8;
+      color:#9b1c1c;
+      border:2px solid #e3a1a1;
+    }
+
+    .btn-main{
+      background:#7a4c1f;
+      color:#fff;
+      box-shadow:0 4px 10px rgba(0,0,0,.2);
+    }
+
+    .summary-box{
+      margin-top:16px;
+      background:#fff8eb;
+      border:1px solid #e4cf9c;
+      border-radius:18px;
+      padding:14px;
+      text-align:center;
+      color:#6b4b1e;
+      font-size:clamp(14px,2vw,20px);
+      line-height:1.7;
+      font-weight:bold;
+    }
+
+    .error-box{
+      display:none;
+      margin-top:14px;
+      background:#ffefef;
+      color:#b00020;
+      border:2px solid #d64545;
+      border-radius:14px;
+      padding:10px;
+      text-align:center;
+      line-height:1.7;
+      font-weight:bold;
+      white-space:pre-line;
+      font-size:14px;
+    }
+
+    .note{
+      text-align:center;
+      margin-top:10px;
+      color:#7a5837;
+      font-size:clamp(12px,1.6vw,15px);
+      line-height:1.7;
+    }
+
+    .small-note{
+      display:block;
+      margin-top:5px;
+      color:#8a6a44;
+      font-size:12px;
+      font-weight:normal;
+      line-height:1.6;
+    }
+
+    .small-note.error{
+      color:#c62828;
+      font-weight:bold;
+    }
+
+    .hidden{
+      display:none;
+    }
+
+    @media (max-width:640px){
+      .page{
+        padding:8px 8px 20px;
+      }
+
+      .card{
+        border-radius:18px;
+        padding:12px 10px 16px;
+      }
+
+      .top-blessing{
+        font-size:14px;
+        line-height:1.7;
+        margin-bottom:12px;
+      }
+
+      .main-hero{
+        font-size:24px;
+        line-height:1.3;
+        margin-bottom:8px;
+      }
+
+      .heart{
+        font-size:28px;
+        margin-bottom:8px;
+      }
+
+      .sub-intro{
+        font-size:13px;
+        margin-bottom:14px;
+      }
+
+      .request-box{
+        padding:10px;
+        border-radius:14px;
+      }
+
+      .request-title{
+        font-size:15px;
+      }
+
+      .field label{
+        font-size:13px;
+      }
+
+      .field input,
+      .field select,
+      .field textarea{
+        font-size:14px;
+        padding:10px 9px;
+      }
+
+      .field textarea{
+        min-height:120px;
+      }
+
+      .btn{
+        width:100%;
+        font-size:14px;
+        padding:11px 14px;
+      }
+
+      .summary-box{
+        font-size:14px;
+        padding:12px;
+      }
+
+      .note{
+        font-size:12px;
+      }
+
+      .small-note{
+        font-size:11px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="card">
+
+      <div class="top-blessing">
+        כָּל הַמְזַכֶּה אֶת הָרַבִּים, זְכוּת הָרַבִּים תְּלוּיָה בּוֹ;<br>
+        וְכָל הַנּוֹתֵן יָד לְהַרְבּוֹת תּוֹרָה וּלְחַזֵּק נְשָׁמוֹת —<br>
+        זוֹכֶה לִבְרָכָה וְסִיּוּעַ מִן הַשָּׁמַיִם
+      </div>
+
+      <div class="main-hero">
+        זכו להיות חלק ממזכי הרבים<br>
+        ולהעניק ליקיריכם מתנה שאין לה מחיר.
+      </div>
+
+      <div class="heart">❤️</div>
+
+      <div class="sub-intro">
+        סדר הופעת השמות בסרטון ייקבע לפי גובה ההשתתפות.
+      </div>
+
+      <div id="requestsContainer"></div>
+
+      <div class="actions-top">
+        <button type="button" class="btn btn-add" onclick="addRequest()">הוספת בקשה נוספת</button>
+      </div>
+
+      <div class="summary-box" id="summaryBox">
+        מספר בקשות כרגע: 1<br>
+        סה״כ לתשלום: 0 ש״ח
+      </div>
+
+      <div id="errorBox" class="error-box"></div>
+
+      <div class="actions-bottom">
+        <button type="button" class="btn btn-main" onclick="submitRequests()">אישור הבקשה</button>
+      </div>
+
+      <div class="note">
+        לאחר לחיצה על "אישור הבקשה", תועברו לדף הסיכום לפני התשלום.
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const NEXT_PAGE_URL = '/Parashat-HaShavua-2.html';
+
+    const REQUEST_TYPES = [
+      'לשמירה והגנה',
+      'לפרנסה ושפע',
+      'לבריאות',
+      'לזיווג הגון להצלחה',
+      'לפרייה ורבייה',
+      'לעילוי נשמת'
+    ];
+
+    const amountOptions = [
+      { value: 18, label: '18(חי) ש"ח - למשך עליה אחת בלבד!' },
+      { value: 36, label: '36( פעמיים חי) ש"ח - למשך שני עליות בלבד!' },
+      { value: 54, label: '54( שלוש פעמים חי) ש"ח - למשך שלוש עליות בלבד!' },
+      { value: 72, label: '72( ארבע פעמים חי) ש"ח - למשך ארבעה עליות בלבד!' },
+      { value: 90, label: '90( חמש פעמים חי) ש"ח - למשך חמש עליות בלבד!' },
+      { value: 180, label: '180( עשר פעמים חי) ש"ח - למשך עשר עליות בלבד!' },
+      { value: 'yearly', label: 'למשך כל השנה עד שוב לאותה עליה שבה הופיע השם לראשונה - כל סכום מעל 999 ש"ח' }
+    ];
+
+    let requestCount = 0;
+
+    function escapeHtml(value) {
+      return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function createTypeOptionsHtml() {
+      return REQUEST_TYPES.map(function(type) {
+        return `<option value="${type}">${type}</option>`;
+      }).join('');
+    }
+
+    function createAmountOptionsHtml() {
+      return amountOptions.map(function(option) {
+        return `<option value="${option.value}">${option.label}</option>`;
+      }).join('');
+    }
+
+    function normalizeSpaces(value) {
+      return String(value || '').replace(/\s+/g, ' ').trim();
+    }
+
+    function containsNonHebrewLetters(value) {
+      return /[A-Za-z\u00C0-\u024F\u0400-\u04FF]/.test(String(value || ''));
+    }
+
+    function parseDedicatedName(value) {
+      const normalized = normalizeSpaces(value);
+      if (!normalized) return null;
+
+      if (normalized.includes(' בן ')) {
+        const parts = normalized.split(' בן ');
+        if (parts.length === 2 && parts[0].trim() && parts[1].trim()) {
+          return {
+            full: normalized,
+            gender: 'male',
+            relation: 'בן'
+          };
+        }
+      }
+
+      if (normalized.includes(' בת ')) {
+        const parts = normalized.split(' בת ');
+        if (parts.length === 2 && parts[0].trim() && parts[1].trim()) {
+          return {
+            full: normalized,
+            gender: 'female',
+            relation: 'בת'
+          };
+        }
+      }
+
+      return null;
+    }
+
+    function isValidContactEmail(email) {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
+
+    function updateDedicatedNameNote(requestBox) {
+      const nameInput = requestBox.querySelector('.req-name');
+      const note = requestBox.querySelector('.dedicated-name-note');
+      const value = normalizeSpaces(nameInput.value);
+
+      if (!value) {
+        note.textContent = 'יש לרשום את השם המלא שיופיע בהקדשה, כולל בן או בת.';
+        note.classList.remove('error');
+        return;
+      }
+
+      if (containsNonHebrewLetters(value)) {
+        note.textContent = 'השם יתורגם לעברית ויופיע בעברית';
+        note.classList.add('error');
+        return;
+      }
+
+      note.textContent = 'יש לרשום את השם המלא שיופיע בהקדשה, כולל בן או בת.';
+      note.classList.remove('error');
+    }
+
+    function getTemplateByType(type, gender, dedicatedName) {
+      const male = {
+        'לשמירה והגנה':
+`יְהִי רָצוֹן מִלְּפָנֶיךָ ה׳ אֱלֹהֵינוּ וֵאלֹהֵי אֲבוֹתֵינוּ,
+שֶׁתִּשְׁמֹר וְתַצִּיל אֶת ${dedicatedName}
+מִכָּל צָרָה וְצוּקָה, וּמִכָּל נֶגַע וּמַחֲלָה,
+וְתִשְׁלַח לוֹ שְׁמִירָה מִן הַשָּׁמַיִם, אָמֵן.`,
+
+        'לפרנסה ושפע':
+`יִפְתַּח ה׳ לְךָ אֶת אוֹצָרוֹ הַטּוֹב,
+לָתֵת מְטַר אַרְצְךָ בְּעִתּוֹ —
+כֵּן יִפְתַּח לְ${dedicatedName}
+שַׁעֲרֵי פַּרְנָסָה וְשֶׁפַע בְּרָכָה.`,
+
+        'לבריאות':
+`כָּל הַמַּחֲלָה אֲשֶׁר שַׂמְתִּי בְמִצְרַיִם לֹא אָשִׂים עָלֶיךָ,
+כִּי אֲנִי ה׳ רֹפְאֶךָ —
+כֵּן יִשְׁמֹר ה׳ אֶת ${dedicatedName}
+מִכָּל נֶגַע וּמַחֲלָה.`,
+
+        'לזיווג הגון להצלחה':
+`יְהִי רָצוֹן מִלְּפָנֶיךָ ה׳ אֱלֹהֵינוּ וֵאלֹהֵי אֲבוֹתֵינוּ,
+שֶׁתְּזַמֵּן לְ${dedicatedName}
+זִוּוּג הָגוּן מִן הַשָּׁמַיִם,
+בְּאַהֲבָה וּבְשָׁלוֹם, בְּרָכָה וְהַצְלָחָה.`,
+
+        'לפרייה ורבייה':
+`יְהִי רָצוֹן מִלְּפָנֶיךָ ה׳ אֱלֹהֵינוּ וֵאלֹהֵי אֲבוֹתֵינוּ,
+שֶׁתְּבָרֵךְ וְתִשְׁמֹר אֶת ${dedicatedName},
+וְתִזְכֵּהוּ לִפְרִי בֶטֶן, זֶרַע שֶׁל קַיָּמָא,
+בְּרִיאִים וּשְׁלֵמִים, לְחַיִּים שֶׁל בְּרָכָה וְשִׂמְחָה.`,
+
+        'לעילוי נשמת':
+`יְהִי רָצוֹן מִלְּפָנֶיךָ ה׳ אֱלֹהֵינוּ וֵאלֹהֵי אֲבוֹתֵינוּ,
+שֶׁתְּהֵא נִשְׁמַת ${dedicatedName}
+צְרוּרָה בִּצְרוֹר הַחַיִּים,
+וְתִזְכֶּה לְמְנוּחָה נְכוֹנָה בְּגַן עֵדֶן.`
+      };
+
+      const female = {
+        'לשמירה והגנה':
+`יְהִי רָצוֹן מִלְּפָנֶיךָ ה׳ אֱלֹהֵינוּ וֵאלֹהֵי אֲבוֹתֵינוּ,
+שֶׁתִּשְׁמֹר וְתַצִּיל אֶת ${dedicatedName}
+מִכָּל צָרָה וְצוּקָה, וּמִכָּל נֶגַע וּמַחֲלָה,
+וְתִשְׁלַח לָהּ שְׁמִירָה מִן הַשָּׁמַיִם, אָמֵן.`,
+
+        'לפרנסה ושפע':
+`יִפְתַּח ה׳ לְךָ אֶת אוֹצָרוֹ הַטּוֹב,
+לָתֵת מְטַר אַרְצְךָ בְּעִתּוֹ —
+כֵּן יִפְתַּח לְ${dedicatedName}
+שַׁעֲרֵי פַּרְנָסָה וְשֶׁפַע בְּרָכָה.`,
+
+        'לבריאות':
+`כָּל הַמַּחֲלָה אֲשֶׁר שַׂמְתִּי בְמִצְרַיִם לֹא אָשִׂים עָלֶיךָ,
+כִּי אֲנִי ה׳ רֹפְאֶךָ —
+כֵּן יִשְׁמֹר ה׳ אֶת ${dedicatedName}
+מִכָּל נֶגַע וּמַחֲלָה.`,
+
+        'לזיווג הגון להצלחה':
+`יְהִי רָצוֹן מִלְּפָנֶיךָ ה׳ אֱלֹהֵינוּ וֵאלֹהֵי אֲבוֹתֵינוּ,
+שֶׁתְּזַמֵּן לְ${dedicatedName}
+זִוּוּג הָגוּן מִן הַשָּׁמַיִם,
+בְּאַהֲבָה וּבְשָׁלוֹם, בְּרָכָה וְהַצְלָחָה.`,
+
+        'לפרייה ורבייה':
+`יְהִי רָצוֹן מִלְּפָנֶיךָ ה׳ אֱלֹהֵינוּ וֵאלֹהֵי אֲבוֹתֵינוּ,
+שֶׁתְּבָרֵךְ וְתִשְׁמֹר אֶת ${dedicatedName},
+וְתִזְכֵּהָ לִפְרִי בֶטֶן, זֶרַע שֶׁל קַיָּמָא,
+בְּרִיאִים וּשְׁלֵמִים, לְחַיִּים שֶׁל בְּרָכָה וְשִׂמְחָה.`,
+
+        'לעילוי נשמת':
+`יְהִי רָצוֹן מִלְּפָנֶיךָ ה׳ אֱלֹהֵינוּ וֵאלֹהֵי אֲבוֹתֵינוּ,
+שֶׁתְּהֵא נִשְׁמַת ${dedicatedName}
+צְרוּרָה בִּצְרוֹר הַחַיִּים,
+וְתִזְכֶּה לְמְנוּחָה נְכוֹנָה בְּגַן עֵדֶן.`
+      };
+
+      return gender === 'female' ? female[type] : male[type];
+    }
+
+    function addRequest(prefill = {}) {
+      requestCount += 1;
+
+      const container = document.getElementById('requestsContainer');
+      const requestDiv = document.createElement('div');
+      requestDiv.className = 'request-box';
+      requestDiv.dataset.requestId = String(requestCount);
+
+      requestDiv.innerHTML = `
+        <div class="request-title">בקשה מס׳ ${requestCount}</div>
+
+        <div class="field">
+          <label for="name_${requestCount}">השם שיופיע בעליה הבאה (רק שם אחד):</label>
+          <input
+            type="text"
+            id="name_${requestCount}"
+            class="req-name"
+            placeholder="פלוני בן/בת פלוני"
+            value="${escapeHtml(prefill.name || '')}"
+            autocomplete="off"
+          />
+          <span class="small-note dedicated-name-note">יש לרשום את השם המלא שיופיע בהקדשה, כולל בן או בת.</span>
+        </div>
+
+        <div class="field">
+          <label for="type_${requestCount}">סוג הבקשה</label>
+          <select id="type_${requestCount}" class="req-type">
+            <option value="" selected disabled hidden>בחר/י סוג בקשה</option>
+            ${createTypeOptionsHtml()}
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="text_${requestCount}">הנוסח שיופיע בסרטון</label>
+          <textarea
+            id="text_${requestCount}"
+            class="req-text"
+            placeholder=""
+            readonly
+          ></textarea>
+        </div>
+
+        <div class="field">
+          <label for="requesterName_${requestCount}">שם מלא של המבקש:</label>
+          <input
+            type="text"
+            id="requesterName_${requestCount}"
+            class="req-requester-name"
+            placeholder="שם אחד בלבד"
+            value="${escapeHtml(prefill.requesterName || '')}"
+            autocomplete="off"
+          />
+        </div>
+
+        <div class="field">
+          <label for="email_${requestCount}">אימייל ליצירת קשר:</label>
+          <input
+            type="email"
+            id="email_${requestCount}"
+            class="req-email"
+            placeholder="הקלד/י אימייל"
+            value="${escapeHtml(prefill.email || '')}"
+            autocomplete="off"
+          />
+        </div>
+
+        <div class="field">
+          <label for="amount_${requestCount}">סכום התרומה</label>
+          <select id="amount_${requestCount}" class="req-amount">
+            <option value="" selected disabled hidden>בחר/י סכום</option>
+            ${createAmountOptionsHtml()}
+          </select>
+        </div>
+
+        <div class="field hidden yearly-amount-wrap">
+          <label for="customAmount_${requestCount}">סכום</label>
+          <input
+            type="number"
+            id="customAmount_${requestCount}"
+            class="req-custom-amount"
+            placeholder="סכום"
+            min="1000"
+            step="1"
+            inputmode="numeric"
+          />
+          <span class="small-note yearly-note">ניתן להזין כאן רק סכום של 1000 ש"ח ומעלה.</span>
+        </div>
+
+        <div class="actions-top" style="margin-top:8px;">
+          <button type="button" class="btn btn-remove" onclick="removeRequest(${requestCount})">מחיקת בקשה זו</button>
+        </div>
+      `;
+
+      container.appendChild(requestDiv);
+
+      const nameInput = requestDiv.querySelector('.req-name');
+      const typeSelect = requestDiv.querySelector('.req-type');
+      const amountSelect = requestDiv.querySelector('.req-amount');
+      const customAmountInput = requestDiv.querySelector('.req-custom-amount');
+      const requesterNameInput = requestDiv.querySelector('.req-requester-name');
+
+      nameInput.addEventListener('input', function() {
+        updateDedicatedNameNote(requestDiv);
+        applyTemplate(requestDiv);
+        updateSummary();
+      });
+
+      typeSelect.addEventListener('change', function() {
+        applyTemplate(requestDiv);
+        updateSummary();
+      });
+
+      requesterNameInput.addEventListener('input', function() {
+        updateSummary();
+      });
+
+      amountSelect.addEventListener('change', function() {
+        toggleCustomAmount(requestDiv);
+        updateSummary();
+      });
+
+      customAmountInput.addEventListener('input', function() {
+        updateYearlyAmountNote(requestDiv);
+        updateSummary();
+      });
+
+      attachLiveSummaryListeners(requestDiv);
+      updateRequestTitles();
+      toggleCustomAmount(requestDiv);
+      updateDedicatedNameNote(requestDiv);
+      applyTemplate(requestDiv);
+      updateSummary();
+    }
+
+    function removeRequest(id) {
+      const allRequests = document.querySelectorAll('.request-box');
+      if (allRequests.length <= 1) {
+        showError('חייבת להישאר לפחות בקשה אחת בטופס.');
+        return;
+      }
+
+      const target = document.querySelector('.request-box[data-request-id="' + id + '"]');
+      if (target) target.remove();
+
+      clearError();
+      updateRequestTitles();
+      updateSummary();
+    }
+
+    function updateRequestTitles() {
+      const boxes = document.querySelectorAll('.request-box');
+      boxes.forEach(function(box, index) {
+        const title = box.querySelector('.request-title');
+        if (title) title.textContent = 'בקשה מס׳ ' + (index + 1);
+      });
+    }
+
+    function attachLiveSummaryListeners(scope) {
+      const fields = scope.querySelectorAll('input, select, textarea');
+      fields.forEach(function(field) {
+        field.addEventListener('input', updateSummary);
+        field.addEventListener('change', updateSummary);
+      });
+    }
+
+    function toggleCustomAmount(requestBox) {
+      const amountSelect = requestBox.querySelector('.req-amount');
+      const wrap = requestBox.querySelector('.yearly-amount-wrap');
+      const customAmountInput = requestBox.querySelector('.req-custom-amount');
+
+      if (amountSelect.value === 'yearly') {
+        wrap.classList.remove('hidden');
+      } else {
+        wrap.classList.add('hidden');
+        customAmountInput.value = '';
+      }
+
+      updateYearlyAmountNote(requestBox);
+    }
+
+    function updateYearlyAmountNote(requestBox) {
+      const amountSelect = requestBox.querySelector('.req-amount');
+      const customAmountInput = requestBox.querySelector('.req-custom-amount');
+      const note = requestBox.querySelector('.yearly-note');
+
+      if (!note) return;
+
+      if (amountSelect.value !== 'yearly') {
+        note.textContent = 'ניתן להזין כאן רק סכום של 1000 ש"ח ומעלה.';
+        note.classList.remove('error');
+        customAmountInput.setCustomValidity('');
+        return;
+      }
+
+      const value = customAmountInput.value.trim();
+
+      if (value && Number(value) < 1000) {
+        note.textContent = 'לא ניתן להגדיר סכום פחות מ1000 ש"ח';
+        note.classList.add('error');
+        customAmountInput.setCustomValidity('לא ניתן להגדיר סכום פחות מ1000 ש"ח');
+      } else {
+        note.textContent = 'ניתן להזין כאן רק סכום של 1000 ש"ח ומעלה.';
+        note.classList.remove('error');
+        customAmountInput.setCustomValidity('');
+      }
+    }
+
+    function applyTemplate(requestBox) {
+      const nameValue = requestBox.querySelector('.req-name').value;
+      const typeValue = requestBox.querySelector('.req-type').value.trim();
+      const textArea = requestBox.querySelector('.req-text');
+
+      const parsed = parseDedicatedName(nameValue);
+
+      if (!parsed || !typeValue) {
+        textArea.value = '';
+        return;
+      }
+
+      const template = getTemplateByType(typeValue, parsed.gender, parsed.full);
+      textArea.value = template || '';
+    }
+
+    function clearError() {
+      const errorBox = document.getElementById('errorBox');
+      errorBox.style.display = 'none';
+      errorBox.textContent = '';
+    }
+
+    function showError(message) {
+      const errorBox = document.getElementById('errorBox');
+      errorBox.textContent = message;
+      errorBox.style.display = 'block';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function collectRequests() {
+      const boxes = document.querySelectorAll('.request-box');
+      const requests = [];
+
+      boxes.forEach(function(box) {
+        const amountValue = box.querySelector('.req-amount').value.trim();
+        const customAmountValue = box.querySelector('.req-custom-amount').value.trim();
+        let finalAmount = 0;
+
+        if (amountValue === 'yearly') {
+          finalAmount = Number(customAmountValue || 0);
+        } else {
+          finalAmount = Number(amountValue || 0);
+        }
+
+        requests.push({
+          name: normalizeSpaces(box.querySelector('.req-name').value),
+          type: box.querySelector('.req-type').value.trim(),
+          text: box.querySelector('.req-text').value.trim(),
+          requesterName: normalizeSpaces(box.querySelector('.req-requester-name').value),
+          email: box.querySelector('.req-email').value.trim(),
+          amountChoice: amountValue,
+          customAmount: customAmountValue,
+          amount: finalAmount
+        });
+      });
+
+      return requests;
+    }
+
+    function updateSummary() {
+      const requests = collectRequests();
+      let totalAmount = 0;
+
+      requests.forEach(function(req) {
+        totalAmount += Number(req.amount || 0);
+      });
+
+      document.getElementById('summaryBox').innerHTML = `
+        מספר בקשות כרגע: ${requests.length}<br>
+        סה״כ לתשלום: ${totalAmount} ש״ח
+      `;
+    }
+
+    function validateRequests(requests) {
+      if (!requests.length) return 'לא נמצאו בקשות בטופס.';
+
+      for (let i = 0; i < requests.length; i++) {
+        const req = requests[i];
+        const requestNumber = i + 1;
+        const parsedDedicatedName = parseDedicatedName(req.name);
+
+        if (!req.name) {
+          return 'יש למלא את השם שיופיע בעליה בבקשה מס׳ ' + requestNumber + '.';
+        }
+
+        if (!parsedDedicatedName) {
+          return 'בבקשה מס׳ ' + requestNumber + ' יש לרשום שם מלא עם בן או בת באמצע.\nלדוגמה: רונן חי בן יחיעם וריקה';
+        }
+
+        if (!req.type) {
+          return 'יש לבחור סוג בקשה בבקשה מס׳ ' + requestNumber + '.';
+        }
+
+        if (!req.text) {
+          return 'הנוסח לא נוצר בבקשה מס׳ ' + requestNumber + '. יש למלא שם תקין ולבחור סוג בקשה.';
+        }
+
+        if (!req.requesterName) {
+          return 'יש למלא את שם המבקש בבקשה מס׳ ' + requestNumber + '.';
+        }
+
+        if (!req.email) {
+          return 'יש למלא אימייל ליצירת קשר בבקשה מס׳ ' + requestNumber + '.';
+        }
+
+        if (!isValidContactEmail(req.email)) {
+          return 'האימייל בבקשה מס׳ ' + requestNumber + ' אינו תקין.';
+        }
+
+        if (!req.amountChoice) {
+          return 'יש לבחור סכום תרומה בבקשה מס׳ ' + requestNumber + '.';
+        }
+
+        if (req.amountChoice === 'yearly') {
+          if (!req.customAmount) {
+            return 'בבקשה מס׳ ' + requestNumber + ' יש להזין סכום עבור האפשרות השנתית.';
+          }
+
+          if (Number(req.customAmount) < 1000) {
+            return 'בבקשה מס׳ ' + requestNumber + ' הסכום השנתי חייב להיות 1000 ש"ח ומעלה.';
+          }
+        }
+      }
+
+      return '';
+    }
+
+    function submitRequests() {
+      clearError();
+
+      const requests = collectRequests();
+      const validationError = validateRequests(requests);
+
+      if (validationError) {
+        showError(validationError);
+        return;
+      }
+
+      const totalAmount = requests.reduce(function(sum, req) {
+        return sum + Number(req.amount || 0);
+      }, 0);
+
+      const payload = {
+        totalAmount: totalAmount,
+        requests: requests
+      };
+
+      try {
+        const json = JSON.stringify(payload);
+        const encoded = encodeURIComponent(btoa(unescape(encodeURIComponent(json))));
+        window.location.href = NEXT_PAGE_URL + '#data=' + encoded;
+      } catch (err) {
+        showError('אירעה שגיאה בעת מעבר לדף האישור.');
+      }
+    }
+
+    addRequest();
+  </script>
+</body>
+</html>
