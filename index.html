@@ -546,6 +546,13 @@
               </div>
             </div>
 
+            <div class="name-builder-row family-name-single-wrap hidden">
+              <div>
+                <span class="mini-label">שם משפחה:</span>
+                <input type="text" class="req-family-name-single" placeholder="הקלד/י שם משפחה" autocomplete="off" />
+              </div>
+            </div>
+
             <input type="hidden" class="req-name" value="" />
             <div class="name-preview-box">השם שייבנה אוטומטית יופיע כאן לאחר מילוי השדות.</div>
             <span class="small-note dedicated-name-note">יש לבחור סוג בקשה, למלא שם פרטי, לבחור בן/בת ולבחור אם השם יוצג עם שם האב או עם שם האם.</span>
@@ -565,7 +572,8 @@
       const displayParentChecked = requestBox.querySelector('.req-display-parent:checked');
       const familyNameBefore = normalizeSpaces(requestBox.querySelector('.req-family-name-before').value);
       const familyNameAfter = normalizeSpaces(requestBox.querySelector('.req-family-name-after').value);
-
+      const familyNameSingle = normalizeSpaces(requestBox.querySelector('.req-family-name-single').value);
+ 
       const relation = relationChecked ? relationChecked.value : '';
       const displayParent = displayParentChecked ? displayParentChecked.value : '';
 
@@ -596,7 +604,8 @@
         parentLabel,
         parentDeceased,
         familyNameBefore,
-        familyNameAfter
+        familyNameAfter,
+        familyNameSingle
       };
     }
 
@@ -604,14 +613,23 @@
       return data.type === 'לעילוי נשמת' && data.relation === 'בת';
     }
 
+    function shouldShowSingleFamilyField(data) {
+      return data.relation === 'בן';
+    }
+
     function buildFamilyName(data) {
-      if (!shouldShowSpecialFamilyFields(data)) return '';
-
-      if (data.familyNameBefore && data.familyNameAfter) {
-        return `${data.familyNameBefore}־${data.familyNameAfter}`;
+      if (shouldShowSpecialFamilyFields(data)) {
+        if (data.familyNameBefore && data.familyNameAfter) {
+          return `${data.familyNameBefore}־${data.familyNameAfter}`;
+        }
+        return data.familyNameBefore || data.familyNameAfter || '';
       }
-
-      return data.familyNameBefore || data.familyNameAfter || '';
+    
+      if (shouldShowSingleFamilyField(data)) {
+        return data.familyNameSingle || '';
+      }
+    
+      return '';
     }
 
     function buildDisplayNameOnly(data) {
@@ -649,16 +667,22 @@
 
     function updateFamilyFieldsVisibility(requestBox) {
       const data = getBuiltNameData(requestBox);
-      const wrap = requestBox.querySelector('.family-name-special-wrap');
-
-      if (!wrap) return;
-
+      const specialWrap = requestBox.querySelector('.family-name-special-wrap');
+      const singleWrap = requestBox.querySelector('.family-name-single-wrap');
+    
       if (shouldShowSpecialFamilyFields(data)) {
-        wrap.classList.remove('hidden');
+        specialWrap.classList.remove('hidden');
       } else {
-        wrap.classList.add('hidden');
+        specialWrap.classList.add('hidden');
         requestBox.querySelector('.req-family-name-before').value = '';
         requestBox.querySelector('.req-family-name-after').value = '';
+      }
+    
+      if (shouldShowSingleFamilyField(data)) {
+        singleWrap.classList.remove('hidden');
+      } else {
+        singleWrap.classList.add('hidden');
+        requestBox.querySelector('.req-family-name-single').value = '';
       }
     }
 
@@ -690,7 +714,8 @@
         containsLatinOrForeignLetters(data.fatherName) ||
         containsLatinOrForeignLetters(data.motherName) ||
         containsLatinOrForeignLetters(data.familyNameBefore) ||
-        containsLatinOrForeignLetters(data.familyNameAfter)
+        containsLatinOrForeignLetters(data.familyNameAfter) ||
+        containsLatinOrForeignLetters(data.familyNameSingle)
       ) {
         note.textContent = 'יש למלא את כל השמות בעברית בלבד.';
         note.classList.add('error');
@@ -816,6 +841,7 @@
       const displayParentInputs = requestDiv.querySelectorAll('.req-display-parent');
       const familyNameBeforeInput = requestDiv.querySelector('.req-family-name-before');
       const familyNameAfterInput = requestDiv.querySelector('.req-family-name-after');
+      const familyNameSingleInput = requestDiv.querySelector('.req-family-name-single');
       const amountSelect = requestDiv.querySelector('.req-amount');
       const customAmountInput = requestDiv.querySelector('.req-custom-amount');
       const requesterNameInput = requestDiv.querySelector('.req-requester-name');
@@ -836,6 +862,7 @@
       motherDeceasedInput.addEventListener('change', refreshBuiltName);
       familyNameBeforeInput.addEventListener('input', refreshBuiltName);
       familyNameAfterInput.addEventListener('input', refreshBuiltName);
+      familyNameSingleInput.addEventListener('input', refreshBuiltName);
 
       relationInputs.forEach(function(input) {
         input.addEventListener('change', refreshBuiltName);
