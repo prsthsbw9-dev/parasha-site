@@ -373,7 +373,6 @@
         requestsHtml += `
           <div class="req-item">
             <div class="req-title">בקשה מס׳ ${index + 1}</div>
-            <div class="line"><strong>השם שיופיע:</strong> ${escapeHtml(req.name || '')}</div>
             <div class="line"><strong>סוג הבקשה:</strong> ${escapeHtml(req.type || '')}</div>
             <div class="line"><strong>הנוסח שיופיע בסרטון:</strong> ${escapeHtml(req.text || '')}</div>
             <div class="line"><strong>שם מלא של המבקש:</strong> ${escapeHtml(req.requesterName || '')}</div>
@@ -404,7 +403,6 @@
 
       requests.forEach(function(req, index) {
         body += 'בקשה מס\' ' + (index + 1) + ':' + '\n';
-        body += 'השם שיופיע: ' + (req.name || '') + '\n';
         body += 'סוג הבקשה: ' + (req.type || '') + '\n';
         body += 'הנוסח שיופיע בסרטון:' + '\n';
         body += (req.text || '') + '\n';
