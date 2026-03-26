@@ -541,7 +541,7 @@
                 <input type="text" class="req-family-name-before" placeholder="הקלד/י שם משפחה קודם" autocomplete="off" />
               </div>
               <div>
-                <span class="mini-label">שם משפחה לאחר נישואין:</span>
+                <span class="mini-label">שם משפחה נוכחי:</span>
                 <input type="text" class="req-family-name-after" placeholder="הקלד/י שם משפחה לאחר נישואין" autocomplete="off" />
               </div>
             </div>
@@ -896,18 +896,57 @@
 
     function removeRequest(id) {
       const allRequests = document.querySelectorAll('.request-box');
-      if (allRequests.length <= 1) {
-        showError('חייבת להישאר לפחות בקשה אחת בטופס.');
+      const target = document.querySelector('.request-box[data-request-id="' + id + '"]');
+      if (!target) return;
+    
+      const isFirstRequest = Array.from(allRequests).indexOf(target) === 0;
+    
+      if (isFirstRequest) {
+        clearRequestFields(target);
+        clearError();
+        updateSummary();
         return;
       }
-
-      const target = document.querySelector('.request-box[data-request-id="' + id + '"]');
-      if (target) target.remove();
-
+    
+      target.remove();
+    
       clearError();
       updateRequestTitles();
       updateSummary();
     }
+
+    function clearRequestFields(requestBox) {
+    const textInputs = requestBox.querySelectorAll('input[type="text"], input[type="email"], input[type="number"]');
+    textInputs.forEach(function(input) {
+      input.value = '';
+    });
+  
+    const selects = requestBox.querySelectorAll('select');
+    selects.forEach(function(select) {
+      select.selectedIndex = 0;
+    });
+  
+    const textareas = requestBox.querySelectorAll('textarea');
+    textareas.forEach(function(textarea) {
+      textarea.value = '';
+    });
+  
+    const radios = requestBox.querySelectorAll('input[type="radio"]');
+    radios.forEach(function(radio) {
+      radio.checked = false;
+    });
+  
+    const checkboxes = requestBox.querySelectorAll('input[type="checkbox"]');
+    checkboxes.forEach(function(checkbox) {
+      checkbox.checked = false;
+    });
+  
+    toggleCustomAmount(requestBox);
+    updateFirstNameLabel(requestBox);
+    updateFamilyFieldsVisibility(requestBox);
+    updateDedicatedNameNote(requestBox);
+    applyTemplate(requestBox);
+  }  
 
     function updateRequestTitles() {
       const boxes = document.querySelectorAll('.request-box');
