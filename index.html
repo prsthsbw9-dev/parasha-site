@@ -1008,6 +1008,7 @@
           displayParent: data.displayParent,
           familyNameBefore: data.familyNameBefore,
           familyNameAfter: data.familyNameAfter,
+          familyNameSingle: data.familyNameSingle,
           name: builtName,
           text: box.querySelector('.req-text').value.trim(),
           requesterName: normalizeSpaces(box.querySelector('.req-requester-name').value),
@@ -1055,7 +1056,8 @@
           containsLatinOrForeignLetters(req.fatherName) ||
           containsLatinOrForeignLetters(req.motherName) ||
           containsLatinOrForeignLetters(req.familyNameBefore) ||
-          containsLatinOrForeignLetters(req.familyNameAfter)
+          containsLatinOrForeignLetters(req.familyNameAfter) ||
+          containsLatinOrForeignLetters(req.familyNameSingle)
         ) {
           return 'בבקשה מס׳ ' + requestNumber + ' יש למלא את כל השמות בעברית בלבד.';
         }
