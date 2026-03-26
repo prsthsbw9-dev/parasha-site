@@ -109,7 +109,7 @@
     }
 
     .field textarea{
-      min-height:140px;
+      min-height:100px;
       resize:vertical;
       line-height:1.8;
       white-space:pre-wrap;
@@ -210,7 +210,70 @@
     }
 
     .hidden{
-      display:none;
+      display:none !important;
+    }
+
+    .name-builder-wrap{
+      border:1px solid #e4cf9c;
+      border-radius:14px;
+      background:#fffaf1;
+      padding:12px 10px;
+    }
+
+    .name-builder-row{
+      display:grid;
+      gap:10px;
+      margin-bottom:10px;
+    }
+
+    .name-builder-row.two-cols{
+      grid-template-columns:1fr 1fr;
+    }
+
+    .inline-choice-group{
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px;
+      align-items:center;
+      background:#fff8eb;
+      border:1px solid #e4cf9c;
+      border-radius:12px;
+      padding:10px;
+    }
+
+    .inline-choice{
+      display:flex;
+      align-items:center;
+      gap:6px;
+      font-size:14px;
+      color:#5a3e18;
+      font-weight:bold;
+    }
+
+    .inline-choice input{
+      width:auto;
+      margin:0;
+      transform:scale(1.1);
+      accent-color:#7a4c1f;
+    }
+
+    .name-preview-box{
+      margin-top:8px;
+      background:#f7f1e4;
+      border:1px dashed #d2b173;
+      border-radius:12px;
+      padding:10px;
+      color:#6b4b1e;
+      line-height:1.8;
+      font-size:14px;
+    }
+
+    .mini-label{
+      display:block;
+      margin-bottom:6px;
+      color:#6b4b1e;
+      font-weight:bold;
+      font-size:13px;
     }
 
     @media (max-width:640px){
@@ -266,7 +329,7 @@
       }
 
       .field textarea{
-        min-height:120px;
+        min-height:90px;
       }
 
       .btn{
@@ -286,6 +349,14 @@
 
       .small-note{
         font-size:11px;
+      }
+
+      .name-builder-row.two-cols{
+        grid-template-columns:1fr;
+      }
+
+      .inline-choice-group{
+        gap:10px;
       }
     }
   </style>
@@ -383,147 +454,280 @@
       return String(value || '').replace(/\s+/g, ' ').trim();
     }
 
-    function containsNonHebrewLetters(value) {
+    function containsLatinOrForeignLetters(value) {
       return /[A-Za-z\u00C0-\u024F\u0400-\u04FF]/.test(String(value || ''));
-    }
-
-    function parseDedicatedName(value) {
-      const normalized = normalizeSpaces(value);
-      if (!normalized) return null;
-
-      if (normalized.includes(' בן ')) {
-        const parts = normalized.split(' בן ');
-        if (parts.length === 2 && parts[0].trim() && parts[1].trim()) {
-          return {
-            full: normalized,
-            gender: 'male',
-            relation: 'בן'
-          };
-        }
-      }
-
-      if (normalized.includes(' בת ')) {
-        const parts = normalized.split(' בת ');
-        if (parts.length === 2 && parts[0].trim() && parts[1].trim()) {
-          return {
-            full: normalized,
-            gender: 'female',
-            relation: 'בת'
-          };
-        }
-      }
-
-      return null;
     }
 
     function isValidContactEmail(email) {
       return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     }
 
-    function updateDedicatedNameNote(requestBox) {
-      const nameInput = requestBox.querySelector('.req-name');
-      const note = requestBox.querySelector('.dedicated-name-note');
-      const value = normalizeSpaces(nameInput.value);
-
-      if (!value) {
-        note.textContent = 'יש לרשום את השם המלא שיופיע בהקדשה, כולל בן או בת.';
-        note.classList.remove('error');
-        return;
-      }
-
-      if (containsNonHebrewLetters(value)) {
-        note.textContent = 'השם יתורגם לעברית ויופיע בעברית';
-        note.classList.add('error');
-        return;
-      }
-
-      note.textContent = 'יש לרשום את השם המלא שיופיע בהקדשה, כולל בן או בת.';
-      note.classList.remove('error');
+    function getFirstNameLabel(typeValue) {
+      return typeValue === 'לעילוי נשמת'
+        ? 'שם פרטי של הנפטר/ת:'
+        : 'שם פרטי שיופיע:';
     }
 
-    function getTemplateByType(type, gender, dedicatedName) {
-      const isFemale = gender === 'female';
+    function createNameBuilderHtml(id) {
+      return `
+        <div class="field">
+          <label for="type_${id}">סוג הבקשה</label>
+          <select id="type_${id}" class="req-type">
+            <option value="" selected disabled hidden>בחר/י סוג בקשה</option>
+            ${createTypeOptionsHtml()}
+          </select>
+        </div>
 
-      const templatesMale = {
-        'לשמירה והגנה':
-`יְהִי רָצוֹן מִלְּפָנֶיךָ ה׳ אֱלֹהֵינוּ וֵאלֹהֵי אֲבוֹתֵינוּ,
-שֶׁתִּשְׁמֹר וְתַצִּיל אֶת ${dedicatedName}
-מִכָּל צָרָה וְצוּקָה, מִכָּל פַּחַד וְהֶפְסֵד,
-וְתִשְׁלַח לוֹ שְׁמִירָה, הֲגָנָה וְסִיּוּעַ מִן הַשָּׁמַיִם.`,
+        <div class="field">
+          <label>השם שיופיע בעליה הבאה (רק שם אחד):</label>
+          <div class="name-builder-wrap">
+            <div class="name-builder-row two-cols">
+              <div>
+                <span class="mini-label name-first-label">שם פרטי שיופיע:</span>
+                <input type="text" class="req-first-name" placeholder="הקלד/י שם פרטי" autocomplete="off" />
+              </div>
+              <div>
+                <span class="mini-label">בן / בת</span>
+                <div class="inline-choice-group">
+                  <label class="inline-choice"><input type="radio" name="relation_${id}" class="req-relation" value="בן"> בן</label>
+                  <label class="inline-choice"><input type="radio" name="relation_${id}" class="req-relation" value="בת"> בת</label>
+                </div>
+              </div>
+            </div>
 
-        'לפרנסה ושפע':
-`יְהִי רָצוֹן מִלְּפָנֶיךָ ה׳ אֱלֹהֵינוּ וֵאלֹהֵי אֲבוֹתֵינוּ,
-שֶׁתִּפְתַּח לְ${dedicatedName}
-שַׁעֲרֵי פַּרְנָסָה, שֶׁפַע וּבְרָכָה,
-וְתִשְׁלַח לוֹ רֶוַח וְהַצְלָחָה בְּכָל מַעֲשֵׂה יָדָיו.`,
+            <div class="name-builder-row two-cols">
+              <div>
+                <span class="mini-label">שם האב:</span>
+                <input type="text" class="req-father-name" placeholder="הקלד/י שם האב" autocomplete="off" />
+              </div>
+              <div>
+                <span class="mini-label">שם האם:</span>
+                <input type="text" class="req-mother-name" placeholder="הקלד/י שם האם" autocomplete="off" />
+              </div>
+            </div>
 
-        'לבריאות':
-`יְהִי רָצוֹן מִלְּפָנֶיךָ ה׳ אֱלֹהֵינוּ וֵאלֹהֵי אֲבוֹתֵינוּ,
-שֶׁתִּשְׁלַח רְפוּאָה שְׁלֵמָה לְ${dedicatedName},
-רְפוּאַת הַנֶּפֶשׁ וּרְפוּאַת הַגּוּף,
-וְתִשְׁמֹר אוֹתוֹ מִכָּל חֹלִי, מַכְאוֹב וּמַחֲלָה.`,
+            <div class="small-note">
+              במידה ואחד/שניים נפטרו יש לרשום בנוסף לאחר רווח מהשם ע"ה.
+            </div>
 
-        'לזיווג הגון להצלחה':
-`יְהִי רָצוֹן מִלְּפָנֶיךָ ה׳ אֱלֹהֵינוּ וֵאלֹהֵי אֲבוֹתֵינוּ,
-שֶׁתְּזַמֵּן לְ${dedicatedName}
-זִוּוּג הָגוּן מִן הַשָּׁמַיִם,
-בְּאַהֲבָה, בְּשָׁלוֹם, בִּבְרָכָה וּבְהַצְלָחָה.`,
+            <div class="name-builder-row two-cols">
+              <div>
+                <span class="mini-label">סימון ע"ה ליד שם האב</span>
+                <div class="inline-choice-group">
+                  <label class="inline-choice"><input type="checkbox" class="req-father-deceased"> האב נפטר</label>
+                </div>
+              </div>
+              <div>
+                <span class="mini-label">סימון ע"ה ליד שם האם</span>
+                <div class="inline-choice-group">
+                  <label class="inline-choice"><input type="checkbox" class="req-mother-deceased"> האם נפטרה</label>
+                </div>
+              </div>
+            </div>
 
-        'לפרייה ורבייה':
-`יְהִי רָצוֹן מִלְּפָנֶיךָ ה׳ אֱלֹהֵינוּ וֵאלֹהֵי אֲבוֹתֵינוּ,
-שֶׁתְּבָרֵךְ אֶת ${dedicatedName}
-וְתִשְׁמְרֵהוּ, וְתִזְכֵּהוּ לְזֶרַע שֶׁל קַיָּמָא,
-לְבָנִים וּבָנוֹת בְּרִיאִים וּשְׁלֵמִים,
-לְחַיִּים שֶׁל בְּרָכָה, שָׁלוֹם וְשִׂמְחָה.`,
+            <div class="name-builder-row">
+              <div>
+                <span class="mini-label">יש לסמן בוי את השם שיופיע בצמוד לשם הראשי:</span>
+                <div class="inline-choice-group">
+                  <label class="inline-choice"><input type="radio" name="display_parent_${id}" class="req-display-parent" value="father"> שם האב</label>
+                  <label class="inline-choice"><input type="radio" name="display_parent_${id}" class="req-display-parent" value="mother"> שם האם</label>
+                </div>
+              </div>
+            </div>
 
-        'לעילוי נשמת':
-`יְהִי רָצוֹן מִלְּפָנֶיךָ ה׳ אֱלֹהֵינוּ וֵאלֹהֵי אֲבוֹתֵינוּ,
-שֶׁתְּהֵא נִשְׁמָתוֹ שֶׁל ${dedicatedName}
-צְרוּרָה בִּצְרוֹר הַחַיִּים,
-וְתִזְכֶּה לִמְנוּחָה נְכוֹנָה בְּגַן עֵדֶן.`
+            <div class="name-builder-row two-cols family-name-special-wrap hidden">
+              <div>
+                <span class="mini-label">שם משפחה קודם:</span>
+                <input type="text" class="req-family-name-before" placeholder="הקלד/י שם משפחה קודם" autocomplete="off" />
+              </div>
+              <div>
+                <span class="mini-label">שם משפחה לאחר נישואין:</span>
+                <input type="text" class="req-family-name-after" placeholder="הקלד/י שם משפחה לאחר נישואין" autocomplete="off" />
+              </div>
+            </div>
+
+            <input type="hidden" class="req-name" value="" />
+            <div class="name-preview-box">השם שייבנה אוטומטית יופיע כאן לאחר מילוי השדות.</div>
+            <span class="small-note dedicated-name-note">יש לבחור סוג בקשה, למלא שם פרטי, לבחור בן/בת ולבחור אם השם יוצג עם שם האב או עם שם האם.</span>
+          </div>
+        </div>
+      `;
+    }
+
+    function getBuiltNameData(requestBox) {
+      const type = requestBox.querySelector('.req-type').value.trim();
+      const firstName = normalizeSpaces(requestBox.querySelector('.req-first-name').value);
+      const relationChecked = requestBox.querySelector('.req-relation:checked');
+      const fatherName = normalizeSpaces(requestBox.querySelector('.req-father-name').value);
+      const motherName = normalizeSpaces(requestBox.querySelector('.req-mother-name').value);
+      const fatherDeceased = requestBox.querySelector('.req-father-deceased').checked;
+      const motherDeceased = requestBox.querySelector('.req-mother-deceased').checked;
+      const displayParentChecked = requestBox.querySelector('.req-display-parent:checked');
+      const familyNameBefore = normalizeSpaces(requestBox.querySelector('.req-family-name-before').value);
+      const familyNameAfter = normalizeSpaces(requestBox.querySelector('.req-family-name-after').value);
+
+      const relation = relationChecked ? relationChecked.value : '';
+      const displayParent = displayParentChecked ? displayParentChecked.value : '';
+
+      let parentName = '';
+      let parentLabel = '';
+      let parentDeceased = false;
+
+      if (displayParent === 'father') {
+        parentName = fatherName;
+        parentLabel = 'שם האב';
+        parentDeceased = fatherDeceased;
+      } else if (displayParent === 'mother') {
+        parentName = motherName;
+        parentLabel = 'שם האם';
+        parentDeceased = motherDeceased;
+      }
+
+      return {
+        type,
+        firstName,
+        relation,
+        fatherName,
+        motherName,
+        fatherDeceased,
+        motherDeceased,
+        displayParent,
+        parentName,
+        parentLabel,
+        parentDeceased,
+        familyNameBefore,
+        familyNameAfter
       };
+    }
 
-      const templatesFemale = {
-        'לשמירה והגנה':
-`יְהִי רָצוֹן מִלְּפָנֶיךָ ה׳ אֱלֹהֵינוּ וֵאלֹהֵי אֲבוֹתֵינוּ,
-שֶׁתִּשְׁמֹר וְתַצִּיל אֶת ${dedicatedName}
-מִכָּל צָרָה וְצוּקָה, מִכָּל פַּחַד וְהֶפְסֵד,
-וְתִשְׁלַח לָהּ שְׁמִירָה, הֲגָנָה וְסִיּוּעַ מִן הַשָּׁמַיִם.`,
+    function shouldShowSpecialFamilyFields(data) {
+      return data.type === 'לעילוי נשמת' && data.relation === 'בת';
+    }
 
-        'לפרנסה ושפע':
-`יְהִי רָצוֹן מִלְּפָנֶיךָ ה׳ אֱלֹהֵינוּ וֵאלֹהֵי אֲבוֹתֵינוּ,
-שֶׁתִּפְתַּח לְ${dedicatedName}
-שַׁעֲרֵי פַּרְנָסָה, שֶׁפַע וּבְרָכָה,
-וְתִשְׁלַח לָהּ רֶוַח וְהַצְלָחָה בְּכָל מַעֲשֵׂה יָדֶיהָ.`,
+    function buildFamilyName(data) {
+      if (!shouldShowSpecialFamilyFields(data)) return '';
 
-        'לבריאות':
-`יְהִי רָצוֹן מִלְּפָנֶיךָ ה׳ אֱלֹהֵינוּ וֵאלֹהֵי אֲבוֹתֵינוּ,
-שֶׁתִּשְׁלַח רְפוּאָה שְׁלֵמָה לְ${dedicatedName},
-רְפוּאַת הַנֶּפֶשׁ וּרְפוּאַת הַגּוּף,
-וְתִשְׁמֹר אוֹתָהּ מִכָּל חֹלִי, מַכְאוֹב וּמַחֲלָה.`,
+      if (data.familyNameBefore && data.familyNameAfter) {
+        return `${data.familyNameBefore}־${data.familyNameAfter}`;
+      }
 
-        'לזיווג הגון להצלחה':
-`יְהִי רָצוֹן מִלְּפָנֶיךָ ה׳ אֱלֹהֵינוּ וֵאלֹהֵי אֲבוֹתֵינוּ,
-שֶׁתְּזַמֵּן לְ${dedicatedName}
-זִוּוּג הָגוּן מִן הַשָּׁמַיִם,
-בְּאַהֲבָה, בְּשָׁלוֹם, בִּבְרָכָה וּבְהַצְלָחָה.`,
+      return data.familyNameBefore || data.familyNameAfter || '';
+    }
 
-        'לפרייה ורבייה':
-`יְהִי רָצוֹן מִלְּפָנֶיךָ ה׳ אֱלֹהֵינוּ וֵאלֹהֵי אֲבוֹתֵינוּ,
-שֶׁתְּבָרֵךְ אֶת ${dedicatedName}
-וְתִשְׁמְרֶהָ, וְתִזְכֶּהָ לִפְרִי בֶטֶן וְזֶרַע שֶׁל קַיָּמָא,
-לְבָנִים וּבָנוֹת בְּרִיאִים וּשְׁלֵמִים,
-לְחַיִּים שֶׁל בְּרָכָה, שָׁלוֹם וְשִׂמְחָה.`,
+    function buildDisplayNameOnly(data) {
+      if (!data.firstName || !data.relation || !data.parentName) return '';
 
-        'לעילוי נשמת':
-`יְהִי רָצוֹן מִלְּפָנֶיךָ ה׳ אֱלֹהֵינוּ וֵאלֹהֵי אֲבוֹתֵינוּ,
-שֶׁתְּהֵא נִשְׁמָתָהּ שֶׁל ${dedicatedName}
-צְרוּרָה בִּצְרוֹר הַחַיִּים,
-וְתִזְכֶּה לִמְנוּחָה נְכוֹנָה בְּגַן עֵדֶן.`
-      };
+      const mainLine =
+        `${data.firstName} ${data.relation} ${data.parentName}${data.parentDeceased ? ' ע"ה' : ''}`;
 
-      const templates = isFemale ? templatesFemale : templatesMale;
-      return templates[type] || '';
+      let secondLine = '';
+
+      if (data.displayParent === 'father' && data.motherName) {
+        secondLine = `האם: ${data.motherName}${data.motherDeceased ? ' ע"ה' : ''}`;
+      } else if (data.displayParent === 'mother' && data.fatherName) {
+        secondLine = `האב: ${data.fatherName}${data.fatherDeceased ? ' ע"ה' : ''}`;
+      }
+
+      const familyName = buildFamilyName(data);
+
+      if (familyName) {
+        secondLine += `${secondLine ? ', ' : ''}משפחה : ${familyName}`;
+      }
+
+      if (secondLine) {
+        return `${mainLine}\n${secondLine}`;
+      }
+
+      return mainLine;
+    }
+
+    function updateFirstNameLabel(requestBox) {
+      const typeValue = requestBox.querySelector('.req-type').value.trim();
+      const firstLabel = requestBox.querySelector('.name-first-label');
+      firstLabel.textContent = getFirstNameLabel(typeValue);
+    }
+
+    function updateFamilyFieldsVisibility(requestBox) {
+      const data = getBuiltNameData(requestBox);
+      const wrap = requestBox.querySelector('.family-name-special-wrap');
+
+      if (!wrap) return;
+
+      if (shouldShowSpecialFamilyFields(data)) {
+        wrap.classList.remove('hidden');
+      } else {
+        wrap.classList.add('hidden');
+        requestBox.querySelector('.req-family-name-before').value = '';
+        requestBox.querySelector('.req-family-name-after').value = '';
+      }
+    }
+
+    function updateDedicatedNameNote(requestBox) {
+      const note = requestBox.querySelector('.dedicated-name-note');
+      const preview = requestBox.querySelector('.name-preview-box');
+      const hiddenNameInput = requestBox.querySelector('.req-name');
+      const data = getBuiltNameData(requestBox);
+      const builtName = buildDisplayNameOnly(data);
+
+      hiddenNameInput.value = builtName;
+
+      if (!data.type) {
+        note.textContent = 'יש לבחור תחילה סוג בקשה.';
+        note.classList.remove('error');
+        preview.textContent = 'השם שייבנה אוטומטית יופיע כאן לאחר מילוי השדות.';
+        return;
+      }
+
+      if (!data.firstName) {
+        note.textContent = 'יש למלא שם פרטי.';
+        note.classList.add('error');
+        preview.textContent = 'השם שייבנה אוטומטית יופיע כאן לאחר מילוי השדות.';
+        return;
+      }
+
+      if (
+        containsLatinOrForeignLetters(data.firstName) ||
+        containsLatinOrForeignLetters(data.fatherName) ||
+        containsLatinOrForeignLetters(data.motherName) ||
+        containsLatinOrForeignLetters(data.familyNameBefore) ||
+        containsLatinOrForeignLetters(data.familyNameAfter)
+      ) {
+        note.textContent = 'יש למלא את כל השמות בעברית בלבד.';
+        note.classList.add('error');
+        preview.textContent = 'השם שייבנה אוטומטית יופיע כאן לאחר מילוי השדות.';
+        return;
+      }
+
+      if (!data.relation) {
+        note.textContent = 'יש לבחור בן או בת.';
+        note.classList.add('error');
+        preview.textContent = 'השם שייבנה אוטומטית יופיע כאן לאחר מילוי השדות.';
+        return;
+      }
+
+      if (!data.displayParent) {
+        note.textContent = 'יש לבחור האם להציג בצמוד את שם האב או את שם האם.';
+        note.classList.add('error');
+        preview.textContent = 'השם שייבנה אוטומטית יופיע כאן לאחר מילוי השדות.';
+        return;
+      }
+
+      if (!data.parentName) {
+        note.textContent = 'יש למלא את ' + data.parentLabel + '.';
+        note.classList.add('error');
+        preview.textContent = 'השם שייבנה אוטומטית יופיע כאן לאחר מילוי השדות.';
+        return;
+      }
+
+      note.textContent = 'השם נבנה אוטומטית לפי ההגדרות שבחרת.';
+      note.classList.remove('error');
+      preview.textContent = 'השם שיופיע: ' + builtName;
+    }
+
+    function applyTemplate(requestBox) {
+      const data = getBuiltNameData(requestBox);
+      const textArea = requestBox.querySelector('.req-text');
+      textArea.value = buildDisplayNameOnly(data);
     }
 
     function addRequest(prefill = {}) {
@@ -537,26 +741,7 @@
       requestDiv.innerHTML = `
         <div class="request-title">בקשה מס׳ ${requestCount}</div>
 
-        <div class="field">
-          <label for="name_${requestCount}">השם שיופיע בעליה הבאה (רק שם אחד):</label>
-          <input
-            type="text"
-            id="name_${requestCount}"
-            class="req-name"
-            placeholder="פלוני בן/בת פלוני"
-            value="${escapeHtml(prefill.name || '')}"
-            autocomplete="off"
-          />
-          <span class="small-note dedicated-name-note">יש לרשום את השם המלא שיופיע בהקדשה, כולל בן או בת.</span>
-        </div>
-
-        <div class="field">
-          <label for="type_${requestCount}">סוג הבקשה</label>
-          <select id="type_${requestCount}" class="req-type">
-            <option value="" selected disabled hidden>בחר/י סוג בקשה</option>
-            ${createTypeOptionsHtml()}
-          </select>
-        </div>
+        ${createNameBuilderHtml(requestCount)}
 
         <div class="field">
           <label for="text_${requestCount}">הנוסח שיופיע בסרטון</label>
@@ -621,26 +806,46 @@
 
       container.appendChild(requestDiv);
 
-      const nameInput = requestDiv.querySelector('.req-name');
       const typeSelect = requestDiv.querySelector('.req-type');
+      const firstNameInput = requestDiv.querySelector('.req-first-name');
+      const relationInputs = requestDiv.querySelectorAll('.req-relation');
+      const fatherNameInput = requestDiv.querySelector('.req-father-name');
+      const motherNameInput = requestDiv.querySelector('.req-mother-name');
+      const fatherDeceasedInput = requestDiv.querySelector('.req-father-deceased');
+      const motherDeceasedInput = requestDiv.querySelector('.req-mother-deceased');
+      const displayParentInputs = requestDiv.querySelectorAll('.req-display-parent');
+      const familyNameBeforeInput = requestDiv.querySelector('.req-family-name-before');
+      const familyNameAfterInput = requestDiv.querySelector('.req-family-name-after');
       const amountSelect = requestDiv.querySelector('.req-amount');
       const customAmountInput = requestDiv.querySelector('.req-custom-amount');
       const requesterNameInput = requestDiv.querySelector('.req-requester-name');
 
-      nameInput.addEventListener('input', function() {
+      function refreshBuiltName() {
+        updateFirstNameLabel(requestDiv);
+        updateFamilyFieldsVisibility(requestDiv);
         updateDedicatedNameNote(requestDiv);
         applyTemplate(requestDiv);
         updateSummary();
+      }
+
+      typeSelect.addEventListener('change', refreshBuiltName);
+      firstNameInput.addEventListener('input', refreshBuiltName);
+      fatherNameInput.addEventListener('input', refreshBuiltName);
+      motherNameInput.addEventListener('input', refreshBuiltName);
+      fatherDeceasedInput.addEventListener('change', refreshBuiltName);
+      motherDeceasedInput.addEventListener('change', refreshBuiltName);
+      familyNameBeforeInput.addEventListener('input', refreshBuiltName);
+      familyNameAfterInput.addEventListener('input', refreshBuiltName);
+
+      relationInputs.forEach(function(input) {
+        input.addEventListener('change', refreshBuiltName);
       });
 
-      typeSelect.addEventListener('change', function() {
-        applyTemplate(requestDiv);
-        updateSummary();
+      displayParentInputs.forEach(function(input) {
+        input.addEventListener('change', refreshBuiltName);
       });
 
-      requesterNameInput.addEventListener('input', function() {
-        updateSummary();
-      });
+      requesterNameInput.addEventListener('input', updateSummary);
 
       amountSelect.addEventListener('change', function() {
         toggleCustomAmount(requestDiv);
@@ -655,6 +860,8 @@
       attachLiveSummaryListeners(requestDiv);
       updateRequestTitles();
       toggleCustomAmount(requestDiv);
+      updateFirstNameLabel(requestDiv);
+      updateFamilyFieldsVisibility(requestDiv);
       updateDedicatedNameNote(requestDiv);
       applyTemplate(requestDiv);
       updateSummary();
@@ -733,22 +940,6 @@
       }
     }
 
-    function applyTemplate(requestBox) {
-      const nameValue = requestBox.querySelector('.req-name').value;
-      const typeValue = requestBox.querySelector('.req-type').value.trim();
-      const textArea = requestBox.querySelector('.req-text');
-
-      const parsed = parseDedicatedName(nameValue);
-
-      if (!parsed || !typeValue) {
-        textArea.value = '';
-        return;
-      }
-
-      const template = getTemplateByType(typeValue, parsed.gender, parsed.full);
-      textArea.value = template || '';
-    }
-
     function clearError() {
       const errorBox = document.getElementById('errorBox');
       errorBox.style.display = 'none';
@@ -769,6 +960,8 @@
       boxes.forEach(function(box) {
         const amountValue = box.querySelector('.req-amount').value.trim();
         const customAmountValue = box.querySelector('.req-custom-amount').value.trim();
+        const data = getBuiltNameData(box);
+        const builtName = buildDisplayNameOnly(data);
         let finalAmount = 0;
 
         if (amountValue === 'yearly') {
@@ -778,8 +971,17 @@
         }
 
         requests.push({
-          name: normalizeSpaces(box.querySelector('.req-name').value),
-          type: box.querySelector('.req-type').value.trim(),
+          type: data.type,
+          firstName: data.firstName,
+          relation: data.relation,
+          fatherName: data.fatherName,
+          motherName: data.motherName,
+          fatherDeceased: data.fatherDeceased,
+          motherDeceased: data.motherDeceased,
+          displayParent: data.displayParent,
+          familyNameBefore: data.familyNameBefore,
+          familyNameAfter: data.familyNameAfter,
+          name: builtName,
           text: box.querySelector('.req-text').value.trim(),
           requesterName: normalizeSpaces(box.querySelector('.req-requester-name').value),
           email: box.querySelector('.req-email').value.trim(),
@@ -812,22 +1014,47 @@
       for (let i = 0; i < requests.length; i++) {
         const req = requests[i];
         const requestNumber = i + 1;
-        const parsedDedicatedName = parseDedicatedName(req.name);
-
-        if (!req.name) {
-          return 'יש למלא את השם שיופיע בעליה בבקשה מס׳ ' + requestNumber + '.';
-        }
-
-        if (!parsedDedicatedName) {
-          return 'בבקשה מס׳ ' + requestNumber + ' יש לרשום שם מלא עם בן או בת באמצע.\nלדוגמה: רונן חי בן יחיעם וריקה';
-        }
 
         if (!req.type) {
           return 'יש לבחור סוג בקשה בבקשה מס׳ ' + requestNumber + '.';
         }
 
+        if (!req.firstName) {
+          return 'יש למלא שם פרטי בבקשה מס׳ ' + requestNumber + '.';
+        }
+
+        if (
+          containsLatinOrForeignLetters(req.firstName) ||
+          containsLatinOrForeignLetters(req.fatherName) ||
+          containsLatinOrForeignLetters(req.motherName) ||
+          containsLatinOrForeignLetters(req.familyNameBefore) ||
+          containsLatinOrForeignLetters(req.familyNameAfter)
+        ) {
+          return 'בבקשה מס׳ ' + requestNumber + ' יש למלא את כל השמות בעברית בלבד.';
+        }
+
+        if (!req.relation) {
+          return 'יש לבחור בן או בת בבקשה מס׳ ' + requestNumber + '.';
+        }
+
+        if (!req.displayParent) {
+          return 'יש לבחור האם יוצג שם האב או שם האם בבקשה מס׳ ' + requestNumber + '.';
+        }
+
+        if (req.displayParent === 'father' && !req.fatherName) {
+          return 'יש למלא את שם האב בבקשה מס׳ ' + requestNumber + '.';
+        }
+
+        if (req.displayParent === 'mother' && !req.motherName) {
+          return 'יש למלא את שם האם בבקשה מס׳ ' + requestNumber + '.';
+        }
+
+        if (!req.name) {
+          return 'השם לא נבנה כראוי בבקשה מס׳ ' + requestNumber + '.';
+        }
+
         if (!req.text) {
-          return 'הנוסח לא נוצר בבקשה מס׳ ' + requestNumber + '. יש למלא שם תקין ולבחור סוג בקשה.';
+          return 'הנוסח לא נוצר בבקשה מס׳ ' + requestNumber + '.';
         }
 
         if (!req.requesterName) {
