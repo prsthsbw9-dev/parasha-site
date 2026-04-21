@@ -241,7 +241,7 @@
       margin-top:10px;
     }
 
-    .pay-btn,.send-btn,.return-btn{
+    .pay-btn,.send-btn,.return-btn,.copy-btn{
       border:none;
       border-radius:16px;
       padding:12px 18px;
@@ -263,6 +263,15 @@
       box-shadow:none;
       pointer-events:none;
       opacity:.85;
+    }
+
+    .copy-btn{
+      background:#8a6331;
+      margin-top:10px;
+    }
+
+    .copy-btn.hidden{
+      display:none !important;
     }
 
     .send-wrap{
@@ -433,7 +442,7 @@
       .field input,.field select,.field textarea{font-size:14px;padding:10px 9px;}
       .name-builder-row.two-cols{grid-template-columns:1fr;}
       .pay-links-actions{flex-direction:column;}
-      .pay-btn,.send-btn,.return-btn{width:100%;font-size:14px;padding:11px 14px;}
+      .pay-btn,.send-btn,.return-btn,.copy-btn{width:100%;font-size:14px;padding:11px 14px;}
       .entry-card{border-radius:22px;padding:24px 12px 24px;}
       .entry-title{font-size:30px;}
       .entry-subtitle{font-size:15px;margin-bottom:18px;}
@@ -676,6 +685,7 @@
           <div class="send-wrap" id="sendWrap">
             <button id="sendDetailsBtn" type="button" class="send-btn disabled">שלח/י אליי את פרטי הבקשה</button>
             <div id="sendNotice" class="send-notice pending">כדי להפעיל את אפשרויות התשלום יש למלא את כל הפרטים, לשלוח את פרטי הבקשה אל הלקוח, ורק לאחר מכן ניתן יהיה לשלם.</div>
+            <button id="copyWhatsappBtn" type="button" class="copy-btn hidden">📋 העתק הודעה לוואטסאפ</button>
           </div>
 
           <div id="returnButtonContainer" class="return-wrap hidden"></div>
@@ -758,6 +768,7 @@
     const donationConfirmNotice = document.getElementById('donationConfirmNotice');
     const imageNote = document.getElementById('imageNote');
     const returnButtonContainer = document.getElementById('returnButtonContainer');
+    const copyWhatsappBtn = document.getElementById('copyWhatsappBtn');
 
     const payButtons = [
       document.getElementById('bitBtn'),
@@ -814,6 +825,7 @@
     function resetSendConfirmation() {
       detailsSentConfirmed = false;
       hideReturnButton();
+      hideCopyWhatsappButton();
     }
 
     function updateSendNotice(message, isSuccess) {
@@ -1484,6 +1496,26 @@
       returnButtonContainer.classList.add('hidden');
     }
 
+    function showCopyWhatsappButton() {
+      if (!copyWhatsappBtn) return;
+      copyWhatsappBtn.classList.remove('hidden');
+    }
+
+    function hideCopyWhatsappButton() {
+      if (!copyWhatsappBtn) return;
+      copyWhatsappBtn.classList.add('hidden');
+    }
+
+    async function copyWhatsappMessage() {
+      try {
+        const text = buildWhatsappCompactBody();
+        await navigator.clipboard.writeText(text);
+        alert('ההודעה הועתקה. כעת אפשר לפתוח וואטסאפ ידנית, להדביק ולשלוח.');
+      } catch (err) {
+        alert('לא ניתן היה להעתיק אוטומטית. אפשר לנסות שוב או לפתוח בדפדפן חיצוני.');
+      }
+    }
+
     function collectFormData() {
       return {
         flowMode: flowMode,
@@ -1572,8 +1604,15 @@
 
         if (detailsSentConfirmed) {
           showReturnButton();
+
+          if (getCheckedValue('contactMethod') === 'וואטסאפ') {
+            showCopyWhatsappButton();
+          } else {
+            hideCopyWhatsappButton();
+          }
         } else {
           hideReturnButton();
+          hideCopyWhatsappButton();
         }
       } catch (err) {
         console.error('שחזור הנתונים נכשל', err);
@@ -1585,6 +1624,7 @@
       requestType.value = '';
       detailsSentConfirmed = false;
       hideReturnButton();
+      hideCopyWhatsappButton();
       clearFieldErrors();
       showMainForm();
       updateRequestModeVisibility();
@@ -1597,6 +1637,7 @@
       requestType.value = '';
       detailsSentConfirmed = false;
       hideReturnButton();
+      hideCopyWhatsappButton();
       clearFieldErrors();
       showMainForm();
       updateRequestModeVisibility();
@@ -1608,6 +1649,7 @@
       flowMode = '';
       detailsSentConfirmed = false;
       hideReturnButton();
+      hideCopyWhatsappButton();
       clearFieldErrors();
       showEntryScreen();
       saveFormData();
@@ -1618,6 +1660,7 @@
       if (missing.length) {
         detailsSentConfirmed = false;
         hideReturnButton();
+        hideCopyWhatsappButton();
         updatePaymentState();
         saveFormData();
         return;
@@ -1630,28 +1673,26 @@
 
       if (method === 'וואטסאפ') {
         const compactBody = buildWhatsappCompactBody();
-        const waUrl = 'https://api.whatsapp.com/send?phone=' + OWNER_WHATSAPP_NUMBER + '&text=' + encodeURIComponent(compactBody);
+        const encodedText = encodeURIComponent(compactBody);
 
-        const newWindow = window.open(waUrl, '_blank');
+        const appUrl = 'whatsapp://send?phone=' + OWNER_WHATSAPP_NUMBER + '&text=' + encodedText;
+        const webUrl = 'https://wa.me/' + OWNER_WHATSAPP_NUMBER + '?text=' + encodedText;
 
         detailsSentConfirmed = true;
         showReturnButton();
-        updateSendNotice('נפתחה הודעת וואטסאפ. לאחר השליחה חזור לכאן לתשלום וסיום הבקשה.', true);
+        showCopyWhatsappButton();
+        updateSendNotice('מתבצע ניסיון לפתוח הודעת וואטסאפ. אם לא נפתח, אפשר להעתיק את ההודעה ידנית ואז לחזור לכאן לתשלום וסיום הבקשה.', true);
         updatePaymentState();
         saveFormData();
 
-        if (!newWindow) {
-          alert('ייתכן שהדפדפן חסם את פתיחת וואטסאפ. אם לא נפתח חלון, יש לאפשר פתיחת חלונות קופצים ולנסות שוב.');
-          return;
-        }
+        window.location.href = appUrl;
 
-        if (isDonationFlow()) {
-          alert('נפתחה הודעת וואטסאפ אל בעל הערוץ. יש ללחוץ על שלח מתוך הוואטסאפ שלך.');
-        } else if (isBusinessRequest()) {
-          alert('נפתחה הודעת וואטסאפ אל בעל הערוץ. בעת קבלת ההודעה ניתן להוסיף לבקשה את התמונה של הלוגו של העסק.');
-        } else {
-          alert('נפתחה הודעת וואטסאפ אל בעל הערוץ. במידה ובחרת שם להקדשה, יש להעלות את התמונה לפה ורק אחר כך ללחוץ על שלח.');
-        }
+        setTimeout(function () {
+          window.location.href = webUrl;
+        }, 1200);
+
+        alert('אם וואטסאפ לא נפתח מתוך טיקטוק, אפשר ללחוץ על "העתק הודעה לוואטסאפ", לפתוח את וואטסאפ ידנית, לשלוח, ואז לחזור לכאן לתשלום.');
+
         return;
       }
 
@@ -1669,6 +1710,7 @@
 
         detailsSentConfirmed = true;
         showReturnButton();
+        hideCopyWhatsappButton();
         updateSendNotice('נפתחה טיוטת מייל. לאחר השליחה חזור לכאן לתשלום וסיום הבקשה.', true);
         updatePaymentState();
         saveFormData();
@@ -1687,6 +1729,7 @@
 
       detailsSentConfirmed = true;
       showReturnButton();
+      hideCopyWhatsappButton();
       updatePaymentState();
       saveFormData();
     }
@@ -1761,6 +1804,10 @@
       startNameFlowBtn.addEventListener('click', startNameFlow);
       startDonationFlowBtn.addEventListener('click', startDonationFlow);
       backToChoiceBtn.addEventListener('click', goBackToChoice);
+
+      if (copyWhatsappBtn) {
+        copyWhatsappBtn.addEventListener('click', copyWhatsappMessage);
+      }
     }
 
     bindLiveListeners();
