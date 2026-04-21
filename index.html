@@ -3,9 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>טופס בקשה - פרשת השבוע</title>
+  <title>הוספת שם לעליה הבאה</title>
   <style>
     * { box-sizing: border-box; }
+
+    html, body { min-height: 100%; }
 
     body{
       margin:0;
@@ -18,6 +20,34 @@
       max-width:980px;
       margin:0 auto;
       padding:12px 10px 28px;
+    }
+
+    #entryWrapper{
+      min-height:100vh;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      padding:16px 0;
+      opacity:1;
+      transform:translateY(0);
+      transition:opacity .35s ease, transform .35s ease;
+    }
+
+    #entryWrapper.leaving{
+      opacity:0;
+      transform:translateY(18px);
+      pointer-events:none;
+    }
+
+    #mainForm{
+      opacity:1;
+      transform:translateY(0);
+      transition:opacity .35s ease, transform .35s ease;
+    }
+
+    #mainForm.entering{
+      opacity:0;
+      transform:translateY(18px);
     }
 
     .card{
@@ -35,22 +65,13 @@
       line-height:1.35;
     }
 
-    .top-blessing{
-      text-align:center;
-      color:#8b6331;
-      line-height:1.8;
-      font-size:clamp(14px,1.8vw,22px);
-      font-weight:bold;
-      margin-bottom:14px;
-    }
-
     .main-hero{
       text-align:center;
       color:#8b5f1b;
       line-height:1.35;
       font-size:clamp(18px,3vw,30px);
       font-weight:bold;
-      margin-bottom:10px;
+      margin:8px 0 10px;
     }
 
     .heart{
@@ -67,7 +88,7 @@
       margin-bottom:18px;
     }
 
-    .request-box{
+    .request-box,.contact-box,.payment-box{
       background:#fffdf8;
       border:1px solid #e0c892;
       border-radius:18px;
@@ -75,7 +96,25 @@
       margin-bottom:14px;
     }
 
-    .request-title{
+    .confirm-box{
+      background:#fffdf8;
+      border:1px solid #e0c892;
+      border-radius:18px;
+      padding:16px 12px;
+      margin-bottom:14px;
+      text-align:center;
+    }
+
+    .confirm-box .section-title{margin-bottom:8px;}
+
+    .confirm-instruction{
+      color:#7a5837;
+      line-height:1.8;
+      font-size:clamp(13px,1.8vw,16px);
+      margin-bottom:12px;
+    }
+
+    .section-title{
       font-weight:bold;
       color:#7a531a;
       margin-bottom:10px;
@@ -83,9 +122,7 @@
       text-align:center;
     }
 
-    .field{
-      margin-bottom:12px;
-    }
+    .field{margin-bottom:12px;}
 
     .field label{
       display:block;
@@ -95,9 +132,7 @@
       font-size:clamp(13px,1.8vw,16px);
     }
 
-    .field input,
-    .field select,
-    .field textarea{
+    .field input,.field select,.field textarea{
       width:100%;
       border:1px solid #d7bc86;
       border-radius:12px;
@@ -109,7 +144,7 @@
     }
 
     .field textarea{
-      min-height:100px;
+      min-height:90px;
       resize:vertical;
       line-height:1.8;
       white-space:pre-wrap;
@@ -118,116 +153,6 @@
     .req-text[readonly]{
       background:#f7f1e4;
       cursor:default;
-    }
-
-    .actions-top,
-    .actions-bottom{
-      display:flex;
-      flex-wrap:wrap;
-      justify-content:center;
-      gap:10px;
-      margin-top:14px;
-    }
-
-    .btn{
-      border:none;
-      border-radius:16px;
-      padding:12px 18px;
-      font-size:clamp(14px,1.8vw,18px);
-      font-weight:bold;
-      cursor:pointer;
-      text-decoration:none;
-      text-align:center;
-      display:inline-block;
-    }
-
-    .btn-add{
-      background:#efe0bf;
-      color:#6b4b1e;
-      border:2px solid #d2b173;
-    }
-
-    .btn-remove{
-      background:#ffe8e8;
-      color:#9b1c1c;
-      border:2px solid #e3a1a1;
-    }
-
-    .btn-main{
-      background:#7a4c1f;
-      color:#fff;
-      box-shadow:0 4px 10px rgba(0,0,0,.2);
-    }
-
-    .summary-box{
-      margin-top:16px;
-      background:#fff8eb;
-      border:1px solid #e4cf9c;
-      border-radius:18px;
-      padding:14px;
-      text-align:center;
-      color:#6b4b1e;
-      font-size:clamp(14px,2vw,20px);
-      line-height:1.7;
-      font-weight:bold;
-    }
-
-    .error-box{
-      display:none;
-      margin-top:14px;
-      background:#ffefef;
-      color:#b00020;
-      border:2px solid #d64545;
-      border-radius:14px;
-      padding:10px;
-      text-align:center;
-      line-height:1.7;
-      font-weight:bold;
-      white-space:pre-line;
-      font-size:14px;
-    }
-
-    .note{
-      text-align:center;
-      margin-top:10px;
-      color:#7a5837;
-      font-size:clamp(12px,1.6vw,15px);
-      line-height:1.7;
-    }
-
-    .small-note{
-      display:block;
-      margin-top:5px;
-      color:#8a6a44;
-      font-size:12px;
-      font-weight:normal;
-      line-height:1.6;
-    }
-
-    .small-note.error{
-      color:#c62828;
-      font-weight:bold;
-    }
-
-    .hidden{
-      display:none !important;
-    }
-
-    .name-builder-wrap{
-      border:1px solid #e4cf9c;
-      border-radius:14px;
-      background:#fffaf1;
-      padding:12px 10px;
-    }
-
-    .name-builder-row{
-      display:grid;
-      gap:10px;
-      margin-bottom:10px;
-    }
-
-    .name-builder-row.two-cols{
-      grid-template-columns:1fr 1fr;
     }
 
     .inline-choice-group{
@@ -257,6 +182,23 @@
       accent-color:#7a4c1f;
     }
 
+    .name-builder-wrap{
+      border:1px solid #e4cf9c;
+      border-radius:14px;
+      background:#fffaf1;
+      padding:12px 10px;
+    }
+
+    .name-builder-row{
+      display:grid;
+      gap:10px;
+      margin-bottom:10px;
+    }
+
+    .name-builder-row.two-cols{
+      grid-template-columns:1fr 1fr;
+    }
+
     .name-preview-box{
       margin-top:8px;
       background:#f7f1e4;
@@ -266,6 +208,7 @@
       color:#6b4b1e;
       line-height:1.8;
       font-size:14px;
+      white-space:pre-wrap;
     }
 
     .mini-label{
@@ -276,178 +219,582 @@
       font-size:13px;
     }
 
+    .small-note{
+      display:block;
+      margin-top:5px;
+      color:#8a6a44;
+      font-size:12px;
+      font-weight:normal;
+      line-height:1.6;
+    }
+
+    .small-note.error{
+      color:#c62828;
+      font-weight:bold;
+    }
+
+    .pay-links-actions{
+      display:flex;
+      flex-wrap:wrap;
+      justify-content:center;
+      gap:10px;
+      margin-top:10px;
+    }
+
+    .pay-btn,.send-btn{
+      border:none;
+      border-radius:16px;
+      padding:12px 18px;
+      font-size:clamp(14px,1.8vw,18px);
+      font-weight:bold;
+      cursor:pointer;
+      text-decoration:none;
+      text-align:center;
+      display:inline-block;
+      background:#7a4c1f;
+      color:#fff;
+      box-shadow:0 4px 10px rgba(0,0,0,.2);
+    }
+
+    .pay-btn.disabled,.send-btn.disabled{
+      background:#b7a793;
+      color:#f8f3ec;
+      cursor:not-allowed;
+      box-shadow:none;
+      pointer-events:none;
+      opacity:.85;
+    }
+
+    .send-wrap{
+      margin-top:16px;
+      text-align:center;
+    }
+
+    .note{
+      text-align:center;
+      margin-top:10px;
+      color:#7a5837;
+      font-size:clamp(12px,1.6vw,15px);
+      line-height:1.7;
+    }
+
+    .field-error{
+      display:block;
+      margin-top:6px;
+      color:#c62828;
+      font-size:13px;
+      font-weight:bold;
+      line-height:1.5;
+      min-height:1.2em;
+    }
+
+    .send-notice{
+      margin-top:12px;
+      background:#eef8ee;
+      border:1px solid #b6d8b6;
+      border-radius:14px;
+      padding:12px;
+      text-align:center;
+      color:#2e6b2e;
+      font-size:14px;
+      line-height:1.7;
+      font-weight:bold;
+    }
+
+    .send-notice.pending{
+      background:#fff8eb;
+      border-color:#e4cf9c;
+      color:#8b6331;
+    }
+
+    .hidden{display:none !important;}
+    .field-error.hidden{display:none !important;}
+
+    .entry-card{
+      background:linear-gradient(180deg,#fff6e7 0%,#f4e4c4 100%);
+      border:2px solid #d7b777;
+      border-radius:30px;
+      box-shadow:0 16px 42px rgba(0,0,0,.28);
+      padding:32px 18px 30px;
+      text-align:center;
+      position:relative;
+      overflow:hidden;
+      width:100%;
+    }
+
+    .entry-card::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:radial-gradient(circle at top center,rgba(255,255,255,.42),transparent 42%);
+      pointer-events:none;
+    }
+
+    .entry-title{
+      margin:0 0 12px;
+      color:#6f4712;
+      line-height:1.25;
+      font-size:clamp(26px,4vw,42px);
+      font-weight:800;
+      position:relative;
+    }
+
+    .entry-subtitle{
+      color:#7a5837;
+      line-height:1.85;
+      font-size:clamp(15px,2.2vw,21px);
+      margin:0 auto 24px;
+      max-width:700px;
+      position:relative;
+    }
+
+    .entry-actions{
+      display:flex;
+      flex-direction:column;
+      gap:16px;
+      max-width:620px;
+      margin:0 auto;
+      position:relative;
+    }
+
+    .entry-btn{
+      border:none;
+      border-radius:24px;
+      padding:20px 20px;
+      font-size:clamp(18px,2.6vw,24px);
+      font-weight:800;
+      cursor:pointer;
+      background:linear-gradient(180deg,#8a5620 0%,#6f4317 100%);
+      color:#fff;
+      box-shadow:0 10px 22px rgba(0,0,0,.22);
+      line-height:1.4;
+      min-height:78px;
+      transition:transform .18s ease, box-shadow .18s ease, filter .18s ease;
+    }
+
+    .entry-btn:hover{
+      transform:translateY(-2px);
+      box-shadow:0 14px 26px rgba(0,0,0,.25);
+      filter:brightness(1.03);
+    }
+
+    .entry-btn:active{transform:translateY(0);}
+    .entry-btn.secondary{background:linear-gradient(180deg,#a16f34 0%,#855824 100%);}
+
+    .entry-btn small{
+      display:block;
+      font-size:clamp(12px,1.6vw,15px);
+      font-weight:600;
+      opacity:.95;
+      margin-top:4px;
+    }
+
+    .entry-note{
+      text-align:center;
+      margin-top:16px;
+      color:#7a5837;
+      font-size:clamp(13px,1.8vw,16px);
+      line-height:1.9;
+      font-weight:700;
+      position:relative;
+    }
+
+    .back-wrap{
+      display:flex;
+      justify-content:flex-start;
+      margin-bottom:10px;
+    }
+
+    .back-btn{
+      border:none;
+      background:#fff8eb;
+      color:#7a4c1f;
+      border:1px solid #d7bc86;
+      border-radius:999px;
+      padding:9px 14px;
+      font-weight:bold;
+      cursor:pointer;
+      font-size:14px;
+    }
+
     @media (max-width:640px){
-      .page{
-        padding:8px 8px 20px;
-      }
-
-      .card{
-        border-radius:18px;
-        padding:12px 10px 16px;
-      }
-
-      .top-blessing{
-        font-size:14px;
-        line-height:1.7;
-        margin-bottom:12px;
-      }
-
-      .main-hero{
-        font-size:24px;
-        line-height:1.3;
-        margin-bottom:8px;
-      }
-
-      .heart{
-        font-size:28px;
-        margin-bottom:8px;
-      }
-
-      .sub-intro{
-        font-size:13px;
-        margin-bottom:14px;
-      }
-
-      .request-box{
-        padding:10px;
-        border-radius:14px;
-      }
-
-      .request-title{
-        font-size:15px;
-      }
-
-      .field label{
-        font-size:13px;
-      }
-
-      .field input,
-      .field select,
-      .field textarea{
-        font-size:14px;
-        padding:10px 9px;
-      }
-
-      .field textarea{
-        min-height:90px;
-      }
-
-      .btn{
-        width:100%;
-        font-size:14px;
-        padding:11px 14px;
-      }
-
-      .summary-box{
-        font-size:14px;
-        padding:12px;
-      }
-
-      .note{
-        font-size:12px;
-      }
-
-      .small-note{
-        font-size:11px;
-      }
-
-      .name-builder-row.two-cols{
-        grid-template-columns:1fr;
-      }
-
-      .inline-choice-group{
-        gap:10px;
-      }
+      .page{padding:8px 8px 20px;}
+      #entryWrapper{min-height:100dvh;padding:12px 0;}
+      .card{border-radius:18px;padding:12px 10px 16px;}
+      .main-hero{font-size:24px;line-height:1.3;margin-bottom:8px;}
+      .heart{font-size:28px;margin-bottom:8px;}
+      .sub-intro{font-size:13px;margin-bottom:14px;}
+      .field label{font-size:13px;}
+      .field input,.field select,.field textarea{font-size:14px;padding:10px 9px;}
+      .name-builder-row.two-cols{grid-template-columns:1fr;}
+      .pay-links-actions{flex-direction:column;}
+      .pay-btn,.send-btn{width:100%;font-size:14px;padding:11px 14px;}
+      .entry-card{border-radius:22px;padding:24px 12px 24px;}
+      .entry-title{font-size:30px;}
+      .entry-subtitle{font-size:15px;margin-bottom:18px;}
+      .entry-actions{gap:14px;}
+      .entry-btn{width:100%;font-size:18px;padding:18px 14px;min-height:84px;border-radius:20px;}
+      .entry-btn small{font-size:12px;}
+      .entry-note{font-size:13px;line-height:1.8;}
     }
   </style>
 </head>
 <body>
   <div class="page">
-    <div class="card">
 
-      <div class="top-blessing">
-        כָּל הַמְזַכֶּה אֶת הָרַבִּים, זְכוּת הָרַבִּים תְּלוּיָה בּוֹ;<br>
-        וְכָל הַנּוֹתֵן יָד לְהַרְבּוֹת תּוֹרָה וּלְחַזֵּק נְשָׁמוֹת —<br>
-        זוֹכֶה לִבְרָכָה וְסִיּוּעַ מִן הַשָּׁמַיִם
+    <div id="entryWrapper">
+      <div id="entryScreen" class="entry-card">
+        <div class="entry-title">✨ רגע קטן שלך יכול להפוך לזכות גדולה בשמיים</div>
+        <div class="entry-subtitle">הלב שלך כבר יודע - עכשיו זה הזמן לפעול. 👇</div>
+
+        <div class="entry-actions">
+          <button type="button" class="entry-btn secondary" id="startDonationFlowBtn">
+            ❤️ חיזוק ותמיכה בערוץ
+            <small>לתרומה בלבד, בלי מילוי שם להקדשה</small>
+          </button>
+
+          <button type="button" class="entry-btn" id="startNameFlowBtn">
+            ➕ הוספת שם, ברכה או הקדשה
+            <small>לשמות פרטיים, בקשות אישיות וגם ברכת הצלחה לעסק</small>
+          </button>
+
+          <div class="entry-note">⏳ שמות שמתווספים עכשיו — נכנסים לעליה הקרובה</div>
+        </div>
       </div>
+    </div>
 
-      <div class="main-hero">
-        זכו להיות חלק ממזכי הרבים<br>
-        ולהעניק ליקיריכם מתנה שאין לה מחיר.
-      </div>
+    <div id="mainForm" class="hidden entering">
+      <div class="card">
+        <div class="back-wrap">
+          <button type="button" class="back-btn" id="backToChoiceBtn">← חזרה לבחירה הראשית</button>
+        </div>
 
-      <div class="heart">❤️</div>
+        <div class="main-hero" id="mainHeroTitle">הוספת שם לעליה הבאה</div>
+        <div class="heart">❤️</div>
 
-      <div class="sub-intro">
-        סדר הופעת השמות בסרטון ייקבע לפי גובה ההשתתפות.
-      </div>
+        <div class="sub-intro" id="mainSubIntro">
+          מלאו את הפרטים, בחרו אמצעי תשלום, ולאחר מכן שלחו אליכם את פרטי הבקשה בהתאם לדרך הקשר שבחרתם.
+        </div>
 
-      <div id="requestsContainer"></div>
+        <div class="request-box" id="requestTypeBox">
+          <div class="section-title" id="requestTypeTitle">בחירת הבקשה</div>
+          <div class="field">
+            <label for="requestType">סוג הבקשה</label>
+            <select id="requestType">
+              <option value="" selected disabled hidden>בחר/י סוג בקשה</option>
+              <option value="לשמירה והגנה">לשמירה והגנה</option>
+              <option value="לפרנסה בשפע">לפרנסה בשפע</option>
+              <option value="לבריאות">לבריאות</option>
+              <option value="לזיווג הגון">לזיווג הגון</option>
+              <option value="לפרייה ורבייה">לפרייה ורבייה</option>
+              <option value="לעילוי נשמת">לעילוי נשמת</option>
+              <option value="להצלחת העסק">להצלחת העסק</option>
+            </select>
+            <span id="requestTypeError" class="field-error"></span>
+            <span class="small-note">ללא בחירת סוג בקשה לא יהיה ניתן להמשיך.</span>
+          </div>
+        </div>
 
-      <div class="actions-top">
-        <button type="button" class="btn btn-add" onclick="addRequest()">הוספת בקשה נוספת</button>
-      </div>
+        <div id="requestDetailsBox" class="request-box">
+          <div class="section-title" id="requestDetailsTitle">פרטי הבקשה</div>
 
-      <div class="summary-box" id="summaryBox">
-        מספר בקשות כרגע: 1<br>
-        סה״כ לתשלום: 0 ש״ח
-      </div>
+          <div id="personRequestFields">
+            <div class="field">
+              <label>השם שיופיע בעליה הבאה (רק שם אחד):</label>
+              <div class="name-builder-wrap">
+                <div class="name-builder-row two-cols">
+                  <div>
+                    <span class="mini-label name-first-label">שם פרטי שיופיע:</span>
+                    <input type="text" id="firstName" placeholder="הקלד/י שם פרטי" autocomplete="off" />
+                    <span id="firstNameError" class="field-error"></span>
+                  </div>
+                  <div>
+                    <span class="mini-label">בן / בת</span>
+                    <div class="inline-choice-group">
+                      <label class="inline-choice"><input type="radio" name="relation" value="בן"> בן</label>
+                      <label class="inline-choice"><input type="radio" name="relation" value="בת"> בת</label>
+                    </div>
+                    <span id="relationError" class="field-error"></span>
+                  </div>
+                </div>
 
-      <div id="errorBox" class="error-box"></div>
+                <div class="name-builder-row two-cols">
+                  <div>
+                    <span class="mini-label">שם האב:</span>
+                    <input type="text" id="fatherName" placeholder="הקלד/י שם האב" autocomplete="off" />
+                    <span id="fatherNameError" class="field-error"></span>
+                  </div>
+                  <div>
+                    <span class="mini-label">שם האם:</span>
+                    <input type="text" id="motherName" placeholder="הקלד/י שם האם" autocomplete="off" />
+                    <span id="motherNameError" class="field-error"></span>
+                  </div>
+                </div>
 
-      <div class="actions-bottom">
-        <button type="button" class="btn btn-main" onclick="submitRequests()">אישור הבקשה</button>
-      </div>
+                <div class="small-note">במידה ואחד/שניים נפטרו יש לרשום בנוסף לאחר רווח מהשם ע"ה.</div>
 
-      <div class="note">
-        לאחר לחיצה על "אישור הבקשה", תועברו לדף הסיכום לפני התשלום.
+                <div class="name-builder-row two-cols">
+                  <div>
+                    <span class="mini-label">סימון ע"ה ליד שם האב</span>
+                    <div class="inline-choice-group">
+                      <label class="inline-choice"><input type="checkbox" id="fatherDeceased"> האב נפטר</label>
+                    </div>
+                  </div>
+                  <div>
+                    <span class="mini-label">סימון ע"ה ליד שם האם</span>
+                    <div class="inline-choice-group">
+                      <label class="inline-choice"><input type="checkbox" id="motherDeceased"> האם נפטרה</label>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="name-builder-row">
+                  <div>
+                    <span class="mini-label">יש לסמן את השם שיופיע בצמוד לשם הראשי:</span>
+                    <div class="inline-choice-group">
+                      <label class="inline-choice"><input type="radio" name="displayParent" value="father"> שם האב</label>
+                      <label class="inline-choice"><input type="radio" name="displayParent" value="mother"> שם האם</label>
+                    </div>
+                  </div>
+                  <span id="displayParentError" class="field-error"></span>
+                </div>
+
+                <div id="familySpecialWrap" class="name-builder-row two-cols hidden">
+                  <div>
+                    <span class="mini-label">שם משפחה קודם:</span>
+                    <input type="text" id="familyNameBefore" placeholder="הקלד/י שם משפחה קודם" autocomplete="off" />
+                  </div>
+                  <div>
+                    <span class="mini-label">שם משפחה נוכחי:</span>
+                    <input type="text" id="familyNameAfter" placeholder="הקלד/י שם משפחה לאחר נישואין" autocomplete="off" />
+                  </div>
+                </div>
+
+                <div id="familySingleWrap" class="name-builder-row hidden">
+                  <div>
+                    <span class="mini-label">שם משפחה:</span>
+                    <input type="text" id="familyNameSingle" placeholder="הקלד/י שם משפחה" autocomplete="off" />
+                  </div>
+                </div>
+
+                <div id="namePreview" class="name-preview-box">השם שייבנה אוטומטית יופיע כאן לאחר מילוי השדות.</div>
+                <span id="nameNote" class="small-note">יש לבחור סוג בקשה, למלא שם פרטי, לבחור בן/בת ולבחור אם השם יוצג עם שם האב או עם שם האם.</span>
+              </div>
+            </div>
+          </div>
+
+          <div id="businessRequestFields" class="hidden">
+  <div class="field">
+    <label for="businessName">שם העסק שיופיע בעלייה הבאה:</label>
+    <input type="text" id="businessName" placeholder="הקלד/י את שם העסק" autocomplete="off" />
+    <span id="businessNameError" class="field-error"></span>
+  </div>
+
+  <div class="field">
+    <label for="businessType">תחום העסק / תיאור קצר:</label>
+    <input type="text" id="businessType" placeholder="לדוגמה: עיצוב פנים, קוסמטיקה, מסעדה" autocomplete="off" />
+    <span id="businessTypeError" class="field-error"></span>
+  </div>
+
+  <div class="field">
+    <label for="businessLocation">עיר / אזור:</label>
+    <input type="text" id="businessLocation" placeholder="לדוגמה: ראשון לציון" autocomplete="off" />
+    <span id="businessLocationError" class="field-error"></span>
+  </div>
+
+  <div class="field">
+    <label for="businessPhone">טלפון / נייד של העסק:</label>
+    <input type="text" id="businessPhone" placeholder="לדוגמה: 050-1234567" autocomplete="off" />
+    <span id="businessPhoneError" class="field-error"></span>
+  </div>
+
+  <div class="field">
+    <label for="businessAddress">כתובת העסק:</label>
+    <input type="text" id="businessAddress" placeholder="לדוגמה: רחוב הרצל 10" autocomplete="off" />
+    <span id="businessAddressError" class="field-error"></span>
+  </div>
+</div>
+
+<div class="field">
+  <label for="requestText">הנוסח שיופיע בסרטון</label>
+  <textarea id="requestText" class="req-text" readonly></textarea>
+  <div id="requestTextError" class="field-error hidden"></div>
+</div>
+</div>
+
+<div class="contact-box">
+  <div class="section-title" id="contactBoxTitle">פרטי קשר</div>
+
+  <div class="field">
+    <label for="phoneNumber">מספר נייד:</label>
+    <input type="tel" id="phoneNumber" placeholder="הקלד/י מספר נייד" autocomplete="off" />
+    <span id="phoneNumberError" class="field-error"></span>
+  </div>
+
+  <div class="field">
+    <label for="emailAddress">אימייל ליצירת קשר:</label>
+    <input type="email" id="emailAddress" placeholder="הקלד/י אימייל" autocomplete="off" />
+    <span id="emailAddressError" class="field-error"></span>
+  </div>
+
+          <div class="field">
+            <label for="requesterName">שם מלא של המבקש:</label>
+            <input type="text" id="requesterName" placeholder="שם מלא:" autocomplete="off" />
+            <span id="requesterNameError" class="field-error"></span>
+          </div>
+
+          <div class="field">
+            <label>ליצירת קשר לגבי תרומתך, היכן עדיף ליצור עמך קשר?</label>
+            <div class="inline-choice-group">
+              <label class="inline-choice"><input type="radio" name="contactMethod" value="וואטסאפ"> וואטסאפ</label>
+              <label class="inline-choice"><input type="radio" name="contactMethod" value="מייל"> מייל</label>
+            </div>
+            <span id="contactMethodError" class="field-error"></span>
+          </div>
+        </div>
+
+        <div class="payment-box">
+          <div class="section-title" id="paymentBoxTitle">תרומה ותשלום</div>
+
+          <div class="field">
+            <label for="donationAmount">תרומה לזיכוי הרבים ותמיכה בערוץ - מחי (18) ₪ ומעלה:</label>
+            <input id="donationAmount" type="number" min="18" step="1" placeholder="הקלד/י סכום תרומה" />
+            <span id="donationAmountError" class="field-error"></span>
+          </div>
+
+          <div class="pay-links-actions">
+            <a id="bitBtn" href="https://www.bitpay.co.il/app/me/4A7D7360-AF51-7846-5E67-60FACACD37C54857?v=2" target="_blank" rel="noopener noreferrer" class="pay-btn disabled">תשלום בביט</a>
+            <a id="payboxBtn" href="https://3ydbh.app.link/c9hSuB5Xq1b?_p=c11331dc9a006ceee61490fceeb4" target="_blank" rel="noopener noreferrer" class="pay-btn disabled">תשלום בפייבוקס</a>
+            <a id="paypalBtn" href="https://paypal.me/RonenTorah" target="_blank" rel="noopener noreferrer" class="pay-btn disabled">תשלום בפייפאל</a>
+          </div>
+
+          <div class="send-wrap">
+            <button id="sendDetailsBtn" type="button" class="send-btn disabled">שלח/י אליי את פרטי הבקשה</button>
+            <div id="sendNotice" class="send-notice pending">כדי להפעיל את אפשרויות התשלום יש למלא את כל הפרטים, לשלוח את פרטי הבקשה אל הלקוח, ורק לאחר מכן ניתן יהיה לשלם.</div>
+          </div>
+
+          <div class="note" id="imageNote">
+            במידה ובחרת שם להקדשה, יש להעלות תמונה פה ורק אחר כך ללחוץ על שלח.
+          </div>
+        </div>
+
+        <div id="donationConfirmBox" class="confirm-box hidden">
+          <div class="section-title">אישור הבקשה</div>
+          <div class="confirm-instruction" id="donationConfirmText">לאחר מילוי כל הפרטים, יש ללחוץ על הכפתור הבא כדי לאשר את הבקשה ולשלוח את הפרטים אליכם ואל הערוץ.</div>
+          <div class="send-wrap">
+            <button id="donationConfirmBtn" type="button" class="send-btn disabled">יש ללחוץ פה לאישור הבקשה</button>
+            <div id="donationConfirmNotice" class="send-notice pending">יש להשלים תחילה את כל הפרטים הנדרשים.</div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
   <script>
-    const NEXT_PAGE_URL = 'Parashat-HaShavua-2.html';
+    const BUSINESS_SUCCESS_VALUE = 'להצלחת העסק';
 
-    const REQUEST_TYPES = [
-      'לשמירה והגנה',
-      'לפרנסה בשפע',
-      'לבריאות',
-      'לזיווג הגון ',
-      'לפרייה ורבייה',
-      'לעילוי נשמת'
+    let flowMode = '';
+
+    const entryWrapper = document.getElementById('entryWrapper');
+    const entryScreen = document.getElementById('entryScreen');
+    const mainForm = document.getElementById('mainForm');
+    const startNameFlowBtn = document.getElementById('startNameFlowBtn');
+    const startDonationFlowBtn = document.getElementById('startDonationFlowBtn');
+    const backToChoiceBtn = document.getElementById('backToChoiceBtn');
+    const mainHeroTitle = document.getElementById('mainHeroTitle');
+    const mainSubIntro = document.getElementById('mainSubIntro');
+    const requestTypeBox = document.getElementById('requestTypeBox');
+    const requestTypeTitle = document.getElementById('requestTypeTitle');
+    const requestDetailsTitle = document.getElementById('requestDetailsTitle');
+    const contactBoxTitle = document.getElementById('contactBoxTitle');
+    const paymentBoxTitle = document.getElementById('paymentBoxTitle');
+
+    const requestType = document.getElementById('requestType');
+    const requestDetailsBox = document.getElementById('requestDetailsBox');
+
+    const firstName = document.getElementById('firstName');
+    const fatherName = document.getElementById('fatherName');
+    const motherName = document.getElementById('motherName');
+    const fatherDeceased = document.getElementById('fatherDeceased');
+    const motherDeceased = document.getElementById('motherDeceased');
+    const familyNameBefore = document.getElementById('familyNameBefore');
+    const familyNameAfter = document.getElementById('familyNameAfter');
+    const familyNameSingle = document.getElementById('familyNameSingle');
+
+    const personRequestFields = document.getElementById('personRequestFields');
+    const businessRequestFields = document.getElementById('businessRequestFields');
+
+    const businessName = document.getElementById('businessName');
+    const businessType = document.getElementById('businessType');
+    const businessLocation = document.getElementById('businessLocation');
+    const businessPhone = document.getElementById('businessPhone');
+    const businessAddress = document.getElementById('businessAddress');
+
+    const familySpecialWrap = document.getElementById('familySpecialWrap');
+    const familySingleWrap = document.getElementById('familySingleWrap');
+    const requestText = document.getElementById('requestText');
+    const requesterName = document.getElementById('requesterName');
+    const phoneNumber = document.getElementById('phoneNumber');
+    const emailAddress = document.getElementById('emailAddress');
+    const donationAmount = document.getElementById('donationAmount');
+    const namePreview = document.getElementById('namePreview');
+    const nameNote = document.getElementById('nameNote');
+    const sendDetailsBtn = document.getElementById('sendDetailsBtn');
+    const sendNotice = document.getElementById('sendNotice');
+    const donationConfirmBox = document.getElementById('donationConfirmBox');
+    const donationConfirmBtn = document.getElementById('donationConfirmBtn');
+    const donationConfirmNotice = document.getElementById('donationConfirmNotice');
+    const imageNote = document.getElementById('imageNote');
+
+    const payButtons = [
+      document.getElementById('bitBtn'),
+      document.getElementById('payboxBtn'),
+      document.getElementById('paypalBtn')
     ];
 
-    const amountOptions = [
-      { value: 18, label: '18(חי) ש"ח - למשך עליה אחת בלבד!' },
-      { value: 36, label: '36( פעמיים חי) ש"ח - למשך שני עליות בלבד!' },
-      { value: 54, label: '54( שלוש פעמים חי) ש"ח - למשך שלוש עליות בלבד!' },
-      { value: 72, label: '72( ארבע פעמים חי) ש"ח - למשך ארבעה עליות בלבד!' },
-      { value: 90, label: '90( חמש פעמים חי) ש"ח - למשך חמש עליות בלבד!' },
-      { value: 180, label: '180( עשר פעמים חי) ש"ח - למשך עשר עליות בלבד!' },
-      { value: 'yearly', label: 'למשך כל השנה עד שוב לאותה עליה שבה הופיע השם לראשונה - כל סכום של 1000 ש"ח ומעלה' }
-    ];
+    const OWNER_WHATSAPP_NUMBER = '972508618789';
+    const OWNER_EMAIL = 'prsthsbw9@gmail.com';
+    let detailsSentConfirmed = false;
+    const touchedFields = new Set();
 
-    let requestCount = 0;
+    const errorEls = {
+      requestType: document.getElementById('requestTypeError'),
+      firstName: document.getElementById('firstNameError'),
+      relation: document.getElementById('relationError'),
+      fatherName: document.getElementById('fatherNameError'),
+      motherName: document.getElementById('motherNameError'),
+      displayParent: document.getElementById('displayParentError'),
+      businessName: document.getElementById('businessNameError'),
+      businessType: document.getElementById('businessTypeError'),
+      businessLocation: document.getElementById('businessLocationError'),
+      businessPhone: document.getElementById('businessPhoneError'),
+      businessAddress: document.getElementById('businessAddressError'),
+      requesterName: document.getElementById('requesterNameError'),
+      phoneNumber: document.getElementById('phoneNumberError'),
+      emailAddress: document.getElementById('emailAddressError'),
+      contactMethod: document.getElementById('contactMethodError'),
+      donationAmount: document.getElementById('donationAmountError'),
+      requestText: document.getElementById('requestTextError')
+    };
 
-    function escapeHtml(value) {
-      return String(value ?? '')
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;');
+    function setFieldError(key, message) {
+      if (errorEls[key]) errorEls[key].textContent = message || '';
     }
 
-    function createTypeOptionsHtml() {
-      return REQUEST_TYPES.map(function(type) {
-        return `<option value="${type}">${type}</option>`;
-      }).join('');
+    function clearFieldErrors() {
+      Object.keys(errorEls).forEach(function(key){
+        setFieldError(key, '');
+      });
     }
 
-    function createAmountOptionsHtml() {
-      return amountOptions.map(function(option) {
-        return `<option value="${option.value}">${option.label}</option>`;
-      }).join('');
+    function resetSendConfirmation() {
+      detailsSentConfirmed = false;
+    }
+
+    function updateSendNotice(message, isSuccess) {
+      if (!sendNotice) return;
+      sendNotice.textContent = message;
+      sendNotice.classList.toggle('pending', !isSuccess);
     }
 
     function normalizeSpaces(value) {
@@ -458,154 +805,189 @@
       return /[A-Za-z\u00C0-\u024F\u0400-\u04FF]/.test(String(value || ''));
     }
 
+    function isBusinessRequest() {
+      return requestType.value === BUSINESS_SUCCESS_VALUE;
+    }
+
+    function isDonationFlow() {
+      return flowMode === 'donation';
+    }
+
+    function showMainForm() {
+      entryWrapper.classList.add('leaving');
+
+      setTimeout(function () {
+        entryWrapper.classList.add('hidden');
+        mainForm.classList.remove('hidden');
+        mainForm.classList.add('entering');
+
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () {
+            mainForm.classList.remove('entering');
+          });
+        });
+      }, 220);
+    }
+
+    function showEntryScreen() {
+      mainForm.classList.add('entering');
+
+      setTimeout(function () {
+        mainForm.classList.add('hidden');
+        entryWrapper.classList.remove('hidden');
+
+        requestAnimationFrame(function () {
+          entryWrapper.classList.remove('leaving');
+        });
+      }, 220);
+    }
+
+    function updateFlowHeadings() {
+      if (isDonationFlow()) {
+        mainHeroTitle.textContent = 'חיזוק ותמיכה בערוץ';
+        mainSubIntro.textContent = 'מלאו כמה פרטים קצרים. לאחר אישור הבקשה הפרטים יישלחו אליכם ולערוץ לפי דרך הקשר שבחרתם, ורק אז יתאפשר לבצע את התשלום.';
+        requestTypeBox.classList.add('hidden');
+        requestDetailsBox.classList.add('hidden');
+        contactBoxTitle.textContent = 'פרטי קשר';
+        paymentBoxTitle.textContent = 'תרומה ותשלום';
+        sendDetailsBtn.textContent = 'שלח/י אליי את פרטי התרומה';
+        donationConfirmBox.classList.remove('hidden');
+        sendDetailsBtn.parentElement.classList.add('hidden');
+        if (imageNote) imageNote.classList.add('hidden');
+        return;
+      }
+
+      requestTypeBox.classList.remove('hidden');
+      requestDetailsBox.classList.remove('hidden');
+      donationConfirmBox.classList.add('hidden');
+      sendDetailsBtn.parentElement.classList.remove('hidden');
+
+      if (isBusinessRequest()) {
+        mainHeroTitle.textContent = 'ברכה והצלחה לעסק';
+        mainSubIntro.textContent = 'מלאו את פרטי העסק, בחרו אמצעי תשלום, ולאחר מכן שלחו אליכם את פרטי הבקשה בהתאם לדרך הקשר שבחרתם.';
+        requestDetailsTitle.textContent = 'פרטי העסק';
+        contactBoxTitle.textContent = 'פרטי קשר';
+        paymentBoxTitle.textContent = 'תרומה ותשלום';
+        sendDetailsBtn.textContent = 'שלח/י אליי את פרטי ברכת העסק';
+        if (imageNote) {
+          imageNote.classList.remove('hidden');
+          imageNote.textContent = 'בעת קבלת ההודעה ניתן להוסיף לבקשה את התמונה של הלוגו של העסק';
+        }
+      } else {
+        mainHeroTitle.textContent = 'הוספת שם לעליה הבאה';
+        mainSubIntro.textContent = 'מלאו את הפרטים, בחרו אמצעי תשלום, ולאחר מכן שלחו אליכם את פרטי הבקשה בהתאם לדרך הקשר שבחרתם.';
+        requestDetailsTitle.textContent = 'פרטי הבקשה';
+        contactBoxTitle.textContent = 'פרטי קשר';
+        paymentBoxTitle.textContent = 'תרומה ותשלום';
+        sendDetailsBtn.textContent = 'שלח/י אליי את פרטי הבקשה';
+        if (imageNote) {
+          imageNote.classList.remove('hidden');
+          imageNote.textContent = 'במידה ובחרת שם להקדשה, יש להעלות תמונה בעת קבלת ההודעה ולאחר מכן ללחוץ על שלח.';
+        }
+      }
+    }
+
+    function startNameFlow() {
+      flowMode = 'name';
+      requestType.value = '';
+      detailsSentConfirmed = false;
+      clearFieldErrors();
+      showMainForm();
+      updateRequestModeVisibility();
+      updatePaymentState();
+    }
+
+    function startDonationFlow() {
+      flowMode = 'donation';
+      requestType.value = '';
+      detailsSentConfirmed = false;
+      clearFieldErrors();
+      showMainForm();
+      updateRequestModeVisibility();
+      updatePaymentState();
+    }
+
+    function goBackToChoice() {
+      flowMode = '';
+      detailsSentConfirmed = false;
+      clearFieldErrors();
+      showEntryScreen();
+    }
+
     function isValidContactEmail(email) {
-      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+      const value = String(email || '').trim();
+      if (!value) return false;
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+    }
+
+    function isValidPhone(phone) {
+      const value = String(phone || '').trim();
+      if (!value) return false;
+      const clean = value.replace(/[\s\-()]/g, '');
+      return /^\+?\d{7,15}$/.test(clean);
+    }
+
+    function getCheckedValue(name) {
+      const checked = document.querySelector('input[name="' + name + '"]:checked');
+      return checked ? checked.value : '';
     }
 
     function getFirstNameLabel(typeValue) {
-      return typeValue === 'לעילוי נשמת'
-        ? 'שם פרטי של הנפטר/ת:'
-        : 'שם פרטי שיופיע:';
+      return typeValue === 'לעילוי נשמת' ? 'שם פרטי של הנפטר/ת:' : 'שם פרטי שיופיע:';
     }
 
-    function createNameBuilderHtml(id) {
-      return `
-        <div class="field">
-          <label for="type_${id}">סוג הבקשה</label>
-          <select id="type_${id}" class="req-type">
-            <option value="" selected disabled hidden>בחר/י סוג בקשה</option>
-            ${createTypeOptionsHtml()}
-          </select>
-        </div>
-
-        <div class="field">
-          <label>השם שיופיע בעליה הבאה (רק שם אחד):</label>
-          <div class="name-builder-wrap">
-            <div class="name-builder-row two-cols">
-              <div>
-                <span class="mini-label name-first-label">שם פרטי שיופיע:</span>
-                <input type="text" class="req-first-name" placeholder="הקלד/י שם פרטי" autocomplete="off" />
-              </div>
-              <div>
-                <span class="mini-label">בן / בת</span>
-                <div class="inline-choice-group">
-                  <label class="inline-choice"><input type="radio" name="relation_${id}" class="req-relation" value="בן"> בן</label>
-                  <label class="inline-choice"><input type="radio" name="relation_${id}" class="req-relation" value="בת"> בת</label>
-                </div>
-              </div>
-            </div>
-
-            <div class="name-builder-row two-cols">
-              <div>
-                <span class="mini-label">שם האב:</span>
-                <input type="text" class="req-father-name" placeholder="הקלד/י שם האב" autocomplete="off" />
-              </div>
-              <div>
-                <span class="mini-label">שם האם:</span>
-                <input type="text" class="req-mother-name" placeholder="הקלד/י שם האם" autocomplete="off" />
-              </div>
-            </div>
-
-            <div class="small-note">
-              במידה ואחד/שניים נפטרו יש לרשום בנוסף לאחר רווח מהשם ע"ה.
-            </div>
-
-            <div class="name-builder-row two-cols">
-              <div>
-                <span class="mini-label">סימון ע"ה (עליו השלום) ליד שם האב</span>
-                <div class="inline-choice-group">
-                  <label class="inline-choice"><input type="checkbox" class="req-father-deceased"> האב נפטר</label>
-                </div>
-              </div>
-              <div>
-                <span class="mini-label">סימון ע"ה (עליה השלום) ליד שם האם</span>
-                <div class="inline-choice-group">
-                  <label class="inline-choice"><input type="checkbox" class="req-mother-deceased"> האם נפטרה</label>
-                </div>
-              </div>
-            </div>
-
-            <div class="name-builder-row">
-              <div>
-                <span class="mini-label">יש לסמן בוי את השם שיופיע בצמוד לשם הראשי:</span>
-                <div class="inline-choice-group">
-                  <label class="inline-choice"><input type="radio" name="display_parent_${id}" class="req-display-parent" value="father"> שם האב</label>
-                  <label class="inline-choice"><input type="radio" name="display_parent_${id}" class="req-display-parent" value="mother"> שם האם</label>
-                </div>
-              </div>
-            </div>
-
-            <div class="name-builder-row two-cols family-name-special-wrap hidden">
-              <div>
-                <span class="mini-label">שם משפחה קודם:</span>
-                <input type="text" class="req-family-name-before" placeholder="הקלד/י שם משפחה קודם" autocomplete="off" />
-              </div>
-              <div>
-                <span class="mini-label">שם משפחה נוכחי:</span>
-                <input type="text" class="req-family-name-after" placeholder="הקלד/י שם משפחה לאחר נישואין" autocomplete="off" />
-              </div>
-            </div>
-
-            <div class="name-builder-row family-name-single-wrap hidden">
-              <div>
-                <span class="mini-label">שם משפחה:</span>
-                <input type="text" class="req-family-name-single" placeholder="הקלד/י שם משפחה" autocomplete="off" />
-              </div>
-            </div>
-
-            <input type="hidden" class="req-name" value="" />
-            <div class="name-preview-box">השם שייבנה אוטומטית יופיע כאן לאחר מילוי השדות.</div>
-            <span class="small-note dedicated-name-note">יש לבחור סוג בקשה, למלא שם פרטי, לבחור בן/בת ולבחור אם השם יוצג עם שם האב או עם שם האם.</span>
-          </div>
-        </div>
-      `;
+    function updateFirstNameLabel() {
+      const el = document.querySelector('.name-first-label');
+      if (el) el.textContent = getFirstNameLabel(requestType.value.trim());
     }
 
-    function getBuiltNameData(requestBox) {
-      const type = requestBox.querySelector('.req-type').value.trim();
-      const firstName = normalizeSpaces(requestBox.querySelector('.req-first-name').value);
-      const relationChecked = requestBox.querySelector('.req-relation:checked');
-      const fatherName = normalizeSpaces(requestBox.querySelector('.req-father-name').value);
-      const motherName = normalizeSpaces(requestBox.querySelector('.req-mother-name').value);
-      const fatherDeceased = requestBox.querySelector('.req-father-deceased').checked;
-      const motherDeceased = requestBox.querySelector('.req-mother-deceased').checked;
-      const displayParentChecked = requestBox.querySelector('.req-display-parent:checked');
-      const familyNameBefore = normalizeSpaces(requestBox.querySelector('.req-family-name-before').value);
-      const familyNameAfter = normalizeSpaces(requestBox.querySelector('.req-family-name-after').value);
-      const familyNameSingle = normalizeSpaces(requestBox.querySelector('.req-family-name-single').value);
- 
-      const relation = relationChecked ? relationChecked.value : '';
-      const displayParent = displayParentChecked ? displayParentChecked.value : '';
+    function getBuiltNameData() {
+      const type = requestType.value.trim();
+      const first = normalizeSpaces(firstName.value);
+      const relation = getCheckedValue('relation');
+      const father = normalizeSpaces(fatherName.value);
+      const mother = normalizeSpaces(motherName.value);
+      const displayParent = getCheckedValue('displayParent');
 
       let parentName = '';
       let parentLabel = '';
       let parentDeceased = false;
 
       if (displayParent === 'father') {
-        parentName = fatherName;
+        parentName = father;
         parentLabel = 'שם האב';
-        parentDeceased = fatherDeceased;
+        parentDeceased = fatherDeceased.checked;
       } else if (displayParent === 'mother') {
-        parentName = motherName;
+        parentName = mother;
         parentLabel = 'שם האם';
-        parentDeceased = motherDeceased;
+        parentDeceased = motherDeceased.checked;
       }
 
       return {
-        type,
-        firstName,
-        relation,
-        fatherName,
-        motherName,
-        fatherDeceased,
-        motherDeceased,
-        displayParent,
-        parentName,
-        parentLabel,
-        parentDeceased,
-        familyNameBefore,
-        familyNameAfter,
-        familyNameSingle
+        type:type,
+        firstName:first,
+        relation:relation,
+        fatherName:father,
+        motherName:mother,
+        fatherDeceased:fatherDeceased.checked,
+        motherDeceased:motherDeceased.checked,
+        displayParent:displayParent,
+        parentName:parentName,
+        parentLabel:parentLabel,
+        parentDeceased:parentDeceased,
+        familyNameBefore:normalizeSpaces(familyNameBefore.value),
+        familyNameAfter:normalizeSpaces(familyNameAfter.value),
+        familyNameSingle:normalizeSpaces(familyNameSingle.value)
+      };
+    }
+
+    function getBusinessData() {
+      return {
+        businessName: normalizeSpaces(businessName.value),
+        businessType: normalizeSpaces(businessType.value),
+        businessLocation: normalizeSpaces(businessLocation.value),
+        businessPhone: normalizeSpaces(businessPhone.value),
+        businessAddress: normalizeSpaces(businessAddress.value)
       };
     }
 
@@ -620,92 +1002,100 @@
     function buildFamilyName(data) {
       if (shouldShowSpecialFamilyFields(data)) {
         if (data.familyNameBefore && data.familyNameAfter) {
-          return `${data.familyNameBefore}־${data.familyNameAfter}`;
+          return data.familyNameBefore + '־' + data.familyNameAfter;
         }
         return data.familyNameBefore || data.familyNameAfter || '';
       }
-    
+
       if (shouldShowSingleFamilyField(data)) {
         return data.familyNameSingle || '';
       }
-    
+
       return '';
     }
 
     function buildDisplayNameOnly(data) {
       if (!data.firstName || !data.relation || !data.parentName) return '';
 
-      const mainLine =
-        `${data.firstName} ${data.relation} ${data.parentName}${data.parentDeceased ? ' ע"ה' : ''}`;
-
-      let secondLine = '';
+      const mainLine = data.firstName + ' ' + data.relation + ' ' + data.parentName + (data.parentDeceased ? ' ע"ה' : '');
+      const extraParts = [];
 
       if (data.displayParent === 'father' && data.motherName) {
-        secondLine = `האם: ${data.motherName}${data.motherDeceased ? ' ע"ה' : ''}`;
+        extraParts.push('האם: ' + data.motherName + (data.motherDeceased ? ' ע"ה' : ''));
       } else if (data.displayParent === 'mother' && data.fatherName) {
-        secondLine = `האב: ${data.fatherName}${data.fatherDeceased ? ' ע"ה' : ''}`;
+        extraParts.push('האב: ' + data.fatherName + (data.fatherDeceased ? ' ע"ה' : ''));
       }
 
       const familyName = buildFamilyName(data);
-
       if (familyName) {
-        secondLine += `${secondLine ? ', ' : ''}משפחה : ${familyName}`;
+        extraParts.push('משפחה: ' + familyName);
       }
 
-      if (secondLine) {
-        return `${mainLine}\n${secondLine}`;
+      return extraParts.length ? mainLine + ', ' + extraParts.join(', ') : mainLine;
+    }
+
+    function buildBusinessRequestText(data) {
+      if (!data.businessName) return '';
+
+      let firstLine = '"' + data.businessName + '"';
+      const inlineParts = [];
+
+      if (data.businessType) inlineParts.push(data.businessType);
+      if (data.businessLocation) inlineParts.push(data.businessLocation);
+
+      if (inlineParts.length) {
+        firstLine += ' — ' + inlineParts.join(', ');
       }
 
-      return mainLine;
+      const extraLines = [];
+      if (data.businessPhone) extraLines.push('טלפון: ' + data.businessPhone);
+      if (data.businessAddress) extraLines.push('כתובת: ' + data.businessAddress);
+
+      if (extraLines.length) {
+        return firstLine + '\n' + extraLines.join('\n');
+      }
+
+      return firstLine;
     }
 
-    function updateFirstNameLabel(requestBox) {
-      const typeValue = requestBox.querySelector('.req-type').value.trim();
-      const firstLabel = requestBox.querySelector('.name-first-label');
-      firstLabel.textContent = getFirstNameLabel(typeValue);
-    }
+    function updateFamilyFieldsVisibility() {
+      const data = getBuiltNameData();
 
-    function updateFamilyFieldsVisibility(requestBox) {
-      const data = getBuiltNameData(requestBox);
-      const specialWrap = requestBox.querySelector('.family-name-special-wrap');
-      const singleWrap = requestBox.querySelector('.family-name-single-wrap');
-    
       if (shouldShowSpecialFamilyFields(data)) {
-        specialWrap.classList.remove('hidden');
+        familySpecialWrap.classList.remove('hidden');
       } else {
-        specialWrap.classList.add('hidden');
-        requestBox.querySelector('.req-family-name-before').value = '';
-        requestBox.querySelector('.req-family-name-after').value = '';
+        familySpecialWrap.classList.add('hidden');
+        familyNameBefore.value = '';
+        familyNameAfter.value = '';
       }
-    
+
       if (shouldShowSingleFamilyField(data)) {
-        singleWrap.classList.remove('hidden');
+        familySingleWrap.classList.remove('hidden');
       } else {
-        singleWrap.classList.add('hidden');
-        requestBox.querySelector('.req-family-name-single').value = '';
+        familySingleWrap.classList.add('hidden');
+        familyNameSingle.value = '';
       }
     }
 
-    function updateDedicatedNameNote(requestBox) {
-      const note = requestBox.querySelector('.dedicated-name-note');
-      const preview = requestBox.querySelector('.name-preview-box');
-      const hiddenNameInput = requestBox.querySelector('.req-name');
-      const data = getBuiltNameData(requestBox);
+    function updateBuiltName() {
+      updateFamilyFieldsVisibility();
+
+      const data = getBuiltNameData();
       const builtName = buildDisplayNameOnly(data);
 
-      hiddenNameInput.value = builtName;
-
       if (!data.type) {
-        note.textContent = 'יש לבחור תחילה סוג בקשה.';
-        note.classList.remove('error');
-        preview.textContent = 'השם שייבנה אוטומטית יופיע כאן לאחר מילוי השדות.';
+        namePreview.textContent = 'השם שייבנה אוטומטית יופיע כאן לאחר מילוי השדות.';
+        nameNote.textContent = 'יש לבחור תחילה סוג בקשה.';
+        nameNote.classList.remove('error');
+        requestText.value = '';
         return;
       }
 
       if (!data.firstName) {
-        note.textContent = 'יש למלא שם פרטי.';
-        note.classList.add('error');
-        preview.textContent = 'השם שייבנה אוטומטית יופיע כאן לאחר מילוי השדות.';
+        namePreview.textContent = 'השם שייבנה אוטומטית יופיע כאן לאחר מילוי השדות.';
+        nameNote.textContent = 'יש למלא שם פרטי.';
+        nameNote.classList.add('error');
+        requestText.value = '';
         return;
       }
 
@@ -717,474 +1107,511 @@
         containsLatinOrForeignLetters(data.familyNameAfter) ||
         containsLatinOrForeignLetters(data.familyNameSingle)
       ) {
-        note.textContent = 'יש למלא את כל השמות בעברית בלבד.';
-        note.classList.add('error');
-        preview.textContent = 'השם שייבנה אוטומטית יופיע כאן לאחר מילוי השדות.';
+        namePreview.textContent = 'השם שייבנה אוטומטית יופיע כאן לאחר מילוי השדות.';
+        nameNote.textContent = 'יש למלא את כל השמות בעברית בלבד.';
+        nameNote.classList.add('error');
+        requestText.value = '';
         return;
       }
 
       if (!data.relation) {
-        note.textContent = 'יש לבחור בן או בת.';
-        note.classList.add('error');
-        preview.textContent = 'השם שייבנה אוטומטית יופיע כאן לאחר מילוי השדות.';
+        namePreview.textContent = 'השם שייבנה אוטומטית יופיע כאן לאחר מילוי השדות.';
+        nameNote.textContent = 'יש לבחור בן או בת.';
+        nameNote.classList.add('error');
+        requestText.value = '';
         return;
       }
 
       if (!data.displayParent) {
-        note.textContent = 'יש לבחור האם להציג בצמוד את שם האב או את שם האם.';
-        note.classList.add('error');
-        preview.textContent = 'השם שייבנה אוטומטית יופיע כאן לאחר מילוי השדות.';
+        namePreview.textContent = 'השם שייבנה אוטומטית יופיע כאן לאחר מילוי השדות.';
+        nameNote.textContent = 'יש לבחור האם להציג בצמוד את שם האב או את שם האם.';
+        nameNote.classList.add('error');
+        requestText.value = '';
         return;
       }
 
       if (!data.parentName) {
-        note.textContent = 'יש למלא את ' + data.parentLabel + '.';
-        note.classList.add('error');
-        preview.textContent = 'השם שייבנה אוטומטית יופיע כאן לאחר מילוי השדות.';
+        namePreview.textContent = 'השם שייבנה אוטומטית יופיע כאן לאחר מילוי השדות.';
+        nameNote.textContent = 'יש למלא את ' + data.parentLabel + '.';
+        nameNote.classList.add('error');
+        requestText.value = '';
         return;
       }
 
-      note.textContent = 'השם נבנה אוטומטית לפי ההגדרות שבחרת.';
-      note.classList.remove('error');
-      preview.textContent = 'השם שיופיע: ' + builtName;
+      namePreview.textContent = 'השם שיופיע: ' + builtName;
+      nameNote.textContent = 'השם נבנה אוטומטית לפי ההגדרות שבחרת.';
+      nameNote.classList.remove('error');
+      requestText.value = builtName;
     }
 
-    function applyTemplate(requestBox) {
-      const data = getBuiltNameData(requestBox);
-      const textArea = requestBox.querySelector('.req-text');
-      textArea.value = buildDisplayNameOnly(data);
-    }
+    function updateRequestModeVisibility() {
+      updateFirstNameLabel();
+      updateFlowHeadings();
 
-    function addRequest(prefill = {}) {
-      requestCount += 1;
-
-      const container = document.getElementById('requestsContainer');
-      const requestDiv = document.createElement('div');
-      requestDiv.className = 'request-box';
-      requestDiv.dataset.requestId = String(requestCount);
-
-      requestDiv.innerHTML = `
-        <div class="request-title">בקשה מס׳ ${requestCount}</div>
-
-        ${createNameBuilderHtml(requestCount)}
-
-        <div class="field">
-          <label for="text_${requestCount}">הנוסח שיופיע בסרטון</label>
-          <textarea
-            id="text_${requestCount}"
-            class="req-text"
-            placeholder=""
-            readonly
-          ></textarea>
-        </div>
-
-        <div class="field">
-          <label for="requesterName_${requestCount}">שם מלא של המבקש:</label>
-          <input
-            type="text"
-            id="requesterName_${requestCount}"
-            class="req-requester-name"
-            placeholder="שם אחד בלבד"
-            value="${escapeHtml(prefill.requesterName || '')}"
-            autocomplete="off"
-          />
-        </div>
-
-        <div class="field">
-          <label for="email_${requestCount}">אימייל ליצירת קשר:</label>
-          <input
-            type="email"
-            id="email_${requestCount}"
-            class="req-email"
-            placeholder="הקלד/י אימייל"
-            value="${escapeHtml(prefill.email || '')}"
-            autocomplete="off"
-          />
-        </div>
-
-        <div class="field">
-          <label for="amount_${requestCount}">סכום התרומה</label>
-          <select id="amount_${requestCount}" class="req-amount">
-            <option value="" selected disabled hidden>בחר/י סכום</option>
-            ${createAmountOptionsHtml()}
-          </select>
-        </div>
-
-        <div class="field hidden yearly-amount-wrap">
-          <label for="customAmount_${requestCount}">סכום</label>
-          <input
-            type="number"
-            id="customAmount_${requestCount}"
-            class="req-custom-amount"
-            placeholder="סכום"
-            min="1000"
-            step="1"
-            inputmode="numeric"
-          />
-          <span class="small-note yearly-note">ניתן להזין כאן רק סכום של 1000 ש"ח ומעלה.</span>
-        </div>
-
-        <div class="actions-top" style="margin-top:8px;">
-          <button type="button" class="btn btn-remove" onclick="removeRequest(${requestCount})">מחיקת בקשה זו</button>
-        </div>
-      `;
-
-      container.appendChild(requestDiv);
-
-      const typeSelect = requestDiv.querySelector('.req-type');
-      const firstNameInput = requestDiv.querySelector('.req-first-name');
-      const relationInputs = requestDiv.querySelectorAll('.req-relation');
-      const fatherNameInput = requestDiv.querySelector('.req-father-name');
-      const motherNameInput = requestDiv.querySelector('.req-mother-name');
-      const fatherDeceasedInput = requestDiv.querySelector('.req-father-deceased');
-      const motherDeceasedInput = requestDiv.querySelector('.req-mother-deceased');
-      const displayParentInputs = requestDiv.querySelectorAll('.req-display-parent');
-      const familyNameBeforeInput = requestDiv.querySelector('.req-family-name-before');
-      const familyNameAfterInput = requestDiv.querySelector('.req-family-name-after');
-      const familyNameSingleInput = requestDiv.querySelector('.req-family-name-single');
-      const amountSelect = requestDiv.querySelector('.req-amount');
-      const customAmountInput = requestDiv.querySelector('.req-custom-amount');
-      const requesterNameInput = requestDiv.querySelector('.req-requester-name');
-
-      function refreshBuiltName() {
-        updateFirstNameLabel(requestDiv);
-        updateFamilyFieldsVisibility(requestDiv);
-        updateDedicatedNameNote(requestDiv);
-        applyTemplate(requestDiv);
-        updateSummary();
-      }
-
-      typeSelect.addEventListener('change', refreshBuiltName);
-      firstNameInput.addEventListener('input', refreshBuiltName);
-      fatherNameInput.addEventListener('input', refreshBuiltName);
-      motherNameInput.addEventListener('input', refreshBuiltName);
-      fatherDeceasedInput.addEventListener('change', refreshBuiltName);
-      motherDeceasedInput.addEventListener('change', refreshBuiltName);
-      familyNameBeforeInput.addEventListener('input', refreshBuiltName);
-      familyNameAfterInput.addEventListener('input', refreshBuiltName);
-      familyNameSingleInput.addEventListener('input', refreshBuiltName);
-
-      relationInputs.forEach(function(input) {
-        input.addEventListener('change', refreshBuiltName);
-      });
-
-      displayParentInputs.forEach(function(input) {
-        input.addEventListener('change', refreshBuiltName);
-      });
-
-      requesterNameInput.addEventListener('input', updateSummary);
-
-      amountSelect.addEventListener('change', function() {
-        toggleCustomAmount(requestDiv);
-        updateSummary();
-      });
-
-      customAmountInput.addEventListener('input', function() {
-        updateYearlyAmountNote(requestDiv);
-        updateSummary();
-      });
-
-      attachLiveSummaryListeners(requestDiv);
-      updateRequestTitles();
-      toggleCustomAmount(requestDiv);
-      updateFirstNameLabel(requestDiv);
-      updateFamilyFieldsVisibility(requestDiv);
-      updateDedicatedNameNote(requestDiv);
-      applyTemplate(requestDiv);
-      updateSummary();
-    }
-
-    function removeRequest(id) {
-      const allRequests = document.querySelectorAll('.request-box');
-      const target = document.querySelector('.request-box[data-request-id="' + id + '"]');
-      if (!target) return;
-    
-      const isFirstRequest = Array.from(allRequests).indexOf(target) === 0;
-    
-      if (isFirstRequest) {
-        clearRequestFields(target);
-        clearError();
-        updateSummary();
-        return;
-      }
-    
-      target.remove();
-    
-      clearError();
-      updateRequestTitles();
-      updateSummary();
-    }
-
-    function clearRequestFields(requestBox) {
-    const textInputs = requestBox.querySelectorAll('input[type="text"], input[type="email"], input[type="number"]');
-    textInputs.forEach(function(input) {
-      input.value = '';
-    });
-  
-    const selects = requestBox.querySelectorAll('select');
-    selects.forEach(function(select) {
-      select.selectedIndex = 0;
-    });
-  
-    const textareas = requestBox.querySelectorAll('textarea');
-    textareas.forEach(function(textarea) {
-      textarea.value = '';
-    });
-  
-    const radios = requestBox.querySelectorAll('input[type="radio"]');
-    radios.forEach(function(radio) {
-      radio.checked = false;
-    });
-  
-    const checkboxes = requestBox.querySelectorAll('input[type="checkbox"]');
-    checkboxes.forEach(function(checkbox) {
-      checkbox.checked = false;
-    });
-  
-    toggleCustomAmount(requestBox);
-    updateFirstNameLabel(requestBox);
-    updateFamilyFieldsVisibility(requestBox);
-    updateDedicatedNameNote(requestBox);
-    applyTemplate(requestBox);
-  }  
-
-    function updateRequestTitles() {
-      const boxes = document.querySelectorAll('.request-box');
-      boxes.forEach(function(box, index) {
-        const title = box.querySelector('.request-title');
-        if (title) title.textContent = 'בקשה מס׳ ' + (index + 1);
-      });
-    }
-
-    function attachLiveSummaryListeners(scope) {
-      const fields = scope.querySelectorAll('input, select, textarea');
-      fields.forEach(function(field) {
-        field.addEventListener('input', updateSummary);
-        field.addEventListener('change', updateSummary);
-      });
-    }
-
-    function toggleCustomAmount(requestBox) {
-      const amountSelect = requestBox.querySelector('.req-amount');
-      const wrap = requestBox.querySelector('.yearly-amount-wrap');
-      const customAmountInput = requestBox.querySelector('.req-custom-amount');
-
-      if (amountSelect.value === 'yearly') {
-        wrap.classList.remove('hidden');
-      } else {
-        wrap.classList.add('hidden');
-        customAmountInput.value = '';
-      }
-
-      updateYearlyAmountNote(requestBox);
-    }
-
-    function updateYearlyAmountNote(requestBox) {
-      const amountSelect = requestBox.querySelector('.req-amount');
-      const customAmountInput = requestBox.querySelector('.req-custom-amount');
-      const note = requestBox.querySelector('.yearly-note');
-
-      if (!note) return;
-
-      if (amountSelect.value !== 'yearly') {
-        note.textContent = 'ניתן להזין כאן רק סכום של 1000 ש"ח ומעלה.';
-        note.classList.remove('error');
-        customAmountInput.setCustomValidity('');
+      if (isDonationFlow()) {
+        personRequestFields.classList.add('hidden');
+        businessRequestFields.classList.add('hidden');
+        requestText.value = '';
         return;
       }
 
-      const value = customAmountInput.value.trim();
+      if (isBusinessRequest()) {
+        personRequestFields.classList.add('hidden');
+        businessRequestFields.classList.remove('hidden');
 
-      if (value && Number(value) < 1000) {
-        note.textContent = 'לא ניתן להגדיר סכום פחות מ1000 ש"ח';
-        note.classList.add('error');
-        customAmountInput.setCustomValidity('לא ניתן להגדיר סכום פחות מ1000 ש"ח');
-      } else {
-        note.textContent = 'ניתן להזין כאן רק סכום של 1000 ש"ח ומעלה.';
-        note.classList.remove('error');
-        customAmountInput.setCustomValidity('');
-      }
-    }
+        const data = getBusinessData();
+        const businessText = buildBusinessRequestText(data);
 
-    function clearError() {
-      const errorBox = document.getElementById('errorBox');
-      errorBox.style.display = 'none';
-      errorBox.textContent = '';
-    }
-
-    function showError(message) {
-      const errorBox = document.getElementById('errorBox');
-      errorBox.textContent = message;
-      errorBox.style.display = 'block';
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    function collectRequests() {
-      const boxes = document.querySelectorAll('.request-box');
-      const requests = [];
-
-      boxes.forEach(function(box) {
-        const amountValue = box.querySelector('.req-amount').value.trim();
-        const customAmountValue = box.querySelector('.req-custom-amount').value.trim();
-        const data = getBuiltNameData(box);
-        const builtName = buildDisplayNameOnly(data);
-        let finalAmount = 0;
-
-        if (amountValue === 'yearly') {
-          finalAmount = Number(customAmountValue || 0);
+        if (!data.businessName) {
+          requestText.value = '';
         } else {
-          finalAmount = Number(amountValue || 0);
+          requestText.value = businessText;
+        }
+        return;
+      }
+
+      businessRequestFields.classList.add('hidden');
+      personRequestFields.classList.remove('hidden');
+      updateBuiltName();
+    }
+
+    function shouldShowFieldError(showInlineErrors, fieldName) {
+      return showInlineErrors === 'force' || touchedFields.has(fieldName);
+    }
+
+    function getMissingFields(showInlineErrors) {
+      const missing = [];
+      const forceShowAll = showInlineErrors === 'force';
+
+      if (!isDonationFlow() && !requestType.value) {
+        missing.push('יש לבחור סוג בקשה');
+        if (forceShowAll) {
+          setFieldError('requestType', 'יש לבחור סוג בקשה.');
+        }
+      }
+
+      const phoneValue = phoneNumber.value.trim();
+      const emailValue = emailAddress.value.trim();
+      const contactMethod = getCheckedValue('contactMethod');
+
+      if (!phoneValue && !emailValue) {
+        missing.push('יש למלא מספר נייד או אימייל');
+        if (forceShowAll) {
+          setFieldError('phoneNumber', 'יש למלא מספר נייד או אימייל');
+          setFieldError('emailAddress', 'יש למלא מספר נייד או אימייל');
+        }
+      } else {
+        if (phoneValue && !isValidPhone(phoneValue)) {
+          missing.push('מספר הנייד אינו תקין');
+          if (forceShowAll || shouldShowFieldError(showInlineErrors, 'phoneNumber')) {
+            setFieldError('phoneNumber', 'מספר הנייד אינו תקין');
+          }
         }
 
-        requests.push({
-          type: data.type,
-          firstName: data.firstName,
-          relation: data.relation,
-          fatherName: data.fatherName,
-          motherName: data.motherName,
-          fatherDeceased: data.fatherDeceased,
-          motherDeceased: data.motherDeceased,
-          displayParent: data.displayParent,
-          familyNameBefore: data.familyNameBefore,
-          familyNameAfter: data.familyNameAfter,
-          familyNameSingle: data.familyNameSingle,
-          name: builtName,
-          text: box.querySelector('.req-text').value.trim(),
-          requesterName: normalizeSpaces(box.querySelector('.req-requester-name').value),
-          email: box.querySelector('.req-email').value.trim(),
-          amountChoice: amountValue,
-          customAmount: customAmountValue,
-          amount: finalAmount
+        if (emailValue && !isValidContactEmail(emailValue)) {
+          missing.push('האימייל אינו תקין');
+          if (forceShowAll || shouldShowFieldError(showInlineErrors, 'emailAddress')) {
+            setFieldError('emailAddress', 'האימייל אינו תקין');
+          }
+        }
+      }
+
+      if (!requesterName.value.trim()) {
+        missing.push('יש למלא שם מלא של המבקש');
+        if (forceShowAll || shouldShowFieldError(showInlineErrors, 'requesterName')) {
+          setFieldError('requesterName', 'יש למלא שם מלא');
+        }
+      }
+
+      if (!contactMethod) {
+        missing.push('יש לבחור דרך מועדפת ליצירת קשר');
+        if (forceShowAll) {
+          setFieldError('contactMethod', 'יש לבחור וואטסאפ או מייל.');
+        }
+      } else {
+        if (contactMethod === 'מייל' && !emailValue) {
+          missing.push('יש למלא תחילה את כתובת המייל');
+          if (forceShowAll || shouldShowFieldError(showInlineErrors, 'emailAddress')) {
+            setFieldError('emailAddress', 'יש למלא תחילה את כתובת המייל');
+          }
+        }
+        if (contactMethod === 'וואטסאפ' && !phoneValue) {
+          missing.push('יש למלא תחילה את מספר הנייד');
+          if (forceShowAll || shouldShowFieldError(showInlineErrors, 'phoneNumber')) {
+            setFieldError('phoneNumber', 'יש למלא תחילה את מספר הנייד');
+          }
+        }
+      }
+
+      if (!donationAmount.value.trim()) {
+        missing.push('יש למלא סכום תרומה');
+        if (forceShowAll || shouldShowFieldError(showInlineErrors, 'donationAmount')) {
+          setFieldError('donationAmount', 'יש למלא סכום תרומה');
+        }
+      } else if (Number(donationAmount.value) < 18) {
+        missing.push('סכום התרומה חייב להיות 18 ₪ ומעלה');
+        if (forceShowAll || shouldShowFieldError(showInlineErrors, 'donationAmount')) {
+          setFieldError('donationAmount', 'סכום התרומה חייב להיות 18 ₪ ומעלה');
+        }
+      }
+
+      if (isDonationFlow()) {
+        return [...new Set(missing)];
+      }
+
+      if (isBusinessRequest()) {
+        const data = getBusinessData();
+
+        if (!data.businessName) {
+          missing.push('יש למלא את שם העסק');
+          if (forceShowAll || shouldShowFieldError(showInlineErrors, 'businessName')) {
+            setFieldError('businessName', 'יש למלא את שם העסק');
+          }
+        }
+
+        if (!requestText.value.trim()) {
+          missing.push('נוסח העסק טרם נוצר');
+          if (forceShowAll || shouldShowFieldError(showInlineErrors, 'requestText')) {
+            setFieldError('requestText', 'נוסח העסק טרם נוצר');
+          }
+        }
+
+        return [...new Set(missing)];
+      }
+
+      const data = getBuiltNameData();
+
+      if (!data.firstName) {
+        missing.push('יש למלא שם פרטי');
+        if (forceShowAll || shouldShowFieldError(showInlineErrors, 'firstName')) {
+          setFieldError('firstName', 'יש למלא שם פרטי');
+        }
+      }
+
+      if (
+        containsLatinOrForeignLetters(data.firstName) ||
+        containsLatinOrForeignLetters(data.fatherName) ||
+        containsLatinOrForeignLetters(data.motherName) ||
+        containsLatinOrForeignLetters(data.familyNameBefore) ||
+        containsLatinOrForeignLetters(data.familyNameAfter) ||
+        containsLatinOrForeignLetters(data.familyNameSingle)
+      ) {
+        missing.push('יש למלא את כל השמות בעברית בלבד');
+        if (forceShowAll || shouldShowFieldError(showInlineErrors, 'firstName')) {
+          setFieldError('firstName', 'יש למלא את כל השמות בעברית בלבד');
+        }
+      }
+
+      if (!data.relation) {
+        missing.push('יש לבחור בן או בת');
+        if (forceShowAll) setFieldError('relation', 'יש לבחור בן או בת');
+      }
+
+      if (!data.displayParent) {
+        missing.push('יש לבחור האם יוצג שם האב או שם האם');
+        if (forceShowAll) setFieldError('displayParent', 'יש לבחור האם יוצג שם האב או שם האם');
+      }
+
+      if (data.displayParent === 'father' && !data.fatherName) {
+        missing.push('יש למלא את שם האב');
+        if (forceShowAll || shouldShowFieldError(showInlineErrors, 'fatherName')) {
+          setFieldError('fatherName', 'יש למלא את שם האב');
+        }
+      }
+
+      if (data.displayParent === 'mother' && !data.motherName) {
+        missing.push('יש למלא את שם האם');
+        if (forceShowAll || shouldShowFieldError(showInlineErrors, 'motherName')) {
+          setFieldError('motherName', 'יש למלא את שם האם');
+        }
+      }
+
+      if (!requestText.value.trim()) {
+        missing.push('הנוסח טרם נוצר');
+        if (forceShowAll || shouldShowFieldError(showInlineErrors, 'requestText')) {
+          setFieldError('requestText', 'הנוסח טרם נוצר');
+        }
+      }
+
+      return [...new Set(missing)];
+    }
+
+    function setButtonsEnabled(canSendDetails, canPay) {
+      payButtons.forEach(function(btn) {
+        btn.classList.toggle('disabled', !canPay);
+      });
+
+      sendDetailsBtn.classList.toggle('disabled', !canSendDetails);
+      sendDetailsBtn.disabled = !canSendDetails;
+
+      if (donationConfirmBtn) {
+        donationConfirmBtn.classList.toggle('disabled', !canSendDetails);
+        donationConfirmBtn.disabled = !canSendDetails;
+      }
+    }
+
+    function updatePaymentState() {
+      const missing = getMissingFields('force');
+      const canSendDetails = missing.length === 0;
+      const canPay = canSendDetails && detailsSentConfirmed;
+
+      setButtonsEnabled(canSendDetails, canPay);
+
+      if (isDonationFlow()) {
+        if (canSendDetails && detailsSentConfirmed) {
+          donationConfirmNotice.textContent = 'הבקשה נשלחה אליכם ולערוץ לפי דרך הקשר שנבחרה. כעת ניתן לבצע את התשלום באחת מהאפשרויות שמתחת.';
+          donationConfirmNotice.classList.remove('pending');
+        } else if (canSendDetails) {
+          donationConfirmNotice.textContent = 'כל הפרטים מולאו. כעת יש ללחוץ על הכפתור כדי לאשר את הבקשה ולשלוח את פרטי התרומה.';
+          donationConfirmNotice.classList.add('pending');
+        } else {
+          donationConfirmNotice.textContent = 'יש להשלים תחילה את כל הפרטים הנדרשים.';
+          donationConfirmNotice.classList.add('pending');
+        }
+      }
+
+      if (canSendDetails && detailsSentConfirmed) {
+        updateSendNotice('הבקשה נפתחה לשליחה אל בעל הערוץ לפי הדרך שנבחרה. לאחר השליחה ניתן לבצע את התשלום באחת מהאפשרויות שמתחת.', true);
+      } else if (canSendDetails) {
+        updateSendNotice('כל הפרטים מולאו. כעת יש ללחוץ על כפתור השליחה כדי לשלוח את הבקשה אל בעל הערוץ, ורק אחר כך אפשרויות התשלום ייפתחו.', false);
+      } else {
+        updateSendNotice('יש להשלים את כל הפרטים הנדרשים, לאחר מכן לשלוח את הבקשה לערוץ, ורק אז אפשרויות התשלום יופעלו.', false);
+      }
+    }
+
+    function buildMessageBody() {
+      const contactMethod = getCheckedValue('contactMethod');
+      const reqType = requestType.value || '';
+      const donation = Number(donationAmount.value || 0);
+      const requester = requesterName.value.trim() || 'לא הוזן';
+      const phone = phoneNumber.value.trim() || 'לא הוזן';
+      const email = emailAddress.value.trim() || 'לא הוזן';
+
+      let body = '';
+
+      if (isDonationFlow()) {
+        body += 'התקבלה תרומה לחיזוק הערוץ\n';
+        body += 'שם המבקש: ' + requester + '\n';
+        body += 'מספר נייד: ' + phone + '\n';
+        body += 'אימייל: ' + email + '\n';
+        body += 'דרך קשר מועדפת: ' + contactMethod + '\n';
+        body += 'תרומה: ' + donation + ' ₪\n\n';
+        body += 'כעת יש ללחוץ על שלח.';
+        return body;
+      }
+
+      if (isBusinessRequest()) {
+        const businessData = getBusinessData();
+        body += 'התקבלה בקשה לברכת הצלחה לעסק\n';
+        body += 'שם המבקש: ' + requester + '\n';
+        body += 'שם העסק: ' + (businessData.businessName || 'לא הוזן') + '\n';
+        body += 'תחום העסק: ' + (businessData.businessType || 'לא הוזן') + '\n';
+        body += 'עיר / אזור: ' + (businessData.businessLocation || 'לא הוזן') + '\n';
+        body += 'טלפון העסק: ' + (businessData.businessPhone || 'לא הוזן') + '\n';
+        body += 'כתובת העסק: ' + (businessData.businessAddress || 'לא הוזן') + '\n';
+        body += 'הנוסח שיופיע בסרטון:\n' + (requestText.value.trim() || 'לא הוזן') + '\n';
+        body += 'מספר נייד: ' + phone + '\n';
+        body += 'אימייל: ' + email + '\n';
+        body += 'דרך קשר מועדפת: ' + contactMethod + '\n';
+        body += 'תרומה: ' + donation + ' ₪\n\n';
+        body += 'בעת קבלת ההודעה ניתן להוסיף לבקשה את התמונה של הלוגו של העסק.';
+        return body;
+      }
+
+      const builtName = requestText.value.trim();
+      body += 'התקבלה בקשה להוספת שם\n';
+      body += 'שם המבקש: ' + requester + '\n';
+      body += 'השם שיופיע בעליה הבאה: ' + builtName + '\n';
+      body += 'סוג הבקשה: ' + reqType + '\n';
+      body += 'מספר נייד: ' + phone + '\n';
+      body += 'אימייל: ' + email + '\n';
+      body += 'דרך קשר מועדפת: ' + contactMethod + '\n';
+      body += 'תרומה: ' + donation + ' ₪\n\n';
+      body += 'במידה ובחרת שם להקדשה, יש להעלות תמונה פה ואז ללחוץ במייל על שלח.';
+      return body;
+    }
+
+    function buildWhatsappCompactBody() {
+      const contactMethod = getCheckedValue('contactMethod');
+      const reqType = requestType.value || '';
+      const donation = Number(donationAmount.value || 0);
+      const requester = requesterName.value.trim() || 'לא הוזן';
+      const phone = phoneNumber.value.trim() || 'לא הוזן';
+      const email = emailAddress.value.trim() || 'לא הוזן';
+
+      const lines = [];
+
+      if (isDonationFlow()) {
+        lines.push('התקבלה בקשת תרומה לחיזוק הערוץ');
+      } else if (isBusinessRequest()) {
+        const businessData = getBusinessData();
+        lines.push('התקבלה בקשה לברכת הצלחה לעסק');
+        lines.push('שם העסק: ' + (businessData.businessName || 'לא הוזן'));
+        if (businessData.businessType) lines.push('תחום העסק: ' + businessData.businessType);
+        if (businessData.businessLocation) lines.push('עיר / אזור: ' + businessData.businessLocation);
+        if (businessData.businessPhone) lines.push('טלפון העסק: ' + businessData.businessPhone);
+        if (businessData.businessAddress) lines.push('כתובת העסק: ' + businessData.businessAddress);
+        lines.push('הנוסח שיופיע: ' + (requestText.value.trim() || 'לא הוזן'));
+      } else {
+        lines.push('התקבלה בקשה להוספת שם');
+        lines.push('השם שיופיע: ' + (requestText.value.trim() || 'לא הוזן'));
+        lines.push('סוג הבקשה: ' + (reqType || 'לא הוזן'));
+      }
+
+      lines.push('שם המבקש: ' + requester);
+      lines.push('נייד: ' + phone);
+      lines.push('אימייל: ' + email);
+      lines.push('דרך קשר: ' + (contactMethod || 'לא הוזן'));
+      lines.push('תרומה: ' + donation + ' ₪');
+      lines.push('');
+
+      if (isDonationFlow()) {
+        lines.push('כעת יש ללחוץ על שלח.');
+      } else if (isBusinessRequest()) {
+        lines.push('בעת קבלת ההודעה ניתן להוסיף לבקשה את התמונה של הלוגו של העסק.');
+      } else {
+        lines.push('במידה ובחרת שם להקדשה, את התמונה יש להעלות לפה ורק אחר כך ללחוץ על שלח.');
+      }
+
+      return lines.join('\n');
+    }
+
+    function sendDetails() {
+      const missing = getMissingFields('force');
+      if (missing.length) {
+        detailsSentConfirmed = false;
+        updatePaymentState();
+        return;
+      }
+
+      const method = getCheckedValue('contactMethod');
+      const body = buildMessageBody();
+
+      if (method === 'וואטסאפ') {
+        const compactBody = buildWhatsappCompactBody();
+        const waUrl = 'https://api.whatsapp.com/send?phone=' + OWNER_WHATSAPP_NUMBER + '&text=' + encodeURIComponent(compactBody);
+
+        window.open(waUrl, '_blank');
+
+        detailsSentConfirmed = true;
+        updatePaymentState();
+
+        if (isDonationFlow()) {
+          alert('נפתחה הודעת וואטסאפ אל בעל הערוץ. יש ללחוץ על שלח מתוך הוואטסאפ שלך.');
+        } else if (isBusinessRequest()) {
+          alert('נפתחה הודעת וואטסאפ אל בעל הערוץ. בעת קבלת ההודעה ניתן להוסיף לבקשה את התמונה של הלוגו של העסק.');
+        } else {
+          alert('נפתחה הודעת וואטסאפ אל בעל הערוץ. במידה ובחרת שם להקדשה, יש להעלות את התמונה לפה ורק אחר כך ללחוץ על שלח.');
+        }
+        return;
+      }
+
+      if (method === 'מייל') {
+        const subject = isDonationFlow()
+          ? 'בקשת תרומה לחיזוק הערוץ'
+          : isBusinessRequest()
+            ? 'בקשה לברכת הצלחה לעסק'
+            : 'בקשה להוספת שם לעליה הבאה';
+
+        const mailtoUrl =
+          'mailto:' + encodeURIComponent(OWNER_EMAIL) +
+          '?subject=' + encodeURIComponent(subject) +
+          '&body=' + encodeURIComponent(body);
+
+        window.location.href = mailtoUrl;
+
+        detailsSentConfirmed = true;
+        updatePaymentState();
+
+        if (isDonationFlow()) {
+          alert('נפתחה טיוטת מייל אל בעל הערוץ. יש ללחוץ על שלח מתוך המייל שלך.');
+        } else if (isBusinessRequest()) {
+          alert('נפתחה טיוטת מייל אל בעל הערוץ. בעת קבלת ההודעה ניתן להוסיף לבקשה את התמונה של הלוגו של העסק.');
+        } else {
+          alert('נפתחה טיוטת מייל אל בעל הערוץ. במידה ובחרת שם להקדשה, יש להעלות תמונה לפה ואז ללחוץ במייל על שלח.');
+        }
+        return;
+      }
+
+      detailsSentConfirmed = true;
+      updatePaymentState();
+    }
+
+    function markTouched(fieldName) {
+      touchedFields.add(fieldName);
+    }
+
+    function bindLiveListeners() {
+      const liveFields = [
+        requestType, firstName, fatherName, motherName, fatherDeceased, motherDeceased,
+        familyNameBefore, familyNameAfter, familyNameSingle,
+        businessName, businessType, businessLocation, businessPhone, businessAddress,
+        requesterName, phoneNumber, emailAddress, donationAmount
+      ];
+
+      liveFields.forEach(function(el) {
+        el.addEventListener('input', function() {
+          if (el.id) markTouched(el.id);
+          resetSendConfirmation();
+          updateRequestModeVisibility();
+          updatePaymentState();
+        });
+
+        el.addEventListener('change', function() {
+          if (el.id) markTouched(el.id);
+          resetSendConfirmation();
+          updateRequestModeVisibility();
+          updatePaymentState();
         });
       });
 
-      return requests;
-    }
-
-    function updateSummary() {
-      const requests = collectRequests();
-      let totalAmount = 0;
-
-      requests.forEach(function(req) {
-        totalAmount += Number(req.amount || 0);
+      document.querySelectorAll('input[name="relation"]').forEach(function(el) {
+        el.addEventListener('change', function() {
+          markTouched('relation');
+          resetSendConfirmation();
+          updateRequestModeVisibility();
+          updatePaymentState();
+        });
       });
 
-      document.getElementById('summaryBox').innerHTML = `
-        מספר בקשות כרגע: ${requests.length}<br>
-        סה״כ לתשלום: ${totalAmount} ש״ח
-      `;
-    }
+      document.querySelectorAll('input[name="displayParent"]').forEach(function(el) {
+        el.addEventListener('change', function() {
+          markTouched('displayParent');
+          resetSendConfirmation();
+          updateRequestModeVisibility();
+          updatePaymentState();
+        });
+      });
 
-    function validateRequests(requests) {
-      if (!requests.length) return 'לא נמצאו בקשות בטופס.';
+      document.querySelectorAll('input[name="contactMethod"]').forEach(function(el) {
+        el.addEventListener('change', function() {
+          markTouched('contactMethod');
+          resetSendConfirmation();
+          updateRequestModeVisibility();
+          updatePaymentState();
+        });
+      });
 
-      for (let i = 0; i < requests.length; i++) {
-        const req = requests[i];
-        const requestNumber = i + 1;
-
-        if (!req.type) {
-          return 'יש לבחור סוג בקשה בבקשה מס׳ ' + requestNumber + '.';
-        }
-
-        if (!req.firstName) {
-          return 'יש למלא שם פרטי בבקשה מס׳ ' + requestNumber + '.';
-        }
-
-        if (
-          containsLatinOrForeignLetters(req.firstName) ||
-          containsLatinOrForeignLetters(req.fatherName) ||
-          containsLatinOrForeignLetters(req.motherName) ||
-          containsLatinOrForeignLetters(req.familyNameBefore) ||
-          containsLatinOrForeignLetters(req.familyNameAfter) ||
-          containsLatinOrForeignLetters(req.familyNameSingle)
-        ) {
-          return 'בבקשה מס׳ ' + requestNumber + ' יש למלא את כל השמות בעברית בלבד.';
-        }
-
-        if (!req.relation) {
-          return 'יש לבחור בן או בת בבקשה מס׳ ' + requestNumber + '.';
-        }
-
-        if (!req.displayParent) {
-          return 'יש לבחור האם יוצג שם האב או שם האם בבקשה מס׳ ' + requestNumber + '.';
-        }
-
-        if (req.displayParent === 'father' && !req.fatherName) {
-          return 'יש למלא את שם האב בבקשה מס׳ ' + requestNumber + '.';
-        }
-
-        if (req.displayParent === 'mother' && !req.motherName) {
-          return 'יש למלא את שם האם בבקשה מס׳ ' + requestNumber + '.';
-        }
-
-        if (!req.name) {
-          return 'השם לא נבנה כראוי בבקשה מס׳ ' + requestNumber + '.';
-        }
-
-        if (!req.text) {
-          return 'הנוסח לא נוצר בבקשה מס׳ ' + requestNumber + '.';
-        }
-
-        if (!req.requesterName) {
-          return 'יש למלא את שם המבקש בבקשה מס׳ ' + requestNumber + '.';
-        }
-
-        if (!req.email) {
-          return 'יש למלא אימייל ליצירת קשר בבקשה מס׳ ' + requestNumber + '.';
-        }
-
-        if (!isValidContactEmail(req.email)) {
-          return 'האימייל בבקשה מס׳ ' + requestNumber + ' אינו תקין.';
-        }
-
-        if (!req.amountChoice) {
-          return 'יש לבחור סכום תרומה בבקשה מס׳ ' + requestNumber + '.';
-        }
-
-        if (req.amountChoice === 'yearly') {
-          if (!req.customAmount) {
-            return 'בבקשה מס׳ ' + requestNumber + ' יש להזין סכום עבור האפשרות השנתית.';
+      payButtons.forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+          if (btn.classList.contains('disabled')) {
+            e.preventDefault();
+            updatePaymentState();
           }
+        });
+      });
 
-          if (Number(req.customAmount) < 1000) {
-            return 'בבקשה מס׳ ' + requestNumber + ' הסכום השנתי חייב להיות 1000 ש"ח ומעלה.';
-          }
-        }
-      }
-
-      return '';
+      sendDetailsBtn.addEventListener('click', sendDetails);
+      if (donationConfirmBtn) donationConfirmBtn.addEventListener('click', sendDetails);
+      startNameFlowBtn.addEventListener('click', startNameFlow);
+      startDonationFlowBtn.addEventListener('click', startDonationFlow);
+      backToChoiceBtn.addEventListener('click', goBackToChoice);
     }
 
-    function submitRequests() {
-      clearError();
-
-      const requests = collectRequests();
-      const validationError = validateRequests(requests);
-
-      if (validationError) {
-        showError(validationError);
-        return;
-      }
-
-      const totalAmount = requests.reduce(function(sum, req) {
-        return sum + Number(req.amount || 0);
-      }, 0);
-
-      const payload = {
-        totalAmount: totalAmount,
-        requests: requests
-      };
-
-      try {
-        const json = JSON.stringify(payload);
-        const encoded = encodeURIComponent(btoa(unescape(encodeURIComponent(json))));
-        window.location.href = NEXT_PAGE_URL + '#data=' + encoded;
-      } catch (err) {
-        showError('אירעה שגיאה בעת מעבר לדף האישור.');
-      }
-    }
-
-    addRequest();
+    bindLiveListeners();
+    updateFlowHeadings();
+    updateRequestModeVisibility();
+    updatePaymentState();
   </script>
 </body>
 </html>
