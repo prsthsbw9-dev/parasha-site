@@ -241,7 +241,7 @@
       margin-top:10px;
     }
 
-    .pay-btn,.send-btn{
+    .pay-btn,.send-btn,.return-btn{
       border:none;
       border-radius:16px;
       padding:12px 18px;
@@ -267,6 +267,11 @@
 
     .send-wrap{
       margin-top:16px;
+      text-align:center;
+    }
+
+    .return-wrap{
+      margin-top:12px;
       text-align:center;
     }
 
@@ -428,7 +433,7 @@
       .field input,.field select,.field textarea{font-size:14px;padding:10px 9px;}
       .name-builder-row.two-cols{grid-template-columns:1fr;}
       .pay-links-actions{flex-direction:column;}
-      .pay-btn,.send-btn{width:100%;font-size:14px;padding:11px 14px;}
+      .pay-btn,.send-btn,.return-btn{width:100%;font-size:14px;padding:11px 14px;}
       .entry-card{border-radius:22px;padding:24px 12px 24px;}
       .entry-title{font-size:30px;}
       .entry-subtitle{font-size:15px;margin-bottom:18px;}
@@ -584,58 +589,58 @@
           </div>
 
           <div id="businessRequestFields" class="hidden">
-  <div class="field">
-    <label for="businessName">שם העסק שיופיע בעלייה הבאה:</label>
-    <input type="text" id="businessName" placeholder="הקלד/י את שם העסק" autocomplete="off" />
-    <span id="businessNameError" class="field-error"></span>
-  </div>
+            <div class="field">
+              <label for="businessName">שם העסק שיופיע בעלייה הבאה:</label>
+              <input type="text" id="businessName" placeholder="הקלד/י את שם העסק" autocomplete="off" />
+              <span id="businessNameError" class="field-error"></span>
+            </div>
 
-  <div class="field">
-    <label for="businessType">תחום העסק / תיאור קצר:</label>
-    <input type="text" id="businessType" placeholder="לדוגמה: עיצוב פנים, קוסמטיקה, מסעדה" autocomplete="off" />
-    <span id="businessTypeError" class="field-error"></span>
-  </div>
+            <div class="field">
+              <label for="businessType">תחום העסק / תיאור קצר:</label>
+              <input type="text" id="businessType" placeholder="לדוגמה: עיצוב פנים, קוסמטיקה, מסעדה" autocomplete="off" />
+              <span id="businessTypeError" class="field-error"></span>
+            </div>
 
-  <div class="field">
-    <label for="businessLocation">עיר / אזור:</label>
-    <input type="text" id="businessLocation" placeholder="לדוגמה: ראשון לציון" autocomplete="off" />
-    <span id="businessLocationError" class="field-error"></span>
-  </div>
+            <div class="field">
+              <label for="businessLocation">עיר / אזור:</label>
+              <input type="text" id="businessLocation" placeholder="לדוגמה: ראשון לציון" autocomplete="off" />
+              <span id="businessLocationError" class="field-error"></span>
+            </div>
 
-  <div class="field">
-    <label for="businessPhone">טלפון / נייד של העסק:</label>
-    <input type="text" id="businessPhone" placeholder="לדוגמה: 050-1234567" autocomplete="off" />
-    <span id="businessPhoneError" class="field-error"></span>
-  </div>
+            <div class="field">
+              <label for="businessPhone">טלפון / נייד של העסק:</label>
+              <input type="text" id="businessPhone" placeholder="לדוגמה: 050-1234567" autocomplete="off" />
+              <span id="businessPhoneError" class="field-error"></span>
+            </div>
 
-  <div class="field">
-    <label for="businessAddress">כתובת העסק:</label>
-    <input type="text" id="businessAddress" placeholder="לדוגמה: רחוב הרצל 10" autocomplete="off" />
-    <span id="businessAddressError" class="field-error"></span>
-  </div>
-</div>
+            <div class="field">
+              <label for="businessAddress">כתובת העסק:</label>
+              <input type="text" id="businessAddress" placeholder="לדוגמה: רחוב הרצל 10" autocomplete="off" />
+              <span id="businessAddressError" class="field-error"></span>
+            </div>
+          </div>
 
-<div class="field">
-  <label for="requestText">הנוסח שיופיע בסרטון</label>
-  <textarea id="requestText" class="req-text" readonly></textarea>
-  <div id="requestTextError" class="field-error hidden"></div>
-</div>
-</div>
+          <div class="field">
+            <label for="requestText">הנוסח שיופיע בסרטון</label>
+            <textarea id="requestText" class="req-text" readonly></textarea>
+            <div id="requestTextError" class="field-error hidden"></div>
+          </div>
+        </div>
 
-<div class="contact-box">
-  <div class="section-title" id="contactBoxTitle">פרטי קשר</div>
+        <div class="contact-box">
+          <div class="section-title" id="contactBoxTitle">פרטי קשר</div>
 
-  <div class="field">
-    <label for="phoneNumber">מספר נייד:</label>
-    <input type="tel" id="phoneNumber" placeholder="הקלד/י מספר נייד" autocomplete="off" />
-    <span id="phoneNumberError" class="field-error"></span>
-  </div>
+          <div class="field">
+            <label for="phoneNumber">מספר נייד:</label>
+            <input type="tel" id="phoneNumber" placeholder="הקלד/י מספר נייד" autocomplete="off" />
+            <span id="phoneNumberError" class="field-error"></span>
+          </div>
 
-  <div class="field">
-    <label for="emailAddress">אימייל ליצירת קשר:</label>
-    <input type="email" id="emailAddress" placeholder="הקלד/י אימייל" autocomplete="off" />
-    <span id="emailAddressError" class="field-error"></span>
-  </div>
+          <div class="field">
+            <label for="emailAddress">אימייל ליצירת קשר:</label>
+            <input type="email" id="emailAddress" placeholder="הקלד/י אימייל" autocomplete="off" />
+            <span id="emailAddressError" class="field-error"></span>
+          </div>
 
           <div class="field">
             <label for="requesterName">שם מלא של המבקש:</label>
@@ -668,10 +673,12 @@
             <a id="paypalBtn" href="https://paypal.me/RonenTorah" target="_blank" rel="noopener noreferrer" class="pay-btn disabled">תשלום בפייפאל</a>
           </div>
 
-          <div class="send-wrap">
+          <div class="send-wrap" id="sendWrap">
             <button id="sendDetailsBtn" type="button" class="send-btn disabled">שלח/י אליי את פרטי הבקשה</button>
             <div id="sendNotice" class="send-notice pending">כדי להפעיל את אפשרויות התשלום יש למלא את כל הפרטים, לשלוח את פרטי הבקשה אל הלקוח, ורק לאחר מכן ניתן יהיה לשלם.</div>
           </div>
+
+          <div id="returnButtonContainer" class="return-wrap hidden"></div>
 
           <div class="note" id="imageNote">
             במידה ובחרת שם להקדשה, יש להעלות תמונה פה ורק אחר כך ללחוץ על שלח.
@@ -692,11 +699,17 @@
 
   <script>
     const BUSINESS_SUCCESS_VALUE = 'להצלחת העסק';
+    const OWNER_WHATSAPP_NUMBER = '972508618789';
+    const OWNER_EMAIL = 'prsthsbw9@gmail.com';
+    const STORAGE_KEY = 'parasha_form_data_v1';
+    const CHANNEL_RETURN_URL = window.location.href;
 
     let flowMode = '';
+    let detailsSentConfirmed = false;
+
+    const touchedFields = new Set();
 
     const entryWrapper = document.getElementById('entryWrapper');
-    const entryScreen = document.getElementById('entryScreen');
     const mainForm = document.getElementById('mainForm');
     const startNameFlowBtn = document.getElementById('startNameFlowBtn');
     const startDonationFlowBtn = document.getElementById('startDonationFlowBtn');
@@ -704,13 +717,12 @@
     const mainHeroTitle = document.getElementById('mainHeroTitle');
     const mainSubIntro = document.getElementById('mainSubIntro');
     const requestTypeBox = document.getElementById('requestTypeBox');
-    const requestTypeTitle = document.getElementById('requestTypeTitle');
+    const requestDetailsBox = document.getElementById('requestDetailsBox');
     const requestDetailsTitle = document.getElementById('requestDetailsTitle');
     const contactBoxTitle = document.getElementById('contactBoxTitle');
     const paymentBoxTitle = document.getElementById('paymentBoxTitle');
 
     const requestType = document.getElementById('requestType');
-    const requestDetailsBox = document.getElementById('requestDetailsBox');
 
     const firstName = document.getElementById('firstName');
     const fatherName = document.getElementById('fatherName');
@@ -745,17 +757,13 @@
     const donationConfirmBtn = document.getElementById('donationConfirmBtn');
     const donationConfirmNotice = document.getElementById('donationConfirmNotice');
     const imageNote = document.getElementById('imageNote');
+    const returnButtonContainer = document.getElementById('returnButtonContainer');
 
     const payButtons = [
       document.getElementById('bitBtn'),
       document.getElementById('payboxBtn'),
       document.getElementById('paypalBtn')
     ];
-
-    const OWNER_WHATSAPP_NUMBER = '972508618789';
-    const OWNER_EMAIL = 'prsthsbw9@gmail.com';
-    let detailsSentConfirmed = false;
-    const touchedFields = new Set();
 
     const errorEls = {
       requestType: document.getElementById('requestTypeError'),
@@ -787,16 +795,6 @@
       });
     }
 
-    function resetSendConfirmation() {
-      detailsSentConfirmed = false;
-    }
-
-    function updateSendNotice(message, isSuccess) {
-      if (!sendNotice) return;
-      sendNotice.textContent = message;
-      sendNotice.classList.toggle('pending', !isSuccess);
-    }
-
     function normalizeSpaces(value) {
       return String(value || '').replace(/\s+/g, ' ').trim();
     }
@@ -811,6 +809,28 @@
 
     function isDonationFlow() {
       return flowMode === 'donation';
+    }
+
+    function resetSendConfirmation() {
+      detailsSentConfirmed = false;
+      hideReturnButton();
+    }
+
+    function updateSendNotice(message, isSuccess) {
+      if (!sendNotice) return;
+      sendNotice.textContent = message;
+      sendNotice.classList.toggle('pending', !isSuccess);
+    }
+
+    function getCheckedValue(name) {
+      const checked = document.querySelector('input[name="' + name + '"]:checked');
+      return checked ? checked.value : '';
+    }
+
+    function setCheckedValue(name, value) {
+      document.querySelectorAll('input[name="' + name + '"]').forEach(function(el) {
+        el.checked = el.value === value;
+      });
     }
 
     function showMainForm() {
@@ -840,96 +860,6 @@
           entryWrapper.classList.remove('leaving');
         });
       }, 220);
-    }
-
-    function updateFlowHeadings() {
-      if (isDonationFlow()) {
-        mainHeroTitle.textContent = 'חיזוק ותמיכה בערוץ';
-        mainSubIntro.textContent = 'מלאו כמה פרטים קצרים. לאחר אישור הבקשה הפרטים יישלחו אליכם ולערוץ לפי דרך הקשר שבחרתם, ורק אז יתאפשר לבצע את התשלום.';
-        requestTypeBox.classList.add('hidden');
-        requestDetailsBox.classList.add('hidden');
-        contactBoxTitle.textContent = 'פרטי קשר';
-        paymentBoxTitle.textContent = 'תרומה ותשלום';
-        sendDetailsBtn.textContent = 'שלח/י אליי את פרטי התרומה';
-        donationConfirmBox.classList.remove('hidden');
-        sendDetailsBtn.parentElement.classList.add('hidden');
-        if (imageNote) imageNote.classList.add('hidden');
-        return;
-      }
-
-      requestTypeBox.classList.remove('hidden');
-      requestDetailsBox.classList.remove('hidden');
-      donationConfirmBox.classList.add('hidden');
-      sendDetailsBtn.parentElement.classList.remove('hidden');
-
-      if (isBusinessRequest()) {
-        mainHeroTitle.textContent = 'ברכה והצלחה לעסק';
-        mainSubIntro.textContent = 'מלאו את פרטי העסק, בחרו אמצעי תשלום, ולאחר מכן שלחו אליכם את פרטי הבקשה בהתאם לדרך הקשר שבחרתם.';
-        requestDetailsTitle.textContent = 'פרטי העסק';
-        contactBoxTitle.textContent = 'פרטי קשר';
-        paymentBoxTitle.textContent = 'תרומה ותשלום';
-        sendDetailsBtn.textContent = 'שלח/י אליי את פרטי ברכת העסק';
-        if (imageNote) {
-          imageNote.classList.remove('hidden');
-          imageNote.textContent = 'בעת קבלת ההודעה ניתן להוסיף לבקשה את התמונה של הלוגו של העסק';
-        }
-      } else {
-        mainHeroTitle.textContent = 'הוספת שם לעליה הבאה';
-        mainSubIntro.textContent = 'מלאו את הפרטים, בחרו אמצעי תשלום, ולאחר מכן שלחו אליכם את פרטי הבקשה בהתאם לדרך הקשר שבחרתם.';
-        requestDetailsTitle.textContent = 'פרטי הבקשה';
-        contactBoxTitle.textContent = 'פרטי קשר';
-        paymentBoxTitle.textContent = 'תרומה ותשלום';
-        sendDetailsBtn.textContent = 'שלח/י אליי את פרטי הבקשה';
-        if (imageNote) {
-          imageNote.classList.remove('hidden');
-          imageNote.textContent = 'במידה ובחרת שם להקדשה, יש להעלות תמונה בעת קבלת ההודעה ולאחר מכן ללחוץ על שלח.';
-        }
-      }
-    }
-
-    function startNameFlow() {
-      flowMode = 'name';
-      requestType.value = '';
-      detailsSentConfirmed = false;
-      clearFieldErrors();
-      showMainForm();
-      updateRequestModeVisibility();
-      updatePaymentState();
-    }
-
-    function startDonationFlow() {
-      flowMode = 'donation';
-      requestType.value = '';
-      detailsSentConfirmed = false;
-      clearFieldErrors();
-      showMainForm();
-      updateRequestModeVisibility();
-      updatePaymentState();
-    }
-
-    function goBackToChoice() {
-      flowMode = '';
-      detailsSentConfirmed = false;
-      clearFieldErrors();
-      showEntryScreen();
-    }
-
-    function isValidContactEmail(email) {
-      const value = String(email || '').trim();
-      if (!value) return false;
-      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
-    }
-
-    function isValidPhone(phone) {
-      const value = String(phone || '').trim();
-      if (!value) return false;
-      const clean = value.replace(/[\s\-()]/g, '');
-      return /^\+?\d{7,15}$/.test(clean);
-    }
-
-    function getCheckedValue(name) {
-      const checked = document.querySelector('input[name="' + name + '"]:checked');
-      return checked ? checked.value : '';
     }
 
     function getFirstNameLabel(typeValue) {
@@ -1144,6 +1074,51 @@
       requestText.value = builtName;
     }
 
+    function updateFlowHeadings() {
+      if (isDonationFlow()) {
+        mainHeroTitle.textContent = 'חיזוק ותמיכה בערוץ';
+        mainSubIntro.textContent = 'מלאו כמה פרטים קצרים. לאחר אישור הבקשה הפרטים יישלחו אליכם ולערוץ לפי דרך הקשר שבחרתם, ורק אז יתאפשר לבצע את התשלום.';
+        requestTypeBox.classList.add('hidden');
+        requestDetailsBox.classList.add('hidden');
+        contactBoxTitle.textContent = 'פרטי קשר';
+        paymentBoxTitle.textContent = 'תרומה ותשלום';
+        sendDetailsBtn.textContent = 'שלח/י אליי את פרטי התרומה';
+        donationConfirmBox.classList.remove('hidden');
+        sendDetailsBtn.parentElement.classList.add('hidden');
+        if (imageNote) imageNote.classList.add('hidden');
+        return;
+      }
+
+      requestTypeBox.classList.remove('hidden');
+      requestDetailsBox.classList.remove('hidden');
+      donationConfirmBox.classList.add('hidden');
+      sendDetailsBtn.parentElement.classList.remove('hidden');
+
+      if (isBusinessRequest()) {
+        mainHeroTitle.textContent = 'ברכה והצלחה לעסק';
+        mainSubIntro.textContent = 'מלאו את פרטי העסק, בחרו אמצעי תשלום, ולאחר מכן שלחו אליכם את פרטי הבקשה בהתאם לדרך הקשר שבחרתם.';
+        requestDetailsTitle.textContent = 'פרטי העסק';
+        contactBoxTitle.textContent = 'פרטי קשר';
+        paymentBoxTitle.textContent = 'תרומה ותשלום';
+        sendDetailsBtn.textContent = 'שלח/י אליי את פרטי ברכת העסק';
+        if (imageNote) {
+          imageNote.classList.remove('hidden');
+          imageNote.textContent = 'בעת קבלת ההודעה ניתן להוסיף לבקשה את התמונה של הלוגו של העסק';
+        }
+      } else {
+        mainHeroTitle.textContent = 'הוספת שם לעליה הבאה';
+        mainSubIntro.textContent = 'מלאו את הפרטים, בחרו אמצעי תשלום, ולאחר מכן שלחו אליכם את פרטי הבקשה בהתאם לדרך הקשר שבחרתם.';
+        requestDetailsTitle.textContent = 'פרטי הבקשה';
+        contactBoxTitle.textContent = 'פרטי קשר';
+        paymentBoxTitle.textContent = 'תרומה ותשלום';
+        sendDetailsBtn.textContent = 'שלח/י אליי את פרטי הבקשה';
+        if (imageNote) {
+          imageNote.classList.remove('hidden');
+          imageNote.textContent = 'במידה ובחרת שם להקדשה, יש להעלות תמונה בעת קבלת ההודעה ולאחר מכן ללחוץ על שלח.';
+        }
+      }
+    }
+
     function updateRequestModeVisibility() {
       updateFirstNameLabel();
       updateFlowHeadings();
@@ -1162,17 +1137,26 @@
         const data = getBusinessData();
         const businessText = buildBusinessRequestText(data);
 
-        if (!data.businessName) {
-          requestText.value = '';
-        } else {
-          requestText.value = businessText;
-        }
+        requestText.value = data.businessName ? businessText : '';
         return;
       }
 
       businessRequestFields.classList.add('hidden');
       personRequestFields.classList.remove('hidden');
       updateBuiltName();
+    }
+
+    function isValidContactEmail(email) {
+      const value = String(email || '').trim();
+      if (!value) return false;
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+    }
+
+    function isValidPhone(phone) {
+      const value = String(phone || '').trim();
+      if (!value) return false;
+      const clean = value.replace(/[\s\-()]/g, '');
+      return /^\+?\d{7,15}$/.test(clean);
     }
 
     function shouldShowFieldError(showInlineErrors, fieldName) {
@@ -1183,11 +1167,11 @@
       const missing = [];
       const forceShowAll = showInlineErrors === 'force';
 
+      clearFieldErrors();
+
       if (!isDonationFlow() && !requestType.value) {
         missing.push('יש לבחור סוג בקשה');
-        if (forceShowAll) {
-          setFieldError('requestType', 'יש לבחור סוג בקשה.');
-        }
+        if (forceShowAll) setFieldError('requestType', 'יש לבחור סוג בקשה.');
       }
 
       const phoneValue = phoneNumber.value.trim();
@@ -1225,9 +1209,7 @@
 
       if (!contactMethod) {
         missing.push('יש לבחור דרך מועדפת ליצירת קשר');
-        if (forceShowAll) {
-          setFieldError('contactMethod', 'יש לבחור וואטסאפ או מייל.');
-        }
+        if (forceShowAll) setFieldError('contactMethod', 'יש לבחור וואטסאפ או מייל.');
       } else {
         if (contactMethod === 'מייל' && !emailValue) {
           missing.push('יש למלא תחילה את כתובת המייל');
@@ -1359,10 +1341,10 @@
 
       if (isDonationFlow()) {
         if (canSendDetails && detailsSentConfirmed) {
-          donationConfirmNotice.textContent = 'הבקשה נשלחה אליכם ולערוץ לפי דרך הקשר שנבחרה. כעת ניתן לבצע את התשלום באחת מהאפשרויות שמתחת.';
+          donationConfirmNotice.textContent = 'נפתחה הודעה לשליחת הבקשה. לאחר שתשלח אותה בפועל ניתן לבצע את התשלום באחת מהאפשרויות שמתחת.';
           donationConfirmNotice.classList.remove('pending');
         } else if (canSendDetails) {
-          donationConfirmNotice.textContent = 'כל הפרטים מולאו. כעת יש ללחוץ על הכפתור כדי לאשר את הבקשה ולשלוח את פרטי התרומה.';
+          donationConfirmNotice.textContent = 'כל הפרטים מולאו. כעת יש ללחוץ על הכפתור כדי לפתוח את הודעת האישור ולשלוח את פרטי התרומה.';
           donationConfirmNotice.classList.add('pending');
         } else {
           donationConfirmNotice.textContent = 'יש להשלים תחילה את כל הפרטים הנדרשים.';
@@ -1371,11 +1353,11 @@
       }
 
       if (canSendDetails && detailsSentConfirmed) {
-        updateSendNotice('הבקשה נפתחה לשליחה אל בעל הערוץ לפי הדרך שנבחרה. לאחר השליחה ניתן לבצע את התשלום באחת מהאפשרויות שמתחת.', true);
+        updateSendNotice('נפתחה הודעה לשליחה. לאחר שתשלח אותה — חזור לכאן להמשך התשלום וסיום הבקשה.', true);
       } else if (canSendDetails) {
-        updateSendNotice('כל הפרטים מולאו. כעת יש ללחוץ על כפתור השליחה כדי לשלוח את הבקשה אל בעל הערוץ, ורק אחר כך אפשרויות התשלום ייפתחו.', false);
+        updateSendNotice('כל הפרטים מולאו. כעת יש ללחוץ על כפתור השליחה כדי לפתוח את ההודעה, ורק אחר כך אפשרויות התשלום ייפתחו.', false);
       } else {
-        updateSendNotice('יש להשלים את כל הפרטים הנדרשים, לאחר מכן לשלוח את הבקשה לערוץ, ורק אז אפשרויות התשלום יופעלו.', false);
+        updateSendNotice('יש להשלים את כל הפרטים הנדרשים, לאחר מכן לפתוח את הודעת הבקשה לערוץ, ורק אז אפשרויות התשלום יופעלו.', false);
       }
     }
 
@@ -1476,25 +1458,192 @@
       return lines.join('\n');
     }
 
+    function markTouched(fieldName) {
+      touchedFields.add(fieldName);
+    }
+
+    function showReturnButton() {
+      if (!returnButtonContainer) return;
+
+      returnButtonContainer.innerHTML = '';
+
+      const backBtn = document.createElement('a');
+      backBtn.href = CHANNEL_RETURN_URL;
+      backBtn.className = 'return-btn';
+      backBtn.textContent = '⬅️ חזרה לתשלום וסיום הבקשה';
+      backBtn.title = 'חזרה להמשך התהליך ולביצוע התשלום';
+      backBtn.target = '_self';
+
+      returnButtonContainer.appendChild(backBtn);
+      returnButtonContainer.classList.remove('hidden');
+    }
+
+    function hideReturnButton() {
+      if (!returnButtonContainer) return;
+      returnButtonContainer.innerHTML = '';
+      returnButtonContainer.classList.add('hidden');
+    }
+
+    function collectFormData() {
+      return {
+        flowMode: flowMode,
+        requestType: requestType.value,
+        firstName: firstName.value,
+        fatherName: fatherName.value,
+        motherName: motherName.value,
+        fatherDeceased: fatherDeceased.checked,
+        motherDeceased: motherDeceased.checked,
+        relation: getCheckedValue('relation'),
+        displayParent: getCheckedValue('displayParent'),
+        familyNameBefore: familyNameBefore.value,
+        familyNameAfter: familyNameAfter.value,
+        familyNameSingle: familyNameSingle.value,
+        businessName: businessName.value,
+        businessType: businessType.value,
+        businessLocation: businessLocation.value,
+        businessPhone: businessPhone.value,
+        businessAddress: businessAddress.value,
+        requestText: requestText.value,
+        requesterName: requesterName.value,
+        phoneNumber: phoneNumber.value,
+        emailAddress: emailAddress.value,
+        contactMethod: getCheckedValue('contactMethod'),
+        donationAmount: donationAmount.value,
+        detailsSentConfirmed: detailsSentConfirmed
+      };
+    }
+
+    function saveFormData() {
+      try {
+        const data = collectFormData();
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      } catch (err) {
+        console.error('שמירת הנתונים נכשלה', err);
+      }
+    }
+
+    function restoreFormData() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return;
+
+        const data = JSON.parse(raw);
+
+        flowMode = data.flowMode || '';
+
+        requestType.value = data.requestType || '';
+        firstName.value = data.firstName || '';
+        fatherName.value = data.fatherName || '';
+        motherName.value = data.motherName || '';
+        fatherDeceased.checked = !!data.fatherDeceased;
+        motherDeceased.checked = !!data.motherDeceased;
+
+        setCheckedValue('relation', data.relation || '');
+        setCheckedValue('displayParent', data.displayParent || '');
+
+        familyNameBefore.value = data.familyNameBefore || '';
+        familyNameAfter.value = data.familyNameAfter || '';
+        familyNameSingle.value = data.familyNameSingle || '';
+
+        businessName.value = data.businessName || '';
+        businessType.value = data.businessType || '';
+        businessLocation.value = data.businessLocation || '';
+        businessPhone.value = data.businessPhone || '';
+        businessAddress.value = data.businessAddress || '';
+
+        requesterName.value = data.requesterName || '';
+        phoneNumber.value = data.phoneNumber || '';
+        emailAddress.value = data.emailAddress || '';
+        donationAmount.value = data.donationAmount || '';
+        requestText.value = data.requestText || '';
+
+        setCheckedValue('contactMethod', data.contactMethod || '');
+
+        detailsSentConfirmed = !!data.detailsSentConfirmed;
+
+        if (flowMode === 'name' || flowMode === 'donation') {
+          entryWrapper.classList.add('hidden');
+          mainForm.classList.remove('hidden');
+          mainForm.classList.remove('entering');
+        }
+
+        updateRequestModeVisibility();
+        updatePaymentState();
+
+        if (detailsSentConfirmed) {
+          showReturnButton();
+        } else {
+          hideReturnButton();
+        }
+      } catch (err) {
+        console.error('שחזור הנתונים נכשל', err);
+      }
+    }
+
+    function startNameFlow() {
+      flowMode = 'name';
+      requestType.value = '';
+      detailsSentConfirmed = false;
+      hideReturnButton();
+      clearFieldErrors();
+      showMainForm();
+      updateRequestModeVisibility();
+      updatePaymentState();
+      saveFormData();
+    }
+
+    function startDonationFlow() {
+      flowMode = 'donation';
+      requestType.value = '';
+      detailsSentConfirmed = false;
+      hideReturnButton();
+      clearFieldErrors();
+      showMainForm();
+      updateRequestModeVisibility();
+      updatePaymentState();
+      saveFormData();
+    }
+
+    function goBackToChoice() {
+      flowMode = '';
+      detailsSentConfirmed = false;
+      hideReturnButton();
+      clearFieldErrors();
+      showEntryScreen();
+      saveFormData();
+    }
+
     function sendDetails() {
       const missing = getMissingFields('force');
       if (missing.length) {
         detailsSentConfirmed = false;
+        hideReturnButton();
         updatePaymentState();
+        saveFormData();
         return;
       }
 
       const method = getCheckedValue('contactMethod');
       const body = buildMessageBody();
 
+      saveFormData();
+
       if (method === 'וואטסאפ') {
         const compactBody = buildWhatsappCompactBody();
         const waUrl = 'https://api.whatsapp.com/send?phone=' + OWNER_WHATSAPP_NUMBER + '&text=' + encodeURIComponent(compactBody);
 
-        window.open(waUrl, '_blank');
+        const newWindow = window.open(waUrl, '_blank');
 
         detailsSentConfirmed = true;
+        showReturnButton();
+        updateSendNotice('נפתחה הודעת וואטסאפ. לאחר השליחה חזור לכאן לתשלום וסיום הבקשה.', true);
         updatePaymentState();
+        saveFormData();
+
+        if (!newWindow) {
+          alert('ייתכן שהדפדפן חסם את פתיחת וואטסאפ. אם לא נפתח חלון, יש לאפשר פתיחת חלונות קופצים ולנסות שוב.');
+          return;
+        }
 
         if (isDonationFlow()) {
           alert('נפתחה הודעת וואטסאפ אל בעל הערוץ. יש ללחוץ על שלח מתוך הוואטסאפ שלך.');
@@ -1518,10 +1667,13 @@
           '?subject=' + encodeURIComponent(subject) +
           '&body=' + encodeURIComponent(body);
 
-        window.location.href = mailtoUrl;
-
         detailsSentConfirmed = true;
+        showReturnButton();
+        updateSendNotice('נפתחה טיוטת מייל. לאחר השליחה חזור לכאן לתשלום וסיום הבקשה.', true);
         updatePaymentState();
+        saveFormData();
+
+        window.location.href = mailtoUrl;
 
         if (isDonationFlow()) {
           alert('נפתחה טיוטת מייל אל בעל הערוץ. יש ללחוץ על שלח מתוך המייל שלך.');
@@ -1534,11 +1686,9 @@
       }
 
       detailsSentConfirmed = true;
+      showReturnButton();
       updatePaymentState();
-    }
-
-    function markTouched(fieldName) {
-      touchedFields.add(fieldName);
+      saveFormData();
     }
 
     function bindLiveListeners() {
@@ -1555,6 +1705,7 @@
           resetSendConfirmation();
           updateRequestModeVisibility();
           updatePaymentState();
+          saveFormData();
         });
 
         el.addEventListener('change', function() {
@@ -1562,6 +1713,7 @@
           resetSendConfirmation();
           updateRequestModeVisibility();
           updatePaymentState();
+          saveFormData();
         });
       });
 
@@ -1571,6 +1723,7 @@
           resetSendConfirmation();
           updateRequestModeVisibility();
           updatePaymentState();
+          saveFormData();
         });
       });
 
@@ -1580,6 +1733,7 @@
           resetSendConfirmation();
           updateRequestModeVisibility();
           updatePaymentState();
+          saveFormData();
         });
       });
 
@@ -1589,6 +1743,7 @@
           resetSendConfirmation();
           updateRequestModeVisibility();
           updatePaymentState();
+          saveFormData();
         });
       });
 
@@ -1609,9 +1764,14 @@
     }
 
     bindLiveListeners();
+    restoreFormData();
     updateFlowHeadings();
     updateRequestModeVisibility();
     updatePaymentState();
+
+    window.addEventListener('beforeunload', function() {
+      saveFormData();
+    });
   </script>
 </body>
 </html>
