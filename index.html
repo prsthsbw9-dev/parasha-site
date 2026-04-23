@@ -431,6 +431,51 @@
       font-size:14px;
     }
 
+    .steps-intro{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      text-align:right;
+      max-width:760px;
+      margin:0 auto;
+    }
+
+    .step-line{
+      display:flex;
+      align-items:flex-start;
+      gap:10px;
+      background:#fff8eb;
+      border:1px solid #e4cf9c;
+      border-radius:14px;
+      padding:10px 12px;
+      box-shadow:0 2px 6px rgba(0,0,0,.05);
+    }
+
+    .step-icon{
+      flex:0 0 auto;
+      font-size:18px;
+      line-height:1.3;
+      margin-top:1px;
+    }
+
+    .step-text{
+      flex:1;
+      line-height:1.75;
+      font-size:clamp(13px,1.9vw,17px);
+      color:#6f4e2c;
+      font-weight:700;
+    }
+
+    .steps-contact-line{
+      margin-top:4px;
+      background:#fffdf8;
+      border:1px dashed #d7bc86;
+    }
+
+    .steps-contact-line .step-text{
+      font-weight:600;
+    }
+
     @media (max-width:640px){
       .page{padding:8px 8px 20px;}
       #entryWrapper{min-height:100dvh;padding:12px 0;}
@@ -450,6 +495,10 @@
       .entry-btn{width:100%;font-size:18px;padding:18px 14px;min-height:84px;border-radius:20px;}
       .entry-btn small{font-size:12px;}
       .entry-note{font-size:13px;line-height:1.8;}
+      .steps-intro{gap:8px;}
+      .step-line{padding:9px 10px;border-radius:12px;gap:8px;}
+      .step-icon{font-size:16px;}
+      .step-text{font-size:13px;line-height:1.7;}
     }
   </style>
 </head>
@@ -487,7 +536,7 @@
         <div class="heart">❤️</div>
 
         <div class="sub-intro" id="mainSubIntro">
-         מלאו כמה פרטים קצרים. לאחר אישור הבקשה הפרטים יישלחו אליכם ולערוץ (יש להוסיף תמונה למי שרוצה) לפי דרך הקשר שבחרתם, ורק אז יתאפשר לבצע את התשלום.
+          מלאו כמה פרטים קצרים. לאחר אישור הבקשה הפרטים יישלחו אליכם ולערוץ לפי דרך הקשר שבחרתם, ורק אז יתאפשר לבצע את התרומה.
         </div>
 
         <div class="request-box" id="requestTypeBox">
@@ -545,23 +594,6 @@
                   </div>
                 </div>
 
-                <div class="small-note">במידה ואחד/שניים נפטרו יש לרשום בנוסף לאחר רווח מהשם ע"ה.</div>
-
-                <div class="name-builder-row two-cols">
-                  <div>
-                    <span class="mini-label">סימון ע"ה ליד שם האב</span>
-                    <div class="inline-choice-group">
-                      <label class="inline-choice"><input type="checkbox" id="fatherDeceased"> האב נפטר</label>
-                    </div>
-                  </div>
-                  <div>
-                    <span class="mini-label">סימון ע"ה ליד שם האם</span>
-                    <div class="inline-choice-group">
-                      <label class="inline-choice"><input type="checkbox" id="motherDeceased"> האם נפטרה</label>
-                    </div>
-                  </div>
-                </div>
-
                 <div class="name-builder-row">
                   <div>
                     <span class="mini-label">יש לסמן את השם שיופיע בצמוד לשם הראשי:</span>
@@ -571,24 +603,6 @@
                     </div>
                   </div>
                   <span id="displayParentError" class="field-error"></span>
-                </div>
-
-                <div id="familySpecialWrap" class="name-builder-row two-cols hidden">
-                  <div>
-                    <span class="mini-label">שם משפחה קודם:</span>
-                    <input type="text" id="familyNameBefore" placeholder="הקלד/י שם משפחה קודם" autocomplete="off" />
-                  </div>
-                  <div>
-                    <span class="mini-label">שם משפחה נוכחי:</span>
-                    <input type="text" id="familyNameAfter" placeholder="הקלד/י שם משפחה לאחר נישואין" autocomplete="off" />
-                  </div>
-                </div>
-
-                <div id="familySingleWrap" class="name-builder-row hidden">
-                  <div>
-                    <span class="mini-label">שם משפחה:</span>
-                    <input type="text" id="familyNameSingle" placeholder="הקלד/י שם משפחה" autocomplete="off" />
-                  </div>
                 </div>
 
                 <div id="namePreview" class="name-preview-box">השם שייבנה אוטומטית יופיע כאן לאחר מילוי השדות.</div>
@@ -737,11 +751,6 @@
     const firstName = document.getElementById('firstName');
     const fatherName = document.getElementById('fatherName');
     const motherName = document.getElementById('motherName');
-    const fatherDeceased = document.getElementById('fatherDeceased');
-    const motherDeceased = document.getElementById('motherDeceased');
-    const familyNameBefore = document.getElementById('familyNameBefore');
-    const familyNameAfter = document.getElementById('familyNameAfter');
-    const familyNameSingle = document.getElementById('familyNameSingle');
 
     const personRequestFields = document.getElementById('personRequestFields');
     const businessRequestFields = document.getElementById('businessRequestFields');
@@ -752,8 +761,6 @@
     const businessPhone = document.getElementById('businessPhone');
     const businessAddress = document.getElementById('businessAddress');
 
-    const familySpecialWrap = document.getElementById('familySpecialWrap');
-    const familySingleWrap = document.getElementById('familySingleWrap');
     const requestText = document.getElementById('requestText');
     const requesterName = document.getElementById('requesterName');
     const phoneNumber = document.getElementById('phoneNumber');
@@ -845,6 +852,89 @@
       });
     }
 
+    function buildIntroStepsHtml(mode) {
+      const mailLine = `
+        <a href="mailto:prsthsbw9@gmail.com"
+           style="color:#7a4c1f;font-weight:bold;text-decoration:underline;">
+           prsthsbw9@gmail.com
+        </a>
+      `;
+
+      if (mode === 'donation') {
+        return `
+          <div class="steps-intro">
+            <div class="step-line">
+              <span class="step-icon">📝</span>
+              <span class="step-text">א. מלאו פרטים</span>
+            </div>
+
+            <div class="step-line">
+              <span class="step-icon">✅</span>
+              <span class="step-text">ב. לחצו על אישור הבקשה</span>
+            </div>
+
+            <div class="step-line">
+              <span class="step-icon">📩</span>
+              <span class="step-text">ג. ההודעה תישלח אליכם (אם ברצונכם להוסיף הערות ואישור התרומה, זה המקום)</span>
+            </div>
+
+            <div class="step-line">
+              <span class="step-icon">📤</span>
+              <span class="step-text">ד. ולאחר מכן לחצו על "שלח"</span>
+            </div>
+
+            <div class="step-line">
+              <span class="step-icon">💳</span>
+              <span class="step-text">ה. חיזרו לדף הזה ואז תוכלו לתרום</span>
+            </div>
+
+            <div class="step-line steps-contact-line">
+              <span class="step-icon">✉️</span>
+              <span class="step-text">לשאלות ובירורים: ${mailLine}</span>
+            </div>
+          </div>
+        `;
+      }
+
+      if (mode === 'name') {
+        return `
+          <div class="steps-intro">
+            <div class="step-line">
+              <span class="step-icon">📝</span>
+              <span class="step-text">א. מלאו פרטים</span>
+            </div>
+
+            <div class="step-line">
+              <span class="step-icon">✅</span>
+              <span class="step-text">ב. לחצו על אישור הבקשה</span>
+            </div>
+
+            <div class="step-line">
+              <span class="step-icon">🖼️</span>
+              <span class="step-text">ג. ההודעה תישלח אליכם (אם ברצונכם להוסיף תמונה, הערות ואישור התרומה, זה המקום)</span>
+            </div>
+
+            <div class="step-line">
+              <span class="step-icon">📤</span>
+              <span class="step-text">ד. ולאחר מכן לחצו על "שלח"</span>
+            </div>
+
+            <div class="step-line">
+              <span class="step-icon">💳</span>
+              <span class="step-text">ה. חיזרו לדף הזה ואז תוכלו לתרום</span>
+            </div>
+
+            <div class="step-line steps-contact-line">
+              <span class="step-icon">✉️</span>
+              <span class="step-text">לשאלות ובירורים: ${mailLine}</span>
+            </div>
+          </div>
+        `;
+      }
+
+      return '';
+    }
+
     function showMainForm() {
       entryWrapper.classList.add('leaving');
 
@@ -893,33 +983,24 @@
 
       let parentName = '';
       let parentLabel = '';
-      let parentDeceased = false;
 
       if (displayParent === 'father') {
         parentName = father;
         parentLabel = 'שם האב';
-        parentDeceased = fatherDeceased.checked;
       } else if (displayParent === 'mother') {
         parentName = mother;
         parentLabel = 'שם האם';
-        parentDeceased = motherDeceased.checked;
       }
 
       return {
-        type:type,
-        firstName:first,
-        relation:relation,
-        fatherName:father,
-        motherName:mother,
-        fatherDeceased:fatherDeceased.checked,
-        motherDeceased:motherDeceased.checked,
-        displayParent:displayParent,
-        parentName:parentName,
-        parentLabel:parentLabel,
-        parentDeceased:parentDeceased,
-        familyNameBefore:normalizeSpaces(familyNameBefore.value),
-        familyNameAfter:normalizeSpaces(familyNameAfter.value),
-        familyNameSingle:normalizeSpaces(familyNameSingle.value)
+        type: type,
+        firstName: first,
+        relation: relation,
+        fatherName: father,
+        motherName: mother,
+        displayParent: displayParent,
+        parentName: parentName,
+        parentLabel: parentLabel
       };
     }
 
@@ -933,47 +1014,16 @@
       };
     }
 
-    function shouldShowSpecialFamilyFields(data) {
-      return data.type === 'לעילוי נשמת' && data.relation === 'בת';
-    }
-
-    function shouldShowSingleFamilyField(data) {
-      return data.relation === 'בן';
-    }
-
-    function buildFamilyName(data) {
-      if (shouldShowSpecialFamilyFields(data)) {
-        if (data.familyNameBefore && data.familyNameAfter) {
-          return data.familyNameBefore + '־' + data.familyNameAfter;
-        }
-        return data.familyNameBefore || data.familyNameAfter || '';
-      }
-
-      if (shouldShowSingleFamilyField(data)) {
-        return data.familyNameSingle || '';
-      }
-
-      return '';
-    }
-
     function buildDisplayNameOnly(data) {
       if (!data.firstName || !data.relation || !data.parentName) return '';
 
-      const mainLine = data.firstName + ' ' + data.relation + ' ' + data.parentName + (data.parentDeceased ? ' ע"ה' : '');
-      const extraParts = [];
+      let mainLine = data.firstName + ' ' + data.relation + ' ' + data.parentName;
 
-      if (data.displayParent === 'father' && data.motherName) {
-        extraParts.push('האם: ' + data.motherName + (data.motherDeceased ? ' ע"ה' : ''));
-      } else if (data.displayParent === 'mother' && data.fatherName) {
-        extraParts.push('האב: ' + data.fatherName + (data.fatherDeceased ? ' ע"ה' : ''));
+      if (data.type === 'לעילוי נשמת') {
+        mainLine += ' ע"ה';
       }
 
-      const familyName = buildFamilyName(data);
-      if (familyName) {
-        extraParts.push('משפחה: ' + familyName);
-      }
-
-      return extraParts.length ? mainLine + ', ' + extraParts.join(', ') : mainLine;
+      return mainLine;
     }
 
     function buildBusinessRequestText(data) {
@@ -1001,22 +1051,7 @@
     }
 
     function updateFamilyFieldsVisibility() {
-      const data = getBuiltNameData();
-
-      if (shouldShowSpecialFamilyFields(data)) {
-        familySpecialWrap.classList.remove('hidden');
-      } else {
-        familySpecialWrap.classList.add('hidden');
-        familyNameBefore.value = '';
-        familyNameAfter.value = '';
-      }
-
-      if (shouldShowSingleFamilyField(data)) {
-        familySingleWrap.classList.remove('hidden');
-      } else {
-        familySingleWrap.classList.add('hidden');
-        familyNameSingle.value = '';
-      }
+      return;
     }
 
     function updateBuiltName() {
@@ -1044,10 +1079,7 @@
       if (
         containsLatinOrForeignLetters(data.firstName) ||
         containsLatinOrForeignLetters(data.fatherName) ||
-        containsLatinOrForeignLetters(data.motherName) ||
-        containsLatinOrForeignLetters(data.familyNameBefore) ||
-        containsLatinOrForeignLetters(data.familyNameAfter) ||
-        containsLatinOrForeignLetters(data.familyNameSingle)
+        containsLatinOrForeignLetters(data.motherName)
       ) {
         namePreview.textContent = 'השם שייבנה אוטומטית יופיע כאן לאחר מילוי השדות.';
         nameNote.textContent = 'יש למלא את כל השמות בעברית בלבד.';
@@ -1089,7 +1121,7 @@
     function updateFlowHeadings() {
       if (isDonationFlow()) {
         mainHeroTitle.textContent = 'חיזוק ותמיכה בערוץ';
-        mainSubIntro.textContent = 'מלאו כמה פרטים קצרים. לאחר אישור הבקשה הפרטים יישלחו אליכם ולערוץ לפי דרך הקשר שבחרתם, ורק אז יתאפשר לבצע את התשלום.';
+        mainSubIntro.innerHTML = buildIntroStepsHtml('donation');
         requestTypeBox.classList.add('hidden');
         requestDetailsBox.classList.add('hidden');
         contactBoxTitle.textContent = 'פרטי קשר';
@@ -1108,7 +1140,7 @@
 
       if (isBusinessRequest()) {
         mainHeroTitle.textContent = 'ברכה והצלחה לעסק';
-        mainSubIntro.textContent = 'מלאו את פרטי העסק, בחרו אמצעי תשלום, ולאחר מכן שלחו אליכם את פרטי הבקשה בהתאם לדרך הקשר שבחרתם.';
+        mainSubIntro.innerHTML = buildIntroStepsHtml('name');
         requestDetailsTitle.textContent = 'פרטי העסק';
         contactBoxTitle.textContent = 'פרטי קשר';
         paymentBoxTitle.textContent = 'תרומה ותשלום';
@@ -1119,7 +1151,7 @@
         }
       } else {
         mainHeroTitle.textContent = 'הוספת שם לעליה הבאה';
-        mainSubIntro.textContent = 'מלאו את הפרטים, בחרו אמצעי תשלום, ולאחר מכן שלחו אליכם את פרטי הבקשה בהתאם לדרך הקשר שבחרתם.';
+        mainSubIntro.innerHTML = buildIntroStepsHtml('name');
         requestDetailsTitle.textContent = 'פרטי הבקשה';
         contactBoxTitle.textContent = 'פרטי קשר';
         paymentBoxTitle.textContent = 'תרומה ותשלום';
@@ -1285,10 +1317,7 @@
       if (
         containsLatinOrForeignLetters(data.firstName) ||
         containsLatinOrForeignLetters(data.fatherName) ||
-        containsLatinOrForeignLetters(data.motherName) ||
-        containsLatinOrForeignLetters(data.familyNameBefore) ||
-        containsLatinOrForeignLetters(data.familyNameAfter) ||
-        containsLatinOrForeignLetters(data.familyNameSingle)
+        containsLatinOrForeignLetters(data.motherName)
       ) {
         missing.push('יש למלא את כל השמות בעברית בלבד');
         if (forceShowAll || shouldShowFieldError(showInlineErrors, 'firstName')) {
@@ -1522,13 +1551,8 @@
         firstName: firstName.value,
         fatherName: fatherName.value,
         motherName: motherName.value,
-        fatherDeceased: fatherDeceased.checked,
-        motherDeceased: motherDeceased.checked,
         relation: getCheckedValue('relation'),
         displayParent: getCheckedValue('displayParent'),
-        familyNameBefore: familyNameBefore.value,
-        familyNameAfter: familyNameAfter.value,
-        familyNameSingle: familyNameSingle.value,
         businessName: businessName.value,
         businessType: businessType.value,
         businessLocation: businessLocation.value,
@@ -1566,15 +1590,9 @@
         firstName.value = data.firstName || '';
         fatherName.value = data.fatherName || '';
         motherName.value = data.motherName || '';
-        fatherDeceased.checked = !!data.fatherDeceased;
-        motherDeceased.checked = !!data.motherDeceased;
 
         setCheckedValue('relation', data.relation || '');
         setCheckedValue('displayParent', data.displayParent || '');
-
-        familyNameBefore.value = data.familyNameBefore || '';
-        familyNameAfter.value = data.familyNameAfter || '';
-        familyNameSingle.value = data.familyNameSingle || '';
 
         businessName.value = data.businessName || '';
         businessType.value = data.businessType || '';
@@ -1735,8 +1753,7 @@
 
     function bindLiveListeners() {
       const liveFields = [
-        requestType, firstName, fatherName, motherName, fatherDeceased, motherDeceased,
-        familyNameBefore, familyNameAfter, familyNameSingle,
+        requestType, firstName, fatherName, motherName,
         businessName, businessType, businessLocation, businessPhone, businessAddress,
         requesterName, phoneNumber, emailAddress, donationAmount
       ];
