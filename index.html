@@ -681,6 +681,15 @@
           </div>
         </div>
 
+		<div id="donationConfirmBox" class="confirm-box hidden">
+		  <div class="section-title">אישור הבקשה</div>
+		  <div class="confirm-instruction" id="donationConfirmText">לאחר מילוי כל הפרטים, יש ללחוץ על הכפתור הבא כדי לאשר את הבקשה ולשלוח את הפרטים אליכם ואל הערוץ.</div>
+		  <div class="send-wrap">
+			<button id="donationConfirmBtn" type="button" class="send-btn disabled">יש ללחוץ פה לאישור הבקשה</button>
+			<div id="donationConfirmNotice" class="send-notice pending">יש להשלים תחילה את כל הפרטים הנדרשים.</div>
+		  </div>
+		</div>
+
         <div class="payment-box">
           <div class="section-title" id="paymentBoxTitle">תרומה ותשלום</div>
 
@@ -690,31 +699,22 @@
             <span id="donationAmountError" class="field-error"></span>
           </div>
 
+          <div class="send-wrap" id="sendWrap">
+            <button id="sendDetailsBtn" type="button" class="send-btn disabled">שלח/י אליי את פרטי הבקשה</button>
+            <div id="sendNotice" class="send-notice pending">כדי להפעיל את אפשרויות התשלום יש למלא את כל הפרטים, לשלוח את פרטי הבקשה אל הלקוח, ורק לאחר מכן ניתן יהיה לשלם.</div>
+            <button id="copyWhatsappBtn" type="button" class="copy-btn hidden">📋 העתק הודעה לוואטסאפ</button>
+          </div>
+		  
           <div class="pay-links-actions">
             <a id="bitBtn" href="https://www.bitpay.co.il/app/me/4A7D7360-AF51-7846-5E67-60FACACD37C54857?v=2" target="_blank" rel="noopener noreferrer" class="pay-btn disabled">תשלום בביט</a>
             <a id="payboxBtn" href="https://3ydbh.app.link/c9hSuB5Xq1b?_p=c11331dc9a006ceee61490fceeb4" target="_blank" rel="noopener noreferrer" class="pay-btn disabled">תשלום בפייבוקס</a>
             <a id="paypalBtn" href="https://paypal.me/RonenTorah" target="_blank" rel="noopener noreferrer" class="pay-btn disabled">תשלום בפייפאל</a>
           </div>
 
-          <div class="send-wrap" id="sendWrap">
-            <button id="sendDetailsBtn" type="button" class="send-btn disabled">שלח/י אליי את פרטי הבקשה</button>
-            <div id="sendNotice" class="send-notice pending">כדי להפעיל את אפשרויות התשלום יש למלא את כל הפרטים, לשלוח את פרטי הבקשה אל הלקוח, ורק לאחר מכן ניתן יהיה לשלם.</div>
-            <button id="copyWhatsappBtn" type="button" class="copy-btn hidden">📋 העתק הודעה לוואטסאפ</button>
-          </div>
-
           <div id="returnButtonContainer" class="return-wrap hidden"></div>
 
           <div class="note" id="imageNote">
             במידה ובחרת שם להקדשה, יש להעלות תמונה פה ורק אחר כך ללחוץ על שלח.
-          </div>
-        </div>
-
-        <div id="donationConfirmBox" class="confirm-box hidden">
-          <div class="section-title">אישור הבקשה</div>
-          <div class="confirm-instruction" id="donationConfirmText">לאחר מילוי כל הפרטים, יש ללחוץ על הכפתור הבא כדי לאשר את הבקשה ולשלוח את הפרטים אליכם ואל הערוץ.</div>
-          <div class="send-wrap">
-            <button id="donationConfirmBtn" type="button" class="send-btn disabled">יש ללחוץ פה לאישור הבקשה</button>
-            <div id="donationConfirmNotice" class="send-notice pending">יש להשלים תחילה את כל הפרטים הנדרשים.</div>
           </div>
         </div>
       </div>
