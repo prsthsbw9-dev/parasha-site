@@ -671,6 +671,26 @@
             <span id="requesterNameError" class="field-error"></span>
           </div>
 
+          <div class="field hidden" id="donorDisplayChoiceBox">
+            <label>רוצה ששמך יוצג בעליה הקרובה בדף "תודה למזכי ומחזקי הרבים"?</label>
+
+            <div class="inline-choice-group">
+              <label class="inline-choice">
+                <input type="radio" name="donorDisplay" value="לא"> לא
+              </label>
+
+              <label class="inline-choice">
+                <input type="radio" name="donorDisplay" value="שם בלבד"> כן – שם בלבד
+              </label>
+
+              <label class="inline-choice">
+                <input type="radio" name="donorDisplay" value="שם + תמונה"> כן – שם עם תמונה
+              </label>
+            </div>
+
+            <span id="donorDisplayError" class="field-error"></span>
+          </div>
+
           <div class="field">
             <label>😇 לאן לשלוח אליך את ההודעה?</label>
             <div class="inline-choice-group">
@@ -682,14 +702,13 @@
         </div>
 
 		<div id="donationConfirmBox" class="confirm-box hidden">
-		  <div class="section-title">יש לבדוק שכל הפרטים נכונים לפני שלוחצים</div>
-		  <div class="confirm-instruction" id="donationConfirmText">לאחר הלחיצה תופיע לך הודעה</div>
-		  		  <div class="confirm-instruction" id="donationConfirmText">יש ללחוץ שלח ולאחר מכן ללחוץ על הקישור !!!</div>
-		  <div class="send-wrap">
-			<button id="donationConfirmBtn" type="button" class="send-btn disabled">🙏 זכו אותי במצווה</button>
-			<div id="donationConfirmNotice" class="send-notice pending">יש להשלים תחילה את כל הפרטים הנדרשים.</div>
-		  </div>
-		</div>
+          <div class="section-title">יש לבדוק שכל הפרטים נכונים לפני שלוחצים</div>
+          <div class="confirm-instruction" id="donationConfirmText">לאחר הלחיצה תופיע לך הודעה. יש ללחוץ שלח ולאחר מכן ללחוץ על הקישור.</div>
+          <div class="send-wrap">
+            <button id="donationConfirmBtn" type="button" class="send-btn disabled">🙏 זכו אותי במצווה</button>
+            <div id="donationConfirmNotice" class="send-notice pending">יש להשלים תחילה את כל הפרטים הנדרשים.</div>
+          </div>
+        </div>
 
         <div class="payment-box">
           <div class="section-title hidden" id="paymentBoxTitle">אישור הבקשה</div>
@@ -718,7 +737,15 @@
             במידה ובחרת שם להקדשה, יש להעלות תמונה פה ורק אחר כך ללחוץ על שלח.
           </div>
         </div>
-      </div>
+
+        <!-- 🔽 כאן הכפתור -->
+        <div class="send-wrap" style="margin-top:20px;">
+          <button type="button" id="resetFormBtn" class="send-btn" style="background:#2e7d32;">
+            🔄 התחלה מחדש
+          </button>
+        </div>
+
+      </div> 
     </div>
   </div>
 
@@ -727,7 +754,7 @@
     const OWNER_WHATSAPP_NUMBER = '972508618789';
     const OWNER_EMAIL = 'prsthsbw9@gmail.com';
     const STORAGE_KEY = 'parasha_form_data_v1';
-	const DONATION_PAGE_URL = 'https://prsthsbw9-dev.github.io/parasha-site/Parashat-HaShavua-payment.html';
+	const DONATION_PAGE_URL = 'https://tinyurl.com/Request-name-approval';
     const CHANNEL_RETURN_URL = window.location.href;
 
     let flowMode = '';
@@ -805,7 +832,11 @@
       requestText: document.getElementById('requestTextError')
     };
 
-    function setFieldError(key, message) {
+    function getDonorDisplayChoice() {
+      return getCheckedValue('donorDisplay') || 'לא נבחר';
+    }
+
+function setFieldError(key, message) {
       if (errorEls[key]) errorEls[key].textContent = message || '';
     }
 
@@ -1121,6 +1152,8 @@
     }
 
     function updateFlowHeadings() {
+      const donorDisplayChoiceBox = document.getElementById('donorDisplayChoiceBox');
+
       if (isDonationFlow()) {
         mainHeroTitle.textContent = 'חיזוק ותמיכה בערוץ';
         mainSubIntro.innerHTML = buildIntroStepsHtml('donation');
@@ -1128,13 +1161,15 @@
         requestDetailsBox.classList.add('hidden');
         contactBoxTitle.textContent = 'פרטי קשר';
         paymentBoxTitle.textContent = 'אישור הבקשה';
-        sendDetailsBtn.textContent = 'שלח/י אליי את פרטי התרומה';
+        sendDetailsBtn.textContent = '🙏 זכו אותי במצווה';
         donationConfirmBox.classList.remove('hidden');
         sendDetailsBtn.parentElement.classList.add('hidden');
+        if (donorDisplayChoiceBox) donorDisplayChoiceBox.classList.remove('hidden');
         if (imageNote) imageNote.classList.add('hidden');
         return;
       }
 
+      if (donorDisplayChoiceBox) donorDisplayChoiceBox.classList.add('hidden');
       requestTypeBox.classList.remove('hidden');
       requestDetailsBox.classList.remove('hidden');
       donationConfirmBox.classList.add('hidden');
@@ -1148,7 +1183,7 @@
         sendDetailsBtn.textContent = '🙏 זכו אותי במצווה';
         if (imageNote) {
           imageNote.classList.remove('hidden');
-          imageNote.textContent = 'בעת קבלת ההודעה ניתן להוסיף לבקשה את התמונה של הלוגו של העסק';
+          imageNote.textContent = 'בעת קבלת ההודעה ניתן להוסיף לבקשה את התמונה של הלוגו של העסק.';
         }
       } else {
         mainHeroTitle.textContent = 'הוספת שם לעליה הבאה';
@@ -1156,10 +1191,10 @@
         requestDetailsTitle.textContent = 'פרטי הבקשה';
         contactBoxTitle.textContent = 'פרטי קשר';
         paymentBoxTitle.textContent = 'אישור הבקשה';
-        sendDetailsBtn.textContent = '🙏 זכו אותי במצווה ';
+        sendDetailsBtn.textContent = '🙏 זכו אותי במצווה';
         if (imageNote) {
           imageNote.classList.remove('hidden');
-          imageNote.textContent = 'לאחר מכן תופיע לך הודעה, יש ללחוץ שלח ואז ללחוץ על הקישור !!!';
+          imageNote.textContent = 'לאחר מכן תופיע לך הודעה, יש ללחוץ שלח ואז ללחוץ על הקישור.';
         }
       }
     }
@@ -1409,51 +1444,46 @@
       let body = '';
 
       if (isDonationFlow()) {
-        body += 'התקבלה פנייה לחיזוק הערוץ\n';
-        body += 'שם המבקש: ' + requester + '\n';
-        body += 'מספר נייד: ' + phone + '\n';
+        body += 'נרשמה זכות יקרה להשתתפות במצווה גדולה של זיכוי הרבים והפצת התורה\n';
+        body += 'מאת: ' + requester + '\n';
+        body += 'זכות גדולה תעמוד לזכותך בעזרת השם\n\n';
+
+        body += 'נייד: ' + phone + '\n';
         body += 'אימייל: ' + email + '\n';
-        body += 'דרך קשר מועדפת: ' + contactMethod + '\n';
-		body += 'לחצו שלח\n\n';
-		body += '\n🔗 לאחר מכן לחצו על הקישור:\n' + DONATION_PAGE_URL;
+        body += 'דרך קשר: ' + (contactMethod || 'לא הוזן') + '\n';
+        body += 'בחירת הצגת שם בדף תודה למזכי ומחזקי הרבים: ' + getDonorDisplayChoice() + '\n';
+
+        if (getDonorDisplayChoice() === 'שם + תמונה') {
+          body += 'להוספת תמונה קודם ללחוץ על 📎 ומוסיפים\n';
+        }
+
+        body += '\nלאחר מכן לוחצים ◀️ ולבסוף על הקישור פה 👇\n';
+        body += DONATION_PAGE_URL;
+
         return body;
       }
 
-      if (isBusinessRequest()) {
-        const businessData = getBusinessData();
-        body += 'התקבלה בקשה לברכת הצלחה לעסק\n';
-        body += 'שם המבקש: ' + requester + '\n';
-        body += 'שם העסק: ' + (businessData.businessName || 'לא הוזן') + '\n';
-        body += 'תחום העסק: ' + (businessData.businessType || 'לא הוזן') + '\n';
-        body += 'עיר / אזור: ' + (businessData.businessLocation || 'לא הוזן') + '\n';
-        body += 'טלפון העסק: ' + (businessData.businessPhone || 'לא הוזן') + '\n';
-        body += 'כתובת העסק: ' + (businessData.businessAddress || 'לא הוזן') + '\n';
-        body += 'הנוסח שיופיע בסרטון:\n' + (requestText.value.trim() || 'לא הוזן') + '\n';
-        body += 'מספר נייד: ' + phone + '\n';
-        body += 'אימייל: ' + email + '\n';
-        body += 'דרך קשר מועדפת: ' + contactMethod + '\n';
-        body += 'בעת קבלת ההודעה ניתן להוסיף לבקשה את התמונה של הלוגו של העסק.';
-		body += '\n🔗 לאחר מכן לחצו על הקישור:\n' + DONATION_PAGE_URL;
-        return body;
-      }
+      body += 'התקבלה בקשה להוספת שם לעלייה הקרובה\n';
+      body += 'זכות גדולה תעמוד לזכותך בעזרת השם\n\n';
 
-      const builtName = requestText.value.trim();
-      body += 'התקבלה בקשה להוספת שם\n';
+      body += 'השם שיופיע: ' + (requestText.value.trim() || 'לא הוזן') + '\n';
+      body += 'סוג הבקשה: ' + (reqType || 'לא הוזן') + '\n\n';
+
       body += 'שם המבקש: ' + requester + '\n';
-      body += 'השם שיופיע בעליה הבאה: ' + builtName + '\n';
-      body += 'סוג הבקשה: ' + reqType + '\n';
-      body += 'מספר נייד: ' + phone + '\n';
+      body += 'נייד: ' + phone + '\n';
       body += 'אימייל: ' + email + '\n';
-      body += 'דרך קשר מועדפת: ' + contactMethod + '\n';
-	  body += 'במידה ובחרת שם להקדשה, יש להעלות תמונה פה ורק לאחר מכן ללחוץ על שלח.';
-	  body += '\n🔗 לאחר מכן יש ללחוץ על הקישור:\n' + DONATION_PAGE_URL;
+      body += 'דרך קשר: ' + (contactMethod || 'לא הוזן') + '\n';
+
+      body += 'להוספת תמונה קודם לוחצים על 📎 ומצרפים תמונה\n';
+      body += '\nלאחר מכן לוחצים ◀️ ולבסוף על הקישור פה 👇\n';
+      body += DONATION_PAGE_URL;
+
       return body;
     }
 
     function buildWhatsappCompactBody() {
       const contactMethod = getCheckedValue('contactMethod');
       const reqType = requestType.value || '';
-      const donation = Number(donationAmount.value || 0);
       const requester = requesterName.value.trim() || 'לא הוזן';
       const phone = phoneNumber.value.trim() || 'לא הוזן';
       const email = emailAddress.value.trim() || 'לא הוזן';
@@ -1461,44 +1491,54 @@
       const lines = [];
 
       if (isDonationFlow()) {
-        lines.push('התקבלה פנייה לחיזוק הערוץ');
+        lines.push('נרשמה זכות יקרה להשתתפות במצווה גדולה של זיכוי הרבים והפצת התורה');
+        lines.push('מאת: ' + requester);
+        lines.push('זכות גדולה תעמוד לזכותך בעזרת השם');
+        lines.push('');
+        lines.push('נייד: ' + phone);
+        lines.push('אימייל: ' + email);
+        lines.push('דרך קשר: ' + (contactMethod || 'לא הוזן'));
+        lines.push('בחירת הצגת שם בדף תודה למזכי ומחזקי הרבים: ' + getDonorDisplayChoice());
+
+        if (getDonorDisplayChoice() === 'שם + תמונה') {
+          lines.push('להוספת תמונה קודם ללחוץ על 📎 ומוסיפים');
+        }
       } else if (isBusinessRequest()) {
         const businessData = getBusinessData();
+
         lines.push('התקבלה בקשה לברכת הצלחה לעסק');
+        lines.push('יהי רצון שתשרה ברכה והצלחה בעסק ובכל מעשה ידיים');
+        lines.push('');
         lines.push('שם העסק: ' + (businessData.businessName || 'לא הוזן'));
         if (businessData.businessType) lines.push('תחום העסק: ' + businessData.businessType);
         if (businessData.businessLocation) lines.push('עיר / אזור: ' + businessData.businessLocation);
         if (businessData.businessPhone) lines.push('טלפון העסק: ' + businessData.businessPhone);
         if (businessData.businessAddress) lines.push('כתובת העסק: ' + businessData.businessAddress);
+        lines.push('');
         lines.push('הנוסח שיופיע: ' + (requestText.value.trim() || 'לא הוזן'));
+        lines.push('');
+        lines.push('שם המבקש: ' + requester);
+        lines.push('נייד: ' + phone);
+        lines.push('אימייל: ' + email);
+        lines.push('דרך קשר: ' + (contactMethod || 'לא הוזן'));
+        lines.push('להוספת לוגו העסק קודם לוחצים על 📎 ומצרפים תמונה');
       } else {
-        lines.push('התקבלה בקשה להוספת שם');
+        lines.push('התקבלה בקשה להוספת שם לעלייה הקרובה');
+        lines.push('זכות גדולה תעמוד לזכותך בעזרת השם');
+        lines.push('');
         lines.push('השם שיופיע: ' + (requestText.value.trim() || 'לא הוזן'));
         lines.push('סוג הבקשה: ' + (reqType || 'לא הוזן'));
+        lines.push('');
+        lines.push('שם המבקש: ' + requester);
+        lines.push('נייד: ' + phone);
+        lines.push('אימייל: ' + email);
+        lines.push('דרך קשר: ' + (contactMethod || 'לא הוזן'));
+        lines.push('להוספת תמונה קודם ללחוץ על 📎 ומוסיפים');
       }
 
-      lines.push('שם המבקש: ' + requester);
-      lines.push('נייד: ' + phone);
-      lines.push('אימייל: ' + email);
-      lines.push('דרך קשר: ' + (contactMethod || 'לא הוזן'));
-      lines.push('');
-
-      if (isDonationFlow()) {
-        lines.push('לחצו שלח.');
-      } else if (isBusinessRequest()) {
-        lines.push('בעת קבלת ההודעה ניתן להוסיף לבקשה את התמונה של הלוגו של העסק.');
-      } else {
-        lines.push('במידה ובחרת שם להקדשה, יש להעלות תמונה בהודעה שקיבלת ולאחר מכן ללחוץ על שלח.');
-      }
-	  
-      lines.push('');
-      lines.push('⏳ כדי שהבקשה תיכנס לעלייה הקרובה — יש להשלים את הפעולה עכשיו.');
-      lines.push('⚠️ ללא לחיצה על הקישור, הבקשה לא תושלם.');
-      lines.push('');
-      lines.push('👇👇👇');
-      lines.push('🟢 לחצו כאן לאישור וסיום הבקשה 🟢');
+      lines.push('לאחר מכן לוחצים ◀️ ולבסוף על הקישור פה 👇');
       lines.push(DONATION_PAGE_URL);
-		
+
       return lines.join('\n');
     }
 
@@ -1601,6 +1641,7 @@
         requestText.value = data.requestText || '';
 
         setCheckedValue('contactMethod', data.contactMethod || '');
+        setCheckedValue('donorDisplay', data.donorDisplay || '');
 
         detailsSentConfirmed = !!data.detailsSentConfirmed;
 
@@ -1753,23 +1794,17 @@
             ? 'בקשה לברכת הצלחה לעסק'
             : 'בקשה להוספת שם לעליה הבאה';
 
-        const gmailUrl =
-          'https://mail.google.com/mail/?view=cm&fs=1' +
-          '&to=' + encodeURIComponent(OWNER_EMAIL) +
-          '&su=' + encodeURIComponent(subject) +
-          '&body=' + encodeURIComponent(body);
-
         const mailtoUrl =
           'mailto:' + encodeURIComponent(OWNER_EMAIL) +
           '?subject=' + encodeURIComponent(subject) +
           '&body=' + encodeURIComponent(body);
 
-        window.open(gmailUrl, '_blank');
+        window.location.href = mailtoUrl;
 
         if (isDonationFlow()) {
-          alert('נפתחה טיוטת מייל אל בעל הערוץ. יש ללחוץ על שלח מתוך המייל שלך.');
+          alert('נפתחה טיוטת מייל אל בעל הערוץ. יש ללחוץ על שלח מתוך המייל, ולאחר מכן ללחוץ על הקישור לסיום הפעולה.');
         } else if (isBusinessRequest()) {
-          alert('נפתחה טיוטת מייל אל בעל הערוץ. בעת קבלת ההודעה ניתן להוסיף לבקשה את התמונה של הלוגו של העסק ולאחר מכן ללחוץ על שלח.');
+          alert('נפתחה טיוטת מייל אל בעל הערוץ. ניתן לצרף לוגו או תמונה רלוונטית, ללחוץ על שלח, ולאחר מכן ללחוץ על הקישור לסיום הפעולה.');
         } else {
           alert('נפתחה טיוטת מייל אל בעל הערוץ. במידה ובחרת שם להקדשה, יש להעלות תמונה בהודעה שקיבלת, לאחר מכן ללחוץ על שלח ואז ללחוץ על הקישור לסיום הפעולה.');
         }
@@ -1781,6 +1816,47 @@
       hideCopyWhatsappButton();
       updatePaymentState();
       saveFormData();
+    }
+
+    function resetFormCompletely() {
+      localStorage.removeItem(STORAGE_KEY);
+
+      flowMode = '';
+      detailsSentConfirmed = false;
+      touchedFields.clear();
+
+      requestType.value = '';
+      firstName.value = '';
+      fatherName.value = '';
+      motherName.value = '';
+
+      setCheckedValue('relation', '');
+      setCheckedValue('displayParent', '');
+      setCheckedValue('contactMethod', '');
+      setCheckedValue('donorDisplay', '');
+
+      businessName.value = '';
+      businessType.value = '';
+      businessLocation.value = '';
+      businessPhone.value = '';
+      businessAddress.value = '';
+
+      requestText.value = '';
+      requesterName.value = '';
+      phoneNumber.value = '';
+      emailAddress.value = '';
+      donationAmount.value = '';
+
+      hideReturnButton();
+      hideCopyWhatsappButton();
+      clearFieldErrors();
+
+      showEntryScreen();
+      updateRequestModeVisibility();
+      updatePaymentState();
+      saveFormData();
+
+      alert('הטופס אופס בהצלחה. אפשר להתחיל מחדש.');
     }
 
     function bindLiveListeners() {
@@ -1852,6 +1928,11 @@
       startNameFlowBtn.addEventListener('click', startNameFlow);
       startDonationFlowBtn.addEventListener('click', startDonationFlow);
       backToChoiceBtn.addEventListener('click', goBackToChoice);
+
+      const resetFormBtn = document.getElementById('resetFormBtn');
+      if (resetFormBtn) {
+        resetFormBtn.addEventListener('click', resetFormCompletely);
+      }
 
       if (copyWhatsappBtn) {
         copyWhatsappBtn.addEventListener('click', copyWhatsappMessage);
