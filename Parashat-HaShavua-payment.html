@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>סיום הבקשה וביצוע התרומה</title>
+  <title>סיום הבקשה</title>
 
   <style>
     * { box-sizing: border-box; }
@@ -35,7 +35,7 @@
       margin: 0 0 10px;
       color: #7a531a;
       font-size: clamp(24px, 4vw, 34px);
-      line-height: 1.35;
+      line-height: 1.5;
     }
 
     .intro {
@@ -84,8 +84,16 @@
       filter: brightness(1.05);
     }
 
+    .note {
+      margin-top: 10px;
+      color: #7a5837;
+      font-size: 14px;
+      line-height: 1.8;
+      font-weight: 700;
+    }
+
     .final-note {
-      margin-top: 18px;
+      margin-top: 16px;
       color: #7a5837;
       line-height: 1.8;
       font-size: 14px;
@@ -104,38 +112,67 @@
       כעת ניתן להשלים את התהליך.
     </div>
 
-    <div class="blessing-box">
+    <!-- 🔽 כאן מתעדכן השם -->
+    <div class="blessing-box" id="blessingBox">
       תודה על השותפות בזיכוי הרבים.<br>
       כל תמיכה עוזרת להמשיך להפיץ תורה, חיזוק וברכה לעוד יהודים.
     </div>
 
-    <div class="pay-title">בחרו דרך לתרומה:</div>
+    <div class="pay-title">בחרו דרך לתשלום:</div>
 
     <a class="pay-btn"
        href="https://www.bitpay.co.il/app/me/4A7D7360-AF51-7846-5E67-60FACACD37C54857?v=2"
-       target="_blank"
-       rel="noopener noreferrer">
+       target="_blank">
       תשלום בביט
     </a>
 
     <a class="pay-btn"
        href="https://3ydbh.app.link/c9hSuB5Xq1b?_p=c11331dc9a006ceee61490fceeb4"
-       target="_blank"
-       rel="noopener noreferrer">
+       target="_blank">
       תשלום בפייבוקס
     </a>
 
     <a class="pay-btn"
        href="https://paypal.me/RonenTorah"
-       target="_blank"
-       rel="noopener noreferrer">
+       target="_blank">
       תשלום בפייפאל
     </a>
 
+    <div class="note">
+      סכום התשלום להכנסת בקשה הינו מחי שקלים (18) ומעלה.
+    </div>
+
+    <div class="note">
+      סדר הופעת השמות יופיע לפי גודל התשלום של הבקשה.
+    </div>
+
     <div class="final-note">
-      לאחר ביצוע התרומה — הבקשה תטופל ותיכנס בעזרת ה׳ לעלייה הקרובה.
+      לאחר ביצוע התשלום — הבקשה תטופל ותיכנס בעזרת ה׳ לעלייה הקרובה.
     </div>
   </div>
+
+  <script>
+    const STORAGE_KEY = 'parasha_form_data_v1';
+
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        const data = JSON.parse(raw);
+        const requester = (data.requesterName || '').trim();
+
+        if (requester) {
+          const blessingBox = document.getElementById('blessingBox');
+
+          blessingBox.innerHTML =
+            'תודה לך ' + requester + ' מכל הלב, על השתתפותך בזיכוי הרבים<br>' +
+            'כל תמיכה שלך עוזרת להמשיך להפיץ תורה, חיזוק וברכה לעוד יהודים ולכל העולם.<br>' +
+            'זוהי זכות גדולה בשמים לבקשה שלך ❤️';
+        }
+      }
+    } catch (e) {
+      console.error('שגיאה בשליפת שם המבקש', e);
+    }
+  </script>
 
 </body>
 </html>
