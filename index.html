@@ -1458,7 +1458,7 @@ function setFieldError(key, message) {
         }
 
         body += '\nלאחר מכן לוחצים ◀️ ולבסוף על הקישור פה 👇\n';
-        body += DONATION_PAGE_URL + '?requester=' + encodeURIComponent(requester);
+        body += DONATION_PAGE_URL;
 
         return body;
       }
@@ -1476,7 +1476,7 @@ function setFieldError(key, message) {
 
       body += 'להוספת תמונה קודם לוחצים על 📎 ומצרפים תמונה\n';
       body += '\nלאחר מכן לוחצים ◀️ ולבסוף על הקישור פה 👇\n';
-      body += DONATION_PAGE_URL + '?requester=' + encodeURIComponent(requester);
+      body += DONATION_PAGE_URL;
 
       return body;
     }
@@ -1537,7 +1537,7 @@ function setFieldError(key, message) {
       }
 
       lines.push('לאחר מכן לוחצים ◀️ ולבסוף על הקישור פה 👇');
-      lines.push(DONATION_PAGE_URL + '?requester=' + encodeURIComponent(requester));
+      lines.push(DONATION_PAGE_URL);
       return lines.join('\n');
     }
 
