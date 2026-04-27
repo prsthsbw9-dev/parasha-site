@@ -1458,7 +1458,7 @@ function setFieldError(key, message) {
         }
 
         body += '\nלאחר מכן לוחצים ◀️ ולבסוף על הקישור פה 👇\n';
-        body += DONATION_PAGE_URL;
+        body += DONATION_PAGE_URL + '?requester=' + encodeURIComponent(requester);
 
         return body;
       }
@@ -1476,7 +1476,7 @@ function setFieldError(key, message) {
 
       body += 'להוספת תמונה קודם לוחצים על 📎 ומצרפים תמונה\n';
       body += '\nלאחר מכן לוחצים ◀️ ולבסוף על הקישור פה 👇\n';
-      body +body += DONATION_PAGE_URL + '?rbody += DONATION_PAGE_URL + '?requester=' + encodeURIComponent(requester);equester=' + encodeURIComponent(requester);= DONATION_PAGE_URL;
+      body += DONATION_PAGE_URL + '?requester=' + encodeURIComponent(requester);
 
       return body;
     }
@@ -1596,6 +1596,7 @@ function setFieldError(key, message) {
         phoneNumber: phoneNumber.value,
         emailAddress: emailAddress.value,
         contactMethod: getCheckedValue('contactMethod'),
+        donorDisplay: getCheckedValue('donorDisplay'),
         donationAmount: donationAmount.value,
         detailsSentConfirmed: detailsSentConfirmed
       };
