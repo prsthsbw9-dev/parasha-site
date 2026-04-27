@@ -55,6 +55,7 @@
       color: #6b4b1e;
       line-height: 1.8;
       font-size: 15px;
+      font-weight: 700;
     }
 
     .pay-title {
@@ -84,20 +85,40 @@
       filter: brightness(1.05);
     }
 
-    .note {
-      margin-top: 10px;
+    .notes-box {
+      margin-top: 16px;
       color: #7a5837;
-      font-size: 14px;
-      line-height: 1.8;
+      font-size: 13px;
+      line-height: 1.75;
       font-weight: 700;
     }
 
+    .notes-box div {
+      margin-bottom: 8px;
+    }
+
     .final-note {
-      margin-top: 16px;
+      margin-top: 12px;
       color: #7a5837;
-      line-height: 1.8;
-      font-size: 14px;
+      line-height: 1.75;
+      font-size: 13px;
       font-weight: 700;
+    }
+
+    @media (max-width: 420px) {
+      .card {
+        padding: 20px 14px 22px;
+      }
+
+      .notes-box,
+      .final-note {
+        font-size: 12.5px;
+        line-height: 1.7;
+      }
+
+      .pay-btn {
+        font-size: 16px;
+      }
     }
   </style>
 </head>
@@ -112,7 +133,6 @@
       כעת ניתן להשלים את התהליך.
     </div>
 
-    <!-- 🔽 כאן מתעדכן השם -->
     <div class="blessing-box" id="blessingBox">
       תודה על השותפות בזיכוי הרבים.<br>
       כל תמיכה עוזרת להמשיך להפיץ תורה, חיזוק וברכה לעוד יהודים.
@@ -122,28 +142,28 @@
 
     <a class="pay-btn"
        href="https://www.bitpay.co.il/app/me/4A7D7360-AF51-7846-5E67-60FACACD37C54857?v=2"
-       target="_blank">
+       target="_blank"
+       rel="noopener noreferrer">
       תשלום בביט
     </a>
 
     <a class="pay-btn"
        href="https://3ydbh.app.link/c9hSuB5Xq1b?_p=c11331dc9a006ceee61490fceeb4"
-       target="_blank">
+       target="_blank"
+       rel="noopener noreferrer">
       תשלום בפייבוקס
     </a>
 
     <a class="pay-btn"
        href="https://paypal.me/RonenTorah"
-       target="_blank">
+       target="_blank"
+       rel="noopener noreferrer">
       תשלום בפייפאל
     </a>
 
-    <div class="note">
-      סכום התשלום להכנסת בקשה הינו מחי שקלים (18) ומעלה.
-    </div>
-
-    <div class="note">
-      סדר הופעת השמות יופיע לפי גודל התשלום של הבקשה.
+    <div class="notes-box">
+      <div>סכום התשלום להכנסת בקשה הינו מחי שקלים (18) ומעלה.</div>
+      <div>סדר הופעת השמות יופיע לפי גודל התשלום של הבקשה.</div>
     </div>
 
     <div class="final-note">
@@ -154,23 +174,37 @@
   <script>
     const STORAGE_KEY = 'parasha_form_data_v1';
 
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) {
-        const data = JSON.parse(raw);
-        const requester = (data.requesterName || '').trim();
+    function getRequesterName() {
+      const params = new URLSearchParams(window.location.search);
+      const nameFromUrl = (params.get('requester') || '').trim();
 
-        if (requester) {
-          const blessingBox = document.getElementById('blessingBox');
-
-          blessingBox.innerHTML =
-            'תודה לך ' + requester + ' מכל הלב, על השתתפותך בזיכוי הרבים<br>' +
-            'כל תמיכה שלך עוזרת להמשיך להפיץ תורה, חיזוק וברכה לעוד יהודים ולכל העולם.<br>' +
-            'זוהי זכות גדולה בשמים לבקשה שלך ❤️';
-        }
+      if (nameFromUrl) {
+        return nameFromUrl;
       }
-    } catch (e) {
-      console.error('שגיאה בשליפת שם המבקש', e);
+
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          const data = JSON.parse(raw);
+          return (data.requesterName || '').trim();
+        }
+      } catch (e) {
+        console.error('שגיאה בשליפת שם המבקש', e);
+      }
+
+      return '';
+    }
+
+    const requester = getRequesterName();
+
+    if (requester) {
+      const blessingBox = document.getElementById('blessingBox');
+
+      blessingBox.innerHTML =
+        'תודה לך ' + requester + ' מכל הלב,<br>' +
+        'על השתתפותך בזיכוי הרבים.<br>' +
+        'כל תמיכה שלך עוזרת להמשיך להפיץ תורה, חיזוק וברכה לעוד יהודים ולכל העולם.<br>' +
+        'זוהי זכות גדולה בשמים לבקשה שלך ❤️';
     }
   </script>
 
