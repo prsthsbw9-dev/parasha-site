@@ -614,20 +614,21 @@
           </div>
         </div>
 
-		<div class="field">
-		  <label>😇 לאן לשלוח אליך את ההודעה?</label>
-		  <div class="inline-choice-group">
-			<label class="inline-choice">
-			  <input type="radio" name="vipContactMethod" value="whatsapp" checked>
-			  לוואטסאפ
-			</label>
+    <div class="field">
+      <label>😇 לאן לשלוח אליך את ההודעה?</label>
+      <div class="inline-choice-group">
+        <label class="inline-choice">
+          <input type="radio" name="vipContactMethod" value="whatsapp" checked>
+          לוואטסאפ
+        </label>
 
-			<label class="inline-choice">
-			  <input type="radio" name="vipContactMethod" value="email">
-			  למייל
-			</label>
-		  </div>
-		</div>
+        <label class="inline-choice">
+          <input type="radio" name="vipContactMethod" value="email">
+          למייל
+        </label>
+      </div>
+      <span id="contactMethodError" class="field-error"></span>
+    </div>
 
 		<div class="field">
 		  <label for="vipBusinessEmail">אימייל ליצירת קשר:</label>
@@ -635,7 +636,7 @@
 		</div>
 
         <div class="send-wrap">
-          <button type="button" class="send-btn" id="vipBusinessSendBtn">
+          <button type="button" class="send-btn disabled" id="vipBusinessSendBtn" disabled>
             🙏 שליחת פרטי העסק
           </button>
         </div>
@@ -821,12 +822,12 @@
 		    <label>😇 לאן לשלוח אליך את ההודעה?</label>
 		    <div class="inline-choice-group">
 			  <label class="inline-choice">
-			    <input type="radio" name="vipContactMethod" value="whatsapp" checked>
+			    <input type="radio" name="contactMethod" value="וואטסאפ">
 			    לוואטסאפ
 			  </label>
 
 			  <label class="inline-choice">
-			    <input type="radio" name="vipContactMethod" value="email">
+			    <input type="radio" name="contactMethod" value="מייל">
 			    למייל
 			  </label>
 		    </div>
@@ -1102,6 +1103,28 @@
 	  return checked ? checked.value : '';
 	}
 
+	function updateBusinessVipSendState() {
+	  const packageChoice = getBusinessVipPackage();
+
+	  const name = document.getElementById('vipBusinessName').value.trim();
+	  const phone = document.getElementById('vipBusinessPhone').value.trim();
+	  const email = document.getElementById('vipBusinessEmail').value.trim();
+
+	  const vipContactChecked = document.querySelector('input[name="vipContactMethod"]:checked');
+	  const contactMethod = vipContactChecked ? vipContactChecked.value : '';
+
+	  let canSend = !!packageChoice && !!name && !!phone;
+
+	  if (contactMethod === 'email' && !email) {
+		canSend = false;
+	  }
+
+	  if (vipBusinessSendBtn) {
+		vipBusinessSendBtn.disabled = !canSend;
+		vipBusinessSendBtn.classList.toggle('disabled', !canSend);
+	  }
+	}
+
 	function sendBusinessVip() {
 	  const packageChoice = getBusinessVipPackage();
 
@@ -1178,36 +1201,39 @@
       }, 220);
     }
   
-	function showBusinessVipScreen() {
-	  localStorage.removeItem(STORAGE_KEY);
+  function showBusinessVipScreen() {
+    localStorage.removeItem(STORAGE_KEY);
 
-	  flowMode = 'businessVip';
-	  detailsSentConfirmed = false;
-	  touchedFields.clear();
+    flowMode = 'businessVip';
+    detailsSentConfirmed = false;
+    touchedFields.clear();
 
-	  clearFieldErrors();
-	  hideReturnButton();
-	  hideCopyWhatsappButton();
+    clearFieldErrors();
+    hideReturnButton();
+    hideCopyWhatsappButton();
 
-	  mainForm.classList.add('hidden');
-	  businessVipWrapper.classList.add('hidden');
+    mainForm.classList.add('hidden');
+    businessVipWrapper.classList.add('hidden');
 
-	  entryWrapper.classList.add('leaving');
+    entryWrapper.classList.add('leaving');
 
-	  setTimeout(function () {
-		entryWrapper.classList.add('hidden');
-		businessVipWrapper.classList.remove('hidden');
-		businessVipWrapper.classList.add('entering');
+    setTimeout(function () {
+      entryWrapper.classList.add('hidden');
+      businessVipWrapper.classList.remove('hidden');
+      businessVipWrapper.classList.add('entering');
 
-		requestAnimationFrame(function () {
-		  requestAnimationFrame(function () {
-			businessVipWrapper.classList.remove('entering');
-		  });
-		});
+      requestAnimationFrame(function () {
+        requestAnimationFrame(function () {
+          businessVipWrapper.classList.remove('entering');
+        });
+      });
 
-		window.scrollTo({ top: 0, behavior: 'smooth' });
-	  }, 220);
-	}
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      updateBusinessVipSendState();
+
+    }, 220);
+  }
 
     function getBusinessVipPackage() {
       const checked = document.querySelector('input[name="businessVipPackage"]:checked');
@@ -2151,6 +2177,34 @@
           updatePaymentState();
           saveFormData();
         });
+      });
+
+      const vipLiveFields = [
+        document.getElementById('vipBusinessName'),
+        document.getElementById('vipBusinessType'),
+        document.getElementById('vipBusinessLocation'),
+        document.getElementById('vipBusinessPhone'),
+        document.getElementById('vipBusinessEmail')
+      ];
+
+      vipLiveFields.forEach(function(el) {
+        if (!el) return;
+
+        el.addEventListener('input', function() {
+        updateBusinessVipSendState();
+        });
+
+        el.addEventListener('change', function() {
+        updateBusinessVipSendState();
+        });
+      });
+
+      document.querySelectorAll('input[name="businessVipPackage"]').forEach(function(el) {
+        el.addEventListener('change', updateBusinessVipSendState);
+      });
+
+      document.querySelectorAll('input[name="vipContactMethod"]').forEach(function(el) {
+        el.addEventListener('change', updateBusinessVipSendState);
       });
 
       payButtons.forEach(function(btn) {
