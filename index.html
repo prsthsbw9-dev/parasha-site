@@ -531,34 +531,36 @@
       overflow-x:hidden;
     }
 
-    .sea-bg-video{
-      position:fixed;
-      inset:0;
-      width:100%;
-      height:100%;
-      object-fit:cover;
-      z-index:-3;
-      background:#071014;
-      transform:scale(1.04);
-    }
+	.sea-bg-video{
+	  position:fixed;
+	  inset:0;
+	  width:100%;
+	  height:100%;
+	  object-fit:cover;
+	  z-index:0;
+	  background:#071014;
+	  transform:scale(1.04);
+	  pointer-events:none;
+	}
 
-    .sea-bg-overlay{
-      position:fixed;
-      inset:0;
-      z-index:-2;
-      background:
-        radial-gradient(circle at top center, rgba(255,255,255,.12), transparent 34%),
-        linear-gradient(180deg, rgba(0,0,0,.30) 0%, rgba(0,0,0,.50) 48%, rgba(0,0,0,.72) 100%);
-      backdrop-filter:blur(1.5px);
-      pointer-events:none;
-    }
+	.sea-bg-overlay{
+	  position:fixed;
+	  inset:0;
+	  z-index:1;
+	  background:
+	    radial-gradient(circle at top center, rgba(255,255,255,.12), transparent 34%),
+	    linear-gradient(180deg, rgba(0,0,0,.30) 0%, rgba(0,0,0,.50) 48%, rgba(0,0,0,.72) 100%);
+	  backdrop-filter:blur(1.5px);
+	  pointer-events:none;
+	}
 
-    .page{
-      max-width:560px;
-      min-height:100vh;
-      padding:18px 10px 34px;
-      position:relative;
-    }
+	.page{
+	  max-width:560px;
+	  min-height:100vh;
+	  padding:18px 10px 34px;
+	  position:relative;
+	  z-index:2;
+	}
 
     #entryWrapper{
       min-height:100dvh;
