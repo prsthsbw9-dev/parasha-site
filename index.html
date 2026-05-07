@@ -486,15 +486,15 @@
 	}
 	
 	.back-btn{
-	  border:none;
-	  background:#fff8eb;
-	  color:#7a4c1f;
-	  border:1px solid #d7bc86;
+	  background:rgba(255,255,255,.16);
+	  color:#fff;
+	  border:1px solid rgba(255,255,255,.55);
 	  border-radius:999px;
 	  padding:9px 14px;
 	  font-weight:bold;
 	  cursor:pointer;
 	  font-size:14px;
+	  backdrop-filter:blur(8px);
 	}
 	
 	.steps-intro{
@@ -510,11 +510,17 @@
 	  display:flex;
 	  align-items:flex-start;
 	  gap:10px;
-	  background:#fff8eb;
-	  border:1px solid #e4cf9c;
+	  background:rgba(10,35,42,.45);
+	  border:1px solid rgba(255,255,255,.45);
 	  border-radius:14px;
 	  padding:10px 12px;
-	  box-shadow:0 2px 6px rgba(0,0,0,.05);
+	  box-shadow:0 6px 18px rgba(0,0,0,.22);
+	  backdrop-filter:blur(8px);
+	}
+	
+	.step-text{
+	  color:#fff;
+	  text-shadow:0 2px 8px rgba(0,0,0,.45);
 	}
 	
 	.step-icon{
