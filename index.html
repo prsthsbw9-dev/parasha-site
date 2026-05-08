@@ -1545,20 +1545,37 @@
           מלאו כמה פרטים קצרים. לאחר אישור הבקשה הפרטים יישלחו אליכם ולערוץ לפי דרך הקשר שבחרתם, ורק אז יתאפשר לבצע את התרומה.
         </div>
 
-        <div class="request-box" id="requestTypeBox">
-          <div class="section-title" id="requestTypeTitle">בחירת הבקשה</div>
-          <div class="field">
-            <label for="requestType">סוג הבקשה</label>
-            <select id="requestType">
-              <option value="" selected disabled hidden>בחר/י סוג בקשה</option>
-              <option value="לשמירה והגנה">לשמירה והגנה</option>
-              <option value="לפרנסה בשפע">לפרנסה בשפע</option>
-              <option value="לבריאות">לבריאות</option>
-              <option value="לזיווג הגון">לזיווג הגון</option>
-              <option value="לפרייה ורבייה">לפרייה ורבייה</option>
-              <option value="לעילוי נשמת">לעילוי נשמת</option>
-              <option value="להצלחת העסק">להצלחת העסק</option>
-            </select>
+		<div class="request-box" id="requestTypeBox">
+		  <div class="section-title" id="requestTypeTitle">בחירת הבקשה</div>
+		
+		  <div class="field">
+		    <label for="requestType">סוג הבקשה</label>
+		
+		    <select id="requestType" class="hidden-native-select">
+		      <option value="" selected disabled hidden>בחר/י סוג בקשה</option>
+		      <option value="לשמירה והגנה">לשמירה והגנה</option>
+		      <option value="לפרנסה בשפע">לפרנסה בשפע</option>
+		      <option value="לבריאות">לבריאות</option>
+		      <option value="לזיווג הגון">לזיווג הגון</option>
+		      <option value="לפרייה ורבייה">לפרייה ורבייה</option>
+		      <option value="לעילוי נשמת">לעילוי נשמת</option>
+		      <option value="להצלחת העסק">להצלחת העסק</option>
+		    </select>
+		
+		    <div class="custom-request-buttons">
+		      <button type="button" data-request-value="לשמירה והגנה">לשמירה והגנה</button>
+		      <button type="button" data-request-value="לפרנסה בשפע">לפרנסה בשפע</button>
+		      <button type="button" data-request-value="לבריאות">לבריאות</button>
+		      <button type="button" data-request-value="לזיווג הגון">לזיווג הגון</button>
+		      <button type="button" data-request-value="לפרייה ורבייה">לפרייה ורבייה</button>
+		      <button type="button" data-request-value="לעילוי נשמת">לעילוי נשמת</button>
+		      <button type="button" data-request-value="להצלחת העסק">להצלחת העסק</button>
+		    </div>
+		
+		    <span id="requestTypeError" class="field-error"></span>
+		    <span class="small-note">ללא בחירת סוג בקשה לא יהיה ניתן להמשיך.</span>
+		  </div>
+		</div>		  
             <span id="requestTypeError" class="field-error"></span>
             <span class="small-note">ללא בחירת סוג בקשה לא יהיה ניתן להמשיך.</span>
           </div>
