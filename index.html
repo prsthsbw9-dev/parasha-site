@@ -2886,4 +2886,263 @@
     }
   
     function sendDetails() {
-      const missing 
+      const missing = getMissingFields('force');
+      if (missing.length) {
+        detailsSentConfirmed = false;
+        hideReturnButton();
+        hideCopyWhatsappButton();
+        updatePaymentState();
+        saveFormData();
+        return;
+      }
+  
+      const method = getCheckedValue('contactMethod');
+      const body = buildMessageBody();
+  
+      saveFormData();
+  
+      if (method === 'וואטסאפ') {
+        const compactBody = buildWhatsappCompactBody();
+        const encodedText = encodeURIComponent(compactBody);
+  
+        const appUrl = 'whatsapp://send?phone=' + OWNER_WHATSAPP_NUMBER + '&text=' + encodedText;
+        const webUrl = 'https://wa.me/' + OWNER_WHATSAPP_NUMBER + '?text=' + encodedText;
+  
+        detailsSentConfirmed = true;
+        showReturnButton();
+        showCopyWhatsappButton();
+        updateSendNotice('מתבצע ניסיון לפתוח הודעת וואטסאפ. אם לא נפתח, אפשר להעתיק את ההודעה ידנית ואז לחזור לכאן לתשלום וסיום הבקשה.', true);
+        updatePaymentState();
+        saveFormData();
+  
+        window.location.href = appUrl;
+  
+        setTimeout(function () {
+          window.location.href = webUrl;
+        }, 1200);
+  
+        alert('אתר זה מנסה לפתוח את הוואטסאפ, לפני שתילחצו אישור וודאו כי האפליקציה קיימת ומופעלת אצלכם.');
+  
+        return;
+      }
+  
+      if (method === 'מייל') {
+        const subject = isDonationFlow()
+          ? 'פנייה לחיזוק הערוץ'
+          : isBusinessRequest()
+            ? 'בקשה לברכת הצלחה לעסק'
+            : 'בקשה להוספת שם לעליה הבאה';
+  
+        const mailtoUrl =
+          'mailto:' + encodeURIComponent(OWNER_EMAIL) +
+          '?subject=' + encodeURIComponent(subject) +
+          '&body=' + encodeURIComponent(body);
+  
+        window.location.href = mailtoUrl;
+  
+        if (isDonationFlow()) {
+          alert('נפתחה טיוטת מייל אל בעל הערוץ. יש ללחוץ על שלח מתוך המייל, ולאחר מכן ללחוץ על הקישור לסיום הפעולה.');
+        } else if (isBusinessRequest()) {
+          alert('נפתחה טיוטת מייל אל בעל הערוץ. ניתן לצרף לוגו או תמונה רלוונטית, ללחוץ על שלח, ולאחר מכן ללחוץ על הקישור לסיום הפעולה.');
+        } else {
+          alert('נפתחה טיוטת מייל אל בעל הערוץ. במידה ובחרת שם להקדשה, יש להעלות תמונה בהודעה שקיבלת, לאחר מכן ללחוץ על שלח ואז ללחוץ על הקישור לסיום הפעולה.');
+        }
+  
+        return;
+      }
+  
+      detailsSentConfirmed = true;
+      showReturnButton();
+      hideCopyWhatsappButton();
+      updatePaymentState();
+      saveFormData();
+    }
+  
+    function resetFormCompletely() {
+      localStorage.removeItem(STORAGE_KEY);
+  
+      flowMode = '';
+      detailsSentConfirmed = false;
+      touchedFields.clear();
+  
+      requestType.value = '';
+      firstName.value = '';
+      fatherName.value = '';
+      motherName.value = '';
+  
+      setCheckedValue('relation', '');
+      setCheckedValue('displayParent', '');
+      setCheckedValue('contactMethod', '');
+      setCheckedValue('donorDisplay', '');
+  
+      businessName.value = '';
+      businessType.value = '';
+      businessLocation.value = '';
+      businessPhone.value = '';
+      businessAddress.value = '';
+  
+      requestText.value = '';
+      requesterName.value = '';
+      phoneNumber.value = '';
+      emailAddress.value = '';
+      donationAmount.value = '';
+  
+      clearBusinessVipForm();
+  
+      hideReturnButton();
+      hideCopyWhatsappButton();
+      clearFieldErrors();
+  
+      showEntryScreen();
+      updateRequestModeVisibility();
+      updatePaymentState();
+      saveFormData();
+  
+      alert('הטופס אופס בהצלחה. אפשר להתחיל מחדש.');
+    }
+  
+    function bindLiveListeners() {
+      const liveFields = [
+        requestType, firstName, fatherName, motherName,
+        businessName, businessType, businessLocation, businessPhone, businessAddress,
+        requesterName, phoneNumber, emailAddress, donationAmount
+      ];
+
+      liveFields.forEach(function(el) {
+        if (!el) return;
+
+        el.addEventListener('input', function() {
+          if (el.id) markTouched(el.id);
+          resetSendConfirmation();
+          updateRequestModeVisibility();
+          updatePaymentState();
+          saveFormData();
+        });
+
+        el.addEventListener('change', function() {
+          if (el.id) markTouched(el.id);
+          resetSendConfirmation();
+          updateRequestModeVisibility();
+          updatePaymentState();
+          saveFormData();
+        });
+      });
+
+      document.querySelectorAll('input[name="relation"]').forEach(function(el) {
+        el.addEventListener('change', function() {
+          markTouched('relation');
+          resetSendConfirmation();
+          updateRequestModeVisibility();
+          updatePaymentState();
+          saveFormData();
+        });
+      });
+
+      document.querySelectorAll('input[name="displayParent"]').forEach(function(el) {
+        el.addEventListener('change', function() {
+          markTouched('displayParent');
+          resetSendConfirmation();
+          updateRequestModeVisibility();
+          updatePaymentState();
+          saveFormData();
+        });
+      });
+
+      document.querySelectorAll('input[name="contactMethod"]').forEach(function(el) {
+        el.addEventListener('change', function() {
+          markTouched('contactMethod');
+          resetSendConfirmation();
+          updateRequestModeVisibility();
+          updatePaymentState();
+          saveFormData();
+        });
+      });
+
+      const vipLiveFields = [
+        document.getElementById('vipBusinessName'),
+        document.getElementById('vipBusinessType'),
+        document.getElementById('vipBusinessLocation'),
+        document.getElementById('vipBusinessPhone'),
+        document.getElementById('vipBusinessEmail')
+      ];
+
+      vipLiveFields.forEach(function(el) {
+        if (!el) return;
+
+        el.addEventListener('input', function() {
+        updateBusinessVipSendState();
+        });
+
+        el.addEventListener('change', function() {
+        updateBusinessVipSendState();
+        });
+      });
+
+      document.querySelectorAll('input[name="businessVipPackage"]').forEach(function(el) {
+        el.addEventListener('change', updateBusinessVipSendState);
+      });
+
+      document.querySelectorAll('input[name="vipContactMethod"]').forEach(function(el) {
+        el.addEventListener('change', updateBusinessVipSendState);
+      });
+
+      payButtons.forEach(function(btn) {
+        if (!btn) return;
+
+        btn.addEventListener('click', function(e) {
+          if (btn.classList.contains('disabled')) {
+            e.preventDefault();
+            updatePaymentState();
+          }
+        });
+      });
+
+      if (sendDetailsBtn) sendDetailsBtn.addEventListener('click', sendDetails);
+      if (donationConfirmBtn) donationConfirmBtn.addEventListener('click', sendDetails);
+
+      if (startNameFlowBtn) startNameFlowBtn.addEventListener('click', startNameFlow);
+      if (startDonationFlowBtn) startDonationFlowBtn.addEventListener('click', startDonationFlow);
+
+      if (startBusinessFlowBtn) {
+        startBusinessFlowBtn.addEventListener('click', showBusinessVipScreen);
+      }
+
+	  if (backFromBusinessVipBtn) {
+	    backFromBusinessVipBtn.addEventListener('click', hideBusinessVipScreen);
+	  }
+
+	  if (vipBusinessSendBtn) {
+	    vipBusinessSendBtn.addEventListener('click', sendBusinessVip);
+	  }
+
+      if (backToChoiceBtn) {
+        backToChoiceBtn.addEventListener('click', goBackToChoice);
+      }
+
+      const resetFormBtn = document.getElementById('resetFormBtn');
+      if (resetFormBtn) {
+        resetFormBtn.addEventListener('click', resetFormCompletely);
+      }
+
+      const resetBusinessVipBtn = document.getElementById('resetBusinessVipBtn');
+      if (resetBusinessVipBtn) {
+        resetBusinessVipBtn.addEventListener('click', resetFormCompletely);
+      }
+
+      if (copyWhatsappBtn) {
+        copyWhatsappBtn.addEventListener('click', copyWhatsappMessage);
+      }
+    }
+
+    bindLiveListeners();
+    restoreFormData();
+    updateFlowHeadings();
+    updateRequestModeVisibility();
+    updatePaymentState();
+
+    window.addEventListener('beforeunload', function() {
+      saveFormData();
+    });
+  </script>
+</body>
+</html>
