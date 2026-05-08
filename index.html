@@ -1149,6 +1149,66 @@
 	  color:#fff !important;
 	  text-shadow:0 2px 8px rgba(0,0,0,.55) !important;
 	}
+	#mainForm input[type="text"],
+	#mainForm input[type="tel"],
+	#mainForm input[type="email"],
+	#mainForm input[type="number"],
+	#mainForm select,
+	#mainForm textarea,
+	#businessVipWrapper input,
+	#businessVipWrapper select,
+	#businessVipWrapper textarea{
+	  background:rgba(255,255,255,.18) !important;
+	  color:#fff !important;
+	  border:1px solid rgba(255,255,255,.42) !important;
+	  box-shadow:inset 0 1px 0 rgba(255,255,255,.12) !important;
+	  text-shadow:0 2px 8px rgba(0,0,0,.35) !important;
+	  backdrop-filter:blur(8px) !important;
+	}
+	
+	#mainForm input::placeholder,
+	#mainForm textarea::placeholder,
+	#businessVipWrapper input::placeholder,
+	#businessVipWrapper textarea::placeholder{
+	  color:rgba(255,255,255,.68) !important;
+	  text-shadow:none !important;
+	}
+	
+	/* select - שיהיה קריא גם כשהרשימה נפתחת */
+	#mainForm select option,
+	#businessVipWrapper select option{
+	  color:#2f2417 !important;
+	  background:#ffffff !important;
+	}
+	
+	/* רדיו - עיגול ברור גם בנייד */
+	#mainForm input[type="radio"],
+	#businessVipWrapper input[type="radio"]{
+	  appearance:none !important;
+	  -webkit-appearance:none !important;
+	
+	  width:18px !important;
+	  height:18px !important;
+	  border-radius:50% !important;
+	
+	  border:2px solid rgba(255,255,255,.95) !important;
+	  background:rgba(0,0,0,.25) !important;
+	
+	  box-shadow:
+	    0 0 0 2px rgba(0,0,0,.22),
+	    0 0 8px rgba(255,255,255,.55) !important;
+	
+	  display:inline-block !important;
+	  position:relative !important;
+	  vertical-align:middle !important;
+	  margin:0 4px !important;
+	}
+	
+	#mainForm input[type="radio"]:checked,
+	#businessVipWrapper input[type="radio"]:checked{
+	  background:
+	    radial-gradient(circle, #ffffff 0 38%, transparent 42%) !important;
+	}
 	  
   </style>
 </head>
