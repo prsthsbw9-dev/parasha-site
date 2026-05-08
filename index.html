@@ -1335,6 +1335,32 @@
 	  background:
 	    radial-gradient(circle, #ffffff 0 38%, transparent 42%) !important;
 	}
+	.hidden-native-select{
+	  display:none !important;
+	}
+	
+	.custom-request-buttons{
+	  display:grid;
+	  grid-template-columns:1fr;
+	  gap:8px;
+	  margin-top:8px;
+	}
+	
+	.custom-request-buttons button{
+	  background:rgba(255,255,255,.12) !important;
+	  border:1px solid rgba(255,255,255,.35) !important;
+	  color:#fff !important;
+	  border-radius:14px !important;
+	  padding:10px 12px !important;
+	  font-weight:800 !important;
+	  text-align:center !important;
+	  backdrop-filter:blur(8px) !important;
+	}
+	
+	.custom-request-buttons button.active{
+	  background:rgba(80,190,205,.35) !important;
+	  border-color:rgba(255,255,255,.75) !important;
+	}
 	  
   </style>
 </head>
@@ -3160,6 +3186,22 @@
     window.addEventListener('beforeunload', function() {
       saveFormData();
     });
+
+	document.querySelectorAll('.custom-request-buttons button').forEach(function(btn){
+	  btn.addEventListener('click', function(){
+	    const value = btn.getAttribute('data-request-value');
+	
+	    requestType.value = value;
+	    requestType.dispatchEvent(new Event('change', { bubbles:true }));
+	
+	    document.querySelectorAll('.custom-request-buttons button').forEach(function(b){
+	      b.classList.remove('active');
+	    });
+	
+	    btn.classList.add('active');
+	  });
+	});
+	  
   </script>
 </body>
 </html>
