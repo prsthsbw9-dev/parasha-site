@@ -1382,7 +1382,63 @@
 	  background:#0d2630 !important;
 	  color:#fff !important;
 	}	  
-	  
+
+  /* שקיפות כמעט מלאה לכל התיבות */
+
+  #mainForm .request-box,
+  #mainForm .contact-box,
+  #mainForm .payment-box,
+  #mainForm .confirm-box,
+  #mainForm .name-builder-wrap,
+  #mainForm .inline-choice-group,
+  #mainForm .name-preview-box,
+  #mainForm .send-notice,
+  #mainForm .send-notice.pending,
+  #businessVipWrapper .request-box,
+  #businessVipWrapper .confirm-box{
+    background:transparent !important;
+
+    backdrop-filter:none !important;
+    -webkit-backdrop-filter:none !important;
+
+    border:1px solid rgba(255,255,255,.20) !important;
+
+    box-shadow:none !important;
+  }
+
+  /* כל שדות ההקלדה */
+  #mainForm input,
+  #mainForm textarea,
+  #mainForm select,
+  #businessVipWrapper input,
+  #businessVipWrapper textarea,
+  #businessVipWrapper select{
+    background:transparent !important;
+
+    color:#fff !important;
+
+    border:1px solid rgba(255,255,255,.28) !important;
+
+    box-shadow:none !important;
+
+    backdrop-filter:none !important;
+    -webkit-backdrop-filter:none !important;
+  }
+
+  /* טקסט placeholder */
+  #mainForm input::placeholder,
+  #mainForm textarea::placeholder,
+  #businessVipWrapper input::placeholder,
+  #businessVipWrapper textarea::placeholder{
+    color:rgba(255,255,255,.72) !important;
+  }
+
+  /* תיבת השם שנבנה אוטומטית */
+  #namePreview,
+  #requestText{
+    background:transparent !important;
+    color:#fff !important;
+  }	  
   </style>
 </head>
 <body>
