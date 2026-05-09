@@ -1335,6 +1335,53 @@
 	  background:
 	    radial-gradient(circle, #ffffff 0 38%, transparent 42%) !important;
 	}
+
+/* צבע אחיד לבחירת סוג בקשה */
+#mainForm #requestType{
+  background:rgba(255,255,255,.18) !important;
+
+  color:#fff !important;
+
+  border:1px solid rgba(255,255,255,.42) !important;
+  border-radius:28px !important;
+
+  padding:14px 46px 14px 18px !important;
+
+  backdrop-filter:blur(8px) !important;
+  -webkit-backdrop-filter:blur(8px) !important;
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.12) !important;
+
+  text-shadow:0 2px 8px rgba(0,0,0,.35) !important;
+
+  appearance:none !important;
+  -webkit-appearance:none !important;
+  -moz-appearance:none !important;
+
+  background-image:
+    linear-gradient(45deg, transparent 50%, #fff 50%),
+    linear-gradient(135deg, #fff 50%, transparent 50%) !important;
+
+  background-repeat:no-repeat !important;
+
+  background-size:8px 8px, 8px 8px !important;
+
+  background-position:
+    left 18px center,
+    left 26px center !important;
+}
+
+	/* הסתרת חץ מובנה נוסף */
+	#mainForm #requestType::-ms-expand{
+	  display:none;
+	}
+	
+	/* צבע הרשימה שנפתחת */
+	#mainForm #requestType option{
+	  background:#0d2630 !important;
+	  color:#fff !important;
+	}	  
 	  
   </style>
 </head>
