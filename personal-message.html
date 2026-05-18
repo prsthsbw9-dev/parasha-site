@@ -491,7 +491,9 @@
       const dear = data.gender === "female" ? "היקרה" : "היקר";
       const bornTime = data.birthTime ? ` בזמן ה${data.birthTime}` : "";
       const gregorianDateText = formatGregorianDate(data.birthDate);
-      const hebrewDateText = formatHebrewDate(data.birthDate);
+      const hebrewDateText =
+        data.hebcalInfo?.hebrewDate ||
+        formatHebrewDate(data.birthDate);
       const weekdayText = getWeekdayHebrew(data.birthDate);
       const hebrewMonth = getHebrewMonthName(data.birthDate);
       const mazalInfo = getMazalByHebrewMonth(hebrewMonth);
@@ -570,6 +572,26 @@
         console.error(err);
       }
 
+      let hebcalInfo = null;
+      
+      try{
+        hebcalInfo = await getHebcalDateInfo(data.birthDate);
+      }catch(err){
+        console.error("Hebcal error:", err);
+      }
+      
+      data.hebcalInfo = hebcalInfo;
+      
+      let hebcalInfo = null;
+      
+      try{
+        hebcalInfo = await getHebcalDateInfo(data.birthDate);
+      }catch(err){
+        console.error("Hebcal error:", err);
+      }
+      
+      data.hebcalInfo = hebcalInfo;
+      
       const message = buildLocalMessage(data);
 
       formBox.classList.add("hidden");
