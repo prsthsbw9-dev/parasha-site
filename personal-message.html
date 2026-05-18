@@ -489,6 +489,7 @@
     function buildLocalMessage(data){
       const firstName = getFirstName(data.fullName);
       const dear = data.gender === "female" ? "היקרה" : "היקר";
+      const mitzvahLabel = data.gender === "female" ? "בת המצווה" : "בר המצווה";
       const bornTime = data.birthTime ? ` בזמן ה${data.birthTime}` : "";
       const gregorianDateText = formatGregorianDate(data.birthDate);
       const hebrewDateText =
@@ -497,6 +498,14 @@
       const weekdayText = getWeekdayHebrew(data.birthDate);
       const hebrewMonth = getHebrewMonthName(data.birthDate);
       const mazalInfo = getMazalByHebrewMonth(hebrewMonth);
+    
+      const mitzvahHebrewDate =
+        data.mitzvahInfo?.mitzvahHebrewDate || "לא זוהה";
+    
+      const mitzvahGregorianDate =
+        data.mitzvahInfo?.mitzvahGregorianDate
+          ? formatGregorianDate(data.mitzvahInfo.mitzvahGregorianDate)
+          : "לא זוהה";
     
       return `${firstName} ${dear},
     
@@ -507,13 +516,17 @@
     החודש העברי שלך: ${hebrewMonth}
     המזל לפי החודש העברי: ${mazalInfo.mazal}
     
+    תאריך ${mitzvahLabel} שלך:
+    ${mitzvahHebrewDate}
+    ${mitzvahGregorianDate}
+    
     התכונות הקשורות לשורש הזמן שלך:
     ${mazalInfo.traits}
     
     רמז תיקון לפי שורש החודש:
     ${mazalInfo.tikun}
     
-    בשלב הבא נוסיף למערכת חישוב של פרשת הלידה, העלייה הקשורה אליה, וכן פרשת בר/בת המצווה — לבת לפי גיל 12 ולבן לפי גיל 13.
+    בשלב הבא נחבר את תאריך ${mitzvahLabel} גם לפרשת השבוע ולעלייה המתאימה.
     
     הערה חשובה:
     כל מה שכתוב כאן הינו מתוך השראה ממקורות יהודיים בלבד, בדרך כללית ורוחנית, ואינו מחליף עצת רב, ייעוץ מקצועי או בדיקה מעמיקה מול גורם מתאים. ייתכנו טעויות, משום שהתשובה מבוססת על מערכת טכנולוגית ואינה קביעה סופית.`;
