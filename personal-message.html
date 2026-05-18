@@ -637,7 +637,19 @@
         console.error("Mitzvah error:", err);
       }
       
-      data.mitzvahInfo = mitzvahInfo;     
+      data.mitzvahInfo = mitzvahInfo; 
+
+      let parashaInfo = null;
+      
+      try{
+        if(data.mitzvahInfo?.mitzvahGregorianDate){
+          parashaInfo = await getParashaInfo(data.mitzvahInfo.mitzvahGregorianDate);
+        }
+      }catch(err){
+        console.error("Parasha error:", err);
+      }
+      
+      data.parashaInfo = parashaInfo;      
       
       const message = buildLocalMessage(data);
 
