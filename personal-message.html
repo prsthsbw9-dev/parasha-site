@@ -532,6 +532,26 @@
         hebrewYear: data.hy
       };
     }
+
+    async function getBarBatMitzvahInfo(dateValue, gender){
+      const birthInfo = await getHebcalDateInfo(dateValue);
+    
+      const mitzvahYear =
+        gender === "female"
+          ? birthInfo.hebrewYear + 12
+          : birthInfo.hebrewYear + 13;
+    
+      const url = `https://www.hebcal.com/converter?cfg=json&h2g=1&hd=${birthInfo.hebrewDay}&hm=${encodeURIComponent(birthInfo.hebrewMonth)}&hy=${mitzvahYear}&strict=1`;
+    
+      const response = await fetch(url);
+      const data = await response.json();
+    
+      return {
+        birthHebrewDate: birthInfo.hebrewDate,
+        mitzvahHebrewDate: data.hebrew,
+        mitzvahGregorianDate: data.gy + "-" + String(data.gm).padStart(2,"0") + "-" + String(data.gd).padStart(2,"0")
+      };
+    }
     
     function typeText(element, text, speed = 18){
       element.textContent = "";
