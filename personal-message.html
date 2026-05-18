@@ -326,6 +326,26 @@
     const resultBox = document.getElementById("resultBox");
     const resultActions = document.getElementById("resultActions");
 
+    function formatGregorianDate(dateValue){
+      const date = new Date(dateValue + "T12:00:00");
+    
+      return date.toLocaleDateString("he-IL", {
+        day:"2-digit",
+        month:"2-digit",
+        year:"numeric"
+      });
+    }
+    
+    function formatHebrewDate(dateValue){
+      const date = new Date(dateValue + "T12:00:00");
+    
+      return new Intl.DateTimeFormat("he-u-ca-hebrew", {
+        day:"numeric",
+        month:"long",
+        year:"numeric"
+      }).format(date);
+    }
+    
     function getFirstName(fullName){
       return fullName.trim().split(" ")[0] || fullName.trim();
     }
@@ -334,6 +354,8 @@
       const firstName = getFirstName(data.fullName);
       const dear = data.gender === "female" ? "היקרה" : "היקר";
       const bornTime = data.birthTime ? ` בזמן ה${data.birthTime}` : "";
+      const gregorianDateText = formatGregorianDate(data.birthDate);
+      const hebrewDateText = formatHebrewDate(data.birthDate);
       const birth = new Date(data.birthDate);
       
       const month = birth.getMonth() + 1;
@@ -378,7 +400,8 @@
 
       return `${firstName} ${dear},
 
-נולדת בתאריך: ${data.birthDate}${bornTime}.
+נולדת בתאריך הלועזי: ${gregorianDateText}
+ובתאריך העברי: ${hebrewDateText}${bornTime}.
 
 המזל שלך הוא: ${hebrewMazal}
 
