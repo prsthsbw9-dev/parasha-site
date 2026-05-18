@@ -582,16 +582,6 @@
       
       data.hebcalInfo = hebcalInfo;
       
-      let hebcalInfo = null;
-      
-      try{
-        hebcalInfo = await getHebcalDateInfo(data.birthDate);
-      }catch(err){
-        console.error("Hebcal error:", err);
-      }
-      
-      data.hebcalInfo = hebcalInfo;
-      
       const message = buildLocalMessage(data);
 
       formBox.classList.add("hidden");
