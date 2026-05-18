@@ -345,7 +345,98 @@
         year:"numeric"
       }).format(date);
     }
+
+    function getWeekdayHebrew(dateValue){
+      const date = new Date(dateValue + "T12:00:00");
     
+      return date.toLocaleDateString("he-IL", {
+        weekday:"long"
+      });
+    }
+    
+    function getHebrewMonthName(dateValue){
+      const date = new Date(dateValue + "T12:00:00");
+    
+      const parts = new Intl.DateTimeFormat("he-u-ca-hebrew", {
+        month:"long"
+      }).formatToParts(date);
+    
+      const monthPart = parts.find(part => part.type === "month");
+    
+      return monthPart ? monthPart.value : "";
+    }
+    
+    function getMazalByHebrewMonth(hebrewMonth){
+      const map = {
+        "ניסן": {
+          mazal: "טלה",
+          traits: "יוזמה, התחדשות, אש פנימית ורצון לפרוץ קדימה.",
+          tikun: "לאזן בין התלהבות לבין סבלנות והקשבה."
+        },
+        "אייר": {
+          mazal: "שור",
+          traits: "יציבות, ריפוי, התמדה וחיבור עמוק לקרקע.",
+          tikun: "להפוך עקשנות לכוח של התמדה וברכה."
+        },
+        "סיוון": {
+          mazal: "תאומים",
+          traits: "תקשורת, לימוד, סקרנות וחיבור בין עולמות.",
+          tikun: "לא להתפזר, אלא להפוך ריבוי כוחות לכיוון ברור."
+        },
+        "תמוז": {
+          mazal: "סרטן",
+          traits: "רגישות, משפחתיות, עומק רגשי וזיכרון פנימי חזק.",
+          tikun: "להפוך רגישות לחמלה ולא להישאר בתוך פחד."
+        },
+        "אב": {
+          mazal: "אריה",
+          traits: "מנהיגות, לב חזק, עוצמה פנימית ורצון להשפיע.",
+          tikun: "להשתמש בכוח מתוך ענווה, ולא מתוך צורך בשליטה."
+        },
+        "אלול": {
+          mazal: "בתולה",
+          traits: "דיוק, תיקון, סדר, אחריות ויכולת לראות פרטים קטנים.",
+          tikun: "לא להפוך ביקורת פנימית לכובד, אלא לכלי של צמיחה."
+        },
+        "תשרי": {
+          mazal: "מאזניים",
+          traits: "איזון, משפט, שלום, הרמוניה ויכולת לראות שני צדדים.",
+          tikun: "להכריע מתוך אמת ולא להיתקע בריצוי."
+        },
+        "חשוון": {
+          mazal: "עקרב",
+          traits: "עומק, עוצמה פנימית, סוד, נאמנות ויכולת שינוי.",
+          tikun: "להפוך עוצמות נסתרות לאור ולא להחזיק כאב בפנים."
+        },
+        "כסלו": {
+          mazal: "קשת",
+          traits: "אמונה, תנועה, תקווה, חיפוש אמת ושאיפה למרחב.",
+          tikun: "לחבר חזון גבוה למעשה יציב ועקבי."
+        },
+        "טבת": {
+          mazal: "גדי",
+          traits: "אחריות, בנייה, משמעת, עמידות ויכולת לטפס לאט ובטוח.",
+          tikun: "לא לשאת הכול לבד, אלא ללמוד להכניס אור ורכות."
+        },
+        "שבט": {
+          mazal: "דלי",
+          traits: "מקוריות, חשיבה רחבה, נתינה לציבור וחיבור לעתיד.",
+          tikun: "לחבר רעיונות גדולים לקשר אנושי קרוב."
+        },
+        "אדר": {
+          mazal: "דגים",
+          traits: "דמיון, רגש, אמונה, עומק רוחני ויכולת להכיל.",
+          tikun: "לא להיסחף, אלא להפוך רגש לתפילה ולמעשה טוב."
+        }
+      };
+    
+      return map[hebrewMonth] || {
+        mazal: "שורש מיוחד",
+        traits: "חיפוש משמעות, רגישות פנימית ורצון להבין את עומק הדרך.",
+        tikun: "לחבר בין עומק הנשמה לבין פעולה טובה בעולם."
+      };
+    }
+        
     function getFirstName(fullName){
       return fullName.trim().split(" ")[0] || fullName.trim();
     }
