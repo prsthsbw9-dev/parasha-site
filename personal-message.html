@@ -502,6 +502,7 @@
       const aliyahMeaning = getAliyahMeaning(rootAliyah);
       const firstNameOnly = getFirstName(data.fullName);
       const gematriaValue = getGematriaValue(firstNameOnly);
+      const gematriaMeaning = getGematriaMeaning(gematriaValue);
         
       const mitzvahHebrewDate =
         data.mitzvahInfo?.mitzvahHebrewDate || "לא זוהה";
@@ -535,6 +536,9 @@
 
     גימטריית השם הפרטי שלך:
     ${gematriaValue}
+
+    רמז פנימי לפי ערך השם:
+    ${gematriaMeaning}
    
     התכונות הקשורות לשורש הזמן שלך:
     ${mazalInfo.traits}
@@ -657,6 +661,30 @@
       }
     
       return total;
+    }
+
+    function getGematriaMeaning(value){
+      if(value <= 18){
+        return "ערך שם שמרמז על שורש של חיים, התחלה ותמימות פנימית.";
+      }
+    
+      if(value <= 50){
+        return "ערך שם שמרמז על בנייה פנימית, התפתחות וחיפוש אחר יציבות אמיתית.";
+      }
+    
+      if(value <= 100){
+        return "ערך שם שמרמז על כוח השפעה, תנועה פנימית ורצון להתקדם ולשנות.";
+      }
+    
+      if(value <= 200){
+        return "ערך שם שמרמז על עומק מחשבה, חיפוש משמעות וחיבור פנימי לעולם הרוח.";
+      }
+    
+      if(value <= 400){
+        return "ערך שם שמרמז על עוצמה פנימית, אחריות והשפעה על הסביבה.";
+      }
+    
+      return "ערך שם שמרמז על נשמה בעלת עומק מיוחד, מסע פנימי מורכב וחיפוש אחר תיקון והשפעה.";
     }
     
     function typeText(element, text, speed = 18){
