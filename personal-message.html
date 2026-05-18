@@ -499,6 +499,10 @@
       const hebrewMonth = getHebrewMonthName(data.birthDate);
       const mazalInfo = getMazalByHebrewMonth(hebrewMonth);
       const rootAliyah = getAliyahByHebrewDay(data.hebcalInfo?.hebrewDay);
+      const parashaMeaning = getParashaAliyahMeaning(
+        data.parashaInfo?.parasha,
+        rootAliyah
+      );      
     
       const mitzvahHebrewDate =
         data.mitzvahInfo?.mitzvahHebrewDate || "לא זוהה";
@@ -525,7 +529,13 @@
     ${data.parashaInfo?.parasha || "לא זוהתה"}
     
     עליית השורש שלך:
-    עלייה ${rootAliyah}    
+    עלייה ${rootAliyah} 
+
+     משמעות הפרשה שלך:
+    ${parashaMeaning.parashaMeaning}
+    
+    משמעות העלייה שלך:
+    ${parashaMeaning.aliyahMeaning}   
     
     התכונות הקשורות לשורש הזמן שלך:
     ${mazalInfo.traits}
@@ -608,6 +618,41 @@
     
       return aliyot[index];
     }
+
+    function getParashaAliyahMeaning(parashaName, aliyahName){
+      const cleanParasha = (parashaName || "").replace("פרשת ", "").trim();
+    
+      const defaultMeaning = {
+        parashaMeaning: "הפרשה שלך מרמזת על חיבור אישי לתורה, ועל נקודת דרך שבה האדם מוזמן לזהות את הבחירה, הניסיון והשליחות שלו בעולם.",
+        aliyahMeaning: "העלייה שלך מרמזת על שלב מסוים במסע החיים: לא רק מה האדם עובר, אלא איך הוא בוחר להגיב, להתחזק ולהפוך את הדרך שלו לברכה."
+      };
+    
+      const meanings = {
+        "ראה": {
+          parashaMeaning: "פרשת ראה עוסקת בכוח הבחירה: ברכה וקללה, דרך של אור מול דרך של הסתר. מי שמתחבר לפרשה זו מקבל רמז לחיים שבהם הבחירות הפנימיות חשובות מאוד, והלב נדרש לראות מעבר למה שנראה בחוץ.",
+          aliyot: {
+            "ראשונה": "עלייה ראשונה מרמזת על התחלה של בחירה מודעת: לדעת שיש דרך של ברכה, ולבחור בה גם כשיש בלב בלבול.",
+            "שנייה": "עלייה שנייה מרמזת על בירור פנימי: לא להיגרר אחרי השפעות חיצוניות, אלא לבנות נאמנות לאמת שלך.",
+            "שלישית": "עלייה שלישית מרמזת על כוח של התקדמות מתוך ניסיון. יש כאן נשמה שמבקשת ללמוד לראות את הטוב גם בתוך מצבים מורכבים, ולבחור באמונה במקום בפחד.",
+            "רביעית": "עלייה רביעית מרמזת על תיקון דרך הנתינה והקדושה שבחיי היום־יום.",
+            "חמישית": "עלייה חמישית מרמזת על אחריות רוחנית: לא רק לבחור נכון לעצמך, אלא להשפיע טוב גם על אחרים.",
+            "שישית": "עלייה שישית מרמזת על נדיבות, פתיחת הלב והבנה שהשפע נועד לעבור דרכך לעולם.",
+            "שביעית": "עלייה שביעית מרמזת על השלמת דרך: לחבר בין אמונה, מעשה וברכה בצורה מאוזנת."
+          }
+        }
+      };
+    
+      const parashaData = meanings[cleanParasha];
+    
+      if(!parashaData){
+        return defaultMeaning;
+      }
+    
+      return {
+        parashaMeaning: parashaData.parashaMeaning,
+        aliyahMeaning: parashaData.aliyot[aliyahName] || defaultMeaning.aliyahMeaning
+      };
+    }    
     
     function typeText(element, text, speed = 18){
       element.textContent = "";
