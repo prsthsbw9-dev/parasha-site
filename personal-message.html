@@ -498,6 +498,7 @@
       const weekdayText = getWeekdayHebrew(data.birthDate);
       const hebrewMonth = getHebrewMonthName(data.birthDate);
       const mazalInfo = getMazalByHebrewMonth(hebrewMonth);
+      const rootAliyah = getAliyahByHebrewDay(data.hebcalInfo?.hebrewDay);
     
       const mitzvahHebrewDate =
         data.mitzvahInfo?.mitzvahHebrewDate || "לא זוהה";
@@ -521,7 +522,10 @@
     ${mitzvahGregorianDate}
 
     פרשת ${mitzvahLabel} שלך:
-    ${data.parashaInfo?.parasha || "לא זוהתה"}    
+    ${data.parashaInfo?.parasha || "לא זוהתה"}
+    
+    עליית השורש שלך:
+    עלייה ${rootAliyah}    
     
     התכונות הקשורות לשורש הזמן שלך:
     ${mazalInfo.traits}
@@ -582,6 +586,28 @@
         parashaEnglish: parashaItem ? parashaItem.title : ""
       };
     }    
+
+    function getAliyahByHebrewDay(hebrewDay){
+      const aliyot = [
+        "ראשונה",
+        "שנייה",
+        "שלישית",
+        "רביעית",
+        "חמישית",
+        "שישית",
+        "שביעית"
+      ];
+    
+      const dayNumber = Number(hebrewDay);
+    
+      if(!dayNumber){
+        return "לא זוהתה";
+      }
+    
+      const index = (dayNumber - 1) % 7;
+    
+      return aliyot[index];
+    }
     
     function typeText(element, text, speed = 18){
       element.textContent = "";
