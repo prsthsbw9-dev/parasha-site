@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>התיקון שלי</title>
+
+  <style>
+    *{ box-sizing:border-box; }
+
+    html,body{
+      min-height:100%;
+      margin:0;
+    }
+
+    body{
+      font-family:Arial,sans-serif;
+      background:#071014;
+      color:#fff;
+      overflow-x:hidden;
+    }
+
+    .sea-bg-video{
+      position:fixed;
+      inset:0;
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      z-index:0;
+      background:#071014;
+      transform:scale(1.04);
+      pointer-events:none;
+    }
+
+    .sea-bg-overlay{
+      position:fixed;
+      inset:0;
+      z-index:1;
+      background:rgba(0,0,0,.18);
+      pointer-events:none;
+    }
+
+    .page{
+      position:relative;
+      z-index:2;
+      min-height:100vh;
+      width:min(100%,560px);
+      margin:0 auto;
+      padding:20px 10px 34px;
+      text-align:center;
+    }
+
+    .hero-logo{
+      width:clamp(150px,42vw,225px);
+      height:clamp(150px,42vw,225px);
+      object-fit:cover;
+      border-radius:50%;
+      display:block;
+      margin:0 auto 10px;
+      border:2px solid rgba(255,255,255,.76);
+      box-shadow:
+        0 0 0 4px rgba(80,80,255,.32),
+        0 0 34px rgba(255,255,255,.28),
+        0 12px 32px rgba(0,0,0,.45);
+    }
+
+    h1{
+      margin:0 0 8px;
+      font-size:clamp(34px,8vw,54px);
+      font-weight:900;
+      text-shadow:0 4px 18px rgba(0,0,0,.75);
+    }
+
+    .subtitle{
+      margin:0 auto 18px;
+      max-width:430px;
+      font-size:clamp(16px,4vw,22px);
+      line-height:1.55;
+      font-weight:700;
+      color:rgba(255,255,255,.94);
+      text-shadow:0 3px 14px rgba(0,0,0,.72);
+    }
+
+    .glass-box{
+      width:100%;
+      background:transparent;
+      border:1px solid rgba(255,255,255,.28);
+      border-radius:24px;
+      padding:16px 12px;
+      box-shadow:none;
+    }
+
+    .field{
+      text-align:right;
+      margin-bottom:14px;
+    }
+
+    label{
+      display:block;
+      margin-bottom:7px;
+      font-weight:800;
+      color:#fff;
+      text-shadow:0 2px 8px rgba(0,0,0,.55);
+    }
+
+    input,select{
+      width:100%;
+      border:1px solid rgba(255,255,255,.34);
+      border-radius:16px;
+      padding:13px 12px;
+      background:transparent;
+      color:#fff;
+      font-size:15px;
+      outline:none;
+      text-shadow:0 2px 8px rgba(0,0,0,.35);
+    }
+
+    input::placeholder{
+      color:rgba(255,255,255,.62);
+    }
+
+    select option{
+      background:#0d2630;
+      color:#fff;
+    }
+
+    .send-btn{
+      width:100%;
+      border:1px solid rgba(255,255,255,.45);
+      border-radius:22px;
+      padding:16px;
+      margin-top:8px;
+      background:rgba(60,170,180,.34);
+      color:#fff;
+      font-size:18px;
+      font-weight:900;
+      cursor:pointer;
+      box-shadow:
+        0 8px 26px rgba(0,0,0,.28),
+        inset 0 1px 0 rgba(255,255,255,.18);
+    }
+
+    .result-box{
+      display:none;
+      min-height:78vh;
+      width:100%;
+      border:1px solid rgba(255,255,255,.42);
+      border-radius:18px;
+      padding:20px 16px;
+      margin-top:10px;
+      text-align:right;
+      background:rgba(0,0,0,.08);
+      color:#fff;
+      line-height:2;
+      font-size:17px;
+      white-space:pre-wrap;
+      text-shadow:0 2px 10px rgba(0,0,0,.75);
+    }
+
+    .small-disclaimer{
+      margin-top:20px;
+      font-size:11px;
+      line-height:1.7;
+      color:rgba(255,255,255,.72);
+    }
+
+    .back-link{
+      display:inline-block;
+      margin-top:14px;
+      color:#fff;
+      text-decoration:none;
+      font-weight:800;
+      text-shadow:0 2px 8px rgba(0,0,0,.55);
+    }
+
+    .hidden{
+      display:none !important;
+    }
+  </style>
+</head>
+
+<body>
+
+  <video class="sea-bg-video" autoplay muted loop playsinline poster="ocean-poster.jpg">
+    <source src="ocean.mp4" type="video/mp4">
+  </video>
+
+  <div class="sea-bg-overlay"></div>
+
+  <div class="page">
+
+    <img class="hero-logo" src="logo.png" alt="התיקון שלי" />
+
+    <h1>התיקון שלי</h1>
+
+    <div class="subtitle">
+      הזינו את הפרטים וקבלו רמז אישי לחיזוק לפי פרד״ס
+    </div>
+
+    <div id="formBox" class="glass-box">
+
+      <div class="field">
+        <label for="fullName">מה שמך המלא?</label>
+        <input id="fullName" type="text" placeholder="לדוגמה: דוד כהן">
+      </div>
+
+      <div class="field">
+        <label for="gender">זכר / נקבה</label>
+        <select id="gender">
+          <option value="">בחר/י</option>
+          <option value="male">זכר</option>
+          <option value="female">נקבה</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="fatherName">שם האבא</label>
+        <input id="fatherName" type="text" placeholder="שם האב">
+      </div>
+
+      <div class="field">
+        <label for="motherName">שם האמא</label>
+        <input id="motherName" type="text" placeholder="שם האם">
+      </div>
+
+      <div class="field">
+        <label for="birthType">סוג תאריך הלידה</label>
+        <select id="birthType">
+          <option value="gregorian">לועזי</option>
+          <option value="hebrew">עברי</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="birthDate">תאריך לידה</label>
+        <input id="birthDate" type="text" placeholder="לועזי: 1990-05-18 / עברי: י״ד אייר תש״ן">
+      </div>
+
+      <div class="field">
+        <label for="birthTime">האם ידוע לך זמן הלידה?</label>
+        <select id="birthTime">
+          <option value="">לא ידוע</option>
+          <option value="בוקר">בוקר</option>
+          <option value="צהריים">צהריים</option>
+          <option value="ערב">ערב</option>
+          <option value="לילה">לילה</option>
+        </select>
+      </div>
+
+      <button class="send-btn" id="generateBtn">
+        גלה את הרמז שלך
+      </button>
+
+      <a class="back-link" href="aliyah-gate.html">חזרה לפרד״ס</a>
+
+    </div>
+
+    <div id="resultBox" class="result-box"></div>
+
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+
+    import {
+      getFirestore,
+      collection,
+      addDoc,
+      serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDtrEyAnVMhCZWnSaUYut9LxNC17C3So1Y",
+      authDomain: "parasha-site-links.firebaseapp.com",
+      projectId: "parasha-site-links",
+      storageBucket: "parasha-site-links.firebasestorage.app",
+      messagingSenderId: "799400165769",
+      appId: "1:799400165769:web:1b5cf70eee80e772df6158"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const generateBtn = document.getElementById("generateBtn");
+    const formBox = document.getElementById("formBox");
+    const resultBox = document.getElementById("resultBox");
+
+    function getFirstName(fullName){
+      return fullName.trim().split(" ")[0] || fullName.trim();
+    }
+
+    function buildLocalMessage(data){
+      const firstName = getFirstName(data.fullName);
+      const dear = data.gender === "female" ? "היקרה" : "היקר";
+      const bornTime = data.birthTime ? ` בזמן ה${data.birthTime}` : "";
+
+      return `${firstName} ${dear},
+
+נולדת בתאריך: ${data.birthDate}${bornTime}.
+
+על פי דרך הפרד״ס, כל אדם מגיע לעולם עם שורש מיוחד, נטייה פנימית ותפקיד של תיקון. מתוך הפרטים שמסרת, ניתן לראות רמז לכך שהדרך שלך קשורה לחיבור בין עומק פנימי לבין השפעה על אחרים.
+
+בדרך הפשט — יש בך כוח של בנייה, סדר והתקדמות מתוך מעשים פשוטים ועקביים.
+
+בדרך הרמז — נראה שיש לך נטייה לזהות סימנים, להבין מצבים מעבר למה שנראה לעין, ולהרגיש מתי משהו נכון או לא נכון עבורך.
+
+בדרך הדרש — החיים שלך מבקשים ממך להפוך ניסיונות לסיפור של צמיחה, ולא להישאר במקום של קושי אלא למצוא בו שליחות.
+
+בדרך הסוד — שורש התיקון שלך קשור לגילוי האור הפנימי דווקא מתוך סערות, בלבולים ושינויים. כאשר את/ה בוחר/ת להתקרב לטוב, לחזק אחרים, ולפעול באמונה — את/ה מגלה חלק עמוק יותר מהנשמה.
+
+התכונות הבולטות שלך:
+רגישות פנימית, רצון להבין לעומק, יכולת השפעה על הסביבה, וחיפוש אחר משמעות אמיתית.
+
+רמז התיקון שלך:
+לא לברוח מהעומק שלך — אלא להפוך אותו לכלי של אור, חיזוק והשפעה טובה.
+
+הערה חשובה:
+כל מה שכתוב כאן הינו מתוך השראה ממקורות יהודיים בלבד, בדרך כללית ורוחנית, ואינו מחליף עצת רב, ייעוץ מקצועי או בדיקה מעמיקה מול גורם מתאים. ייתכנו טעויות, משום שהתשובה מבוססת על מערכת טכנולוגית ואינה קביעה סופית.`;
+    }
+
+    function typeText(element, text, speed = 18){
+      element.textContent = "";
+      let i = 0;
+
+      const timer = setInterval(()=>{
+        element.textContent += text.charAt(i);
+        i++;
+
+        if(i >= text.length){
+          clearInterval(timer);
+        }
+      }, speed);
+    }
+
+    generateBtn.addEventListener("click", async ()=>{
+
+      const data = {
+        fullName: document.getElementById("fullName").value.trim(),
+        gender: document.getElementById("gender").value,
+        fatherName: document.getElementById("fatherName").value.trim(),
+        motherName: document.getElementById("motherName").value.trim(),
+        birthType: document.getElementById("birthType").value,
+        birthDate: document.getElementById("birthDate").value.trim(),
+        birthTime: document.getElementById("birthTime").value,
+        createdAt: serverTimestamp()
+      };
+
+      if(!data.fullName || !data.gender || !data.fatherName || !data.motherName || !data.birthDate){
+        alert("יש למלא שם מלא, זכר/נקבה, שם אב, שם אם ותאריך לידה.");
+        return;
+      }
+
+      try{
+        await addDoc(collection(db, "personalMessages"), data);
+      }catch(err){
+        console.error(err);
+      }
+
+      const message = buildLocalMessage(data);
+
+      formBox.classList.add("hidden");
+      resultBox.style.display = "block";
+
+      typeText(resultBox, message);
+    });
+  </script>
+
+</body>
+</html>
