@@ -336,14 +336,59 @@
       });
     }
     
+    function hebrewNumber(num){
+      const ones = ["","א","ב","ג","ד","ה","ו","ז","ח","ט"];
+      const tens = ["","י","כ","ל","מ","נ","ס","ע","פ","צ"];
+      const hundreds = ["","ק","ר","ש","ת"];
+    
+      let n = Number(num);
+    
+      if(n >= 5000){
+        n = n % 1000;
+      }
+    
+      let result = "";
+    
+      while(n >= 400){
+        result += "ת";
+        n -= 400;
+      }
+    
+      if(n >= 100){
+        result += hundreds[Math.floor(n / 100)];
+        n = n % 100;
+      }
+    
+      if(n === 15){
+        result += "טו";
+      }else if(n === 16){
+        result += "טז";
+      }else{
+        result += tens[Math.floor(n / 10)];
+        result += ones[n % 10];
+      }
+    
+      if(result.length === 1){
+        return result + "׳";
+      }
+    
+      return result.slice(0,-1) + "״" + result.slice(-1);
+    }
+    
     function formatHebrewDate(dateValue){
       const date = new Date(dateValue + "T12:00:00");
     
-      return new Intl.DateTimeFormat("he-u-ca-hebrew", {
+      const parts = new Intl.DateTimeFormat("he-u-ca-hebrew", {
         day:"numeric",
         month:"long",
         year:"numeric"
-      }).format(date);
+      }).formatToParts(date);
+    
+      const day = parts.find(part => part.type === "day")?.value || "";
+      const month = parts.find(part => part.type === "month")?.value || "";
+      const year = parts.find(part => part.type === "year" || part.type === "relatedYear")?.value || "";
+    
+      return `${hebrewNumber(day)} ב${month} ${hebrewNumber(year)}`;
     }
 
     function getWeekdayHebrew(dateValue){
