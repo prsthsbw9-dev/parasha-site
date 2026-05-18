@@ -565,6 +565,20 @@
         mitzvahGregorianDate: data.gy + "-" + String(data.gm).padStart(2,"0") + "-" + String(data.gd).padStart(2,"0")
       };
     }
+
+    async function getParashaInfo(dateValue){
+      const url = `https://www.hebcal.com/shabbat?cfg=json&geonameid=293397&M=on&gy=${dateValue.slice(0,4)}&gm=${Number(dateValue.slice(5,7))}&gd=${Number(dateValue.slice(8,10))}`;
+    
+      const response = await fetch(url);
+      const data = await response.json();
+    
+      const parashaItem = data.items.find(item => item.category === "parashat");
+    
+      return {
+        parasha: parashaItem ? parashaItem.hebrew : "לא זוהתה פרשה",
+        parashaEnglish: parashaItem ? parashaItem.title : ""
+      };
+    }    
     
     function typeText(element, text, speed = 18){
       element.textContent = "";
