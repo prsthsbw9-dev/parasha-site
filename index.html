@@ -1584,6 +1584,46 @@
   .fruit-email{ right:40px; bottom:38px; }
 }
 
+.fruit-link{
+  position:absolute;
+  z-index:3;
+  width:68px;
+  height:68px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+  text-decoration:none;
+
+.fruit-letter{
+  position:absolute;
+  top:72px;
+  left:50%;
+  transform:translateX(-50%);
+  color:#fff;
+  font-size:18px;
+  font-weight:900;
+  line-height:1;
+  text-shadow:0 3px 10px rgba(0,0,0,.85);
+  pointer-events:none;
+}
+
+.fruit-word{
+  font-size:13px;
+  white-space:nowrap;
+}
+
+@media (max-width:420px){
+  .fruit-letter{
+    top:64px;
+    font-size:16px;
+  }
+
+  .fruit-word{
+    font-size:12px;
+  }
+}	  
   </style>
 </head>
 <body>
