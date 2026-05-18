@@ -1517,6 +1517,7 @@
   display:flex;
   align-items:center;
   justify-content:center;
+  flex-direction:column;
   text-decoration:none;
   background:radial-gradient(circle at 35% 25%, rgba(255,255,255,.34), rgba(255,255,255,.08) 42%, rgba(255,255,255,.02) 70%);
   border:1px solid rgba(255,255,255,.48);
@@ -1555,11 +1556,43 @@
 .fruit-instagram i{ color:#E4405F !important; }
 .fruit-facebook i{ color:#1877F2 !important; }
 .fruit-youtube i{ color:#FF0000 !important; }
-.fruit-tiktok i{ color:#FFFFFF !important; filter:drop-shadow(-2px 0 0 #25F4EE) drop-shadow(2px 0 0 #FE2C55); }
+.fruit-tiktok i{
+  color:#FFFFFF !important;
+  filter:drop-shadow(-2px 0 0 #25F4EE) drop-shadow(2px 0 0 #FE2C55);
+}
 .fruit-whatsapp i{ color:#25D366 !important; }
 .fruit-email i{ color:#FFFFFF !important; }
 
+.secret-admin-hit{
+  position:absolute;
+  left:8px;
+  bottom:8px;
+  width:34px;
+  height:34px;
+  opacity:0;
+  z-index:20;
+}
+
+.fruit-letter{
+  position:absolute;
+  top:72px;
+  left:50%;
+  transform:translateX(-50%);
+  color:#fff;
+  font-size:18px;
+  font-weight:900;
+  line-height:1;
+  text-shadow:0 3px 10px rgba(0,0,0,.85);
+  pointer-events:none;
+}
+
+.fruit-word{
+  font-size:13px;
+  white-space:nowrap;
+}
+
 @media (max-width:420px){
+
   .pardes-tree-wrap{
     height:330px;
     width:min(100%, 390px);
@@ -1582,36 +1615,16 @@
   .fruit-tiktok{ right:10px; top:120px; }
   .fruit-whatsapp{ left:40px; bottom:38px; }
   .fruit-email{ right:40px; bottom:38px; }
-}
 
-.fruit-link{
-  position:absolute;
-  z-index:3;
-  width:68px;
-  height:68px;
-  border-radius:50%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  flex-direction:column;
-  text-decoration:none;
+  .fruit-letter{
+    top:64px;
+    font-size:16px;
+  }
 
-.fruit-letter{
-  position:absolute;
-  top:72px;
-  left:50%;
-  transform:translateX(-50%);
-  color:#fff;
-  font-size:18px;
-  font-weight:900;
-  line-height:1;
-  text-shadow:0 3px 10px rgba(0,0,0,.85);
-  pointer-events:none;
-}
+  .fruit-word{
+    font-size:12px;
+  }
 
-.fruit-word{
-  font-size:13px;
-  white-space:nowrap;
 }
 
 @media (max-width:420px){
@@ -1719,6 +1732,8 @@
 			<span class="fruit-letter fruit-word">פנייה</span>
           </a>
 
+		  <a href="secret-aliyah.html" class="secret-admin-hit" aria-label="כניסה נסתרת"></a>
+			
         </div>
 		
 		<div class="entry-actions">
