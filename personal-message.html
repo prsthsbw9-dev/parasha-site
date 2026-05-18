@@ -601,6 +601,16 @@
       }
       
       data.hebcalInfo = hebcalInfo;
+
+       let mitzvahInfo = null;
+      
+      try{
+        mitzvahInfo = await getBarBatMitzvahInfo(data.birthDate, data.gender);
+      }catch(err){
+        console.error("Mitzvah error:", err);
+      }
+      
+      data.mitzvahInfo = mitzvahInfo;     
       
       const message = buildLocalMessage(data);
 
