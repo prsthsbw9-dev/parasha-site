@@ -500,11 +500,7 @@
       const mazalInfo = getMazalByHebrewMonth(hebrewMonth);
       const rootAliyah = getAliyahByHebrewDay(data.hebcalInfo?.hebrewDay);
       const aliyahMeaning = getAliyahMeaning(rootAliyah);
-      const parashaMeaning = getParashaAliyahMeaning(
-        data.parashaInfo?.parasha,
-        rootAliyah
-      );      
-    
+        
       const mitzvahHebrewDate =
         data.mitzvahInfo?.mitzvahHebrewDate || "לא זוהה";
     
@@ -534,13 +530,7 @@
 
     משמעות עליית השורש:
     ${aliyahMeaning}
-
-     משמעות הפרשה שלך:
-    ${parashaMeaning.parashaMeaning}
-    
-    משמעות העלייה שלך:
-    ${parashaMeaning.aliyahMeaning}   
-    
+   
     התכונות הקשורות לשורש הזמן שלך:
     ${mazalInfo.traits}
     
