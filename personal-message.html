@@ -266,7 +266,7 @@
 
       <div class="field">
         <label for="birthDate">תאריך לידה</label>
-        <input id="birthDate" type="text" placeholder="לועזי: 1990-05-18 / עברי: י״ד אייר תש״ן">
+        <input id="birthDate" type="date">
       </div>
 
       <div class="field">
@@ -334,6 +334,47 @@
       const firstName = getFirstName(data.fullName);
       const dear = data.gender === "female" ? "היקרה" : "היקר";
       const bornTime = data.birthTime ? ` בזמן ה${data.birthTime}` : "";
+      const birth = new Date(data.birthDate);
+      
+      const month = birth.getMonth() + 1;
+      const day = birth.getDate();
+      
+      let hebrewMazal = "";
+      let mazalTraits = "";
+      let spiritualPath = "";
+      
+      if(
+        (month == 3 && day >= 21) ||
+        (month == 4 && day <= 19)
+      ){
+        hebrewMazal = "טלה";
+        mazalTraits = "אש פנימית, יוזמה, אומץ ורצון להוביל.";
+        spiritualPath = "ללמוד לאזן בין כוח פנימי לבין סבלנות והקשבה.";
+      }
+      
+      else if(
+        (month == 4 && day >= 20) ||
+        (month == 5 && day <= 20)
+      ){
+        hebrewMazal = "שור";
+        mazalTraits = "יציבות, התמדה, עומק רגשי וחיבור לחומר ולרוח.";
+        spiritualPath = "ללמוד להשתחרר מפחדים ולהתקדם מתוך אמונה.";
+      }
+      
+      else if(
+        (month == 5 && day >= 21) ||
+        (month == 6 && day <= 20)
+      ){
+        hebrewMazal = "תאומים";
+        mazalTraits = "חכמה, סקרנות, תקשורת וחשיבה מהירה.";
+        spiritualPath = "ללמוד להתמקד ולא להתפזר בין עולמות.";
+      }
+      
+      else{
+        hebrewMazal = "מזל מיוחד";
+        mazalTraits = "רגישות פנימית וחיפוש משמעות עמוקה.";
+        spiritualPath = "לחבר בין עומק הנשמה לבין מעשים בעולם.";
+      }     
 
       return `${firstName} ${dear},
 
