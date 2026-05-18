@@ -517,6 +517,20 @@
     כל מה שכתוב כאן הינו מתוך השראה ממקורות יהודיים בלבד, בדרך כללית ורוחנית, ואינו מחליף עצת רב, ייעוץ מקצועי או בדיקה מעמיקה מול גורם מתאים. ייתכנו טעויות, משום שהתשובה מבוססת על מערכת טכנולוגית ואינה קביעה סופית.`;
     }
 
+    async function getHebcalDateInfo(dateValue){
+      const url = `https://www.hebcal.com/converter?cfg=json&date=${dateValue}&g2h=1&strict=1`;
+    
+      const response = await fetch(url);
+      const data = await response.json();
+    
+      return {
+        hebrewDate: data.hebrew,
+        hebrewDay: data.hd,
+        hebrewMonth: data.hm,
+        hebrewYear: data.hy
+      };
+    }
+    
     function typeText(element, text, speed = 18){
       element.textContent = "";
       let i = 0;
