@@ -504,6 +504,20 @@
       return fullName.trim().split(" ")[0] || fullName.trim();
     }
 
+    function buildJewishName(data){
+      let parentsText = "";
+    
+      if(data.parentDisplay === "father"){
+        parentsText = data.fatherName;
+      }else if(data.parentDisplay === "mother"){
+        parentsText = data.motherName;
+      }else{
+        parentsText = `${data.fatherName} ו${data.motherName}`;
+      }
+    
+      return `${data.firstName} ${data.relationType} ${parentsText}`;
+    }
+    
     function buildLocalMessage(data){
       const firstName = getFirstName(data.fullName);
       const dear = data.gender === "female" ? "היקרה" : "היקר";
