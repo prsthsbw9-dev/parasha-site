@@ -861,6 +861,19 @@
         document.getElementById("hebrewDateBox").classList.toggle("hidden", selectedType !== "hebrew");
       });
     });  
+
+    async function getGregorianFromHebrewDate(hebrewDay, hebrewMonth, hebrewYear){
+      const url = `https://www.hebcal.com/converter?cfg=json&h2g=1&hd=${hebrewDay}&hm=${encodeURIComponent(hebrewMonth)}&hy=${hebrewYear}&strict=1`;
+    
+      const response = await fetch(url);
+      const data = await response.json();
+    
+      if(!data.gy || !data.gm || !data.gd){
+        throw new Error("Invalid Hebrew date");
+      }
+    
+      return data.gy + "-" + String(data.gm).padStart(2,"0") + "-" + String(data.gd).padStart(2,"0");
+    }
     
     generateBtn.addEventListener("click", async ()=>{
 
