@@ -667,6 +667,7 @@
       const weekdayText = getWeekdayHebrew(data.birthDate);
       const hebrewMonth = getHebrewMonthName(data.birthDate);
       const mazalInfo = getMazalByHebrewMonth(hebrewMonth);
+      const monthDetails = getJewishMonthDetails(hebrewMonth);
       const rootAliyah = getAliyahByHebrewDay(data.hebcalInfo?.hebrewDay);
       const aliyahMeaning = getAliyahMeaning(rootAliyah);
       const gematriaValue = getGematriaValue(data.firstName);
@@ -681,22 +682,46 @@
           : "לא זוהה";
     
       return `${firstName} ${dear},
+        
+    נולדת בתאריך הלועזי:
+    ${gregorianDateText}
     
-    נולדת בתאריך הלועזי: ${gregorianDateText}
-    ובתאריך העברי: ${hebrewDateText}${bornTime}.
-    השם כפי שיופיע לחיזוק ותפילה: ${jewishName}
-    יום הלידה שלך: ${weekdayText}
-    החודש העברי שלך: ${hebrewMonth}
-    המזל לפי חודש הלידה העברי: ${mazalInfo.mazal}    
-    תאריך ${mitzvahLabel} שלך:
+    ובתאריך העברי:
+    ${hebrewDateText}${bornTime}
+    
+    השם כפי שיופיע לחיזוק ותפילה:
+    ${jewishName}
+    
+    יום הלידה:
+    ${weekdayText}
+    
+    חודש הלידה העברי:
+    ${hebrewMonth}
+    
+    המזל לפי חודש הלידה העברי:
+    ${mazalInfo.mazal}
+    
+    היסוד המקושר למזל:
+    ${monthDetails.element}
+    
+    השבט המקושר לחודש הלידה:
+    ${monthDetails.tribe}
+    
+    החוש הפנימי המקושר לחודש:
+    ${monthDetails.sense}
+    
+    תאריך ${mitzvahLabel}:
     ${mitzvahHebrewDate}
     ${mitzvahGregorianDate}
-
-    פרשת ${mitzvahLabel} שלך:
+    
+    פרשת ${mitzvahLabel}:
     ${data.parashaInfo?.parasha || "לא זוהתה"}
     
-    עליית השורש שלך:
+    עליית השורש:
     עלייה ${rootAliyah}
+    
+    גימטריית השם הפרטי:
+    ${gematriaValue}
 
     משמעות עליית השורש:
     ${aliyahMeaning}
