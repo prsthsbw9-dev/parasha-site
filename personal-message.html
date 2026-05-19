@@ -998,12 +998,6 @@
         return;
       }
 
-      try{
-        await addDoc(collection(db, "personalMessages"), data);
-      }catch(err){
-        console.error(err);
-      }
-
       if(data.birthType === "hebrew"){
         try{
           data.birthDate = await getGregorianFromHebrewDate(
@@ -1013,9 +1007,15 @@
           );
         }catch(err){
           console.error("Hebrew to Gregorian error:", err);
-          alert("לא הצלחנו להמיר את התאריך העברי. נא להזין שנה עברית באותיות, לדוגמה: התשל״ג, או במספרים, לדוגמה: 5733.");
+          alert("לא הצלחנו להמיר את התאריך העברי. נא לבדוק שהיום, החודש והשנה תקינים.");
           return;
         }
+      }
+      
+      try{
+        await addDoc(collection(db, "personalMessages"), data);
+      }catch(err){
+        console.error(err);
       }
       
       let hebcalInfo = null;
