@@ -295,6 +295,37 @@
       text-shadow:0 2px 8px rgba(0,0,0,.55);
     }
 
+    .root-aliyah-link{
+      display:block;
+      margin-top:12px;
+      border:1px solid rgba(120,220,255,.65);
+      border-radius:16px;
+      padding:14px 14px;
+      background:rgba(60,170,200,.13);
+      color:#fff;
+      text-decoration:none;
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,.05) inset,
+        0 0 16px rgba(90,210,255,.18);
+      text-align:center;
+    }
+    
+    .root-aliyah-link span{
+      display:block;
+      font-size:14px;
+      font-weight:800;
+      color:rgba(255,255,255,.88);
+      margin-bottom:5px;
+    }
+    
+    .root-aliyah-link strong{
+      display:block;
+      font-size:17px;
+      font-weight:900;
+      color:#fff;
+      text-shadow:0 0 10px rgba(120,220,255,.28);
+    }
+    
     .result-actions .main-action{
       background:rgba(60,170,180,.46);
       box-shadow:
@@ -970,6 +1001,11 @@
               <div class="result-label">עליית השורש בפרשת ${mitzvahLabel}</div>
               <div class="result-value">עלייה ${rootAliyah}</div>
             </div>
+
+            <a class="root-aliyah-link" href="#" onclick="return false;">
+              <span>זו העלייה שמאירה את שורש החיבור שלך</span>
+              <strong>${data.parashaInfo?.parasha || "פרשה לא זוהתה"} · עלייה ${rootAliyah}</strong>
+            </a>            
           </div>
       
           <div class="result-note">
