@@ -275,16 +275,80 @@
       </div>     
       
       <div class="field">
-        <label for="birthType">סוג תאריך הלידה</label>
-        <select id="birthType">
-          <option value="gregorian">לועזי</option>
-          <option value="hebrew">עברי</option>
-        </select>
-      </div>
-
-      <div class="field">
-        <label for="birthDate">תאריך לידה</label>
-        <input id="birthDate" type="date">
+        <label>תאריך לידה</label>
+      
+        <div class="date-choice-box">
+          <label class="radio-option">
+            <input type="radio" name="birthType" value="gregorian" checked>
+            <span>לועזי</span>
+          </label>
+      
+          <label class="radio-option">
+            <input type="radio" name="birthType" value="hebrew">
+            <span>עברי</span>
+          </label>
+        </div>
+      
+        <div id="gregorianDateBox" class="date-input-box">
+          <input id="birthDate" type="date">
+        </div>
+      
+        <div id="hebrewDateBox" class="date-input-box hidden">
+          <div class="hebrew-date-grid">
+            <select id="hebrewDay">
+              <option value="">יום</option>
+              <option value="1">א׳</option>
+              <option value="2">ב׳</option>
+              <option value="3">ג׳</option>
+              <option value="4">ד׳</option>
+              <option value="5">ה׳</option>
+              <option value="6">ו׳</option>
+              <option value="7">ז׳</option>
+              <option value="8">ח׳</option>
+              <option value="9">ט׳</option>
+              <option value="10">י׳</option>
+              <option value="11">י״א</option>
+              <option value="12">י״ב</option>
+              <option value="13">י״ג</option>
+              <option value="14">י״ד</option>
+              <option value="15">ט״ו</option>
+              <option value="16">ט״ז</option>
+              <option value="17">י״ז</option>
+              <option value="18">י״ח</option>
+              <option value="19">י״ט</option>
+              <option value="20">כ׳</option>
+              <option value="21">כ״א</option>
+              <option value="22">כ״ב</option>
+              <option value="23">כ״ג</option>
+              <option value="24">כ״ד</option>
+              <option value="25">כ״ה</option>
+              <option value="26">כ״ו</option>
+              <option value="27">כ״ז</option>
+              <option value="28">כ״ח</option>
+              <option value="29">כ״ט</option>
+              <option value="30">ל׳</option>
+            </select>
+      
+            <select id="hebrewMonth">
+              <option value="">חודש</option>
+              <option value="Nisan">ניסן</option>
+              <option value="Iyyar">אייר</option>
+              <option value="Sivan">סיוון</option>
+              <option value="Tamuz">תמוז</option>
+              <option value="Av">אב</option>
+              <option value="Elul">אלול</option>
+              <option value="Tishrei">תשרי</option>
+              <option value="Cheshvan">חשוון</option>
+              <option value="Kislev">כסלו</option>
+              <option value="Tevet">טבת</option>
+              <option value="Shvat">שבט</option>
+              <option value="Adar">אדר</option>
+              <option value="Adar2">אדר ב׳</option>
+            </select>
+      
+            <input id="hebrewYear" type="number" placeholder="שנה עברית, לדוגמה: 5733">
+          </div>
+        </div>
       </div>
 
       <div class="field">
