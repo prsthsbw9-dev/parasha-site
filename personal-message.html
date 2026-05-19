@@ -1439,7 +1439,36 @@
       try{
         const html = buildLocalMessageHtml(data);
         resultBox.innerHTML = html;
+      
+        const aiLoadingBox = document.createElement("div");
+        aiLoadingBox.className = "ai-section";
+        aiLoadingBox.innerHTML = `
+          <div class="ai-section-title">העמקה אישית</div>
+          <div class="ai-section-content">✨ מכינים עבורך העמקה אישית עדינה...</div>
+        `;
+      
+        resultBox.appendChild(aiLoadingBox);
+      
+        try{
+          const aiMessage = await getAiPersonalMessage(data);
+      
+          aiLoadingBox.innerHTML = `
+            <div class="ai-section-title">העמקה אישית</div>
+            <div class="ai-section-content">${escapeHtml(aiMessage).replace(/\n/g, "<br>")}</div>
+          `;
+        }catch(aiErr){
+          console.warn("AI message error:", aiErr);
+      
+          aiLoadingBox.innerHTML = `
+            <div class="ai-section-title">העמקה אישית</div>
+            <div class="ai-section-content">
+              כרגע ההעמקה האישית אינה זמינה. הנתונים הבסיסיים למעלה חושבו בהצלחה.
+            </div>
+          `;
+        }
+      
         resultActions.classList.remove("hidden");
+      
       }catch(err){
         console.error("Render error:", err);
         resultBox.textContent = "אירעה תקלה ביצירת ההודעה האישית. אפשר לנסות שוב בעוד רגע.";
