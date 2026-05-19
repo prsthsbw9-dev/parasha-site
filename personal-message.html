@@ -1367,8 +1367,6 @@
       
       data.parashaInfo = parashaInfo;            
       
-      let message = "";
-      
       try{
         const html = buildLocalMessageHtml(data);
         resultBox.innerHTML = html;
@@ -1377,8 +1375,6 @@
         console.error("Render error:", err);
         resultBox.textContent = "אירעה תקלה ביצירת ההודעה האישית. אפשר לנסות שוב בעוד רגע.";
       }
-      
-      typeText(resultBox, message);
     });
 
     document.getElementById("printBtn").addEventListener("click", ()=>{
