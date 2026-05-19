@@ -739,7 +739,6 @@
       const hebrewMonth = getHebrewMonthName(data.birthDate);
       const mazalInfo = getMazalByHebrewMonth(hebrewMonth);
       const monthDetails = getJewishMonthDetails(hebrewMonth);
-      const monthDetails = getJewishMonthDetails(hebrewMonth);
       const rootAliyah = getAliyahByHebrewDay(data.hebcalInfo?.hebrewDay);
       const aliyahMeaning = getAliyahMeaning(rootAliyah);
       const gematriaValue = getGematriaValue(data.firstName);
@@ -754,67 +753,49 @@
           : "לא זוהה";
     
       return `${firstName} ${dear},
-        
-    נולדת בתאריך הלועזי:
-    ${gregorianDateText}
-    
-    ובתאריך העברי:
-    ${hebrewDateText}${bornTime}
-    
-    השם כפי שיופיע לחיזוק ותפילה:
-    ${jewishName}
-    
-    יום הלידה:
-    ${weekdayText}
-    
-    חודש הלידה העברי:
-    ${hebrewMonth}
-    
-    המזל לפי חודש הלידה העברי:
-    ${mazalInfo.mazal}
-    
-    היסוד המקושר למזל:
-    ${monthDetails.element}
-    
-    השבט המקושר לחודש הלידה:
-    ${monthDetails.tribe}
-    
-    החוש הפנימי המקושר לחודש:
-    ${monthDetails.sense}
-    
-    תאריך ${mitzvahLabel}:
-    ${mitzvahHebrewDate}
-    ${mitzvahGregorianDate}
-    
-    פרשת ${mitzvahLabel}:
-    ${data.parashaInfo?.parasha || "לא זוהתה"}
-    
-    עליית השורש:
-    עלייה ${rootAliyah}
-    
-    גימטריית השם הפרטי:
-    ${gematriaValue}
-
-    משמעות עליית השורש:
-    ${aliyahMeaning}
-
-    גימטריית השם הפרטי שלך:
-    ${gematriaValue}
-
-    רמז פנימי לפי ערך השם:
-    ${gematriaMeaning}
-   
-    התכונות הקשורות לשורש הזמן שלך:
-    ${mazalInfo.traits}
-    
-    רמז תיקון לפי שורש החודש:
-    ${mazalInfo.tikun}
-    
-   פרשת ${mitzvahLabel} שלך היא שער רוחני חשוב, שממנו ניתן להתחיל להבין את נקודת החיבור שלך לתורה ולתיקון האישי שלך.
-    
-    הערה חשובה:
-    כל מה שכתוב כאן הינו מתוך השראה ממקורות יהודיים בלבד, בדרך כללית ורוחנית, ואינו מחליף עצת רב, ייעוץ מקצועי או בדיקה מעמיקה מול גורם מתאים. ייתכנו טעויות, משום שהתשובה מבוססת על מערכת טכנולוגית ואינה קביעה סופית.`;
-    }
+      
+      נולדת בתאריך הלועזי:
+      ${gregorianDateText}
+      
+      ובתאריך העברי:
+      ${hebrewDateText}${bornTime}
+      
+      השם כפי שיופיע לחיזוק ותפילה:
+      ${jewishName}
+      
+      יום הלידה:
+      ${weekdayText}
+      
+      חודש הלידה העברי:
+      ${hebrewMonth}
+      
+      המזל לפי חודש הלידה העברי:
+      ${mazalInfo.mazal}
+      
+      היסוד המקושר למזל:
+      ${monthDetails.element}
+      
+      השבט המקושר לחודש הלידה:
+      ${monthDetails.tribe}
+      
+      החוש הפנימי המקושר לחודש:
+      ${monthDetails.sense}
+      
+      תאריך ${mitzvahLabel}:
+      ${mitzvahHebrewDate}
+      ${mitzvahGregorianDate}
+      
+      פרשת ${mitzvahLabel}:
+      ${data.parashaInfo?.parasha || "לא זוהתה"}
+      
+      עליית השורש:
+      עלייה ${rootAliyah}
+      
+      גימטריית השם הפרטי:
+      ${gematriaValue}
+      
+      הערה חשובה:
+      הנתונים כאן הם בסיס ראשוני לפי שם, תאריך עברי ושיוכים מסורתיים כלליים. אין לראות בהם קביעה מוחלטת על האדם, על נשמתו או על עתידו.`;
 
     async function getHebcalDateInfo(dateValue){
       const url = `https://www.hebcal.com/converter?cfg=json&date=${dateValue}&g2h=1&strict=1`;
