@@ -1310,8 +1310,11 @@
 
       formBox.classList.add("hidden");
       resultBox.style.display = "block";
-      resultBox.textContent = "🤿 צוללים לעומק הנתונים שלך...";
-      
+      resultBox.innerHTML = `
+        <div class="result-loading">
+          🤿 צוללים לעומק הנתונים שלך...
+        </div>
+      `;
       if(data.birthType === "hebrew"){
         try{
           data.birthDate = await getGregorianFromHebrewDate(
