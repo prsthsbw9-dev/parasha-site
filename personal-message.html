@@ -854,6 +854,13 @@
     
       return "ערך שם שמרמז על נשמה בעלת עומק מיוחד, מסע פנימי מורכב וחיפוש אחר תיקון והשפעה.";
     }
+
+     async function getAiPersonalMessage(data){
+      // בשלב הזה עדיין אין חיבור לשרת/AI.
+      // אנחנו משאירים את התוצאה המקומית כגיבוי,
+      // ובהמשך נחליף רק את הפונקציה הזאת לקריאה לשרת.
+      return buildLocalMessage(data);
+    }   
     
     function typeText(element, text, speed = 18){
       element.textContent = "";
@@ -1043,11 +1050,19 @@
       
       data.parashaInfo = parashaInfo;      
       
-      const message = buildLocalMessage(data);
-
       formBox.classList.add("hidden");
       resultBox.style.display = "block";
-
+      resultBox.textContent = "🤿 צוללים לעומק הנתונים שלך...";
+      
+      let message = "";
+      
+      try{
+        message = await getAiPersonalMessage(data);
+      }catch(err){
+        console.error("AI message error:", err);
+        message = "אירעה תקלה ביצירת ההודעה האישית. אפשר לנסות שוב בעוד רגע.";
+      }
+      
       typeText(resultBox, message);
     });
 
