@@ -1367,10 +1367,12 @@
       let message = "";
       
       try{
-        message = await getAiPersonalMessage(data);
+        const html = buildLocalMessageHtml(data);
+        resultBox.innerHTML = html;
+        resultActions.classList.remove("hidden");
       }catch(err){
-        console.error("AI message error:", err);
-        message = "אירעה תקלה ביצירת ההודעה האישית. אפשר לנסות שוב בעוד רגע.";
+        console.error("Render error:", err);
+        resultBox.textContent = "אירעה תקלה ביצירת ההודעה האישית. אפשר לנסות שוב בעוד רגע.";
       }
       
       typeText(resultBox, message);
