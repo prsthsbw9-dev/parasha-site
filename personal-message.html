@@ -1186,6 +1186,15 @@
     function wait(ms){
       return new Promise(resolve => setTimeout(resolve, ms));
     }
+
+    function escapeHtml(text){
+      return String(text)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
     
     async function getAiPersonalMessage(data){
       const apiUrl = "https://us-central1-parasha-site-links.cloudfunctions.net/createPersonalReading";
@@ -1233,13 +1242,11 @@
     
         return result.message;
     
-      }catch(err){
-        console.warn("AI server is not ready yet, using local fallback:", err);
-    
-        await wait(700);
-        return buildLocalMessage(data);
+        }catch(err){
+          console.warn("AI server is not ready yet:", err);
+          throw err;
+        }
       }
-    }
     
     function typeText(element, text, speed = 18){
       element.textContent = "";
