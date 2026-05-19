@@ -463,6 +463,32 @@
         year:"numeric"
       });
     }
+
+    function formatHebrewYearLabel(year){
+    return "ה" + hebrewNumber(year);
+  }
+  
+  function populateHebrewYearSelect(){
+    const hebrewYearSelect = document.getElementById("hebrewYear");
+  
+    if(!hebrewYearSelect){
+      return;
+    }
+  
+    const startYear = 5795;
+    const endYear = 5600;
+  
+    for(let year = startYear; year >= endYear; year--){
+      const option = document.createElement("option");
+  
+      option.value = String(year);
+      option.textContent = formatHebrewYearLabel(year);
+  
+      hebrewYearSelect.appendChild(option);
+    }
+  }
+  
+  populateHebrewYearSelect();  
     
     function hebrewNumber(num){
       const ones = ["","א","ב","ג","ד","ה","ו","ז","ח","ט"];
