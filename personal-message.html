@@ -914,6 +914,20 @@
         console.error(err);
       }
 
+      if(data.birthType === "hebrew"){
+        try{
+          data.birthDate = await getGregorianFromHebrewDate(
+            data.hebrewDay,
+            data.hebrewMonth,
+            data.hebrewYear
+          );
+        }catch(err){
+          console.error("Hebrew to Gregorian error:", err);
+          alert("לא הצלחנו להמיר את התאריך העברי. נא לבדוק שהיום, החודש והשנה תקינים.");
+          return;
+        }
+      }
+      
       let hebcalInfo = null;
       
       try{
