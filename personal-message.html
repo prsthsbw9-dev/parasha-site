@@ -723,10 +723,12 @@
     generateBtn.addEventListener("click", async ()=>{
 
       const data = {
-        fullName: document.getElementById("fullName").value.trim(),
+        firstName: document.getElementById("firstName").value.trim(),
+        relationType: document.getElementById("relationType").value,
         gender: document.getElementById("gender").value,
         fatherName: document.getElementById("fatherName").value.trim(),
         motherName: document.getElementById("motherName").value.trim(),
+        parentDisplay: document.getElementById("parentDisplay").value,
         birthType: document.getElementById("birthType").value,
         birthDate: document.getElementById("birthDate").value.trim(),
         birthTime: document.getElementById("birthTime").value,
