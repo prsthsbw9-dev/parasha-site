@@ -852,6 +852,15 @@
         relationType.value = "בת";
       }
     });
+
+    document.querySelectorAll('input[name="birthType"]').forEach(radio=>{
+      radio.addEventListener("change", ()=>{
+        const selectedType = document.querySelector('input[name="birthType"]:checked').value;
+    
+        document.getElementById("gregorianDateBox").classList.toggle("hidden", selectedType !== "gregorian");
+        document.getElementById("hebrewDateBox").classList.toggle("hidden", selectedType !== "hebrew");
+      });
+    });  
     
     generateBtn.addEventListener("click", async ()=>{
 
