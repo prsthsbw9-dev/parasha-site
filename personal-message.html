@@ -645,6 +645,18 @@
       return `${hebrewNumber(day)} ב${month} ${hebrewNumber(year)}`;
     }
 
+    function formatHebrewDateWithYearNumber(data){
+      const hebrewDay = data.hebcalInfo?.hebrewDay;
+      const hebrewYear = data.hebcalInfo?.hebrewYear;
+      const hebrewMonth = getHebrewMonthName(data.birthDate);
+    
+      if(!hebrewDay || !hebrewYear || !hebrewMonth){
+        return formatHebrewDate(data.birthDate);
+      }
+    
+      return `${hebrewNumber(hebrewDay)} ב${hebrewMonth} ה${hebrewNumber(hebrewYear)}   |   ${hebrewYear}`;
+    }    
+
     function getWeekdayHebrew(dateValue){
       const date = new Date(dateValue + "T12:00:00");
     
