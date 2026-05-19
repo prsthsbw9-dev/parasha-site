@@ -734,6 +734,17 @@
       }, speed);
     }
 
+    document.getElementById("gender").addEventListener("change", ()=>{
+      const gender = document.getElementById("gender").value;
+      const relationType = document.getElementById("relationType");
+    
+      if(gender === "male"){
+        relationType.value = "בן";
+      }else if(gender === "female"){
+        relationType.value = "בת";
+      }
+    });
+    
     generateBtn.addEventListener("click", async ()=>{
 
       const data = {
