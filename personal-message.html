@@ -864,7 +864,121 @@
       הערה חשובה:
       הנתונים כאן הם בסיס ראשוני לפי שם, תאריך עברי ושיוכים מסורתיים כלליים. אין לראות בהם קביעה מוחלטת על האדם, על נשמתו או על עתידו.`;
       }
+
+      function buildLocalMessageHtml(data){
+        const jewishName = buildJewishName(data);
+        const dear = data.gender === "female" ? "היקרה" : "היקר";
+        const mitzvahLabel = data.gender === "female" ? "בת המצווה" : "בר המצווה";
+        const bornTime = data.birthTime ? ` בזמן ה${data.birthTime}` : "";
       
+        const gregorianDateText = formatGregorianDate(data.birthDate);
+      
+        const hebrewDateText =
+          data.hebcalInfo?.hebrewDate ||
+          formatHebrewDate(data.birthDate);
+      
+        const weekdayText = getWeekdayHebrew(data.birthDate);
+        const hebrewMonth = getHebrewMonthName(data.birthDate);
+        const mazalInfo = getMazalByHebrewMonth(hebrewMonth);
+        const monthDetails = getJewishMonthDetails(hebrewMonth);
+        const rootAliyah = getAliyahByHebrewDay(data.hebcalInfo?.hebrewDay);
+        const gematriaValue = getGematriaValue(data.firstName);
+      
+        const mitzvahHebrewDate =
+          data.mitzvahInfo?.mitzvahHebrewDate || "לא זוהה";
+      
+        const mitzvahGregorianDate =
+          data.mitzvahInfo?.mitzvahGregorianDate
+            ? formatGregorianDate(data.mitzvahInfo.mitzvahGregorianDate)
+            : "לא זוהה";
+      
+        return `
+          <div class="result-main-title">${data.firstName} ${dear}</div>
+      
+          <div class="result-section">
+            <div class="result-section-title">פרטים בסיסיים</div>
+      
+            <div class="result-item">
+              <div class="result-label">נולדת בתאריך הלועזי</div>
+              <div class="result-value">${gregorianDateText}</div>
+            </div>
+      
+            <div class="result-item">
+              <div class="result-label">ובתאריך העברי</div>
+              <div class="result-value">${hebrewDateText}${bornTime}</div>
+            </div>
+      
+            <div class="result-item">
+              <div class="result-label">השם כפי שיופיע לחיזוק ותפילה</div>
+              <div class="result-value">${jewishName}</div>
+            </div>
+          </div>
+      
+          <div class="result-section">
+            <div class="result-section-title">נתוני שורש וזמן</div>
+      
+            <div class="result-item">
+              <div class="result-label">יום הלידה</div>
+              <div class="result-value">${weekdayText}</div>
+            </div>
+      
+            <div class="result-item">
+              <div class="result-label">חודש הלידה העברי</div>
+              <div class="result-value">${hebrewMonth}</div>
+            </div>
+      
+            <div class="result-item">
+              <div class="result-label">המזל לפי חודש הלידה העברי</div>
+              <div class="result-value">${mazalInfo.mazal}</div>
+            </div>
+      
+            <div class="result-item">
+              <div class="result-label">היסוד המקושר למזל</div>
+              <div class="result-value">${monthDetails.element}</div>
+            </div>
+      
+            <div class="result-item">
+              <div class="result-label">השבט המקושר לחודש הלידה</div>
+              <div class="result-value">${monthDetails.tribe}</div>
+            </div>
+      
+            <div class="result-item">
+              <div class="result-label">החוש הפנימי המקושר לחודש</div>
+              <div class="result-value">${monthDetails.sense}</div>
+            </div>
+      
+            <div class="result-item">
+              <div class="result-label">עליית השורש</div>
+              <div class="result-value">עלייה ${rootAliyah}</div>
+            </div>
+      
+            <div class="result-item">
+              <div class="result-label">גימטריית השם הפרטי</div>
+              <div class="result-value">${gematriaValue}</div>
+            </div>
+          </div>
+      
+          <div class="result-section">
+            <div class="result-section-title">${mitzvahLabel}</div>
+      
+            <div class="result-item">
+              <div class="result-label">תאריך ${mitzvahLabel}</div>
+              <div class="result-value">${mitzvahHebrewDate}<br>${mitzvahGregorianDate}</div>
+            </div>
+      
+            <div class="result-item">
+              <div class="result-label">פרשת ${mitzvahLabel}</div>
+              <div class="result-value">${data.parashaInfo?.parasha || "לא זוהתה"}</div>
+            </div>
+          </div>
+      
+          <div class="result-note">
+            הנתונים כאן הם בסיס ראשוני לפי שם, תאריך עברי ושיוכים מסורתיים כלליים.
+            אין לראות בהם קביעה מוחלטת על האדם, על נשמתו או על עתידו.
+          </div>
+        `;
+      }
+    
     async function getHebcalDateInfo(dateValue){
       const url = `https://www.hebcal.com/converter?cfg=json&date=${dateValue}&g2h=1&strict=1`;
     
