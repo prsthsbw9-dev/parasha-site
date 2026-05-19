@@ -855,12 +855,17 @@
       return "ערך שם שמרמז על נשמה בעלת עומק מיוחד, מסע פנימי מורכב וחיפוש אחר תיקון והשפעה.";
     }
 
-     async function getAiPersonalMessage(data){
-      // בשלב הזה עדיין אין חיבור לשרת/AI.
-      // אנחנו משאירים את התוצאה המקומית כגיבוי,
-      // ובהמשך נחליף רק את הפונקציה הזאת לקריאה לשרת.
+    function wait(ms){
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+    
+    async function getAiPersonalMessage(data){
+      // השהיה קצרה רק כדי לראות את הודעת הצלילה בזמן הבדיקה.
+      // כשנחבר AI אמיתי, אפשר יהיה למחוק את השורה הזאת.
+      await wait(700);
+    
       return buildLocalMessage(data);
-    }   
+    }
     
     function typeText(element, text, speed = 18){
       element.textContent = "";
