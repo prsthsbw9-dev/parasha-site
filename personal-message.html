@@ -917,8 +917,10 @@
       return 5000 + yearValue;
     }    
     
-    async function getGregorianFromHebrewDate(hebrewDay, hebrewMonth, hebrewYear){
-      const url = `https://www.hebcal.com/converter?cfg=json&h2g=1&hd=${hebrewDay}&hm=${encodeURIComponent(hebrewMonth)}&hy=${hebrewYear}&strict=1`;
+    async function getGregorianFromHebrewDate(hebrewDay, hebrewMonth, hebrewYearText){
+      const hebrewYearNumber = normalizeHebrewYear(hebrewYearText);
+    
+      const url = `https://www.hebcal.com/converter?cfg=json&h2g=1&hd=${hebrewDay}&hm=${encodeURIComponent(hebrewMonth)}&hy=${hebrewYearNumber}&strict=1`;
     
       const response = await fetch(url);
       const data = await response.json();
