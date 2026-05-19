@@ -844,9 +844,7 @@
       const mitzvahLabel = data.gender === "female" ? "בת המצווה" : "בר המצווה";
       const bornTime = data.birthTime ? ` בזמן ה${data.birthTime}` : "";
       const gregorianDateText = formatGregorianDate(data.birthDate);
-      const hebrewDateText =
-        data.hebcalInfo?.hebrewDate ||
-        formatHebrewDate(data.birthDate);
+      const hebrewDateText = formatHebrewDateWithYearNumber(data);
       const weekdayText = getWeekdayHebrew(data.birthDate);
       const hebrewMonth = getHebrewMonthName(data.birthDate);
       const mazalInfo = getMazalByHebrewMonth(hebrewMonth);
@@ -916,9 +914,7 @@
       
         const gregorianDateText = formatGregorianDate(data.birthDate);
       
-        const hebrewDateText =
-          data.hebcalInfo?.hebrewDate ||
-          formatHebrewDate(data.birthDate);
+        const hebrewDateText = formatHebrewDateWithYearNumber(data);
       
         const weekdayText = getWeekdayHebrew(data.birthDate);
         const hebrewMonth = getHebrewMonthName(data.birthDate);
