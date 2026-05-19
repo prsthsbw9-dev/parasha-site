@@ -635,11 +635,82 @@
         tikun: "לחבר בין עומק הנשמה לבין פעולה טובה בעולם."
       };
     }
-        
+
+    function getJewishMonthDetails(hebrewMonth){
+      const map = {
+        "ניסן": {
+          element: "אש",
+          tribe: "יהודה",
+          sense: "דיבור"
+        },
+        "אייר": {
+          element: "אדמה",
+          tribe: "יששכר",
+          sense: "הרהור / מחשבה"
+        },
+        "סיוון": {
+          element: "אוויר",
+          tribe: "זבולון",
+          sense: "הליכה / תנועה"
+        },
+        "תמוז": {
+          element: "מים",
+          tribe: "ראובן",
+          sense: "ראייה"
+        },
+        "אב": {
+          element: "אש",
+          tribe: "שמעון",
+          sense: "שמיעה"
+        },
+        "אלול": {
+          element: "אדמה",
+          tribe: "גד",
+          sense: "מעשה"
+        },
+        "תשרי": {
+          element: "אוויר",
+          tribe: "אפרים",
+          sense: "מישוש / חיבור"
+        },
+        "חשוון": {
+          element: "מים",
+          tribe: "מנשה",
+          sense: "ריח"
+        },
+        "כסלו": {
+          element: "אש",
+          tribe: "בנימין",
+          sense: "שינה"
+        },
+        "טבת": {
+          element: "אדמה",
+          tribe: "דן",
+          sense: "כעס / גבול פנימי"
+        },
+        "שבט": {
+          element: "אוויר",
+          tribe: "אשר",
+          sense: "אכילה"
+        },
+        "אדר": {
+          element: "מים",
+          tribe: "נפתלי",
+          sense: "שחוק / שמחה"
+        }
+      };
+    
+      return map[hebrewMonth] || {
+        element: "לא זוהה",
+        tribe: "לא זוהה",
+        sense: "לא זוהה"
+      };
+    }
+    
     function getFirstName(fullName){
       return fullName.trim().split(" ")[0] || fullName.trim();
     }
-
+    
     function buildJewishName(data){
       let parentsText = "";
     
