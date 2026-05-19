@@ -533,8 +533,7 @@
       const mazalInfo = getMazalByHebrewMonth(hebrewMonth);
       const rootAliyah = getAliyahByHebrewDay(data.hebcalInfo?.hebrewDay);
       const aliyahMeaning = getAliyahMeaning(rootAliyah);
-      const firstNameOnly = getFirstName(data.fullName);
-      const gematriaValue = getGematriaValue(firstNameOnly);
+      const gematriaValue = getGematriaValue(data.firstName);
       const gematriaMeaning = getGematriaMeaning(gematriaValue);
         
       const mitzvahHebrewDate =
