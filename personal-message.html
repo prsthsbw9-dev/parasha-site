@@ -519,7 +519,8 @@
     }
     
     function buildLocalMessage(data){
-      const firstName = getFirstName(data.fullName);
+      const firstName = data.firstName;
+      const jewishName = buildJewishName(data);
       const dear = data.gender === "female" ? "היקרה" : "היקר";
       const mitzvahLabel = data.gender === "female" ? "בת המצווה" : "בר המצווה";
       const bornTime = data.birthTime ? ` בזמן ה${data.birthTime}` : "";
@@ -548,7 +549,7 @@
     
     נולדת בתאריך הלועזי: ${gregorianDateText}
     ובתאריך העברי: ${hebrewDateText}${bornTime}.
-    
+    השם לפי הייחוס היהודי: ${jewishName}
     יום הלידה שלך: ${weekdayText}
     החודש העברי שלך: ${hebrewMonth}
     המזל לפי החודש העברי: ${mazalInfo.mazal}
