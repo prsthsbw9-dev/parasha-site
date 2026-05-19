@@ -884,8 +884,11 @@
         fatherName: document.getElementById("fatherName").value.trim(),
         motherName: document.getElementById("motherName").value.trim(),
         parentDisplay: document.getElementById("parentDisplay").value,
-        birthType: document.getElementById("birthType").value,
+        birthType: document.querySelector('input[name="birthType"]:checked').value,
         birthDate: document.getElementById("birthDate").value.trim(),
+        hebrewDay: document.getElementById("hebrewDay").value,
+        hebrewMonth: document.getElementById("hebrewMonth").value,
+        hebrewYear: document.getElementById("hebrewYear").value.trim(),
         birthTime: document.getElementById("birthTime").value,
         createdAt: serverTimestamp()
       };
