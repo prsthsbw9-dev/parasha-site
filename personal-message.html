@@ -463,32 +463,6 @@
         year:"numeric"
       });
     }
-
-    function formatHebrewYearLabel(year){
-    return "ה" + hebrewNumber(year);
-  }
-  
-  function populateHebrewYearSelect(){
-    const hebrewYearSelect = document.getElementById("hebrewYear");
-  
-    if(!hebrewYearSelect){
-      return;
-    }
-  
-    const startYear = 5795;
-    const endYear = 5600;
-  
-    for(let year = startYear; year >= endYear; year--){
-      const option = document.createElement("option");
-  
-      option.value = String(year);
-      option.textContent = formatHebrewYearLabel(year);
-  
-      hebrewYearSelect.appendChild(option);
-    }
-  }
-  
-  populateHebrewYearSelect();  
     
     function hebrewNumber(num){
       const ones = ["","א","ב","ג","ד","ה","ו","ז","ח","ט"];
@@ -528,6 +502,32 @@
     
       return result.slice(0,-1) + "״" + result.slice(-1);
     }
+
+    function formatHebrewYearLabel(year){
+    return "ה" + hebrewNumber(year);
+  }
+  
+  function populateHebrewYearSelect(){
+    const hebrewYearSelect = document.getElementById("hebrewYear");
+  
+    if(!hebrewYearSelect){
+      return;
+    }
+  
+    const startYear = 5795;
+    const endYear = 5600;
+  
+    for(let year = startYear; year >= endYear; year--){
+      const option = document.createElement("option");
+  
+      option.value = String(year);
+      option.textContent = formatHebrewYearLabel(year);
+  
+      hebrewYearSelect.appendChild(option);
+    }
+  }
+  
+  populateHebrewYearSelect();  
     
     function formatHebrewDate(dateValue){
       const date = new Date(dateValue + "T12:00:00");
@@ -945,10 +945,8 @@
       return 5000 + yearValue;
     }    
     
-    async function getGregorianFromHebrewDate(hebrewDay, hebrewMonth, hebrewYearText){
-      const hebrewYearNumber = normalizeHebrewYear(hebrewYearText);
-    
-      const url = `https://www.hebcal.com/converter?cfg=json&h2g=1&hd=${hebrewDay}&hm=${encodeURIComponent(hebrewMonth)}&hy=${hebrewYearNumber}&strict=1`;
+    async function getGregorianFromHebrewDate(hebrewDay, hebrewMonth, hebrewYear){
+      const url = `https://www.hebcal.com/converter?cfg=json&h2g=1&hd=${hebrewDay}&hm=${encodeURIComponent(hebrewMonth)}&hy=${hebrewYear}&strict=1`;
     
       const response = await fetch(url);
       const data = await response.json();
