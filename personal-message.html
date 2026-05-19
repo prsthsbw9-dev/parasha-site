@@ -998,6 +998,10 @@
         return;
       }
 
+      formBox.classList.add("hidden");
+      resultBox.style.display = "block";
+      resultBox.textContent = "🤿 צוללים לעומק הנתונים שלך...";
+      
       if(data.birthType === "hebrew"){
         try{
           data.birthDate = await getGregorianFromHebrewDate(
@@ -1048,11 +1052,7 @@
         console.error("Parasha error:", err);
       }
       
-      data.parashaInfo = parashaInfo;      
-      
-      formBox.classList.add("hidden");
-      resultBox.style.display = "block";
-      resultBox.textContent = "🤿 צוללים לעומק הנתונים שלך...";
+      data.parashaInfo = parashaInfo;            
       
       let message = "";
       
