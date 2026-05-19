@@ -749,8 +749,8 @@
         createdAt: serverTimestamp()
       };
 
-      if(!data.fullName || !data.gender || !data.fatherName || !data.motherName || !data.birthDate){
-        alert("יש למלא שם מלא, זכר/נקבה, שם אב, שם אם ותאריך לידה.");
+      if(!data.firstName || !data.relationType || !data.gender || !data.fatherName || !data.motherName || !data.birthDate){
+        alert("יש למלא שם פרטי, בן/בת, זכר/נקבה, שם אב, שם אם ותאריך לידה.");
         return;
       }
 
