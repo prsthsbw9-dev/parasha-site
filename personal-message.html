@@ -860,11 +860,57 @@
     }
     
     async function getAiPersonalMessage(data){
-      // השהיה קצרה רק כדי לראות את הודעת הצלילה בזמן הבדיקה.
-      // כשנחבר AI אמיתי, אפשר יהיה למחוק את השורה הזאת.
-      await wait(700);
+      const apiUrl = "https://us-central1-parasha-site-links.cloudfunctions.net/createPersonalReading";
     
-      return buildLocalMessage(data);
+      try{
+        const response = await fetch(apiUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            firstName: data.firstName,
+            jewishName: buildJewishName(data),
+            gender: data.gender,
+            relationType: data.relationType,
+            fatherName: data.fatherName,
+            motherName: data.motherName,
+            parentDisplay: data.parentDisplay,
+            birthType: data.birthType,
+            birthDate: data.birthDate,
+            hebrewDate: data.hebcalInfo?.hebrewDate || "",
+            hebrewDay: data.hebcalInfo?.hebrewDay || "",
+            hebrewMonth: getHebrewMonthName(data.birthDate),
+            hebrewYear: data.hebcalInfo?.hebrewYear || "",
+            weekday: getWeekdayHebrew(data.birthDate),
+            birthTime: data.birthTime,
+            mitzvahType: data.gender === "female" ? "בת מצווה" : "בר מצווה",
+            mitzvahHebrewDate: data.mitzvahInfo?.mitzvahHebrewDate || "",
+            mitzvahGregorianDate: data.mitzvahInfo?.mitzvahGregorianDate || "",
+            parasha: data.parashaInfo?.parasha || "",
+            rootAliyah: getAliyahByHebrewDay(data.hebcalInfo?.hebrewDay),
+            gematriaValue: getGematriaValue(data.firstName)
+          })
+        });
+    
+        if(!response.ok){
+          throw new Error("AI server returned an error");
+        }
+    
+        const result = await response.json();
+    
+        if(!result.message){
+          throw new Error("Missing AI message");
+        }
+    
+        return result.message;
+    
+      }catch(err){
+        console.warn("AI server is not ready yet, using local fallback:", err);
+    
+        await wait(700);
+        return buildLocalMessage(data);
+      }
     }
     
     function typeText(element, text, speed = 18){
