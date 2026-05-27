@@ -162,83 +162,171 @@
     .fruit-link{
       position:absolute;
       z-index:3;
-      width:68px;
-      height:68px;
+      width:72px;
+      height:72px;
       border-radius:50%;
       display:flex;
       align-items:center;
       justify-content:center;
       flex-direction:column;
       text-decoration:none;
-      background:radial-gradient(circle at 35% 25%, rgba(255,255,255,.34), rgba(255,255,255,.08) 42%, rgba(255,255,255,.02) 70%);
-      border:1px solid rgba(255,255,255,.48);
+      overflow:visible;
+      background:
+        radial-gradient(circle at 32% 22%, rgba(255,255,255,.92), rgba(255,255,255,.34) 18%, rgba(255,255,255,.07) 46%),
+        radial-gradient(circle at 50% 72%, rgba(0,0,0,.18), rgba(0,0,0,.02) 62%);
+      border:1px solid rgba(255,255,255,.72);
       box-shadow:
-        0 0 0 6px rgba(255,255,255,.06),
-        0 10px 24px rgba(0,0,0,.32),
-        inset 0 1px 0 rgba(255,255,255,.30);
+        0 0 0 6px rgba(255,255,255,.07),
+        0 10px 25px rgba(0,0,0,.36),
+        0 0 22px var(--fruit-glow, rgba(255,255,255,.28)),
+        inset 0 2px 0 rgba(255,255,255,.55),
+        inset 0 -10px 20px rgba(0,0,0,.14);
       backdrop-filter:blur(7px);
       -webkit-backdrop-filter:blur(7px);
-      transition:transform .22s ease, box-shadow .22s ease, background .22s ease;
+      transition:transform .22s ease, box-shadow .22s ease, filter .22s ease;
+    }
+
+    .fruit-link::before{
+      content:"";
+      position:absolute;
+      top:-8px;
+      right:17px;
+      width:18px;
+      height:11px;
+      border-radius:100% 0 100% 0;
+      background:linear-gradient(135deg, rgba(160,255,170,.95), rgba(38,150,72,.88));
+      transform:rotate(-22deg);
+      box-shadow:0 0 10px rgba(95,255,140,.32);
+    }
+
+    .fruit-link::after{
+      content:"";
+      position:absolute;
+      inset:7px 10px auto auto;
+      width:18px;
+      height:18px;
+      border-radius:50%;
+      background:rgba(255,255,255,.35);
+      filter:blur(1px);
+      pointer-events:none;
     }
 
     .fruit-link:hover{
-      transform:translateY(-4px) scale(1.06);
-      background:radial-gradient(circle at 35% 25%, rgba(255,255,255,.46), rgba(255,255,255,.12) 42%, rgba(255,255,255,.04) 72%);
+      transform:translateY(-5px) scale(1.08);
+      filter:saturate(1.15) brightness(1.08);
       box-shadow:
-        0 0 0 8px rgba(255,255,255,.08),
-        0 14px 30px rgba(0,0,0,.38),
-        0 0 18px rgba(255,255,255,.34),
-        inset 0 1px 0 rgba(255,255,255,.38);
+        0 0 0 9px rgba(255,255,255,.09),
+        0 15px 32px rgba(0,0,0,.42),
+        0 0 30px var(--fruit-glow, rgba(255,255,255,.42)),
+        0 0 56px var(--fruit-glow-soft, rgba(255,255,255,.20)),
+        inset 0 2px 0 rgba(255,255,255,.70),
+        inset 0 -12px 22px rgba(0,0,0,.16);
+    }
+
+    .pardes-fruit-icon{
+      position:relative;
+      z-index:2;
+      font-size:36px;
+      line-height:1;
+      transform:translateY(-1px);
+      text-shadow:
+        0 3px 8px rgba(0,0,0,.38),
+        0 0 14px rgba(255,255,255,.24);
+    }
+
+    .fruit-pshat{
+      right:118px;
+      top:62px;
+      background:
+        radial-gradient(circle at 30% 22%, rgba(255,255,255,.95), rgba(255,185,170,.34) 18%, rgba(255,72,78,.88) 56%, rgba(145,12,24,.94) 100%);
+      --fruit-glow:rgba(255,72,78,.62);
+      --fruit-glow-soft:rgba(255,72,78,.26);
+    }
+
+    .fruit-remez{
+      left:118px;
+      top:62px;
+      background:
+        radial-gradient(circle at 30% 22%, rgba(255,255,255,.95), rgba(220,190,255,.34) 18%, rgba(126,72,255,.90) 56%, rgba(52,22,132,.96) 100%);
+      --fruit-glow:rgba(152,98,255,.68);
+      --fruit-glow-soft:rgba(152,98,255,.28);
+    }
+
+    .fruit-drash{
+      left:18px;
+      top:132px;
+      background:
+        radial-gradient(circle at 30% 22%, rgba(255,255,255,.95), rgba(255,226,158,.38) 18%, rgba(255,145,38,.92) 56%, rgba(145,67,4,.96) 100%);
+      --fruit-glow:rgba(255,160,48,.70);
+      --fruit-glow-soft:rgba(255,160,48,.30);
+    }
+
+    .fruit-sod{
+      right:18px;
+      top:132px;
+      background:
+        radial-gradient(circle at 30% 22%, rgba(255,255,255,.98), rgba(255,250,180,.40) 18%, rgba(255,219,65,.94) 56%, rgba(155,110,0,.96) 100%);
+      --fruit-glow:rgba(255,225,75,.72);
+      --fruit-glow-soft:rgba(255,225,75,.32);
+    }
+
+    .fruit-whatsapp{
+      left:34px;
+      bottom:82px;
+      background:
+        radial-gradient(circle at 30% 22%, rgba(255,255,255,.94), rgba(180,255,210,.34) 18%, rgba(37,211,102,.90) 56%, rgba(15,105,54,.96) 100%);
+      --fruit-glow:rgba(37,211,102,.64);
+      --fruit-glow-soft:rgba(37,211,102,.26);
+    }
+
+    .fruit-tikun{
+      right:34px;
+      bottom:82px;
+      background:
+        radial-gradient(circle at 30% 22%, rgba(255,255,255,.96), rgba(190,235,255,.34) 18%, rgba(92,180,255,.84) 56%, rgba(23,82,145,.96) 100%);
+      --fruit-glow:rgba(100,210,255,.62);
+      --fruit-glow-soft:rgba(100,210,255,.26);
+    }
+
+    .fruit-email{
+      left:125px;
+      top:180px;
+      background:
+        radial-gradient(circle at 30% 22%, rgba(255,255,255,.96), rgba(235,245,255,.36) 18%, rgba(110,165,245,.84) 56%, rgba(24,61,130,.96) 100%);
+      --fruit-glow:rgba(120,190,255,.58);
+      --fruit-glow-soft:rgba(120,190,255,.24);
+    }
+
+    .fruit-names{
+      right:125px;
+      top:180px;
+      background:
+        radial-gradient(circle at 30% 22%, rgba(255,255,255,.96), rgba(255,210,235,.36) 18%, rgba(230,88,160,.86) 56%, rgba(122,22,82,.96) 100%);
+      --fruit-glow:rgba(255,110,185,.60);
+      --fruit-glow-soft:rgba(255,110,185,.25);
     }
 
     .fruit-link i{
-      font-size:34px;
+      position:relative;
+      z-index:2;
+      font-size:31px;
       line-height:1;
-      text-shadow:0 4px 12px rgba(0,0,0,.45);
-    }
-
-    .fruit-instagram{ left:18px; top:132px; }
-    .fruit-facebook{ left:118px; top:62px; }
-    .fruit-youtube{ right:118px; top:62px; }
-    .fruit-tiktok{ right:18px; top:132px; }
-
-    .fruit-whatsapp{ left:34px; bottom:82px; }
-    .fruit-tikun{ right:34px; bottom:82px; }
-
-    .fruit-email{ left:125px; top:180px; }
-    .fruit-names{ right:125px; top:180px; }
-
-    .fruit-instagram i{ color:#E4405F !important; }
-    .fruit-facebook i{ color:#1877F2 !important; }
-    .fruit-youtube i{ color:#FF0000 !important; }
-
-    .fruit-tiktok i{
-      color:#FFFFFF !important;
-      filter:drop-shadow(-2px 0 0 #25F4EE) drop-shadow(2px 0 0 #FE2C55);
-    }
-
-    .fruit-whatsapp i{ color:#25D366 !important; }
-
-    .fruit-email i{
-      color:#FFFFFF !important;
-    }
-
-    .fruit-names i{
-      color:#FFFFFF !important;
-      opacity:.92;
-      filter:
-        drop-shadow(0 0 5px rgba(255,255,255,.35))
-        drop-shadow(0 0 10px rgba(120,220,255,.16));
+      color:#fff !important;
+      text-shadow:
+        0 3px 9px rgba(0,0,0,.42),
+        0 0 13px rgba(255,255,255,.26);
     }
 
     .fruit-logo-icon{
-      width:38px;
-      height:38px;
+      position:relative;
+      z-index:2;
+      width:36px;
+      height:36px;
       object-fit:cover;
       border-radius:50%;
-      border:1px solid rgba(255,255,255,.55);
+      border:1px solid rgba(255,255,255,.70);
       box-shadow:
-        0 0 12px rgba(255,255,255,.18);
+        0 0 12px rgba(255,255,255,.28);
     }
 
     .fruit-letter{
@@ -285,23 +373,27 @@
       }
 
       .fruit-link{
-        width:60px;
-        height:60px;
+        width:62px;
+        height:62px;
+      }
+
+      .pardes-fruit-icon{
+        font-size:31px;
       }
 
       .fruit-link i{
-        font-size:30px;
+        font-size:27px;
       }
 
       .fruit-logo-icon{
-        width:34px;
-        height:34px;
+        width:32px;
+        height:32px;
       }
 
-      .fruit-instagram{ left:10px; top:126px; }
-      .fruit-facebook{ left:95px; top:58px; }
-      .fruit-youtube{ right:95px; top:58px; }
-      .fruit-tiktok{ right:10px; top:126px; }
+      .fruit-pshat{ right:95px; top:58px; }
+      .fruit-remez{ left:95px; top:58px; }
+      .fruit-drash{ left:10px; top:126px; }
+      .fruit-sod{ right:10px; top:126px; }
 
       .fruit-whatsapp{ left:28px; bottom:82px; }
       .fruit-tikun{ right:28px; bottom:82px; }
@@ -399,29 +491,29 @@
           <path class="tree-branch thin" d="M228 186 C248 192 266 200 284 218" />
         </svg>
 
-        <a id="instagramLink" class="fruit-link fruit-instagram" href="#" target="_blank" rel="noopener noreferrer" aria-label="Instagram - דרש">
-          <i class="fa-brands fa-instagram"></i>
-          <span class="fruit-letter">ד</span>
+        <a id="sodLink" class="fruit-link fruit-drash" href="#" aria-label="סוד העלייה">
+          <span class="pardes-fruit-icon" aria-hidden="true">🍊</span>
+          <span class="fruit-letter fruit-word">סוד</span>
         </a>
 
-        <a id="facebookLink" class="fruit-link fruit-facebook" href="#" target="_blank" rel="noopener noreferrer" aria-label="Facebook - רמז">
-          <i class="fa-brands fa-facebook-f"></i>
-          <span class="fruit-letter">ר</span>
+        <a id="drashLink" class="fruit-link fruit-remez" href="#" aria-label="דרש העלייה">
+          <span class="pardes-fruit-icon" aria-hidden="true">🍇</span>
+          <span class="fruit-letter fruit-word">דרש</span>
         </a>
 
-        <a id="youtubeLink" class="fruit-link fruit-youtube" href="#" target="_blank" rel="noopener noreferrer" aria-label="YouTube - פשט">
-          <i class="fa-brands fa-youtube"></i>
-          <span class="fruit-letter">פ</span>
+        <a id="remezLink" class="fruit-link fruit-pshat" href="#" aria-label="רמז העלייה">
+          <span class="pardes-fruit-icon" aria-hidden="true">🍎</span>
+          <span class="fruit-letter fruit-word">רמז</span>
         </a>
 
-        <a id="tiktokLink" class="fruit-link fruit-tiktok" href="#" target="_blank" rel="noopener noreferrer" aria-label="TikTok - ראשי">
-          <i class="fa-brands fa-tiktok"></i>
-          <span class="fruit-letter">ה</span>
+        <a id="pshatLink" class="fruit-link fruit-sod" href="#" aria-label="פשט העלייה">
+          <span class="pardes-fruit-icon" aria-hidden="true">🍋</span>
+          <span class="fruit-letter fruit-word">פשט</span>
         </a>
 
-        <a id="whatsappLink" class="fruit-link fruit-whatsapp" href="#" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp - סוד">
+        <a id="whatsappLink" class="fruit-link fruit-whatsapp" href="#" target="_blank" rel="noopener noreferrer" aria-label="ערוץ וואטסאפ">
           <i class="fa-brands fa-whatsapp"></i>
-          <span class="fruit-letter">ס</span>
+          <span class="fruit-letter fruit-word">וואטסאפ</span>
         </a>
 
         <a id="tikunLink" class="fruit-link fruit-tikun" href="personal-message.html" aria-label="האור שבי">
@@ -474,11 +566,11 @@
       if(docSnap.exists()){
         const data = docSnap.data();
 
-        document.getElementById("youtubeLink").href = data.youtube || "#";
-        document.getElementById("facebookLink").href = data.facebook || "#";
-        document.getElementById("instagramLink").href = data.instagram || "#";
-        document.getElementById("tiktokLink").href = data.tiktok || "#";
-        document.getElementById("whatsappLink").href = data.whatsapp || "#";
+        const whatsappLink = document.getElementById("whatsappLink");
+
+        if(whatsappLink){
+          whatsappLink.href = data.whatsapp || "#";
+        }
       }
     }
 
