@@ -891,6 +891,39 @@
       }
     }
 
+
+    function isMobileViewer(){
+      return window.matchMedia("(max-width: 700px), (pointer: coarse)").matches;
+    }
+
+    function chooseVideoForViewer(item){
+      if(!item) return null;
+
+      const mobile = item.mobile?.url ? item.mobile : (
+        item.mobileUrl ? {
+          url: item.mobileUrl,
+          storagePath: item.mobileStoragePath,
+          fileName: item.mobileFileName,
+          contentType: item.mobileContentType
+        } : null
+      );
+
+      const wide = item.wide?.url ? item.wide : (
+        item.wideUrl ? {
+          url: item.wideUrl,
+          storagePath: item.wideStoragePath,
+          fileName: item.wideFileName,
+          contentType: item.wideContentType
+        } : null
+      );
+
+      if(isMobileViewer()){
+        return mobile || wide || (item.url ? item : null);
+      }
+
+      return wide || mobile || (item.url ? item : null);
+    }
+
     function openLayer(layer){
       const panel = document.getElementById("pardesVideoPanel");
       const title = document.getElementById("pardesVideoTitle");
@@ -904,7 +937,9 @@
         title.textContent = `${layerName} — פרשת ${currentParasha || ""} ${currentAliyah || ""}`.trim();
       }
 
-      if(item?.url){
+      const selectedVideo = chooseVideoForViewer(item);
+
+      if(selectedVideo?.url){
         empty.style.display = "none";
         player.style.display = "block";
         player.classList.remove("is-horizontal", "is-square");
@@ -913,7 +948,7 @@
         player.autoplay = true;
         player.playsInline = true;
         player.preload = "auto";
-        player.src = item.url;
+        player.src = selectedVideo.url;
 
         player.onloadedmetadata = () => {
           const ratio = player.videoWidth && player.videoHeight
@@ -952,7 +987,7 @@
         player.load();
         player.style.display = "none";
         empty.style.display = "block";
-        empty.innerHTML = `עדיין לא הועלה סרטון <b>${layerName}</b> עבור העלייה הפעילה.<br>אפשר להעלות אותו דרך דף הניהול הסודי.`;
+        empty.innerHTML = `עדיין לא הועלה סרטון <b>${layerName}</b> עבור העלייה הפעילה.`;
       }
 
       panel.classList.add("is-open");
