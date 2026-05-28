@@ -1049,6 +1049,198 @@
       };
     }
 
+
+    function getMonthDepthProfile(hebrewMonth){
+      const profiles = {
+        "ניסן": {
+          visibleLight: "יש בך כוח של התחלה, אומץ לפרוץ קדימה ויכולת להדליק מחדש מקומות שכבר נראו כבויים.",
+          hiddenPlace: "לפעמים ההתלהבות הפנימית רצה מהר יותר מהסבלנות, ואז קשה להישאר בתוך תהליך שלא נותן תוצאה מיידית.",
+          strengthens: "מטרה קצרה וברורה, פעולה ראשונה קטנה, ואדם אחד שמאמין בך ומחזיר אותך לכיוון.",
+          weakens: "דחייה, המתנה ארוכה מדי, או תחושה שמישהו מכבה לך את האש לפני שהתחלת.",
+          soulRequest: "להתחיל בלי לחכות שהכול יהיה מושלם — אבל לבנות המשך יציב ולא רק רגע של התלהבות.",
+          innerQuestion: "איפה אני כבר יודע/ת שצריך להתחיל, אבל מחכה לאישור מבחוץ?",
+          weeklyStep: "לבחור דבר אחד שדחית, ולעשות בו פעולה ראשונה של 10 דקות בלבד."
+        },
+        "אייר": {
+          visibleLight: "יש בך כוח של ריפוי, יציבות והתמדה. את/ה יודע/ת לבנות לאט, אבל עמוק.",
+          hiddenPlace: "לפעמים הרצון לביטחון גורם להישאר במקום מוכר גם כשהנשמה כבר מבקשת תנועה.",
+          strengthens: "שגרה רגועה, גוף מאוזן, סביבה נקייה, ומילים שמחזירות לך ביטחון.",
+          weakens: "כאוס, לחץ פתאומי, או אנשים שמנסים להזיז אותך לפני שהלב מוכן.",
+          soulRequest: "להפוך יציבות לצמיחה, ולא לתת לזהירות להפוך לעצירה.",
+          innerQuestion: "איפה אני קורא/ת לזה זהירות, אבל בפנים זה בעצם פחד משינוי?",
+          weeklyStep: "לסדר פינה אחת בבית או ביום שלך, ולהפוך אותה לעוגן של רוגע."
+        },
+        "סיוון": {
+          visibleLight: "יש בך כוח של חיבור, תקשורת ולימוד. את/ה קולט/ת מהר ויודע/ת לחבר בין עולמות.",
+          hiddenPlace: "לפעמים ריבוי מחשבות ואפשרויות גורם להתפזרות, כאילו יש הרבה דלתות ואף אחת לא נפתחת עד הסוף.",
+          strengthens: "כתיבה, שיחה מדויקת, לימוד קצר וקבוע, ובחירה בנושא אחד להתמקד בו.",
+          weakens: "עודף מידע, השוואה לאחרים, ופתיחת יותר מדי כיוונים במקביל.",
+          soulRequest: "להפוך סקרנות לכיוון ברור — פחות רעש, יותר אמת אחת שמובילה למעשה.",
+          innerQuestion: "איזה רעש אני צריך/ה להוריד כדי לשמוע את הקול האמיתי שלי?",
+          weeklyStep: "לכתוב על דף שלושה דברים שמעסיקים אותך, ולבחור רק אחד לקדם השבוע."
+        },
+        "תמוז": {
+          visibleLight: "יש בך רגישות עמוקה ויכולת לראות מה עובר על אנשים גם בלי שיגידו הכול במילים.",
+          hiddenPlace: "לפעמים מה שאת/ה מרגיש/ה בפנים גדול יותר ממה שאת/ה מאפשר/ת לעצמך לומר החוצה.",
+          strengthens: "ביתיות, ביטחון רגשי, תפילה אישית, ושיחה עם אדם שמרגישים איתו מוגנים.",
+          weakens: "קור רגשי, ביקורת קשה, או תחושה שלא באמת רואים אותך.",
+          soulRequest: "לא להפוך רגישות לפחד — אלא להשתמש בה כחמלה, תפילה ויכולת להבין לבבות.",
+          innerQuestion: "איפה אני שומר/ת דמעות בפנים במקום להפוך אותן לתפילה או דיבור נכון?",
+          weeklyStep: "לשתף אדם אחד בדבר קטן שיושב על הלב, בלי להפוך את זה לדרמה."
+        },
+        "אב": {
+          visibleLight: "יש בך לב חזק, נוכחות והשפעה. כשאת/ה מאמין/ה במשהו, אנשים מרגישים את זה.",
+          hiddenPlace: "לפעמים יש מאבק בין הרצון להוביל לבין הפחד שלא יעריכו את מה שאת/ה נותן/ת.",
+          strengthens: "כבוד פנימי, נתינה מתוך לב, והרגשה שהכוח שלך משמש למשהו טוב ולא רק להוכחה עצמית.",
+          weakens: "זלזול, חוסר הערכה, או מצב שבו לוקחים ממך את המקום להשפיע.",
+          soulRequest: "להוביל מתוך ענווה — להשתמש באש של הלב כדי לחמם, לא כדי להישרף.",
+          innerQuestion: "איפה אני מבקש/ת הכרה מבחוץ במקום לזכור את הערך שלי מבפנים?",
+          weeklyStep: "לעשות מעשה אחד של נתינה שקטה בלי לספר עליו לאף אחד."
+        },
+        "אלול": {
+          visibleLight: "יש בך חוש לתיקון, דיוק ואחריות. את/ה רואה פרטים שאחרים מפספסים.",
+          hiddenPlace: "לפעמים הרצון לעשות נכון הופך לביקורת פנימית שמכבידה על הלב.",
+          strengthens: "סדר, ניקוי עומסים, משימה ברורה, וסביבה שמעריכה מאמץ ולא רק תוצאה.",
+          weakens: "בלגן, טעויות שלא נסלחות, או תחושה שכל האחריות נופלת עליך.",
+          soulRequest: "להפוך ביקורת לתיקון באהבה — לדייק בלי לרסק את עצמך בדרך.",
+          innerQuestion: "איפה אני דורש/ת מעצמי שלמות, כשבעצם מספיק להתחיל בתיקון קטן?",
+          weeklyStep: "לבחור דבר אחד קטן לתקן השבוע, ולהפסיק להלקות את עצמך על כל השאר."
+        },
+        "תשרי": {
+          visibleLight: "יש בך כוח של איזון, שלום וראיית שני צדדים. את/ה מסוגל/ת להכניס סדר בין קצוות.",
+          hiddenPlace: "לפעמים הרצון שלא לפגוע באף אחד גורם לדחות החלטות או לוותר על האמת שלך.",
+          strengthens: "בהירות, גבול רגוע, דיבור מכבד, והחלטה שנעשית מתוך אמת ולא מתוך לחץ.",
+          weakens: "ריצוי, התלבטות ארוכה מדי, או פחד שמישהו יכעס אם תבחר/י בעצמך.",
+          soulRequest: "ללמוד ששלום אמיתי לא נבנה מוויתור על האמת, אלא מאמת שנאמרת בעדינות.",
+          innerQuestion: "איפה אני קורא/ת לזה שלום, אבל בפנים זה בעצם ריצוי?",
+          weeklyStep: "להגיד משפט אמת אחד בצורה רגועה במקום לשמור אותו בפנים."
+        },
+        "חשוון": {
+          visibleLight: "יש בך עומק, נאמנות ויכולת להרגיש מתחת לפני השטח. את/ה לא חי/ה רק על החיצוניות.",
+          hiddenPlace: "לפעמים את/ה מחזיק/ה כאב או חשד בפנים יותר מדי זמן, עד שהוא הופך לכובד.",
+          strengthens: "אמון הדרגתי, מרחב שקט, תפילה עמוקה, ותחושה שמותר לך להיפתח בקצב שלך.",
+          weakens: "בגידה באמון, שטחיות, או אנשים שלוחצים עליך לחשוף יותר ממה שנכון לך.",
+          soulRequest: "לא להפוך עומק לבדידות — לקחת את מה שבפנים ולהפוך אותו לדיבור, יצירה או נתינה.",
+          innerQuestion: "איזה כאב אני עדיין מחזיק/ה בפנים במקום להפוך אותו לאור?",
+          weeklyStep: "לכתוב לעצמך מכתב קצר על דבר שלא נאמר, ואז לבחור אם לשחרר או לשתף."
+        },
+        "כסלו": {
+          visibleLight: "יש בך כוח של אמונה, תקווה וחיפוש משמעות. גם בחושך יש בך רצון למצוא נקודת אור.",
+          hiddenPlace: "לפעמים החזון גדול, אבל הצעדים בפועל מתפזרים או נדחים ל'מחר'.",
+          strengthens: "השראה, לימוד מחזק, תנועה, מרחב, ואנשים שמזכירים לך שהדרך אפשרית.",
+          weakens: "ציניות, חוסר אמונה, או תחושה שסוגרים לך את האופק.",
+          soulRequest: "לחבר חזון גבוה למעשה קטן וקבוע — לא רק לחלום על אור, אלא להדליק אותו בפועל.",
+          innerQuestion: "איזה חלום טוב נשאר אצלי בראש כי עדיין לא נתתי לו צעד מעשי?",
+          weeklyStep: "לבחור חלום אחד ולכתוב לו פעולה אחת קטנה שאפשר לבצע השבוע."
+        },
+        "טבת": {
+          visibleLight: "יש בך אחריות, עמידות ויכולת לבנות גם כשלא קל. את/ה יודע/ת לטפס לאט אבל בטוח.",
+          hiddenPlace: "לפעמים את/ה לוקח/ת על עצמך יותר מדי, ואז הלב נהיה כבד ושקט מדי.",
+          strengthens: "גבולות ברורים, תוכנית מסודרת, מנוחה בלי אשמה, ואדם שמזכיר לך שלא הכול עליך.",
+          weakens: "עומס, קור רגשי, או תחושה שצריך להיות חזק/ה כל הזמן.",
+          soulRequest: "לזכור שגם בנייה חזקה צריכה רכות. לא חייבים לסחוב לבד כדי להיות אחראיים.",
+          innerQuestion: "איפה אני מחזיק/ה אחריות שכבר הגיע הזמן לחלוק או לשחרר?",
+          weeklyStep: "לבקש עזרה קטנה בדבר אחד, גם אם את/ה יכול/ה לעשות אותו לבד."
+        },
+        "שבט": {
+          visibleLight: "יש בך מקוריות, ראייה רחבה ורצון להיטיב עם יותר מאדם אחד. את/ה חושב/ת קדימה.",
+          hiddenPlace: "לפעמים הרעיונות הגדולים מרחיקים אותך מהרגש הפשוט ומהקשר הקרוב שמולך.",
+          strengthens: "מרחב יצירתי, קהילה טובה, חיבור לטבע, ושיתוף רעיון עם אנשים שמבינים אותך.",
+          weakens: "תחושה שלא מבינים את הראש שלך, או צורך להתאים את עצמך למסגרת צרה מדי.",
+          soulRequest: "לחבר רעיון גדול ללב אנושי קרוב — לא רק לחשוב על העולם, אלא לגעת באדם אחד באמת.",
+          innerQuestion: "איזה רעיון שלי צריך עכשיו לרדת מהראש אל מעשה קטן וברור?",
+          weeklyStep: "לקחת רעיון אחד ולתרגם אותו לפעולה פשוטה שאדם אחר יוכל להרגיש."
+        },
+        "אדר": {
+          visibleLight: "יש בך רגש, דמיון, אמונה ושמחה שיכולה להרים גם מצבים כבדים.",
+          hiddenPlace: "לפעמים כדי לא להרגיש כאב, יש נטייה לברוח להסחות דעת או להסתיר הכול מאחורי חיוך.",
+          strengthens: "שמחה אמיתית, מוזיקה, תפילה, יצירה, וחיבור לאנשים שמאפשרים לך להיות גם שמח/ה וגם אמיתי/ת.",
+          weakens: "כבדות, ביקורת שמכבה, או מצב שבו לא נותנים מקום לרגש שלך.",
+          soulRequest: "להפוך שמחה לכוח מרפא, לא למסכה. לתת ללב מקום אמיתי ועדיין לבחור אור.",
+          innerQuestion: "איפה אני מחייך/ת כלפי חוץ, אבל בפנים מבקש/ת שמישהו באמת ישים לב?",
+          weeklyStep: "לעשות דבר אחד קטן שמשמח אותך באמת, לא כדי לברוח — אלא כדי להתחזק."
+        }
+      };
+
+      return profiles[hebrewMonth] || profiles["אדר"];
+    }
+
+    function getAliyahDepthProfile(aliyahName){
+      const profiles = {
+        "ראשונה": {
+          addition: "עליית השורש שלך מוסיפה קריאה להתחלה חדשה: לא להישאר רק בהבנה, אלא לפתוח שער ראשון בפועל.",
+          correction: "להיזהר מהמתנה לרגע מושלם. התחלה קטנה ונקייה עדיפה על תוכנית גדולה שלא יוצאת לדרך."
+        },
+        "שנייה": {
+          addition: "עליית השורש שלך מוסיפה קריאה לבירור: להפריד בין מה שאחרים מצפים ממך לבין מה שנכון לך באמת.",
+          correction: "להיזהר מלהיסחף אחרי רעש חיצוני. לא כל קול חזק הוא קול נכון."
+        },
+        "שלישית": {
+          addition: "עליית השורש שלך מוסיפה כוח של קימה מניסיון: דווקא המקומות שלא היו פשוטים יכולים להפוך לכלי של צמיחה.",
+          correction: "להיזהר מלזהות קושי כסימן לעצירה. לפעמים הקושי הוא סימן שהשורש מתחיל להתעורר."
+        },
+        "רביעית": {
+          addition: "עליית השורש שלך מוסיפה קריאה לאיזון: לחבר בין הלב, הראש והמעשה היומיומי.",
+          correction: "להיזהר מלהישאר רק בעולם פנימי. האור צריך לרדת למשהו קטן שאפשר לעשות היום."
+        },
+        "חמישית": {
+          addition: "עליית השורש שלך מוסיפה אחריות והשפעה: יש דברים שעברת לא רק בשביל עצמך, אלא כדי להפוך אותם לחיזוק לאחרים.",
+          correction: "להיזהר מלקחת אחריות על הכול. השפעה טובה לא חייבת לבוא מתוך עומס."
+        },
+        "שישית": {
+          addition: "עליית השורש שלך מוסיפה כוח של נתינה ושפע: האור שלך גדל כשהוא עובר נכון גם לאחרים.",
+          correction: "להיזהר מנתינה בלי גבול. נתינה מתוקנת צריכה להשאיר גם אותך שלם/ה."
+        },
+        "שביעית": {
+          addition: "עליית השורש שלך מוסיפה קריאה להשלמה: לחבר חלקים מפוזרים בחיים לתמונה אחת עמוקה יותר.",
+          correction: "להיזהר מסגירת מעגל מתוך עייפות. השלמה אמיתית באה מתוך בהירות, לא מתוך ויתור פנימי."
+        }
+      };
+
+      return profiles[aliyahName] || {
+        addition: "עליית השורש שלך מוסיפה קריאה להפוך את הדרך האישית שלך לברכה מעשית.",
+        correction: "להיזהר מלשפוט את עצמך מהר מדי. לפעמים השורש מתגלה דווקא בהדרגה."
+      };
+    }
+
+    function getPersonalDepthMap(data, ageDetails){
+      const rawHebrewMonth = getHebrewMonthName(data.birthDate);
+      const hebrewMonth = normalizeHebrewMonthName(rawHebrewMonth);
+      const monthProfile = getMonthDepthProfile(hebrewMonth);
+      const rootAliyah = getAliyahByHebrewDay(data.hebcalInfo?.hebrewDay);
+      const aliyahProfile = getAliyahDepthProfile(rootAliyah);
+      const gematriaValue = getGematriaValue(data.firstName);
+      const gematriaMeaning = getGematriaMeaning(gematriaValue);
+
+      if(ageDetails.isMinor){
+        return {
+          title: "מפת העומק האישית שלך",
+          intro: "הקריאה כאן מותאמת לגיל צעיר: חיזוק, בניית ביטחון, שמחה, מידות טובות והתייעצות עם מבוגר אחראי בדברים חשובים.",
+          visibleLight: monthProfile.visibleLight,
+          hiddenPlace: "המקום העדין שכדאי לשמור עליו עכשיו הוא לא להיסחף אחרי לחץ חברתי, ולא להאמין לכל מחשבה שלילית שעוברת בראש ברגע קשה.",
+          strengthens: "חברים טובים, סדר יום בריא, כבוד להורים, לימוד, תפילה קצרה במילים שלך, ועשייה שמפתחת את הכישרון הטוב שבך.",
+          weakens: "השוואה לאחרים, לחץ להוכיח, או תחושה שצריך להחליט לבד דברים שעדיין נכון לשתף עם הורים או מבוגר שסומכים עליו.",
+          soulRequest: "לבנות את האור שלך לאט ובשמחה, בלי למהר להגדיר את כל החיים עכשיו.",
+          innerQuestion: "איזו מידה טובה אחת אני יכול/ה לחזק השבוע בלי לחץ ובלי להשוות את עצמי לאחרים?",
+          weeklyStep: "לבחור מעשה טוב אחד קטן ולעשות אותו במשך שלושה ימים ברצף.",
+          combinedSignal: aliyahProfile.addition
+        };
+      }
+
+      return {
+        title: "מפת העומק האישית שלך",
+        intro: `הקריאה כאן מחברת בין חודש ${rawHebrewMonth}, עלייה ${rootAliyah}, גימטריית השם (${gematriaValue}) ושנת החיים הנוכחית שלך — לא כנבואה, אלא כמראה להתבוננות פנימית.`,
+        visibleLight: monthProfile.visibleLight,
+        hiddenPlace: monthProfile.hiddenPlace,
+        strengthens: `${monthProfile.strengthens} ${aliyahProfile.addition}`,
+        weakens: `${monthProfile.weakens} ${aliyahProfile.correction}`,
+        soulRequest: `${monthProfile.soulRequest} ${gematriaMeaning}`,
+        innerQuestion: monthProfile.innerQuestion,
+        weeklyStep: monthProfile.weeklyStep,
+        combinedSignal: `החיבור בין חודש ${rawHebrewMonth} לעלייה ${rootAliyah} מרמז על עבודה פנימית של להפוך כוח טבעי למעשה מדויק יותר בחיים של היום.`
+      };
+    }
+
     function getLifeGuidance(data, ageDetails){
       const rawHebrewMonth = getHebrewMonthName(data.birthDate);
       const hebrewMonth = normalizeHebrewMonthName(rawHebrewMonth);
@@ -1120,6 +1312,7 @@
       const ageDetails = calculateAgeDetails(data.birthDate);
       ageDetails.ageText = formatAgeText(ageDetails);
       const lifeGuidance = getLifeGuidance(data, ageDetails);
+      const depthMap = getPersonalDepthMap(data, ageDetails);
 
       return `
         <div class="result-main-title">${safeFirstName} ${escapeHtml(dear)}</div>
@@ -1198,26 +1391,46 @@
         </div>
 
         <div class="result-section">
-          <div class="result-section-title">${escapeHtml(lifeGuidance.title)}</div>
+          <div class="result-section-title">${escapeHtml(depthMap.title)}</div>
 
           <div class="result-item">
-            <div class="result-label">${escapeHtml(lifeGuidance.powerLabel)}</div>
-            <div class="result-value">${escapeHtml(lifeGuidance.power)}</div>
+            <div class="result-label">פתיחה אישית</div>
+            <div class="result-value">${escapeHtml(depthMap.intro)}</div>
           </div>
 
           <div class="result-item">
-            <div class="result-label">${escapeHtml(lifeGuidance.strengthenLabel)}</div>
-            <div class="result-value">${escapeHtml(lifeGuidance.strengthen)}</div>
+            <div class="result-label">1. האור הבולט שלך</div>
+            <div class="result-value">${escapeHtml(depthMap.visibleLight)}</div>
           </div>
 
           <div class="result-item">
-            <div class="result-label">${escapeHtml(lifeGuidance.cautionLabel)}</div>
-            <div class="result-value">${escapeHtml(lifeGuidance.caution)}</div>
+            <div class="result-label">2. המקום שבו את/ה נוטה להסתיר את עצמך</div>
+            <div class="result-value">${escapeHtml(depthMap.hiddenPlace)}</div>
           </div>
 
           <div class="result-item">
-            <div class="result-label">שאלה להתבוננות</div>
-            <div class="result-value">${escapeHtml(lifeGuidance.question)}</div>
+            <div class="result-label">3. מה מחזק אותך באמת</div>
+            <div class="result-value">${escapeHtml(depthMap.strengthens)}</div>
+          </div>
+
+          <div class="result-item">
+            <div class="result-label">4. מה מחליש אותך כשלא שמים לב</div>
+            <div class="result-value">${escapeHtml(depthMap.weakens)}</div>
+          </div>
+
+          <div class="result-item">
+            <div class="result-label">5. מה הנשמה מבקשת בתקופה הזו</div>
+            <div class="result-value">${escapeHtml(depthMap.soulRequest)}</div>
+          </div>
+
+          <div class="result-item">
+            <div class="result-label">6. שאלה אחת שלא כדאי לברוח ממנה</div>
+            <div class="result-value">${escapeHtml(depthMap.innerQuestion)}</div>
+          </div>
+
+          <div class="result-item">
+            <div class="result-label">7. פעולה קטנה לשבוע הקרוב</div>
+            <div class="result-value">${escapeHtml(depthMap.weeklyStep)}</div>
           </div>
         </div>
 
@@ -1396,6 +1609,10 @@
       const apiUrl = "https://us-central1-parasha-site-links.cloudfunctions.net/createPersonalReading";
 
       try{
+        const ageDetails = calculateAgeDetails(data.birthDate);
+        ageDetails.ageText = formatAgeText(ageDetails);
+        const depthMap = getPersonalDepthMap(data, ageDetails);
+
         const response = await fetch(apiUrl, {
           method: "POST",
           headers: {
@@ -1425,12 +1642,24 @@
             aliyahMeaning: getAliyahMeaning(getAliyahByHebrewDay(data.hebcalInfo?.hebrewDay)),
             gematriaValue: getGematriaValue(data.firstName),
             gematriaMeaning: getGematriaMeaning(getGematriaValue(data.firstName)),
-            ageYears: calculateAgeDetails(data.birthDate).years,
-            ageText: formatAgeText(calculateAgeDetails(data.birthDate)),
-            currentLifeYear: calculateAgeDetails(data.birthDate).currentLifeYear,
-            daysToNextBirthday: calculateAgeDetails(data.birthDate).daysToNextBirthday,
-            isMinor: calculateAgeDetails(data.birthDate).isMinor,
-            lifeGuidance: getLifeGuidance(data, calculateAgeDetails(data.birthDate)),
+            ageYears: ageDetails.years,
+            ageText: ageDetails.ageText,
+            currentLifeYear: ageDetails.currentLifeYear,
+            daysToNextBirthday: ageDetails.daysToNextBirthday,
+            isMinor: ageDetails.isMinor,
+            lifeGuidance: getLifeGuidance(data, ageDetails),
+            depthMap,
+            desiredAiTitle: "המפה הפנימית שלך",
+            desiredAiStructure: [
+              "האור הבולט שלך",
+              "המקום שבו את/ה נוטה להסתיר את עצמך",
+              "מה מחזק אותך באמת",
+              "מה מחליש אותך כשלא שמים לב",
+              "מה הנשמה מבקשת בתקופה הזו",
+              "שאלה אחת שלא כדאי לברוח ממנה",
+              "פעולה קטנה לשבוע הקרוב"
+            ],
+            writingInstruction: "אל תציג רשימת נתונים יבשה. בנה מפת עומק אישית מתוך שילוב הנתונים. כתוב כאילו האדם מרגיש שרואים אותו, בשפה חמה, יהודית, אחראית ומעשית. השתמש בזהירות במילים כמו ייתכן, יש כאן רמז, כדאי להתבונן. אל תכתוב שהדברים ודאיים.",
             safetyInstruction: "כתוב כהתבוננות רוחנית עדינה בלבד. אל תכתוב נבואה, קביעה מוחלטת, אבחון רפואי או נפשי, תחזית עתיד, או הוראות מסוכנות. אם isMinor=true אל תכתוב הכוונה זוגית, כספית, מקצועית או דברים מפחידים; כתוב רק חיזוק עדין לגיל צעיר והמלצה להתייעץ עם הורים או מבוגר אחראי."
           })
         });
@@ -1676,8 +1905,8 @@
         const aiLoadingBox = document.createElement("div");
         aiLoadingBox.className = "ai-section";
         aiLoadingBox.innerHTML = `
-          <div class="ai-section-title">העמקה אישית</div>
-          <div class="ai-section-content">✨ מכינים עבורך העמקה אישית עדינה...</div>
+          <div class="ai-section-title">המפה הפנימית שלך</div>
+          <div class="ai-section-content">✨ מחברים את הנתונים למפת עומק אישית...</div>
         `;
 
         resultBox.appendChild(aiLoadingBox);
@@ -1693,9 +1922,9 @@
           console.warn("AI message error:", aiErr);
 
           aiLoadingBox.innerHTML = `
-            <div class="ai-section-title">העמקה אישית</div>
+            <div class="ai-section-title">המפה הפנימית שלך</div>
             <div class="ai-section-content">
-              כרגע ההעמקה האישית אינה זמינה. הנתונים הבסיסיים למעלה חושבו בהצלחה.
+              כרגע החלק החכם של המפה אינו זמין. מפת העומק הבסיסית למעלה חושבה בהצלחה.
             </div>
           `;
         }
