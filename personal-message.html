@@ -157,6 +157,40 @@
       margin-top:8px;
     }
 
+    .date-picker-wrap{
+      position:relative;
+      cursor:pointer;
+    }
+
+    .date-helper{
+      margin:0 0 8px;
+      border:1px solid rgba(120,220,255,.42);
+      border-radius:14px;
+      padding:10px 12px;
+      background:rgba(60,170,200,.10);
+      color:rgba(255,255,255,.94);
+      font-size:14px;
+      font-weight:900;
+      text-align:center;
+      text-shadow:0 2px 8px rgba(0,0,0,.55);
+      user-select:none;
+    }
+
+    input[type="date"]{
+      min-height:48px;
+      direction:ltr;
+      text-align:center;
+      font-weight:800;
+      color-scheme:dark;
+    }
+
+    input[type="date"]::-webkit-calendar-picker-indicator{
+      opacity:1;
+      cursor:pointer;
+      filter:invert(1);
+      transform:scale(1.2);
+    }
+
     .hebrew-date-grid{
       display:grid;
       grid-template-columns:1fr 1fr 1.4fr;
@@ -407,20 +441,11 @@
       </div>
 
       <div class="field">
-        <label for="gender">מין בלידה לצורך חישוב בר/בת מצווה</label>
+        <label for="gender">מין בלידה לצורך חישוב בר/בת מצווה ושם תורני</label>
         <select id="gender">
           <option value="">בחר/י</option>
-          <option value="male">זכר</option>
-          <option value="female">נקבה</option>
-        </select>
-      </div>
-
-      <div class="field">
-        <label for="relationType">בן / בת כפי שיופיע בשם התורני</label>
-        <select id="relationType">
-          <option value="">בחר/י</option>
-          <option value="בן">בן</option>
-          <option value="בת">בת</option>
+          <option value="male">זכר — יוצג כבן</option>
+          <option value="female">נקבה — תוצג כבת</option>
         </select>
       </div>
 
@@ -458,8 +483,9 @@
           </label>
         </div>
 
-        <div id="gregorianDateBox" class="date-input-box">
-          <input id="birthDate" type="date">
+        <div id="gregorianDateBox" class="date-input-box date-picker-wrap">
+          <div class="date-helper" id="gregorianDateHelper">📅 לחצו כאן לבחירת תאריך לועזי</div>
+          <input id="birthDate" type="date" aria-label="בחירת תאריך לידה לועזי">
         </div>
 
         <div id="hebrewDateBox" class="date-input-box hidden">
@@ -2051,17 +2077,6 @@
       }, speed);
     }
 
-    document.getElementById("gender").addEventListener("change", ()=>{
-      const gender = document.getElementById("gender").value;
-      const relationType = document.getElementById("relationType");
-
-      if(gender === "male"){
-        relationType.value = "בן";
-      }else if(gender === "female"){
-        relationType.value = "בת";
-      }
-    });
-
     document.querySelectorAll('input[name="birthType"]').forEach(radio=>{
       radio.addEventListener("change", ()=>{
         const selectedType = document.querySelector('input[name="birthType"]:checked').value;
@@ -2140,6 +2155,50 @@
       return data.gy + "-" + String(data.gm).padStart(2,"0") + "-" + String(data.gd).padStart(2,"0");
     }
 
+    function getRelationTypeFromGender(gender){
+      if(gender === "male"){
+        return "בן";
+      }
+
+      if(gender === "female"){
+        return "בת";
+      }
+
+      return "";
+    }
+
+    function openDatePicker(input){
+      if(!input){
+        return;
+      }
+
+      try{
+        if(typeof input.showPicker === "function"){
+          input.showPicker();
+        }else{
+          input.focus();
+          input.click();
+        }
+      }catch(err){
+        input.focus();
+      }
+    }
+
+    const gregorianDateHelper = document.getElementById("gregorianDateHelper");
+    const birthDateInput = document.getElementById("birthDate");
+
+    if(gregorianDateHelper && birthDateInput){
+      gregorianDateHelper.addEventListener("click", ()=>{
+        openDatePicker(birthDateInput);
+      });
+
+      document.getElementById("gregorianDateBox").addEventListener("click", (event)=>{
+        if(event.target !== birthDateInput){
+          openDatePicker(birthDateInput);
+        }
+      });
+    }
+
     function resetToFormAfterError(){
       formBox.classList.remove("hidden");
       resultBox.style.display = "none";
@@ -2152,8 +2211,8 @@
 
       const data = {
         firstName: document.getElementById("firstName").value.trim(),
-        relationType: document.getElementById("relationType").value,
         gender: document.getElementById("gender").value,
+        relationType: getRelationTypeFromGender(document.getElementById("gender").value),
         fatherName: document.getElementById("fatherName").value.trim(),
         motherName: document.getElementById("motherName").value.trim(),
         parentDisplay: document.getElementById("parentDisplay").value,
@@ -2166,8 +2225,8 @@
         createdAt: serverTimestamp()
       };
 
-      if(!data.firstName || !data.relationType || !data.gender || !data.fatherName || !data.motherName){
-        alert("יש למלא שם פרטי, בן/בת, מין בלידה, שם אב ושם אם.");
+      if(!data.firstName || !data.gender || !data.fatherName || !data.motherName){
+        alert("יש למלא שם פרטי, מין בלידה, שם אב ושם אם.");
         return;
       }
 
@@ -2245,7 +2304,7 @@
           gematriaValue: getGematriaValue(data.firstName),
           ageDetails: calculateAgeDetails(data.birthDate),
           lifeGuidance: getLifeGuidance(data, calculateAgeDetails(data.birthDate)),
-          birthDateReduction: calculateBirthDateReduction(data.birthDate, calculateAgeDetails(data.birthDate).isMinor)
+          hebrewDateReduction: calculateHebrewDateReduction(data, calculateAgeDetails(data.birthDate).isMinor)
         };
 
         await addDoc(collection(db, "personalMessages"), finalDataForFirestore);
