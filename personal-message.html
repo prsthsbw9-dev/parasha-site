@@ -953,6 +953,144 @@
       הנתונים כאן הם בסיס ראשוני לפי שם, תאריך עברי ושיוכים מסורתיים כלליים. אין לראות בהם קביעה מוחלטת על האדם, על נשמתו או על עתידו.`;
     }
 
+    function parseLocalDate(dateValue){
+      const parts = String(dateValue).split("-");
+      const year = Number(parts[0]);
+      const month = Number(parts[1]) - 1;
+      const day = Number(parts[2]);
+
+      return new Date(year, month, day, 12, 0, 0, 0);
+    }
+
+    function getTodayLocalNoon(){
+      const now = new Date();
+      return new Date(now.getFullYear(), now.getMonth(), now.getDate(), 12, 0, 0, 0);
+    }
+
+    function daysInMonth(year, monthIndex){
+      return new Date(year, monthIndex + 1, 0).getDate();
+    }
+
+    function addYearsLocal(date, years){
+      const targetYear = date.getFullYear() + years;
+      const targetMonth = date.getMonth();
+      const targetDay = Math.min(date.getDate(), daysInMonth(targetYear, targetMonth));
+
+      return new Date(targetYear, targetMonth, targetDay, 12, 0, 0, 0);
+    }
+
+    function addMonthsLocal(date, months){
+      const target = new Date(date.getFullYear(), date.getMonth() + months, 1, 12, 0, 0, 0);
+      const targetDay = Math.min(date.getDate(), daysInMonth(target.getFullYear(), target.getMonth()));
+      target.setDate(targetDay);
+
+      return target;
+    }
+
+    function formatAgeText(ageDetails){
+      const parts = [];
+
+      if(ageDetails.years === 1){
+        parts.push("שנה אחת");
+      }else{
+        parts.push(`${ageDetails.years} שנים`);
+      }
+
+      if(ageDetails.months === 1){
+        parts.push("חודש אחד");
+      }else if(ageDetails.months > 1){
+        parts.push(`${ageDetails.months} חודשים`);
+      }
+
+      if(ageDetails.days === 1){
+        parts.push("יום אחד");
+      }else if(ageDetails.days > 1){
+        parts.push(`${ageDetails.days} ימים`);
+      }
+
+      return parts.join(", ");
+    }
+
+    function calculateAgeDetails(dateValue){
+      const birthDate = parseLocalDate(dateValue);
+      const today = getTodayLocalNoon();
+
+      let years = today.getFullYear() - birthDate.getFullYear();
+      let lastBirthday = addYearsLocal(birthDate, years);
+
+      if(lastBirthday > today){
+        years--;
+        lastBirthday = addYearsLocal(birthDate, years);
+      }
+
+      let months = (today.getFullYear() - lastBirthday.getFullYear()) * 12 + (today.getMonth() - lastBirthday.getMonth());
+      let monthAnchor = addMonthsLocal(lastBirthday, months);
+
+      if(monthAnchor > today){
+        months--;
+        monthAnchor = addMonthsLocal(lastBirthday, months);
+      }
+
+      const oneDay = 1000 * 60 * 60 * 24;
+      const days = Math.max(0, Math.floor((today - monthAnchor) / oneDay));
+      const nextBirthday = addYearsLocal(birthDate, years + 1);
+      const daysToNextBirthday = Math.max(0, Math.ceil((nextBirthday - today) / oneDay));
+
+      return {
+        years,
+        months,
+        days,
+        isMinor: years < 18,
+        currentLifeYear: years + 1,
+        nextBirthdayDate: nextBirthday,
+        daysToNextBirthday,
+        ageText: "",
+        lifeYearText: `שנת החיים ה־${years + 1}`
+      };
+    }
+
+    function getLifeGuidance(data, ageDetails){
+      const rawHebrewMonth = getHebrewMonthName(data.birthDate);
+      const hebrewMonth = normalizeHebrewMonthName(rawHebrewMonth);
+      const mazalInfo = getMazalByHebrewMonth(hebrewMonth);
+      const monthDetails = getJewishMonthDetails(hebrewMonth);
+      const rootAliyah = getAliyahByHebrewDay(data.hebcalInfo?.hebrewDay);
+
+      const aliyahPowerMap = {
+        "ראשונה": "כוח של התחלה נקייה, פתיחת דרך ובניית יסוד חדש מתוך אמונה.",
+        "שנייה": "כוח של בירור פנימי, הפרדה בין רעש לאמת וחיזוק זהות אישית.",
+        "שלישית": "כוח של צמיחה מתוך ניסיון, קימה אחרי קושי והתקדמות גם כשהדרך לא ברורה.",
+        "רביעית": "כוח של איזון וחיבור בין מחשבה למעשה, בין עולם פנימי לבין צעדים יומיומיים.",
+        "חמישית": "כוח של אחריות והשפעה טובה על אחרים מתוך ניסיון אישי ובשלות.",
+        "שישית": "כוח של נתינה, שפע והכנה לשלב של שלמות רחבה יותר.",
+        "שביעית": "כוח של השלמה, סגירת מעגלים וחיבור חלקי החיים לתמונה אחת."
+      };
+
+      if(ageDetails.isMinor){
+        return {
+          title: "הכוונה עדינה לגיל צעיר",
+          powerLabel: "כוח פנימי שכדאי לפתח עכשיו",
+          power: "ביטחון פנימי, שמחה פשוטה, כבוד להורים, בחירת חברים טובים ופיתוח הכישרונות הטובים שכבר קיימים בפנים.",
+          strengthenLabel: "מה כדאי לחזק בתקופה הזו",
+          strengthen: "סדר יום בריא, לימוד, אמונה פשוטה, סבלנות, שפה טובה, ויכולת לבקש עזרה ממבוגר שסומכים עליו כשצריך.",
+          cautionLabel: "שמירה עדינה",
+          caution: "לא לקחת החלטות גדולות לבד ולא להיסחף אחרי לחץ חברתי. בדברים חשובים כדאי להתייעץ עם הורים, רב, מחנך או אדם בוגר ואמין.",
+          question: "איזו מידה טובה אחת אני יכול/ה לחזק השבוע בצורה קטנה ומעשית?"
+        };
+      }
+
+      return {
+        title: "הכוונה אישית לתקופה הזו",
+        powerLabel: "כוח פנימי שמבקש להתעורר",
+        power: aliyahPowerMap[rootAliyah] || "כוח פנימי שמבקש להפוך מחשבה טובה למעשה טוב, ולהוציא אור שהיה בפנים אל החיים עצמם.",
+        strengthenLabel: "מה כדאי לחזק עכשיו",
+        strengthen: `כדאי לחזק ${monthDetails.sense}, יחד עם ${mazalInfo.tikun}`,
+        cautionLabel: "נקודת זהירות עדינה",
+        caution: "לא לפעול מתוך לחץ, ריצוי או פחד להפסיד. החלטות משמעותיות כדאי לקבל מתוך יישוב הדעת, תפילה, בדיקה אמיתית והתייעצות עם אדם חכם ואמין.",
+        question: "איזה צעד קטן אחד אני יכול/ה לעשות השבוע כדי להתקרב יותר לגרסה הנקייה והאמיתית שלי?"
+      };
+    }
+
     function buildLocalMessageHtml(data){
       const safeFirstName = escapeHtml(data.firstName);
       const safeJewishName = escapeHtml(buildJewishName(data));
@@ -979,6 +1117,9 @@
           : "לא זוהה";
 
       const parashaText = data.parashaInfo?.parasha || "לא זוהתה";
+      const ageDetails = calculateAgeDetails(data.birthDate);
+      ageDetails.ageText = formatAgeText(ageDetails);
+      const lifeGuidance = getLifeGuidance(data, ageDetails);
 
       return `
         <div class="result-main-title">${safeFirstName} ${escapeHtml(dear)}</div>
@@ -999,6 +1140,21 @@
           <div class="result-item">
             <div class="result-label">השם כפי שיופיע לחיזוק ותפילה</div>
             <div class="result-value">${safeJewishName}</div>
+          </div>
+
+          <div class="result-item">
+            <div class="result-label">גילך כיום</div>
+            <div class="result-value">${escapeHtml(ageDetails.ageText)}</div>
+          </div>
+
+          <div class="result-item">
+            <div class="result-label">שנת החיים הנוכחית שלך</div>
+            <div class="result-value">את/ה נמצא/ת כעת ב${escapeHtml(ageDetails.lifeYearText)}</div>
+          </div>
+
+          <div class="result-item">
+            <div class="result-label">עד יום ההולדת הבא</div>
+            <div class="result-value">נותרו ${escapeHtml(ageDetails.daysToNextBirthday)} ימים</div>
           </div>
         </div>
 
@@ -1042,6 +1198,30 @@
         </div>
 
         <div class="result-section">
+          <div class="result-section-title">${escapeHtml(lifeGuidance.title)}</div>
+
+          <div class="result-item">
+            <div class="result-label">${escapeHtml(lifeGuidance.powerLabel)}</div>
+            <div class="result-value">${escapeHtml(lifeGuidance.power)}</div>
+          </div>
+
+          <div class="result-item">
+            <div class="result-label">${escapeHtml(lifeGuidance.strengthenLabel)}</div>
+            <div class="result-value">${escapeHtml(lifeGuidance.strengthen)}</div>
+          </div>
+
+          <div class="result-item">
+            <div class="result-label">${escapeHtml(lifeGuidance.cautionLabel)}</div>
+            <div class="result-value">${escapeHtml(lifeGuidance.caution)}</div>
+          </div>
+
+          <div class="result-item">
+            <div class="result-label">שאלה להתבוננות</div>
+            <div class="result-value">${escapeHtml(lifeGuidance.question)}</div>
+          </div>
+        </div>
+
+        <div class="result-section">
           <div class="result-section-title">${escapeHtml(mitzvahLabel)}</div>
 
           <div class="result-item">
@@ -1067,7 +1247,8 @@
 
         <div class="result-note">
           הנתונים כאן הם בסיס ראשוני לפי שם, תאריך עברי ושיוכים מסורתיים כלליים.
-          אין לראות בהם קביעה מוחלטת על האדם, על נשמתו או על עתידו.
+          אין לראות בהם נבואה, קביעה מוחלטת על האדם, אבחון אישי, ייעוץ רפואי, ייעוץ נפשי, ייעוץ משפטי או ייעוץ כלכלי.
+          מטרת הדף היא לעורר מחשבה טובה, חשבון נפש, חיזוק וצמיחה.
         </div>
       `;
     }
@@ -1243,7 +1424,14 @@
             rootAliyah: getAliyahByHebrewDay(data.hebcalInfo?.hebrewDay),
             aliyahMeaning: getAliyahMeaning(getAliyahByHebrewDay(data.hebcalInfo?.hebrewDay)),
             gematriaValue: getGematriaValue(data.firstName),
-            gematriaMeaning: getGematriaMeaning(getGematriaValue(data.firstName))
+            gematriaMeaning: getGematriaMeaning(getGematriaValue(data.firstName)),
+            ageYears: calculateAgeDetails(data.birthDate).years,
+            ageText: formatAgeText(calculateAgeDetails(data.birthDate)),
+            currentLifeYear: calculateAgeDetails(data.birthDate).currentLifeYear,
+            daysToNextBirthday: calculateAgeDetails(data.birthDate).daysToNextBirthday,
+            isMinor: calculateAgeDetails(data.birthDate).isMinor,
+            lifeGuidance: getLifeGuidance(data, calculateAgeDetails(data.birthDate)),
+            safetyInstruction: "כתוב כהתבוננות רוחנית עדינה בלבד. אל תכתוב נבואה, קביעה מוחלטת, אבחון רפואי או נפשי, תחזית עתיד, או הוראות מסוכנות. אם isMinor=true אל תכתוב הכוונה זוגית, כספית, מקצועית או דברים מפחידים; כתוב רק חיזוק עדין לגיל צעיר והמלצה להתייעץ עם הורים או מבוגר אחראי."
           })
         });
 
@@ -1471,7 +1659,9 @@
           jewishName: buildJewishName(data),
           hebrewMonthDisplay: getHebrewMonthName(data.birthDate),
           rootAliyah: getAliyahByHebrewDay(data.hebcalInfo?.hebrewDay),
-          gematriaValue: getGematriaValue(data.firstName)
+          gematriaValue: getGematriaValue(data.firstName),
+          ageDetails: calculateAgeDetails(data.birthDate),
+          lifeGuidance: getLifeGuidance(data, calculateAgeDetails(data.birthDate))
         };
 
         await addDoc(collection(db, "personalMessages"), finalDataForFirestore);
