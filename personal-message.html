@@ -1241,6 +1241,144 @@
       };
     }
 
+    function sumDigitsString(text){
+      return String(text)
+        .replace(/\D/g, "")
+        .split("")
+        .filter(Boolean)
+        .map(Number);
+    }
+
+    function reduceNumberWithSteps(number){
+      const steps = [];
+      let current = Number(number);
+
+      while(current > 9){
+        const digits = String(current).split("").map(Number);
+        const next = digits.reduce((sum, digit)=> sum + digit, 0);
+        steps.push({
+          from: current,
+          expression: digits.join("+"),
+          to: next
+        });
+        current = next;
+      }
+
+      return {
+        coreNumber: current,
+        steps
+      };
+    }
+
+    function getBirthDateDigitsText(dateValue){
+      const [year, month, day] = String(dateValue).split("-");
+      return `${day}${month}${year}`;
+    }
+
+    function getBirthDateReductionProfile(coreNumber, isMinor){
+      const adultProfiles = {
+        1: {
+          title: "שורש של התחלה והובלה",
+          light: "יש כאן רמז לנשמה שבאה ללמוד לעמוד על הרגליים שלה, להתחיל דברים, ולא לחכות תמיד שמישהו אחר יפתח את הדרך.",
+          correction: "התיקון העדין הוא להוביל בלי להפוך לקשה, ולזכור שהכוח האמיתי לא צריך להוכיח את עצמו כל הזמן.",
+          question: "איפה אני מחכה לאישור מבחוץ, למרות שבפנים אני כבר יודע/ת שצריך להתחיל?"
+        },
+        2: {
+          title: "שורש של רגישות וחיבור",
+          light: "יש כאן רמז ללב שמרגיש אנשים, קולט ניואנסים, ויכול ליצור שלום, קירבה והקשבה עמוקה.",
+          correction: "התיקון העדין הוא לא לאבד את עצמך בתוך הצורך שיהיה טוב לכולם, ולא להפוך רגישות לריצוי.",
+          question: "איפה אני שומר/ת שקט חיצוני אבל מוותר/ת על הקול הפנימי שלי?"
+        },
+        3: {
+          title: "שורש של ביטוי, שמחה ויצירה",
+          light: "יש כאן רמז לכוח של דיבור, ביטוי, יצירה, שמחה ויכולת להאיר לאחרים דרך מילים, רעיונות או נוכחות.",
+          correction: "התיקון העדין הוא לא לברוח להסחות דעת או דיבורים מיותרים, אלא להפוך את הביטוי לכלי של אמת וברכה.",
+          question: "איזה קול טוב קיים בי ועדיין לא קיבל ביטוי נכון בעולם?"
+        },
+        4: {
+          title: "שורש של בנייה, סדר ואחריות",
+          light: "יש כאן רמז לאדם שבא לבנות משהו יציב, להיות עוגן, ולגלות אור דרך התמדה, אחריות ועמידה במציאות.",
+          correction: "התיקון העדין הוא לא להפוך אחריות לכובד, ולא לשכוח שגם בנייה חזקה צריכה רכות, אמונה ומנוחה.",
+          question: "איפה אני סוחב/ת יותר מדי לבד בשם האחריות?"
+        },
+        5: {
+          title: "שורש של תנועה, שינוי וחופש פנימי",
+          light: "יש כאן רמז לנשמה שצריכה מרחב, תנועה, ניסיון, סקרנות ויכולת לא להיתקע במקום אחד יותר מדי זמן.",
+          correction: "התיקון העדין הוא להפוך חופש לכיוון, ולא לתת לרצון בתנועה להפוך לבריחה ממחויבות או עומק.",
+          question: "איפה אני מחפש/ת שינוי אמיתי, ואיפה אני פשוט בורח/ת מחוסר שקט?"
+        },
+        6: {
+          title: "שורש של לב, משפחה ונתינה",
+          light: "יש כאן רמז ללב שמבקש להעניק, לרפא, לחבר, לקחת אחריות על אהבה, בית ואנשים קרובים.",
+          correction: "התיקון העדין הוא לתת בלי להישחק, לא להציל את כולם, וללמוד שגם ללב נותן מותר לקבל גבול ומנוחה.",
+          question: "איפה אני נותן/ת הרבה לאחרים אבל שוכח/ת לתת גם לעצמי מקום?"
+        },
+        7: {
+          title: "שורש של עומק, אמונה וחיפוש אמת",
+          light: "יש כאן רמז לנשמה שלא מסתפקת בחיצוניות. יש רצון להבין, לשאול, להעמיק, ולחפש אמת פנימית גם כשכולם עסוקים ברעש.",
+          correction: "התיקון העדין הוא לא להפוך עומק לריחוק, ולא להסתגר בתוך מחשבות במקום להפוך אותן לאמונה, תפילה ומעשה.",
+          question: "איזו אמת פנימית אני כבר מרגיש/ה, אבל עדיין מפחד/ת לחיות לפיה?"
+        },
+        8: {
+          title: "שורש של עוצמה, ניהול והשפעה",
+          light: "יש כאן רמז לכוח של עשייה, השפעה, ניהול מציאות, עמידה מול אתגרים ויכולת להוציא דברים מן הכוח אל הפועל.",
+          correction: "התיקון העדין הוא להשתמש בכוח מתוך יושר, ענווה ושליחות — ולא מתוך צורך בשליטה או פחד לאבד מקום.",
+          question: "איפה הכוח שלי יכול להפוך להשפעה טובה יותר, ולא רק למאבק על שליטה?"
+        },
+        9: {
+          title: "שורש של חמלה, סיום מעגלים ושליחות רחבה",
+          light: "יש כאן רמז ללב רחב, ראייה גבוהה, חמלה, רצון לעזור, ויכולת לראות מעבר לאינטרס האישי הצר.",
+          correction: "התיקון העדין הוא לא להתפזר על כל העולם, לא לספוג כאב של כולם, וללמוד לתת בצורה מדויקת ובריאה.",
+          question: "איזה מעגל הגיע הזמן לסגור כדי שהאור שלי יוכל לעבור לשלב הבא?"
+        }
+      };
+
+      const minorProfiles = {
+        1: "ביטחון עצמי טוב, אומץ להתחיל, ולמידה איך להוביל בלי לריב.",
+        2: "רגישות, חברות טובה, הקשבה, ולמידה איך לא להיעלב מהר מדי.",
+        3: "שמחה, דיבור, יצירה, ולמידה איך להשתמש בכישרון בצורה טובה.",
+        4: "סדר, אחריות, התמדה, ולמידה איך לא לקחת הכול כבד מדי.",
+        5: "סקרנות, תנועה, רצון לחופש, ולמידה איך לשמור על גבולות טובים.",
+        6: "לב טוב, משפחתיות, נתינה, ולמידה איך לא לדאוג לכולם יותר מדי.",
+        7: "עומק, מחשבה, שקט פנימי, ולמידה איך לשתף ולא לשמור הכול בפנים.",
+        8: "כוח רצון, יכולת להשפיע, ולמידה איך להשתמש בכוח בעדינות וביושר.",
+        9: "חמלה, רגישות לעולם, ולמידה איך לעזור בלי להעמיס על הלב."
+      };
+
+      if(isMinor){
+        return {
+          title: "רמז עדין לפי תאריך הלידה",
+          light: minorProfiles[coreNumber] || "כוח פנימי טוב שמבקש להתפתח לאט ובשמחה.",
+          correction: "בגיל צעיר זה לא נועד לקבוע גורל או עתיד, אלא לתת נקודת חיזוק עדינה. בדברים חשובים תמיד כדאי להתייעץ עם הורים או מבוגר אחראי.",
+          question: "איזו מידה טובה אחת אני יכול/ה לחזק השבוע?"
+        };
+      }
+
+      return adultProfiles[coreNumber] || adultProfiles[9];
+    }
+
+    function calculateBirthDateReduction(dateValue, isMinor){
+      const digitsText = getBirthDateDigitsText(dateValue);
+      const digits = sumDigitsString(digitsText);
+      const fullSum = digits.reduce((sum, digit)=> sum + digit, 0);
+      const reduction = reduceNumberWithSteps(fullSum);
+      const profile = getBirthDateReductionProfile(reduction.coreNumber, isMinor);
+
+      const firstExpression = digits.join("+");
+      const stepTexts = [`${firstExpression}=${fullSum}`];
+      reduction.steps.forEach(step=>{
+        stepTexts.push(`${step.expression}=${step.to}`);
+      });
+
+      return {
+        digitsText,
+        fullSum,
+        coreNumber: reduction.coreNumber,
+        calculationText: stepTexts.join(" → "),
+        profile
+      };
+    }
+
     function getLifeGuidance(data, ageDetails){
       const rawHebrewMonth = getHebrewMonthName(data.birthDate);
       const hebrewMonth = normalizeHebrewMonthName(rawHebrewMonth);
@@ -1313,6 +1451,7 @@
       ageDetails.ageText = formatAgeText(ageDetails);
       const lifeGuidance = getLifeGuidance(data, ageDetails);
       const depthMap = getPersonalDepthMap(data, ageDetails);
+      const birthDateReduction = calculateBirthDateReduction(data.birthDate, ageDetails.isMinor);
 
       return `
         <div class="result-main-title">${safeFirstName} ${escapeHtml(dear)}</div>
@@ -1348,6 +1487,35 @@
           <div class="result-item">
             <div class="result-label">עד יום ההולדת הבא</div>
             <div class="result-value">נותרו ${escapeHtml(ageDetails.daysToNextBirthday)} ימים</div>
+          </div>
+        </div>
+
+        <div class="result-section">
+          <div class="result-section-title">צמצום תאריך הלידה</div>
+
+          <div class="result-item">
+            <div class="result-label">דרך החישוב</div>
+            <div class="result-value">${escapeHtml(birthDateReduction.calculationText)}</div>
+          </div>
+
+          <div class="result-item">
+            <div class="result-label">מספר השורש לפי צמצום התאריך</div>
+            <div class="result-value">${escapeHtml(birthDateReduction.coreNumber)}</div>
+          </div>
+
+          <div class="result-item">
+            <div class="result-label">הרמז העדין</div>
+            <div class="result-value">${escapeHtml(birthDateReduction.profile.title)} — ${escapeHtml(birthDateReduction.profile.light)}</div>
+          </div>
+
+          <div class="result-item">
+            <div class="result-label">נקודת תיקון להתבוננות</div>
+            <div class="result-value">${escapeHtml(birthDateReduction.profile.correction)}</div>
+          </div>
+
+          <div class="result-item">
+            <div class="result-label">שאלה אישית מתוך החישוב</div>
+            <div class="result-value">${escapeHtml(birthDateReduction.profile.question)}</div>
           </div>
         </div>
 
@@ -1612,6 +1780,7 @@
         const ageDetails = calculateAgeDetails(data.birthDate);
         ageDetails.ageText = formatAgeText(ageDetails);
         const depthMap = getPersonalDepthMap(data, ageDetails);
+        const birthDateReduction = calculateBirthDateReduction(data.birthDate, ageDetails.isMinor);
 
         const response = await fetch(apiUrl, {
           method: "POST",
@@ -1649,6 +1818,7 @@
             isMinor: ageDetails.isMinor,
             lifeGuidance: getLifeGuidance(data, ageDetails),
             depthMap,
+            birthDateReduction,
             desiredAiTitle: "המפה הפנימית שלך",
             desiredAiStructure: [
               "האור הבולט שלך",
@@ -1657,9 +1827,10 @@
               "מה מחליש אותך כשלא שמים לב",
               "מה הנשמה מבקשת בתקופה הזו",
               "שאלה אחת שלא כדאי לברוח ממנה",
-              "פעולה קטנה לשבוע הקרוב"
+              "פעולה קטנה לשבוע הקרוב",
+              "רמז מצמצום תאריך הלידה"
             ],
-            writingInstruction: "אל תציג רשימת נתונים יבשה. בנה מפת עומק אישית מתוך שילוב הנתונים. כתוב כאילו האדם מרגיש שרואים אותו, בשפה חמה, יהודית, אחראית ומעשית. השתמש בזהירות במילים כמו ייתכן, יש כאן רמז, כדאי להתבונן. אל תכתוב שהדברים ודאיים.",
+            writingInstruction: "אל תציג רשימת נתונים יבשה. בנה מפת עומק אישית מתוך שילוב הנתונים, כולל צמצום תאריך הלידה כנקודת התבוננות עדינה בלבד. כתוב כאילו האדם מרגיש שרואים אותו, בשפה חמה, יהודית, אחראית ומעשית. השתמש בזהירות במילים כמו ייתכן, יש כאן רמז, כדאי להתבונן. אל תכתוב שהדברים ודאיים ואל תציג את הצמצום כנבואה או כקבלה מוחלטת.",
             safetyInstruction: "כתוב כהתבוננות רוחנית עדינה בלבד. אל תכתוב נבואה, קביעה מוחלטת, אבחון רפואי או נפשי, תחזית עתיד, או הוראות מסוכנות. אם isMinor=true אל תכתוב הכוונה זוגית, כספית, מקצועית או דברים מפחידים; כתוב רק חיזוק עדין לגיל צעיר והמלצה להתייעץ עם הורים או מבוגר אחראי."
           })
         });
@@ -1890,7 +2061,8 @@
           rootAliyah: getAliyahByHebrewDay(data.hebcalInfo?.hebrewDay),
           gematriaValue: getGematriaValue(data.firstName),
           ageDetails: calculateAgeDetails(data.birthDate),
-          lifeGuidance: getLifeGuidance(data, calculateAgeDetails(data.birthDate))
+          lifeGuidance: getLifeGuidance(data, calculateAgeDetails(data.birthDate)),
+          birthDateReduction: calculateBirthDateReduction(data.birthDate, calculateAgeDetails(data.birthDate).isMinor)
         };
 
         await addDoc(collection(db, "personalMessages"), finalDataForFirestore);
