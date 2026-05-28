@@ -897,6 +897,10 @@
       const mazalInfo = getMazalByHebrewMonth(hebrewMonth);
       const monthDetails = getJewishMonthDetails(hebrewMonth);
       const rootAliyah = getAliyahByHebrewDay(data.hebcalInfo?.hebrewDay);
+      const rootAliyahMeaning = getAliyahMeaning(rootAliyah);
+      const rootAliyahBasis = data.hebcalInfo?.hebrewDay
+        ? `יום הלידה העברי שלך הוא ${hebrewNumber(data.hebcalInfo.hebrewDay)} בחודש. החישוב מחלק את ימי החודש למחזור קבוע של שבע עליות, ולכן מתקבלת עלייה ${rootAliyah}.`
+        : "לא ניתן היה לחשב את עליית השורש כי יום הלידה העברי לא זוהה.";
       const gematriaValue = getGematriaValue(data.firstName);
 
       const mitzvahHebrewDate =
@@ -1462,6 +1466,10 @@
       const mazalInfo = getMazalByHebrewMonth(hebrewMonth);
       const monthDetails = getJewishMonthDetails(hebrewMonth);
       const rootAliyah = getAliyahByHebrewDay(data.hebcalInfo?.hebrewDay);
+      const rootAliyahMeaning = getAliyahMeaning(rootAliyah);
+      const rootAliyahBasis = data.hebcalInfo?.hebrewDay
+        ? `יום הלידה העברי שלך הוא ${hebrewNumber(data.hebcalInfo.hebrewDay)} בחודש. החישוב מחלק את ימי החודש למחזור קבוע של שבע עליות, ולכן מתקבלת עלייה ${rootAliyah}.`
+        : "לא ניתן היה לחשב את עליית השורש כי יום הלידה העברי לא זוהה.";
       const gematriaValue = getGematriaValue(data.firstName);
 
       const mitzvahHebrewDate =
@@ -1673,6 +1681,21 @@
           <div class="result-item">
             <div class="result-label">עליית השורש האישית</div>
             <div class="result-value">עלייה ${escapeHtml(rootAliyah)}</div>
+          </div>
+
+          <div class="result-item">
+            <div class="result-label">איך חושבה עליית השורש?</div>
+            <div class="result-value">${escapeHtml(rootAliyahBasis)}</div>
+          </div>
+
+          <div class="result-item">
+            <div class="result-label">משמעות עליית השורש</div>
+            <div class="result-value">${escapeHtml(rootAliyahMeaning)}</div>
+          </div>
+
+          <div class="result-item">
+            <div class="result-label">דיוק חשוב</div>
+            <div class="result-value">עליית השורש כאן היא רמז אישי לפי יום הלידה העברי, ואינה בהכרח העלייה ההלכתית שבה עלו בפועל בבית הכנסת. הקריאה ההלכתית בפועל תלויה ביום שבו בחרו לעלות לתורה, במנהג המשפחה ובמנהג בית הכנסת.</div>
           </div>
 
           <a class="root-aliyah-link" href="#" onclick="return false;">
@@ -1967,6 +1990,7 @@
             parashaCalculationBasis: data.parashaInfo?.basis || "",
             parashaCalculationNote: data.parashaInfo?.note || "",
             rootAliyah: getAliyahByHebrewDay(data.hebcalInfo?.hebrewDay),
+            aliyahCalculationMethod: "עליית השורש מחושבת כרמז אישי לפי יום הלידה העברי במחזור של שבע עליות; אינה קובעת את העלייה ההלכתית בפועל.",
             aliyahMeaning: getAliyahMeaning(getAliyahByHebrewDay(data.hebcalInfo?.hebrewDay)),
             gematriaValue: getGematriaValue(data.firstName),
             gematriaMeaning: getGematriaMeaning(getGematriaValue(data.firstName)),
