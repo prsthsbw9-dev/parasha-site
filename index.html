@@ -924,7 +924,45 @@
       return wide || mobile || (item.url ? item : null);
     }
 
+    let videoSessionId = 0;
+
+    function stopPardesVideo(){
+      videoSessionId += 1;
+
+      const player = document.getElementById("pardesVideoPlayer");
+      if(!player) return;
+
+      player.onloadedmetadata = null;
+      player.oncanplay = null;
+      player.onplay = null;
+      player.autoplay = false;
+
+      try{
+        player.pause();
+      }catch(error){}
+
+      try{
+        player.currentTime = 0;
+      }catch(error){}
+
+      player.removeAttribute("src");
+      player.src = "";
+
+      while(player.firstChild){
+        player.removeChild(player.firstChild);
+      }
+
+      try{
+        player.load();
+      }catch(error){}
+
+      player.classList.remove("is-horizontal", "is-square");
+      player.style.visibility = "visible";
+    }
+
     function openLayer(layer){
+      stopPardesVideo();
+
       const panel = document.getElementById("pardesVideoPanel");
       const title = document.getElementById("pardesVideoTitle");
       const player = document.getElementById("pardesVideoPlayer");
@@ -932,6 +970,7 @@
 
       const item = activeVideos?.[layer];
       const layerName = layerNames[layer] || "פרד״ס";
+      const currentSession = videoSessionId;
 
       if(title){
         title.textContent = `${layerName} — פרשת ${currentParasha || ""} ${currentAliyah || ""}`.trim();
@@ -947,10 +986,14 @@
         player.muted = false;
         player.autoplay = true;
         player.playsInline = true;
+        player.setAttribute("playsinline", "");
+        player.setAttribute("webkit-playsinline", "");
         player.preload = "auto";
         player.src = selectedVideo.url;
 
         player.onloadedmetadata = () => {
+          if(currentSession !== videoSessionId) return;
+
           const ratio = player.videoWidth && player.videoHeight
             ? player.videoWidth / player.videoHeight
             : 9 / 16;
@@ -966,45 +1009,39 @@
           player.style.visibility = "visible";
         };
 
+        panel.classList.add("is-open");
+        panel.setAttribute("aria-hidden", "false");
+
         player.load();
 
         const playPromise = player.play();
         if(playPromise && typeof playPromise.catch === "function"){
           playPromise.catch(() => {
+            if(currentSession !== videoSessionId || !panel.classList.contains("is-open")) return;
+
             player.muted = true;
             player.play().catch(() => {
+              if(currentSession !== videoSessionId || !panel.classList.contains("is-open")) return;
+
               player.muted = false;
               player.style.visibility = "visible";
             });
           });
         }
       }else{
-        player.pause();
-        player.onloadedmetadata = null;
-        player.classList.remove("is-horizontal", "is-square");
-        player.style.visibility = "visible";
-        player.removeAttribute("src");
-        player.load();
+        stopPardesVideo();
         player.style.display = "none";
         empty.style.display = "block";
         empty.innerHTML = `עדיין לא הועלה סרטון <b>${layerName}</b> עבור העלייה הפעילה.`;
-      }
 
-      panel.classList.add("is-open");
-      panel.setAttribute("aria-hidden", "false");
+        panel.classList.add("is-open");
+        panel.setAttribute("aria-hidden", "false");
+      }
     }
 
     function closePanel(){
       const panel = document.getElementById("pardesVideoPanel");
-      const player = document.getElementById("pardesVideoPlayer");
-      if(player){
-        player.pause();
-        player.onloadedmetadata = null;
-        player.classList.remove("is-horizontal", "is-square");
-        player.style.visibility = "visible";
-        player.removeAttribute("src");
-        player.load();
-      }
+      stopPardesVideo();
       panel.classList.remove("is-open");
       panel.setAttribute("aria-hidden", "true");
     }
@@ -1040,6 +1077,16 @@
     document.addEventListener("keydown", (event) => {
       if(event.key === "Escape"){
         closePanel();
+      }
+    });
+
+    window.addEventListener("pagehide", stopPardesVideo);
+    window.addEventListener("beforeunload", stopPardesVideo);
+    document.addEventListener("visibilitychange", () => {
+      if(document.hidden){
+        stopPardesVideo();
+        document.getElementById("pardesVideoPanel")?.classList.remove("is-open");
+        document.getElementById("pardesVideoPanel")?.setAttribute("aria-hidden", "true");
       }
     });
 
