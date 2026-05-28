@@ -317,6 +317,101 @@
         0 0 13px rgba(255,255,255,.26);
     }
 
+
+
+    .fig-icon{
+      position:relative;
+      z-index:2;
+      width:38px;
+      height:38px;
+      display:inline-block;
+      transform:translateY(-1px);
+      filter:
+        drop-shadow(0 3px 8px rgba(0,0,0,.38))
+        drop-shadow(0 0 12px rgba(255,255,255,.18));
+    }
+
+    .fig-icon .fig-stem{
+      position:absolute;
+      top:2px;
+      left:6px;
+      width:12px;
+      height:4px;
+      background:linear-gradient(180deg,#8e6a44 0%,#6b4a26 100%);
+      border-radius:4px;
+      transform:rotate(-24deg);
+      z-index:4;
+      box-shadow:0 0 2px rgba(255,255,255,.12);
+    }
+
+    .fig-icon .fig-leaf{
+      position:absolute;
+      background:linear-gradient(180deg,#8ee96c 0%, #57bf3c 48%, #2f8730 100%);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.34),
+        0 0 7px rgba(125,255,120,.18);
+      z-index:1;
+    }
+
+    .fig-icon .fig-leaf-left{
+      top:1px;
+      left:7px;
+      width:24px;
+      height:18px;
+      border-radius:55% 45% 58% 42% / 62% 58% 42% 38%;
+      transform:rotate(-8deg);
+      clip-path:polygon(0% 56%, 10% 34%, 26% 22%, 42% 16%, 56% 6%, 72% 10%, 100% 24%, 84% 42%, 74% 56%, 92% 76%, 74% 76%, 60% 100%, 48% 82%, 34% 96%, 28% 76%, 8% 74%, 18% 58%);
+    }
+
+    .fig-icon .fig-leaf-right{
+      top:8px;
+      left:18px;
+      width:20px;
+      height:15px;
+      border-radius:48% 52% 46% 54% / 54% 46% 54% 46%;
+      transform:rotate(26deg);
+      clip-path:polygon(0% 54%, 10% 32%, 28% 18%, 48% 8%, 68% 14%, 100% 30%, 82% 48%, 72% 58%, 88% 82%, 66% 76%, 54% 100%, 40% 80%, 24% 92%, 18% 74%, 0% 70%, 14% 56%);
+    }
+
+    .fig-icon .fig-fruit{
+      position:absolute;
+      left:9px;
+      top:11px;
+      width:21px;
+      height:25px;
+      background:
+        radial-gradient(circle at 34% 24%, rgba(255,255,255,.78) 0%, rgba(255,255,255,.20) 10%, rgba(255,255,255,0) 18%),
+        linear-gradient(180deg,#ba8aa6 0%, #986b8e 16%, #90658b 26%, #815276 46%, #7a466e 66%, #67325b 100%);
+      border-radius:48% 48% 52% 52% / 34% 34% 66% 66%;
+      z-index:3;
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.35),
+        inset 0 -3px 6px rgba(0,0,0,.16),
+        0 0 9px rgba(202,140,190,.18);
+      overflow:hidden;
+    }
+
+    .fig-icon .fig-fruit::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:
+        linear-gradient(90deg, transparent 0%, rgba(240,215,182,.26) 22%, transparent 38%, rgba(240,215,182,.22) 52%, transparent 66%, rgba(240,215,182,.16) 80%, transparent 100%);
+      opacity:.95;
+    }
+
+    .fig-icon .fig-fruit::after{
+      content:"";
+      position:absolute;
+      bottom:2px;
+      left:8px;
+      width:5px;
+      height:5px;
+      border-radius:50%;
+      background:rgba(240,220,180,.55);
+      box-shadow:0 0 3px rgba(255,255,255,.18);
+    }
+
     .fruit-logo-icon{
       position:relative;
       z-index:2;
@@ -594,7 +689,12 @@
         </a>
 
         <a id="drashLink" class="fruit-link fruit-remez" href="#" aria-label="דרש העלייה">
-          <span class="pardes-fruit-icon" aria-hidden="true">🫐</span>
+          <span class="fig-icon" aria-hidden="true">
+            <span class="fig-stem"></span>
+            <span class="fig-leaf fig-leaf-left"></span>
+            <span class="fig-leaf fig-leaf-right"></span>
+            <span class="fig-fruit"></span>
+          </span>
           <span class="fruit-letter fruit-word">דרש</span>
         </a>
 
