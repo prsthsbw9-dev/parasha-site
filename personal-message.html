@@ -130,7 +130,7 @@
       gap:10px;
       margin-bottom:10px;
     }
-    
+
     .radio-option{
       flex:1;
       display:flex;
@@ -143,32 +143,32 @@
       cursor:pointer;
       background:rgba(0,0,0,.08);
     }
-    
+
     .radio-option input{
       width:auto;
       accent-color:#7eefff;
     }
-    
+
     .radio-option span{
       font-weight:900;
     }
-    
+
     .date-input-box{
       margin-top:8px;
     }
-    
+
     .hebrew-date-grid{
       display:grid;
       grid-template-columns:1fr 1fr 1.4fr;
       gap:8px;
     }
-    
+
     @media(max-width:430px){
       .hebrew-date-grid{
         grid-template-columns:1fr;
       }
     }
-    
+
     .send-btn{
       width:100%;
       border:1px solid rgba(255,255,255,.45);
@@ -201,7 +201,7 @@
       white-space:normal;
       text-shadow:0 2px 10px rgba(0,0,0,.75);
     }
-    
+
     .result-main-title{
       font-size:24px;
       font-weight:900;
@@ -212,11 +212,11 @@
         0 0 12px rgba(190,140,255,.35),
         0 3px 14px rgba(0,0,0,.75);
     }
-    
+
     .result-section{
       margin-bottom:26px;
     }
-    
+
     .result-section-title{
       font-size:20px;
       font-weight:900;
@@ -226,18 +226,18 @@
       color:#f4ebff;
       text-shadow:0 0 12px rgba(180,120,255,.28);
     }
-    
+
     .result-item{
       margin-bottom:14px;
     }
-    
+
     .result-label{
       font-size:15px;
       font-weight:900;
       margin-bottom:7px;
       color:rgba(255,255,255,.93);
     }
-    
+
     .result-value{
       border:1px solid rgba(190,140,255,.72);
       border-radius:15px;
@@ -250,7 +250,7 @@
       font-size:16px;
       line-height:1.7;
     }
-    
+
     .result-note{
       margin-top:22px;
       font-size:13px;
@@ -259,7 +259,7 @@
       border-top:1px solid rgba(255,255,255,.18);
       padding-top:14px;
     }
-    
+
     .result-loading{
       min-height:220px;
       display:flex;
@@ -309,7 +309,7 @@
         0 0 16px rgba(90,210,255,.18);
       text-align:center;
     }
-    
+
     .root-aliyah-link span{
       display:block;
       font-size:14px;
@@ -317,7 +317,7 @@
       color:rgba(255,255,255,.88);
       margin-bottom:5px;
     }
-    
+
     .root-aliyah-link strong{
       display:block;
       font-size:17px;
@@ -325,7 +325,7 @@
       color:#fff;
       text-shadow:0 0 10px rgba(120,220,255,.28);
     }
-    
+
     .result-actions .main-action{
       background:rgba(60,170,180,.46);
       box-shadow:
@@ -350,7 +350,7 @@
       text-shadow:0 2px 8px rgba(0,0,0,.55);
     }
 
-     .ai-section{
+    .ai-section{
       margin-top:28px;
       border:1px solid rgba(120,220,255,.55);
       border-radius:18px;
@@ -360,7 +360,7 @@
         0 0 0 1px rgba(255,255,255,.05) inset,
         0 0 18px rgba(90,210,255,.16);
     }
-    
+
     .ai-section-title{
       font-size:20px;
       font-weight:900;
@@ -368,12 +368,12 @@
       color:#eafaff;
       text-shadow:0 0 12px rgba(120,220,255,.28);
     }
-    
+
     .ai-section-content{
       font-size:16px;
       line-height:1.9;
       color:#fff;
-    }   
+    }
 
     .hidden{
       display:none !important;
@@ -401,28 +401,28 @@
 
     <div id="formBox" class="glass-box">
 
-    <div class="field">
-      <label for="firstName">שם פרטי (ללא שם משפחה)</label>
-      <input id="firstName" type="text" placeholder="לדוגמה: רונן">
-    </div>
+      <div class="field">
+        <label for="firstName">שם פרטי (ללא שם משפחה)</label>
+        <input id="firstName" type="text" placeholder="לדוגמה: רונן">
+      </div>
 
-    <div class="field">
-      <label for="gender">מין בלידה לצורך חישוב בר/בת מצווה</label>
-      <select id="gender">
-        <option value="">בחר/י</option>
-        <option value="male">זכר</option>
-        <option value="female">נקבה</option>
-      </select>
-    </div>
-    
-    <div class="field">
-      <label for="relationType">בן / בת כפי שיופיע בשם התורני</label>
-      <select id="relationType">
-        <option value="">בחר/י</option>
-        <option value="בן">בן</option>
-        <option value="בת">בת</option>
-      </select>
-    </div>
+      <div class="field">
+        <label for="gender">מין בלידה לצורך חישוב בר/בת מצווה</label>
+        <select id="gender">
+          <option value="">בחר/י</option>
+          <option value="male">זכר</option>
+          <option value="female">נקבה</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="relationType">בן / בת כפי שיופיע בשם התורני</label>
+        <select id="relationType">
+          <option value="">בחר/י</option>
+          <option value="בן">בן</option>
+          <option value="בת">בת</option>
+        </select>
+      </div>
 
       <div class="field">
         <label for="fatherName">שם האבא</label>
@@ -435,33 +435,33 @@
       </div>
 
       <div class="field">
-       <label for="parentDisplay">איך להציג את שם ההורה?</label>
-       <select id="parentDisplay">
-         <option value="both">שם האב והאם</option>
-         <option value="father">שם האב בלבד</option>
-         <option value="mother">שם האם בלבד</option>
-       </select>
-      </div>     
-      
+        <label for="parentDisplay">איך להציג את שם ההורה?</label>
+        <select id="parentDisplay">
+          <option value="both">שם האב והאם</option>
+          <option value="father">שם האב בלבד</option>
+          <option value="mother">שם האם בלבד</option>
+        </select>
+      </div>
+
       <div class="field">
         <label>תאריך לידה</label>
-      
+
         <div class="date-choice-box">
           <label class="radio-option">
             <input type="radio" name="birthType" value="gregorian" checked>
             <span>לועזי</span>
           </label>
-      
+
           <label class="radio-option">
             <input type="radio" name="birthType" value="hebrew">
             <span>עברי</span>
           </label>
         </div>
-      
+
         <div id="gregorianDateBox" class="date-input-box">
           <input id="birthDate" type="date">
         </div>
-      
+
         <div id="hebrewDateBox" class="date-input-box hidden">
           <div class="hebrew-date-grid">
             <select id="hebrewDay">
@@ -497,7 +497,7 @@
               <option value="29">כ״ט</option>
               <option value="30">ל׳</option>
             </select>
-          
+
             <select id="hebrewMonth">
               <option value="">חודש</option>
               <option value="Nisan">ניסן</option>
@@ -514,7 +514,7 @@
               <option value="Adar">אדר</option>
               <option value="Adar2">אדר ב׳</option>
             </select>
-          
+
             <select id="hebrewYear">
               <option value="">שנה</option>
             </select>
@@ -534,7 +534,7 @@
       </div>
 
       <button class="send-btn" id="generateBtn">
-        🤿 צלילה לעומק 
+        🤿 צלילה לעומק
       </button>
 
       <a class="back-link" href="aliyah-gate.html">🌿 מעבר לענפים נוספים</a>
@@ -545,7 +545,7 @@
 
     <div id="resultActions" class="result-actions hidden">
       <button type="button" id="shareBtn">שיתוף המסקנות</button>
-     <button type="button" id="printBtn">שמירה / הדפסה כ-PDF</button>
+      <button type="button" id="printBtn">שמירה / הדפסה כ-PDF</button>
       <a class="main-action" href="index.html">הוספת שם / תמיכה בערוץ</a>
       <a href="aliyah-gate.html">חזרה לפרד״ס</a>
     </div>
@@ -579,39 +579,52 @@
     const resultBox = document.getElementById("resultBox");
     const resultActions = document.getElementById("resultActions");
 
+    function escapeHtml(text){
+      return String(text ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
     function formatGregorianDate(dateValue){
       const date = new Date(dateValue + "T12:00:00");
-    
+
       return date.toLocaleDateString("he-IL", {
         day:"2-digit",
         month:"2-digit",
         year:"numeric"
       });
     }
-    
+
     function hebrewNumber(num){
       const ones = ["","א","ב","ג","ד","ה","ו","ז","ח","ט"];
       const tens = ["","י","כ","ל","מ","נ","ס","ע","פ","צ"];
       const hundreds = ["","ק","ר","ש","ת"];
-    
+
       let n = Number(num);
-    
+
+      if(!Number.isFinite(n)){
+        return "";
+      }
+
       if(n >= 5000){
         n = n % 1000;
       }
-    
+
       let result = "";
-    
+
       while(n >= 400){
         result += "ת";
         n -= 400;
       }
-    
+
       if(n >= 100){
         result += hundreds[Math.floor(n / 100)];
         n = n % 100;
       }
-    
+
       if(n === 15){
         result += "טו";
       }else if(n === 16){
@@ -620,88 +633,100 @@
         result += tens[Math.floor(n / 10)];
         result += ones[n % 10];
       }
-    
+
       if(result.length === 1){
         return result + "׳";
       }
-    
+
       return result.slice(0,-1) + "״" + result.slice(-1);
     }
 
     function formatHebrewYearLabel(year){
-    return "ה" + hebrewNumber(year);
-  }
-  
-  function populateHebrewYearSelect(){
-    const hebrewYearSelect = document.getElementById("hebrewYear");
-  
-    if(!hebrewYearSelect){
-      return;
+      return "ה" + hebrewNumber(year);
     }
-  
-    const startYear = 5795;
-    const endYear = 5600;
-  
-    for(let year = startYear; year >= endYear; year--){
-      const option = document.createElement("option");
-  
-      option.value = String(year);
-      option.textContent = formatHebrewYearLabel(year);
-  
-      hebrewYearSelect.appendChild(option);
+
+    function populateHebrewYearSelect(){
+      const hebrewYearSelect = document.getElementById("hebrewYear");
+
+      if(!hebrewYearSelect){
+        return;
+      }
+
+      const startYear = 5795;
+      const endYear = 5600;
+
+      for(let year = startYear; year >= endYear; year--){
+        const option = document.createElement("option");
+
+        option.value = String(year);
+        option.textContent = `${formatHebrewYearLabel(year)} (${year})`;
+
+        hebrewYearSelect.appendChild(option);
+      }
     }
-  }
-  
-  populateHebrewYearSelect();  
-    
+
+    populateHebrewYearSelect();
+
     function formatHebrewDate(dateValue){
       const date = new Date(dateValue + "T12:00:00");
-    
+
       const parts = new Intl.DateTimeFormat("he-u-ca-hebrew", {
         day:"numeric",
         month:"long",
         year:"numeric"
       }).formatToParts(date);
-    
+
       const day = parts.find(part => part.type === "day")?.value || "";
       const month = parts.find(part => part.type === "month")?.value || "";
       const year = parts.find(part => part.type === "year" || part.type === "relatedYear")?.value || "";
-    
+
       return `${hebrewNumber(day)} ב${month} ${hebrewNumber(year)}`;
+    }
+
+    function getHebrewMonthName(dateValue){
+      const date = new Date(dateValue + "T12:00:00");
+
+      const parts = new Intl.DateTimeFormat("he-u-ca-hebrew", {
+        month:"long"
+      }).formatToParts(date);
+
+      const monthPart = parts.find(part => part.type === "month");
+
+      return monthPart ? monthPart.value : "";
+    }
+
+    function normalizeHebrewMonthName(monthName){
+      if(!monthName){
+        return "";
+      }
+
+      if(String(monthName).includes("אדר")){
+        return "אדר";
+      }
+
+      return monthName;
     }
 
     function formatHebrewDateWithYearNumber(data){
       const hebrewDay = data.hebcalInfo?.hebrewDay;
       const hebrewYear = data.hebcalInfo?.hebrewYear;
       const hebrewMonth = getHebrewMonthName(data.birthDate);
-    
+
       if(!hebrewDay || !hebrewYear || !hebrewMonth){
         return formatHebrewDate(data.birthDate);
       }
-    
+
       return `${hebrewNumber(hebrewDay)} ב${hebrewMonth} ה${hebrewNumber(hebrewYear)}   |   ${hebrewYear}`;
-    }    
+    }
 
     function getWeekdayHebrew(dateValue){
       const date = new Date(dateValue + "T12:00:00");
-    
+
       return date.toLocaleDateString("he-IL", {
         weekday:"long"
       });
     }
-    
-    function getHebrewMonthName(dateValue){
-      const date = new Date(dateValue + "T12:00:00");
-    
-      const parts = new Intl.DateTimeFormat("he-u-ca-hebrew", {
-        month:"long"
-      }).formatToParts(date);
-    
-      const monthPart = parts.find(part => part.type === "month");
-    
-      return monthPart ? monthPart.value : "";
-    }
-    
+
     function getMazalByHebrewMonth(hebrewMonth){
       const map = {
         "ניסן": {
@@ -765,8 +790,8 @@
           tikun: "לא להיסחף, אלא להפוך רגש לתפילה ולמעשה טוב."
         }
       };
-    
-      return map[hebrewMonth] || {
+
+      return map[normalizeHebrewMonthName(hebrewMonth)] || {
         mazal: "שורש מיוחד",
         traits: "חיפוש משמעות, רגישות פנימית ורצון להבין את עומק הדרך.",
         tikun: "לחבר בין עומק הנשמה לבין פעולה טובה בעולם."
@@ -836,21 +861,17 @@
           sense: "שחוק / שמחה"
         }
       };
-    
-      return map[hebrewMonth] || {
+
+      return map[normalizeHebrewMonthName(hebrewMonth)] || {
         element: "לא זוהה",
         tribe: "לא זוהה",
         sense: "לא זוהה"
       };
     }
-    
-    function getFirstName(fullName){
-      return fullName.trim().split(" ")[0] || fullName.trim();
-    }
-    
+
     function buildJewishName(data){
       let parentsText = "";
-    
+
       if(data.parentDisplay === "father"){
         parentsText = data.fatherName;
       }else if(data.parentDisplay === "mother"){
@@ -858,10 +879,10 @@
       }else{
         parentsText = `${data.fatherName} ו${data.motherName}`;
       }
-    
+
       return `${data.firstName} ${data.relationType} ${parentsText}`;
     }
-    
+
     function buildLocalMessage(data){
       const firstName = data.firstName;
       const jewishName = buildJewishName(data);
@@ -871,189 +892,192 @@
       const gregorianDateText = formatGregorianDate(data.birthDate);
       const hebrewDateText = formatHebrewDateWithYearNumber(data);
       const weekdayText = getWeekdayHebrew(data.birthDate);
-      const hebrewMonth = getHebrewMonthName(data.birthDate);
+      const rawHebrewMonth = getHebrewMonthName(data.birthDate);
+      const hebrewMonth = normalizeHebrewMonthName(rawHebrewMonth);
       const mazalInfo = getMazalByHebrewMonth(hebrewMonth);
       const monthDetails = getJewishMonthDetails(hebrewMonth);
       const rootAliyah = getAliyahByHebrewDay(data.hebcalInfo?.hebrewDay);
       const gematriaValue = getGematriaValue(data.firstName);
-        
+
       const mitzvahHebrewDate =
         data.mitzvahInfo?.mitzvahHebrewDate || "לא זוהה";
-    
+
       const mitzvahGregorianDate =
         data.mitzvahInfo?.mitzvahGregorianDate
           ? formatGregorianDate(data.mitzvahInfo.mitzvahGregorianDate)
           : "לא זוהה";
-    
+
       return `${firstName} ${dear},
-      
+
       נולדת בתאריך הלועזי:
       ${gregorianDateText}
-      
+
       ובתאריך העברי:
       ${hebrewDateText}${bornTime}
-      
+
       השם כפי שיופיע לחיזוק ותפילה:
       ${jewishName}
-      
+
       יום הלידה:
       ${weekdayText}
-      
+
       חודש הלידה העברי:
-      ${hebrewMonth}
-      
+      ${rawHebrewMonth}
+
       המזל לפי חודש הלידה העברי:
       ${mazalInfo.mazal}
-      
+
       היסוד המקושר למזל:
       ${monthDetails.element}
-      
+
       השבט המקושר לחודש הלידה:
       ${monthDetails.tribe}
-      
+
       החוש הפנימי המקושר לחודש:
       ${monthDetails.sense}
-      
+
       תאריך ${mitzvahLabel}:
       ${mitzvahHebrewDate}
       ${mitzvahGregorianDate}
-      
+
       פרשת ${mitzvahLabel}:
       ${data.parashaInfo?.parasha || "לא זוהתה"}
-      
+
       עליית השורש:
       עלייה ${rootAliyah}
-      
+
       גימטריית השם הפרטי:
       ${gematriaValue}
-      
+
       הערה חשובה:
       הנתונים כאן הם בסיס ראשוני לפי שם, תאריך עברי ושיוכים מסורתיים כלליים. אין לראות בהם קביעה מוחלטת על האדם, על נשמתו או על עתידו.`;
-      }
+    }
 
-      function buildLocalMessageHtml(data){
-        const jewishName = buildJewishName(data);
-        const dear = data.gender === "female" ? "היקרה" : "היקר";
-        const mitzvahLabel = data.gender === "female" ? "בת המצווה" : "בר המצווה";
-        const bornTime = data.birthTime ? ` בזמן ה${data.birthTime}` : "";
-      
-        const gregorianDateText = formatGregorianDate(data.birthDate);
-      
-        const hebrewDateText = formatHebrewDateWithYearNumber(data);
-      
-        const weekdayText = getWeekdayHebrew(data.birthDate);
-        const hebrewMonth = getHebrewMonthName(data.birthDate);
-        const mazalInfo = getMazalByHebrewMonth(hebrewMonth);
-        const monthDetails = getJewishMonthDetails(hebrewMonth);
-        const rootAliyah = getAliyahByHebrewDay(data.hebcalInfo?.hebrewDay);
-        const gematriaValue = getGematriaValue(data.firstName);
-      
-        const mitzvahHebrewDate =
-          data.mitzvahInfo?.mitzvahHebrewDate || "לא זוהה";
-      
-        const mitzvahGregorianDate =
-          data.mitzvahInfo?.mitzvahGregorianDate
-            ? formatGregorianDate(data.mitzvahInfo.mitzvahGregorianDate)
-            : "לא זוהה";
-      
-        return `
-          <div class="result-main-title">${data.firstName} ${dear}</div>
-      
-          <div class="result-section">
-            <div class="result-section-title">פרטים בסיסיים</div>
-      
-            <div class="result-item">
-              <div class="result-label">נולדת בתאריך הלועזי</div>
-              <div class="result-value">${gregorianDateText}</div>
-            </div>
-      
-            <div class="result-item">
-              <div class="result-label">ובתאריך העברי</div>
-              <div class="result-value">${hebrewDateText}${bornTime}</div>
-            </div>
-      
-            <div class="result-item">
-              <div class="result-label">השם כפי שיופיע לחיזוק ותפילה</div>
-              <div class="result-value">${jewishName}</div>
-            </div>
-          </div>
-      
-          <div class="result-section">
-            <div class="result-section-title">נתוני שורש וזמן</div>
-      
-            <div class="result-item">
-              <div class="result-label">יום הלידה</div>
-              <div class="result-value">${weekdayText}</div>
-            </div>
-      
-            <div class="result-item">
-              <div class="result-label">חודש הלידה העברי</div>
-              <div class="result-value">${hebrewMonth}</div>
-            </div>
-      
-            <div class="result-item">
-              <div class="result-label">המזל לפי חודש הלידה העברי</div>
-              <div class="result-value">${mazalInfo.mazal}</div>
-            </div>
-      
-            <div class="result-item">
-              <div class="result-label">היסוד המקושר למזל</div>
-              <div class="result-value">${monthDetails.element}</div>
-            </div>
-      
-            <div class="result-item">
-              <div class="result-label">השבט המקושר לחודש הלידה</div>
-              <div class="result-value">${monthDetails.tribe}</div>
-            </div>
-      
-            <div class="result-item">
-              <div class="result-label">החוש הפנימי המקושר לחודש</div>
-              <div class="result-value">${monthDetails.sense}</div>
-            </div>
-           
-            <div class="result-item">
-              <div class="result-label">גימטריית השם הפרטי</div>
-              <div class="result-value">${gematriaValue}</div>
-            </div>
-          </div>
-      
-          <div class="result-section">
-            <div class="result-section-title">${mitzvahLabel}</div>
-          
-            <div class="result-item">
-              <div class="result-label">תאריך ${mitzvahLabel}</div>
-              <div class="result-value">${mitzvahHebrewDate}<br>${mitzvahGregorianDate}</div>
-            </div>
-          
-            <div class="result-item">
-              <div class="result-label">פרשת ${mitzvahLabel}</div>
-              <div class="result-value">${data.parashaInfo?.parasha || "לא זוהתה"}</div>
-            </div>
-          
-            <div class="result-item">
-              <div class="result-label">עליית השורש בפרשת ${mitzvahLabel}</div>
-              <div class="result-value">עלייה ${rootAliyah}</div>
-            </div>
+    function buildLocalMessageHtml(data){
+      const safeFirstName = escapeHtml(data.firstName);
+      const safeJewishName = escapeHtml(buildJewishName(data));
+      const dear = data.gender === "female" ? "היקרה" : "היקר";
+      const mitzvahLabel = data.gender === "female" ? "בת המצווה" : "בר המצווה";
+      const bornTime = data.birthTime ? ` בזמן ה${escapeHtml(data.birthTime)}` : "";
 
-            <a class="root-aliyah-link" href="#" onclick="return false;">
-              <span>זו העלייה שמאירה את שורש החיבור שלך</span>
-              <strong>${data.parashaInfo?.parasha || "פרשה לא זוהתה"} · עלייה ${rootAliyah}</strong>
-            </a>            
+      const gregorianDateText = escapeHtml(formatGregorianDate(data.birthDate));
+      const hebrewDateText = escapeHtml(formatHebrewDateWithYearNumber(data));
+      const weekdayText = escapeHtml(getWeekdayHebrew(data.birthDate));
+      const rawHebrewMonth = getHebrewMonthName(data.birthDate);
+      const hebrewMonth = normalizeHebrewMonthName(rawHebrewMonth);
+      const mazalInfo = getMazalByHebrewMonth(hebrewMonth);
+      const monthDetails = getJewishMonthDetails(hebrewMonth);
+      const rootAliyah = getAliyahByHebrewDay(data.hebcalInfo?.hebrewDay);
+      const gematriaValue = getGematriaValue(data.firstName);
+
+      const mitzvahHebrewDate =
+        data.mitzvahInfo?.mitzvahHebrewDate || "לא זוהה";
+
+      const mitzvahGregorianDate =
+        data.mitzvahInfo?.mitzvahGregorianDate
+          ? formatGregorianDate(data.mitzvahInfo.mitzvahGregorianDate)
+          : "לא זוהה";
+
+      const parashaText = data.parashaInfo?.parasha || "לא זוהתה";
+
+      return `
+        <div class="result-main-title">${safeFirstName} ${escapeHtml(dear)}</div>
+
+        <div class="result-section">
+          <div class="result-section-title">פרטים בסיסיים</div>
+
+          <div class="result-item">
+            <div class="result-label">נולדת בתאריך הלועזי</div>
+            <div class="result-value">${gregorianDateText}</div>
           </div>
-      
-          <div class="result-note">
-            הנתונים כאן הם בסיס ראשוני לפי שם, תאריך עברי ושיוכים מסורתיים כלליים.
-            אין לראות בהם קביעה מוחלטת על האדם, על נשמתו או על עתידו.
+
+          <div class="result-item">
+            <div class="result-label">ובתאריך העברי</div>
+            <div class="result-value">${hebrewDateText}${bornTime}</div>
           </div>
-        `;
-      }
-    
+
+          <div class="result-item">
+            <div class="result-label">השם כפי שיופיע לחיזוק ותפילה</div>
+            <div class="result-value">${safeJewishName}</div>
+          </div>
+        </div>
+
+        <div class="result-section">
+          <div class="result-section-title">נתוני שורש וזמן</div>
+
+          <div class="result-item">
+            <div class="result-label">יום הלידה</div>
+            <div class="result-value">${weekdayText}</div>
+          </div>
+
+          <div class="result-item">
+            <div class="result-label">חודש הלידה העברי</div>
+            <div class="result-value">${escapeHtml(rawHebrewMonth)}</div>
+          </div>
+
+          <div class="result-item">
+            <div class="result-label">המזל לפי חודש הלידה העברי</div>
+            <div class="result-value">${escapeHtml(mazalInfo.mazal)}</div>
+          </div>
+
+          <div class="result-item">
+            <div class="result-label">היסוד המקושר למזל</div>
+            <div class="result-value">${escapeHtml(monthDetails.element)}</div>
+          </div>
+
+          <div class="result-item">
+            <div class="result-label">השבט המקושר לחודש הלידה</div>
+            <div class="result-value">${escapeHtml(monthDetails.tribe)}</div>
+          </div>
+
+          <div class="result-item">
+            <div class="result-label">החוש הפנימי המקושר לחודש</div>
+            <div class="result-value">${escapeHtml(monthDetails.sense)}</div>
+          </div>
+
+          <div class="result-item">
+            <div class="result-label">גימטריית השם הפרטי</div>
+            <div class="result-value">${escapeHtml(gematriaValue)}</div>
+          </div>
+        </div>
+
+        <div class="result-section">
+          <div class="result-section-title">${escapeHtml(mitzvahLabel)}</div>
+
+          <div class="result-item">
+            <div class="result-label">תאריך ${escapeHtml(mitzvahLabel)}</div>
+            <div class="result-value">${escapeHtml(mitzvahHebrewDate)}<br>${escapeHtml(mitzvahGregorianDate)}</div>
+          </div>
+
+          <div class="result-item">
+            <div class="result-label">פרשת ${escapeHtml(mitzvahLabel)}</div>
+            <div class="result-value">${escapeHtml(parashaText)}</div>
+          </div>
+
+          <div class="result-item">
+            <div class="result-label">עליית השורש בפרשת ${escapeHtml(mitzvahLabel)}</div>
+            <div class="result-value">עלייה ${escapeHtml(rootAliyah)}</div>
+          </div>
+
+          <a class="root-aliyah-link" href="#" onclick="return false;">
+            <span>זו העלייה שמאירה את שורש החיבור שלך</span>
+            <strong>${escapeHtml(parashaText)} · עלייה ${escapeHtml(rootAliyah)}</strong>
+          </a>
+        </div>
+
+        <div class="result-note">
+          הנתונים כאן הם בסיס ראשוני לפי שם, תאריך עברי ושיוכים מסורתיים כלליים.
+          אין לראות בהם קביעה מוחלטת על האדם, על נשמתו או על עתידו.
+        </div>
+      `;
+    }
+
     async function getHebcalDateInfo(dateValue){
       const url = `https://www.hebcal.com/converter?cfg=json&date=${dateValue}&g2h=1&strict=1`;
-    
+
       const response = await fetch(url);
       const data = await response.json();
-    
+
       return {
         hebrewDate: data.hebrew,
         hebrewDay: data.hd,
@@ -1064,17 +1088,17 @@
 
     async function getBarBatMitzvahInfo(dateValue, gender){
       const birthInfo = await getHebcalDateInfo(dateValue);
-    
+
       const mitzvahYear =
         gender === "female"
           ? birthInfo.hebrewYear + 12
           : birthInfo.hebrewYear + 13;
-    
+
       const url = `https://www.hebcal.com/converter?cfg=json&h2g=1&hd=${birthInfo.hebrewDay}&hm=${encodeURIComponent(birthInfo.hebrewMonth)}&hy=${mitzvahYear}&strict=1`;
-    
+
       const response = await fetch(url);
       const data = await response.json();
-    
+
       return {
         birthHebrewDate: birthInfo.hebrewDate,
         mitzvahHebrewDate: data.hebrew,
@@ -1084,17 +1108,17 @@
 
     async function getParashaInfo(dateValue){
       const url = `https://www.hebcal.com/shabbat?cfg=json&geonameid=293397&M=on&gy=${dateValue.slice(0,4)}&gm=${Number(dateValue.slice(5,7))}&gd=${Number(dateValue.slice(8,10))}`;
-    
+
       const response = await fetch(url);
       const data = await response.json();
-    
+
       const parashaItem = data.items.find(item => item.category === "parashat");
-    
+
       return {
         parasha: parashaItem ? parashaItem.hebrew : "לא זוהתה פרשה",
         parashaEnglish: parashaItem ? parashaItem.title : ""
       };
-    }    
+    }
 
     function getAliyahByHebrewDay(hebrewDay){
       const aliyot = [
@@ -1106,15 +1130,15 @@
         "שישית",
         "שביעית"
       ];
-    
+
       const dayNumber = Number(hebrewDay);
-    
+
       if(!dayNumber){
         return "לא זוהתה";
       }
-    
+
       const index = (dayNumber - 1) % 7;
-    
+
       return aliyot[index];
     }
 
@@ -1128,9 +1152,9 @@
         "שישית": "עלייה שישית מרמזת על שפע, נתינה והכנה לקראת שלמות. יש כאן רמז לאדם שנדרש לפתוח את הלב, לתת נכון, ולא לפחד מהכוח שיש לו להשפיע.",
         "שביעית": "עלייה שביעית מרמזת על השלמה, סגירת מעגל וחיבור בין כל חלקי הדרך. יש כאן נשמה שמבקשת להגיע לאחדות פנימית, ולראות איך גם חלקים שונים בחיים מתחברים לתמונה אחת."
       };
-    
+
       return meanings[aliyahName] || "העלייה שלך מרמזת על שלב אישי במסע החיים, שבו האדם מוזמן להפוך את הדרך שלו לברכה, חיזוק והשפעה טובה.";
-    }    
+    }
 
     function getGematriaValue(text){
       const values = {
@@ -1149,13 +1173,13 @@
         ש:300,
         ת:400
       };
-    
+
       let total = 0;
-    
+
       for(const char of text){
         total += values[char] || 0;
       }
-    
+
       return total;
     }
 
@@ -1163,23 +1187,23 @@
       if(value <= 18){
         return "ערך שם שמרמז על שורש של חיים, התחלה ותמימות פנימית.";
       }
-    
+
       if(value <= 50){
         return "ערך שם שמרמז על בנייה פנימית, התפתחות וחיפוש אחר יציבות אמיתית.";
       }
-    
+
       if(value <= 100){
         return "ערך שם שמרמז על כוח השפעה, תנועה פנימית ורצון להתקדם ולשנות.";
       }
-    
+
       if(value <= 200){
         return "ערך שם שמרמז על עומק מחשבה, חיפוש משמעות וחיבור פנימי לעולם הרוח.";
       }
-    
+
       if(value <= 400){
         return "ערך שם שמרמז על עוצמה פנימית, אחריות והשפעה על הסביבה.";
       }
-    
+
       return "ערך שם שמרמז על נשמה בעלת עומק מיוחד, מסע פנימי מורכב וחיפוש אחר תיקון והשפעה.";
     }
 
@@ -1187,18 +1211,9 @@
       return new Promise(resolve => setTimeout(resolve, ms));
     }
 
-    function escapeHtml(text){
-      return String(text)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-    }
-    
     async function getAiPersonalMessage(data){
       const apiUrl = "https://us-central1-parasha-site-links.cloudfunctions.net/createPersonalReading";
-    
+
       try{
         const response = await fetch(apiUrl, {
           method: "POST",
@@ -1226,28 +1241,30 @@
             mitzvahGregorianDate: data.mitzvahInfo?.mitzvahGregorianDate || "",
             parasha: data.parashaInfo?.parasha || "",
             rootAliyah: getAliyahByHebrewDay(data.hebcalInfo?.hebrewDay),
-            gematriaValue: getGematriaValue(data.firstName)
+            aliyahMeaning: getAliyahMeaning(getAliyahByHebrewDay(data.hebcalInfo?.hebrewDay)),
+            gematriaValue: getGematriaValue(data.firstName),
+            gematriaMeaning: getGematriaMeaning(getGematriaValue(data.firstName))
           })
         });
-    
+
         if(!response.ok){
           throw new Error("AI server returned an error");
         }
-    
+
         const result = await response.json();
-    
+
         if(!result.message){
           throw new Error("Missing AI message");
         }
-    
+
         return result.message;
-    
-        }catch(err){
-          console.warn("AI server is not ready yet:", err);
-          throw err;
-        }
+
+      }catch(err){
+        console.warn("AI server is not ready yet:", err);
+        throw err;
       }
-    
+    }
+
     function typeText(element, text, speed = 18){
       element.textContent = "";
       let i = 0;
@@ -1266,7 +1283,7 @@
     document.getElementById("gender").addEventListener("change", ()=>{
       const gender = document.getElementById("gender").value;
       const relationType = document.getElementById("relationType");
-    
+
       if(gender === "male"){
         relationType.value = "בן";
       }else if(gender === "female"){
@@ -1277,11 +1294,11 @@
     document.querySelectorAll('input[name="birthType"]').forEach(radio=>{
       radio.addEventListener("change", ()=>{
         const selectedType = document.querySelector('input[name="birthType"]:checked').value;
-    
+
         document.getElementById("gregorianDateBox").classList.toggle("hidden", selectedType !== "gregorian");
         document.getElementById("hebrewDateBox").classList.toggle("hidden", selectedType !== "hebrew");
       });
-    });  
+    });
 
     function hebrewLettersToNumber(text){
       const values = {
@@ -1300,58 +1317,67 @@
         ש:300,
         ת:400
       };
-    
+
       let cleanText = String(text)
         .replace(/[״׳"']/g, "")
         .replace(/\s/g, "")
         .trim();
-    
+
       let total = 0;
-    
+
       for(const char of cleanText){
         total += values[char] || 0;
       }
-    
+
       return total;
     }
-    
+
     function normalizeHebrewYear(hebrewYearText){
       let cleanYear = String(hebrewYearText)
         .replace(/[״׳"']/g, "")
         .replace(/\s/g, "")
         .trim();
-    
+
       if(/^\d+$/.test(cleanYear)){
         return Number(cleanYear);
       }
-    
+
       if(cleanYear.startsWith("ה")){
         cleanYear = cleanYear.slice(1);
       }
-    
+
       const yearValue = hebrewLettersToNumber(cleanYear);
-    
+
       if(!yearValue){
         throw new Error("Invalid Hebrew year");
       }
-    
+
       return 5000 + yearValue;
-    }    
-    
+    }
+
     async function getGregorianFromHebrewDate(hebrewDay, hebrewMonth, hebrewYear){
-      const url = `https://www.hebcal.com/converter?cfg=json&h2g=1&hd=${hebrewDay}&hm=${encodeURIComponent(hebrewMonth)}&hy=${hebrewYear}&strict=1`;
-    
+      const normalizedYear = normalizeHebrewYear(hebrewYear);
+      const url = `https://www.hebcal.com/converter?cfg=json&h2g=1&hd=${hebrewDay}&hm=${encodeURIComponent(hebrewMonth)}&hy=${normalizedYear}&strict=1`;
+
       const response = await fetch(url);
       const data = await response.json();
-    
+
       if(!data.gy || !data.gm || !data.gd){
         throw new Error("Invalid Hebrew date");
       }
-    
+
       return data.gy + "-" + String(data.gm).padStart(2,"0") + "-" + String(data.gd).padStart(2,"0");
     }
-    
+
+    function resetToFormAfterError(){
+      formBox.classList.remove("hidden");
+      resultBox.style.display = "none";
+      resultBox.innerHTML = "";
+      resultActions.classList.add("hidden");
+    }
+
     generateBtn.addEventListener("click", async ()=>{
+      resultActions.classList.add("hidden");
 
       const data = {
         firstName: document.getElementById("firstName").value.trim(),
@@ -1373,12 +1399,12 @@
         alert("יש למלא שם פרטי, בן/בת, מין בלידה, שם אב ושם אם.");
         return;
       }
-      
+
       if(data.birthType === "gregorian" && !data.birthDate){
         alert("יש למלא תאריך לידה לועזי.");
         return;
       }
-      
+
       if(data.birthType === "hebrew" && (!data.hebrewDay || !data.hebrewMonth || !data.hebrewYear)){
         alert("יש למלא יום, חודש ושנה עברית.");
         return;
@@ -1391,6 +1417,7 @@
           🤿 צוללים לעומק הנתונים שלך...
         </div>
       `;
+
       if(data.birthType === "hebrew"){
         try{
           data.birthDate = await getGregorianFromHebrewDate(
@@ -1401,38 +1428,33 @@
         }catch(err){
           console.error("Hebrew to Gregorian error:", err);
           alert("לא הצלחנו להמיר את התאריך העברי. נא לבדוק שהיום, החודש והשנה תקינים.");
+          resetToFormAfterError();
           return;
         }
       }
-      
-      try{
-        await addDoc(collection(db, "personalMessages"), data);
-      }catch(err){
-        console.error(err);
-      }
-      
+
       let hebcalInfo = null;
-      
+
       try{
         hebcalInfo = await getHebcalDateInfo(data.birthDate);
       }catch(err){
         console.error("Hebcal error:", err);
       }
-      
+
       data.hebcalInfo = hebcalInfo;
 
-       let mitzvahInfo = null;
-      
+      let mitzvahInfo = null;
+
       try{
         mitzvahInfo = await getBarBatMitzvahInfo(data.birthDate, data.gender);
       }catch(err){
         console.error("Mitzvah error:", err);
       }
-      
-      data.mitzvahInfo = mitzvahInfo; 
+
+      data.mitzvahInfo = mitzvahInfo;
 
       let parashaInfo = null;
-      
+
       try{
         if(data.mitzvahInfo?.mitzvahGregorianDate){
           parashaInfo = await getParashaInfo(data.mitzvahInfo.mitzvahGregorianDate);
@@ -1440,32 +1462,46 @@
       }catch(err){
         console.error("Parasha error:", err);
       }
-      
-      data.parashaInfo = parashaInfo;            
-      
+
+      data.parashaInfo = parashaInfo;
+
+      try{
+        const finalDataForFirestore = {
+          ...data,
+          jewishName: buildJewishName(data),
+          hebrewMonthDisplay: getHebrewMonthName(data.birthDate),
+          rootAliyah: getAliyahByHebrewDay(data.hebcalInfo?.hebrewDay),
+          gematriaValue: getGematriaValue(data.firstName)
+        };
+
+        await addDoc(collection(db, "personalMessages"), finalDataForFirestore);
+      }catch(err){
+        console.error("Firestore save error:", err);
+      }
+
       try{
         const html = buildLocalMessageHtml(data);
         resultBox.innerHTML = html;
-      
+
         const aiLoadingBox = document.createElement("div");
         aiLoadingBox.className = "ai-section";
         aiLoadingBox.innerHTML = `
           <div class="ai-section-title">העמקה אישית</div>
           <div class="ai-section-content">✨ מכינים עבורך העמקה אישית עדינה...</div>
         `;
-      
+
         resultBox.appendChild(aiLoadingBox);
-      
+
         try{
           const aiMessage = await getAiPersonalMessage(data);
-      
+
           aiLoadingBox.innerHTML = `
             <div class="ai-section-title">העמקה אישית</div>
             <div class="ai-section-content">${escapeHtml(aiMessage).replace(/\n/g, "<br>")}</div>
           `;
         }catch(aiErr){
           console.warn("AI message error:", aiErr);
-      
+
           aiLoadingBox.innerHTML = `
             <div class="ai-section-title">העמקה אישית</div>
             <div class="ai-section-content">
@@ -1473,12 +1509,13 @@
             </div>
           `;
         }
-      
+
         resultActions.classList.remove("hidden");
-      
+
       }catch(err){
         console.error("Render error:", err);
         resultBox.textContent = "אירעה תקלה ביצירת ההודעה האישית. אפשר לנסות שוב בעוד רגע.";
+        resultActions.classList.remove("hidden");
       }
     });
 
