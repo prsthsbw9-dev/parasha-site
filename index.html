@@ -849,9 +849,26 @@
       return `${parashaKey}_${aliyahKey}`;
     }
 
-    function setCurrentLabel(text){
+    function setCurrentLabel(text, visible = true){
       const label = document.getElementById("currentAliyahLabel");
-      if(label){ label.textContent = text; }
+      if(!label) return;
+
+      label.textContent = text || "";
+      label.style.display = (visible && text) ? "block" : "none";
+    }
+
+    function hasAnyLayerVideo(data){
+      if(!data) return false;
+      return ["pshat", "remez", "drash", "sod"].some((layer) => {
+        const item = data[layer];
+        return !!(
+          item?.mobile?.url ||
+          item?.wide?.url ||
+          item?.mobileUrl ||
+          item?.wideUrl ||
+          item?.url
+        );
+      });
     }
 
     async function loadActiveAliyah(){
@@ -860,7 +877,7 @@
         const currentSnap = await getDoc(currentRef);
 
         if(!currentSnap.exists()){
-          setCurrentLabel("עדיין לא הוגדרה עלייה פעילה");
+          setCurrentLabel("", false);
           return;
         }
 
@@ -875,19 +892,25 @@
         if(whatsappLink){ whatsappLink.href = current.whatsapp || "#"; }
 
         if(!currentParasha || !currentAliyah){
-          setCurrentLabel("עדיין לא נבחרו פרשה ועלייה פעילות");
+          setCurrentLabel("", false);
+          activeVideos = {};
           return;
         }
-
-        setCurrentLabel(`העלייה הפעילה: פרשת ${currentParasha} — ${currentAliyah}`);
 
         const videosRef = doc(db, "aliyahVideos", videoDocId(currentParashaKey, currentAliyahKey));
         const videosSnap = await getDoc(videosRef);
 
         activeVideos = videosSnap.exists() ? videosSnap.data() : {};
+
+        if(!hasAnyLayerVideo(activeVideos)){
+          setCurrentLabel("", false);
+          return;
+        }
+
+        setCurrentLabel(`העלייה הפעילה: פרשת ${currentParasha} — ${currentAliyah}`);
       }catch(error){
         console.error("שגיאה בטעינת העלייה הפעילה:", error);
-        setCurrentLabel("לא ניתן היה לטעון את העלייה הפעילה כרגע");
+        setCurrentLabel("", false);
       }
     }
 
