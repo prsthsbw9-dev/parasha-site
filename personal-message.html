@@ -163,32 +163,45 @@
     }
 
     .date-helper{
-      margin:0 0 8px;
-      border:1px solid rgba(120,220,255,.42);
-      border-radius:14px;
-      padding:10px 12px;
-      background:rgba(60,170,200,.10);
-      color:rgba(255,255,255,.94);
-      font-size:14px;
+      margin:0;
+      min-height:52px;
+      border:1px solid rgba(120,220,255,.48);
+      border-radius:16px;
+      padding:14px 12px;
+      background:rgba(60,170,200,.12);
+      color:rgba(255,255,255,.96);
+      font-size:15px;
       font-weight:900;
       text-align:center;
       text-shadow:0 2px 8px rgba(0,0,0,.55);
       user-select:none;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
     }
 
-    input[type="date"]{
-      min-height:48px;
+    .date-helper.has-date{
+      border-color:rgba(160,240,255,.70);
+      background:rgba(60,170,200,.18);
+      box-shadow:0 0 16px rgba(90,210,255,.16);
+    }
+
+    .date-picker-wrap input[type="date"]{
+      position:fixed;
+      left:-9999px;
+      top:0;
+      width:1px;
+      height:1px;
+      min-height:1px;
+      opacity:0;
+      pointer-events:none;
       direction:ltr;
-      text-align:center;
-      font-weight:800;
       color-scheme:dark;
     }
 
-    input[type="date"]::-webkit-calendar-picker-indicator{
-      opacity:1;
+    .date-picker-wrap input[type="date"]::-webkit-calendar-picker-indicator{
       cursor:pointer;
-      filter:invert(1);
-      transform:scale(1.2);
     }
 
     .hebrew-date-grid{
@@ -2186,17 +2199,36 @@
 
     const gregorianDateHelper = document.getElementById("gregorianDateHelper");
     const birthDateInput = document.getElementById("birthDate");
+    const gregorianDateBox = document.getElementById("gregorianDateBox");
 
-    if(gregorianDateHelper && birthDateInput){
+    function syncGregorianDateHelper(){
+      if(!gregorianDateHelper || !birthDateInput){
+        return;
+      }
+
+      if(birthDateInput.value){
+        gregorianDateHelper.textContent = `📅 ${formatGregorianDate(birthDateInput.value)}`;
+        gregorianDateHelper.classList.add("has-date");
+      }else{
+        gregorianDateHelper.textContent = "📅 לחצו כאן לבחירת תאריך לועזי";
+        gregorianDateHelper.classList.remove("has-date");
+      }
+    }
+
+    if(gregorianDateHelper && birthDateInput && gregorianDateBox){
       gregorianDateHelper.addEventListener("click", ()=>{
         openDatePicker(birthDateInput);
       });
 
-      document.getElementById("gregorianDateBox").addEventListener("click", (event)=>{
+      gregorianDateBox.addEventListener("click", (event)=>{
         if(event.target !== birthDateInput){
           openDatePicker(birthDateInput);
         }
       });
+
+      birthDateInput.addEventListener("change", syncGregorianDateHelper);
+      birthDateInput.addEventListener("input", syncGregorianDateHelper);
+      syncGregorianDateHelper();
     }
 
     function resetToFormAfterError(){
