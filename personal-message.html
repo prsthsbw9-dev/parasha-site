@@ -1270,12 +1270,13 @@
       };
     }
 
-    function getBirthDateDigitsText(dateValue){
-      const [year, month, day] = String(dateValue).split("-");
-      return `${day}${month}${year}`;
+    function cleanHebrewLettersOnly(text){
+      return String(text || "")
+        .replace(/[^א-ת]/g, "")
+        .trim();
     }
 
-    function getBirthDateReductionProfile(coreNumber, isMinor){
+    function getHebrewDateReductionProfile(coreNumber, isMinor){
       const adultProfiles = {
         1: {
           title: "שורש של התחלה והובלה",
@@ -1347,7 +1348,7 @@
 
       if(isMinor){
         return {
-          title: "רמז עדין לפי תאריך הלידה",
+          title: "רמז עדין לפי התאריך העברי",
           light: minorProfiles[coreNumber] || "כוח פנימי טוב שמבקש להתפתח לאט ובשמחה.",
           correction: "בגיל צעיר זה לא נועד לקבוע גורל או עתיד, אלא לתת נקודת חיזוק עדינה. בדברים חשובים תמיד כדאי להתייעץ עם הורים או מבוגר אחראי.",
           question: "איזו מידה טובה אחת אני יכול/ה לחזק השבוע?"
@@ -1357,25 +1358,50 @@
       return adultProfiles[coreNumber] || adultProfiles[9];
     }
 
-    function calculateBirthDateReduction(dateValue, isMinor){
-      const digitsText = getBirthDateDigitsText(dateValue);
-      const digits = sumDigitsString(digitsText);
-      const fullSum = digits.reduce((sum, digit)=> sum + digit, 0);
-      const reduction = reduceNumberWithSteps(fullSum);
-      const profile = getBirthDateReductionProfile(reduction.coreNumber, isMinor);
+    function calculateHebrewDateReduction(data, isMinor){
+      const hebrewDay = Number(data.hebcalInfo?.hebrewDay || 0);
+      const rawHebrewMonth = getHebrewMonthName(data.birthDate);
+      const hebrewMonthLetters = cleanHebrewLettersOnly(rawHebrewMonth);
+      const hebrewMonthValue = getGematriaValue(hebrewMonthLetters);
+      const hebrewYearFull = Number(data.hebcalInfo?.hebrewYear || 0);
+      const hebrewYearShort = hebrewYearFull ? hebrewYearFull % 1000 : 0;
 
-      const firstExpression = digits.join("+");
-      const stepTexts = [`${firstExpression}=${fullSum}`];
+      if(!hebrewDay || !hebrewMonthValue || !hebrewYearShort){
+        return {
+          dayValue: hebrewDay || "",
+          monthValue: hebrewMonthValue || "",
+          yearValue: hebrewYearShort || "",
+          fullSum: "",
+          coreNumber: "לא זוהה",
+          calculationText: "לא הצלחנו לחשב את הרמז המספרי לפי התאריך העברי.",
+          profile: getHebrewDateReductionProfile(9, isMinor)
+        };
+      }
+
+      const fullSum = hebrewDay + hebrewMonthValue + hebrewYearShort;
+      const reduction = reduceNumberWithSteps(fullSum);
+      const profile = getHebrewDateReductionProfile(reduction.coreNumber, isMinor);
+
+      const dayLabel = hebrewNumber(hebrewDay);
+      const yearLabel = hebrewNumber(hebrewYearShort);
+      const stepTexts = [`${dayLabel}=${hebrewDay} + ${rawHebrewMonth}=${hebrewMonthValue} + ${yearLabel}=${hebrewYearShort} → ${fullSum}`];
+
       reduction.steps.forEach(step=>{
         stepTexts.push(`${step.expression}=${step.to}`);
       });
 
       return {
-        digitsText,
+        dayLabel,
+        dayValue: hebrewDay,
+        monthLabel: rawHebrewMonth,
+        monthValue: hebrewMonthValue,
+        yearLabel,
+        yearValue: hebrewYearShort,
         fullSum,
         coreNumber: reduction.coreNumber,
         calculationText: stepTexts.join(" → "),
-        profile
+        profile,
+        note: "החישוב נעשה לפי היום, החודש ושנת הלידה העברית ללא האלפים, כדי לשמור על חיבור ללוח היהודי. זהו רמז להתבוננות ולא קביעה מוחלטת."
       };
     }
 
@@ -1451,7 +1477,7 @@
       ageDetails.ageText = formatAgeText(ageDetails);
       const lifeGuidance = getLifeGuidance(data, ageDetails);
       const depthMap = getPersonalDepthMap(data, ageDetails);
-      const birthDateReduction = calculateBirthDateReduction(data.birthDate, ageDetails.isMinor);
+      const hebrewDateReduction = calculateHebrewDateReduction(data, ageDetails.isMinor);
 
       return `
         <div class="result-main-title">${safeFirstName} ${escapeHtml(dear)}</div>
@@ -1491,31 +1517,35 @@
         </div>
 
         <div class="result-section">
-          <div class="result-section-title">צמצום תאריך הלידה</div>
+          <div class="result-section-title">רמז מספרי לפי התאריך העברי</div>
 
-          <div class="result-item">
-            <div class="result-label">דרך החישוב</div>
-            <div class="result-value">${escapeHtml(birthDateReduction.calculationText)}</div>
+          <div class="result-note">
+            כדי לשמור על חיבור למסורת ישראל, הרמז המספרי מחושב לפי התאריך העברי שלך — היום, החודש ושנת הלידה העברית — ולא לפי התאריך הלועזי. זהו כלי להתבוננות בלבד ולא קביעה מוחלטת.
           </div>
 
           <div class="result-item">
-            <div class="result-label">מספר השורש לפי צמצום התאריך</div>
-            <div class="result-value">${escapeHtml(birthDateReduction.coreNumber)}</div>
+            <div class="result-label">דרך החישוב</div>
+            <div class="result-value">${escapeHtml(hebrewDateReduction.calculationText)}</div>
+          </div>
+
+          <div class="result-item">
+            <div class="result-label">מספר השורש לפי התאריך העברי</div>
+            <div class="result-value">${escapeHtml(hebrewDateReduction.coreNumber)}</div>
           </div>
 
           <div class="result-item">
             <div class="result-label">הרמז העדין</div>
-            <div class="result-value">${escapeHtml(birthDateReduction.profile.title)} — ${escapeHtml(birthDateReduction.profile.light)}</div>
+            <div class="result-value">${escapeHtml(hebrewDateReduction.profile.title)} — ${escapeHtml(hebrewDateReduction.profile.light)}</div>
           </div>
 
           <div class="result-item">
             <div class="result-label">נקודת תיקון להתבוננות</div>
-            <div class="result-value">${escapeHtml(birthDateReduction.profile.correction)}</div>
+            <div class="result-value">${escapeHtml(hebrewDateReduction.profile.correction)}</div>
           </div>
 
           <div class="result-item">
             <div class="result-label">שאלה אישית מתוך החישוב</div>
-            <div class="result-value">${escapeHtml(birthDateReduction.profile.question)}</div>
+            <div class="result-value">${escapeHtml(hebrewDateReduction.profile.question)}</div>
           </div>
         </div>
 
@@ -1780,7 +1810,7 @@
         const ageDetails = calculateAgeDetails(data.birthDate);
         ageDetails.ageText = formatAgeText(ageDetails);
         const depthMap = getPersonalDepthMap(data, ageDetails);
-        const birthDateReduction = calculateBirthDateReduction(data.birthDate, ageDetails.isMinor);
+        const hebrewDateReduction = calculateHebrewDateReduction(data, ageDetails.isMinor);
 
         const response = await fetch(apiUrl, {
           method: "POST",
@@ -1818,7 +1848,7 @@
             isMinor: ageDetails.isMinor,
             lifeGuidance: getLifeGuidance(data, ageDetails),
             depthMap,
-            birthDateReduction,
+            hebrewDateReduction,
             desiredAiTitle: "המפה הפנימית שלך",
             desiredAiStructure: [
               "האור הבולט שלך",
@@ -1828,9 +1858,9 @@
               "מה הנשמה מבקשת בתקופה הזו",
               "שאלה אחת שלא כדאי לברוח ממנה",
               "פעולה קטנה לשבוע הקרוב",
-              "רמז מצמצום תאריך הלידה"
+              "רמז מספרי לפי התאריך העברי"
             ],
-            writingInstruction: "אל תציג רשימת נתונים יבשה. בנה מפת עומק אישית מתוך שילוב הנתונים, כולל צמצום תאריך הלידה כנקודת התבוננות עדינה בלבד. כתוב כאילו האדם מרגיש שרואים אותו, בשפה חמה, יהודית, אחראית ומעשית. השתמש בזהירות במילים כמו ייתכן, יש כאן רמז, כדאי להתבונן. אל תכתוב שהדברים ודאיים ואל תציג את הצמצום כנבואה או כקבלה מוחלטת.",
+            writingInstruction: "אל תציג רשימת נתונים יבשה. בנה מפת עומק אישית מתוך שילוב הנתונים, כולל את הרמז המספרי לפי התאריך העברי כנקודת התבוננות עדינה בלבד. כתוב כאילו האדם מרגיש שרואים אותו, בשפה חמה, יהודית, אחראית ומעשית. השתמש בזהירות במילים כמו ייתכן, יש כאן רמז, כדאי להתבונן. אל תכתוב שהדברים ודאיים ואל תציג את הרמז המספרי כנבואה, כהלכה או כקביעה קבלית מוחלטת.",
             safetyInstruction: "כתוב כהתבוננות רוחנית עדינה בלבד. אל תכתוב נבואה, קביעה מוחלטת, אבחון רפואי או נפשי, תחזית עתיד, או הוראות מסוכנות. אם isMinor=true אל תכתוב הכוונה זוגית, כספית, מקצועית או דברים מפחידים; כתוב רק חיזוק עדין לגיל צעיר והמלצה להתייעץ עם הורים או מבוגר אחראי."
           })
         });
