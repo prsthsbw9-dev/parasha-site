@@ -349,6 +349,103 @@
       text-align:center;
     }
 
+
+
+    .pardes-video-panel{
+      position:fixed;
+      inset:0;
+      z-index:50;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:18px;
+      background:rgba(0,0,0,.62);
+      backdrop-filter:blur(9px);
+      -webkit-backdrop-filter:blur(9px);
+    }
+
+    .pardes-video-panel.is-open{
+      display:flex;
+    }
+
+    .pardes-video-card{
+      width:min(100%, 560px);
+      border-radius:26px;
+      border:1px solid rgba(255,255,255,.30);
+      background:linear-gradient(180deg, rgba(7,16,20,.94), rgba(5,9,14,.90));
+      box-shadow:0 24px 70px rgba(0,0,0,.55), 0 0 34px rgba(255,255,255,.10);
+      overflow:hidden;
+      text-align:right;
+    }
+
+    .pardes-video-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding:14px 16px 10px;
+    }
+
+    .pardes-video-title{
+      margin:0;
+      font-size:19px;
+      font-weight:900;
+      line-height:1.35;
+      color:#fff;
+      text-shadow:0 3px 12px rgba(0,0,0,.65);
+    }
+
+    .pardes-video-close{
+      width:38px;
+      height:38px;
+      border-radius:50%;
+      border:1px solid rgba(255,255,255,.34);
+      background:rgba(255,255,255,.10);
+      color:#fff;
+      font-size:26px;
+      line-height:1;
+      cursor:pointer;
+      box-shadow:0 8px 18px rgba(0,0,0,.25);
+    }
+
+    .pardes-video-body{
+      padding:0 14px 16px;
+    }
+
+    .pardes-video-player{
+      width:100%;
+      max-height:72vh;
+      border-radius:20px;
+      background:#000;
+      display:block;
+      outline:none;
+    }
+
+    .pardes-video-empty{
+      display:none;
+      padding:26px 18px;
+      border-radius:20px;
+      border:1px dashed rgba(255,255,255,.30);
+      background:rgba(255,255,255,.08);
+      color:rgba(255,255,255,.92);
+      font-size:16px;
+      line-height:1.65;
+      text-align:center;
+    }
+
+    .pardes-current-label{
+      margin:8px auto 0;
+      width:min(100%, 430px);
+      padding:8px 12px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.24);
+      background:rgba(0,0,0,.18);
+      color:rgba(255,255,255,.92);
+      font-size:14px;
+      font-weight:800;
+      text-shadow:0 2px 10px rgba(0,0,0,.7);
+    }
+
     .secret-admin-hit{
       position:absolute;
       left:8px;
@@ -492,22 +589,22 @@
         </svg>
 
         <a id="sodLink" class="fruit-link fruit-drash" href="#" aria-label="סוד העלייה">
-          <span class="pardes-fruit-icon" aria-hidden="true">🍊</span>
+          <span class="pardes-fruit-icon" aria-hidden="true">🍇</span>
           <span class="fruit-letter fruit-word">סוד</span>
         </a>
 
         <a id="drashLink" class="fruit-link fruit-remez" href="#" aria-label="דרש העלייה">
-          <span class="pardes-fruit-icon" aria-hidden="true">🍇</span>
+          <span class="pardes-fruit-icon" aria-hidden="true">🫐</span>
           <span class="fruit-letter fruit-word">דרש</span>
         </a>
 
         <a id="remezLink" class="fruit-link fruit-pshat" href="#" aria-label="רמז העלייה">
-          <span class="pardes-fruit-icon" aria-hidden="true">🍎</span>
+          <span class="pardes-fruit-icon" aria-hidden="true">🍋</span>
           <span class="fruit-letter fruit-word">רמז</span>
         </a>
 
         <a id="pshatLink" class="fruit-link fruit-sod" href="#" aria-label="פשט העלייה">
-          <span class="pardes-fruit-icon" aria-hidden="true">🍋</span>
+          <span class="pardes-fruit-icon" aria-hidden="true">🌾</span>
           <span class="fruit-letter fruit-word">פשט</span>
         </a>
 
@@ -535,6 +632,21 @@
 
       </div>
 
+      <div id="currentAliyahLabel" class="pardes-current-label">טוען את העלייה הפעילה...</div>
+
+    </div>
+  </div>
+
+  <div id="pardesVideoPanel" class="pardes-video-panel" aria-hidden="true">
+    <div class="pardes-video-card" role="dialog" aria-modal="true" aria-labelledby="pardesVideoTitle">
+      <div class="pardes-video-head">
+        <h2 id="pardesVideoTitle" class="pardes-video-title">עומק העלייה</h2>
+        <button id="pardesVideoClose" class="pardes-video-close" type="button" aria-label="סגירה">×</button>
+      </div>
+      <div class="pardes-video-body">
+        <video id="pardesVideoPlayer" class="pardes-video-player" controls playsinline preload="metadata"></video>
+        <div id="pardesVideoEmpty" class="pardes-video-empty"></div>
+      </div>
     </div>
   </div>
 
@@ -559,22 +671,152 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    async function loadLinks(){
-      const docRef = doc(db, "links", "current");
-      const docSnap = await getDoc(docRef);
+    const layerNames = {
+      pshat: "פשט",
+      remez: "רמז",
+      drash: "דרש",
+      sod: "סוד"
+    };
 
-      if(docSnap.exists()){
-        const data = docSnap.data();
+    let currentParasha = "";
+    let currentAliyah = "";
+    let currentParashaKey = "";
+    let currentAliyahKey = "";
+    let activeVideos = {};
+
+    function makeSafeKey(value){
+      return String(value || "")
+        .trim()
+        .replace(/[\\/#?%&.\[\]*]/g, "-")
+        .replace(/\s+/g, "-")
+        .replace(/-+/g, "-")
+        .replace(/^-|-$/g, "");
+    }
+
+    function videoDocId(parashaKey, aliyahKey){
+      return `${parashaKey}_${aliyahKey}`;
+    }
+
+    function setCurrentLabel(text){
+      const label = document.getElementById("currentAliyahLabel");
+      if(label){ label.textContent = text; }
+    }
+
+    async function loadActiveAliyah(){
+      try{
+        const currentRef = doc(db, "links", "current");
+        const currentSnap = await getDoc(currentRef);
+
+        if(!currentSnap.exists()){
+          setCurrentLabel("עדיין לא הוגדרה עלייה פעילה");
+          return;
+        }
+
+        const current = currentSnap.data();
+
+        currentParasha = current.currentParasha || current.parasha || "";
+        currentAliyah = current.currentAliyah || current.aliyah || "";
+        currentParashaKey = current.currentParashaKey || makeSafeKey(currentParasha);
+        currentAliyahKey = current.currentAliyahKey || makeSafeKey(currentAliyah);
 
         const whatsappLink = document.getElementById("whatsappLink");
+        if(whatsappLink){ whatsappLink.href = current.whatsapp || "#"; }
 
-        if(whatsappLink){
-          whatsappLink.href = data.whatsapp || "#";
+        if(!currentParasha || !currentAliyah){
+          setCurrentLabel("עדיין לא נבחרו פרשה ועלייה פעילות");
+          return;
         }
+
+        setCurrentLabel(`העלייה הפעילה: פרשת ${currentParasha} — ${currentAliyah}`);
+
+        const videosRef = doc(db, "aliyahVideos", videoDocId(currentParashaKey, currentAliyahKey));
+        const videosSnap = await getDoc(videosRef);
+
+        activeVideos = videosSnap.exists() ? videosSnap.data() : {};
+      }catch(error){
+        console.error("שגיאה בטעינת העלייה הפעילה:", error);
+        setCurrentLabel("לא ניתן היה לטעון את העלייה הפעילה כרגע");
       }
     }
 
-    loadLinks();
+    function openLayer(layer){
+      const panel = document.getElementById("pardesVideoPanel");
+      const title = document.getElementById("pardesVideoTitle");
+      const player = document.getElementById("pardesVideoPlayer");
+      const empty = document.getElementById("pardesVideoEmpty");
+
+      const item = activeVideos?.[layer];
+      const layerName = layerNames[layer] || "פרד״ס";
+
+      if(title){
+        title.textContent = `${layerName} — פרשת ${currentParasha || ""} ${currentAliyah || ""}`.trim();
+      }
+
+      if(item?.url){
+        empty.style.display = "none";
+        player.style.display = "block";
+        player.src = item.url;
+        player.load();
+      }else{
+        player.pause();
+        player.removeAttribute("src");
+        player.load();
+        player.style.display = "none";
+        empty.style.display = "block";
+        empty.innerHTML = `עדיין לא הועלה סרטון <b>${layerName}</b> עבור העלייה הפעילה.<br>אפשר להעלות אותו דרך דף הניהול הסודי.`;
+      }
+
+      panel.classList.add("is-open");
+      panel.setAttribute("aria-hidden", "false");
+    }
+
+    function closePanel(){
+      const panel = document.getElementById("pardesVideoPanel");
+      const player = document.getElementById("pardesVideoPlayer");
+      if(player){
+        player.pause();
+        player.removeAttribute("src");
+        player.load();
+      }
+      panel.classList.remove("is-open");
+      panel.setAttribute("aria-hidden", "true");
+    }
+
+    document.getElementById("pshatLink")?.addEventListener("click", (event) => {
+      event.preventDefault();
+      openLayer("pshat");
+    });
+
+    document.getElementById("remezLink")?.addEventListener("click", (event) => {
+      event.preventDefault();
+      openLayer("remez");
+    });
+
+    document.getElementById("drashLink")?.addEventListener("click", (event) => {
+      event.preventDefault();
+      openLayer("drash");
+    });
+
+    document.getElementById("sodLink")?.addEventListener("click", (event) => {
+      event.preventDefault();
+      openLayer("sod");
+    });
+
+    document.getElementById("pardesVideoClose")?.addEventListener("click", closePanel);
+
+    document.getElementById("pardesVideoPanel")?.addEventListener("click", (event) => {
+      if(event.target?.id === "pardesVideoPanel"){
+        closePanel();
+      }
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if(event.key === "Escape"){
+        closePanel();
+      }
+    });
+
+    loadActiveAliyah();
   </script>
 
 </body>
