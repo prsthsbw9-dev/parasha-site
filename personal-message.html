@@ -182,23 +182,35 @@
       gap:8px;
     }
 
+    #birthDate{
+      text-align:center;
+      direction:ltr;
+      font-size:17px;
+      font-weight:900;
+      letter-spacing:.5px;
+      background:rgba(60,170,200,.12);
+      border:1px solid rgba(120,220,255,.48);
+      color:#fff;
+    }
+    
+    #birthDate::placeholder{
+      color:rgba(255,255,255,.58);
+    }
+    
+    #gregorianDateHelper{
+      margin-top:7px;
+      min-height:auto;
+      padding:7px 10px;
+      font-size:13px;
+      border:none;
+      background:transparent;
+      color:rgba(255,255,255,.78);
+    }
+    
     .date-helper.has-date{
       border-color:rgba(160,240,255,.70);
       background:rgba(60,170,200,.18);
       box-shadow:0 0 16px rgba(90,210,255,.16);
-    }
-
-    .date-picker-wrap input[type="date"]{
-      position:absolute;
-      inset:0;
-      width:100%;
-      height:100%;
-      min-height:52px;
-      opacity:0;
-      cursor:pointer;
-      pointer-events:auto;
-      direction:ltr;
-      color-scheme:dark;
     }
 
     .date-picker-wrap input[type="date"]::-webkit-calendar-picker-indicator{
@@ -497,9 +509,18 @@
           </label>
         </div>
 
-        <div id="gregorianDateBox" class="date-input-box date-picker-wrap">
-          <div class="date-helper" id="gregorianDateHelper">📅 לחצו כאן לבחירת תאריך לועזי</div>
-          <input id="birthDate" type="date" aria-label="בחירת תאריך לידה לועזי">
+        <div id="gregorianDateBox" class="date-input-box">
+          <input
+            id="birthDate"
+            type="text"
+            inputmode="numeric"
+            autocomplete="bday"
+            placeholder="לדוגמה: 14/05/1980"
+            aria-label="הקלדת תאריך לידה לועזי"
+          >
+          <div class="date-helper" id="gregorianDateHelper">
+            רשמו תאריך בפורמט: יום/חודש/שנה
+          </div>
         </div>
 
         <div id="hebrewDateBox" class="date-input-box hidden">
@@ -2180,54 +2201,69 @@
       return "";
     }
 
-    function openDatePicker(input){
-      if(!input){
-        return;
-      }
-
-      try{
-        if(typeof input.showPicker === "function"){
-          input.showPicker();
-        }else{
-          input.focus();
-          input.click();
-        }
-      }catch(err){
-        input.focus();
-      }
-    }
-
     const gregorianDateHelper = document.getElementById("gregorianDateHelper");
     const birthDateInput = document.getElementById("birthDate");
-    const gregorianDateBox = document.getElementById("gregorianDateBox");
-
+    
+    function normalizeGregorianDateInput(value){
+      const raw = String(value || "").trim();
+    
+      // מאפשר גם 14/05/1980 וגם 14.05.1980 וגם 14-05-1980
+      const match = raw.match(/^(\d{1,2})[\/.\-](\d{1,2})[\/.\-](\d{4})$/);
+    
+      if(!match){
+        return "";
+      }
+    
+      const day = Number(match[1]);
+      const month = Number(match[2]);
+      const year = Number(match[3]);
+    
+      if(
+        !Number.isFinite(day) ||
+        !Number.isFinite(month) ||
+        !Number.isFinite(year) ||
+        day < 1 ||
+        day > 31 ||
+        month < 1 ||
+        month > 12 ||
+        year < 1900 ||
+        year > 2100
+      ){
+        return "";
+      }
+    
+      const testDate = new Date(year, month - 1, day, 12, 0, 0, 0);
+    
+      if(
+        testDate.getFullYear() !== year ||
+        testDate.getMonth() !== month - 1 ||
+        testDate.getDate() !== day
+      ){
+        return "";
+      }
+    
+      return `${year}-${String(month).padStart(2,"0")}-${String(day).padStart(2,"0")}`;
+    }
+    
     function syncGregorianDateHelper(){
       if(!gregorianDateHelper || !birthDateInput){
         return;
       }
-
-      if(birthDateInput.value){
-        gregorianDateHelper.textContent = `📅 ${formatGregorianDate(birthDateInput.value)}`;
+    
+      const normalizedDate = normalizeGregorianDateInput(birthDateInput.value);
+    
+      if(normalizedDate){
+        gregorianDateHelper.textContent = `📅 ${formatGregorianDate(normalizedDate)}`;
         gregorianDateHelper.classList.add("has-date");
       }else{
-        gregorianDateHelper.textContent = "📅 לחצו כאן לבחירת תאריך לועזי";
+        gregorianDateHelper.textContent = "רשמו תאריך בפורמט: יום/חודש/שנה";
         gregorianDateHelper.classList.remove("has-date");
       }
     }
-
-    if(gregorianDateHelper && birthDateInput && gregorianDateBox){
-      gregorianDateHelper.addEventListener("click", ()=>{
-        openDatePicker(birthDateInput);
-      });
-
-      gregorianDateBox.addEventListener("click", (event)=>{
-        if(event.target !== birthDateInput){
-          openDatePicker(birthDateInput);
-        }
-      });
-
-      birthDateInput.addEventListener("change", syncGregorianDateHelper);
+    
+    if(birthDateInput){
       birthDateInput.addEventListener("input", syncGregorianDateHelper);
+      birthDateInput.addEventListener("change", syncGregorianDateHelper);
       syncGregorianDateHelper();
     }
 
@@ -2249,7 +2285,7 @@
         motherName: document.getElementById("motherName").value.trim(),
         parentDisplay: document.getElementById("parentDisplay").value,
         birthType: document.querySelector('input[name="birthType"]:checked').value,
-        birthDate: document.getElementById("birthDate").value.trim(),
+        birthDate: normalizeGregorianDateInput(document.getElementById("birthDate").value.trim()),
         hebrewDay: document.getElementById("hebrewDay").value,
         hebrewMonth: document.getElementById("hebrewMonth").value,
         hebrewYear: document.getElementById("hebrewYear").value.trim(),
@@ -2263,7 +2299,7 @@
       }
 
       if(data.birthType === "gregorian" && !data.birthDate){
-        alert("יש למלא תאריך לידה לועזי.");
+        alert("יש למלא תאריך לידה לועזי תקין בפורמט יום/חודש/שנה. לדוגמה: 14/05/1980");
         return;
       }
 
