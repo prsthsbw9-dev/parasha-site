@@ -162,6 +162,19 @@
       cursor:pointer;
     }
 
+    .date-picker-wrap input[type="date"]{
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
+      min-height:52px;
+      opacity:0;
+      cursor:pointer;
+      pointer-events:auto;
+      direction:ltr;
+      color-scheme:dark;
+    }
+    
     .date-helper{
       margin:0;
       min-height:52px;
@@ -182,6 +195,39 @@
       gap:8px;
     }
 
+    .desktop-date-box{
+      display:block;
+    }
+    
+    .mobile-date-box{
+      display:none;
+    }
+    
+    #birthDateDesktop{
+      text-align:center;
+      direction:ltr;
+      font-size:17px;
+      font-weight:900;
+      letter-spacing:.5px;
+      background:rgba(60,170,200,.12);
+      border:1px solid rgba(120,220,255,.48);
+      color:#fff;
+    }
+    
+    #birthDateDesktop::placeholder{
+      color:rgba(255,255,255,.58);
+    }
+    
+    #gregorianDateBox .desktop-date-box .date-helper{
+      margin-top:7px;
+      min-height:auto;
+      padding:7px 10px;
+      font-size:13px;
+      border:none;
+      background:transparent;
+      color:rgba(255,255,255,.78);
+    }
+    
     #birthDate{
       text-align:center;
       direction:ltr;
@@ -223,6 +269,16 @@
       gap:8px;
     }
 
+    @media(max-width:700px){
+      .desktop-date-box{
+        display:none;
+      }
+    
+      .mobile-date-box{
+        display:block;
+      }
+    }
+    
     @media(max-width:430px){
       .hebrew-date-grid{
         grid-template-columns:1fr;
@@ -510,17 +566,28 @@
         </div>
 
         <div id="gregorianDateBox" class="date-input-box">
-          <input
-            id="birthDate"
-            type="text"
-            inputmode="numeric"
-            autocomplete="bday"
-            placeholder="לדוגמה: 14/05/1980"
-            aria-label="הקלדת תאריך לידה לועזי"
-          >
-          <div class="date-helper" id="gregorianDateHelper">
-            רשמו תאריך בפורמט: יום/חודש/שנה
+        
+          <!-- מחשב / לפטופ: הקלדה ידנית -->
+          <div class="desktop-date-box">
+            <input
+              id="birthDateDesktop"
+              type="text"
+              inputmode="numeric"
+              autocomplete="bday"
+              placeholder="לדוגמה: 14/05/1980"
+              aria-label="הקלדת תאריך לידה לועזי"
+            >
+            <div class="date-helper">
+              רשמו תאריך בפורמט: יום/חודש/שנה
+            </div>
           </div>
+        
+          <!-- נייד: כמו שהיה קודם -->
+          <div class="mobile-date-box date-picker-wrap">
+            <div class="date-helper" id="gregorianDateHelper">📅 לחצו כאן לבחירת תאריך לועזי</div>
+            <input id="birthDate" type="date" aria-label="בחירת תאריך לידה לועזי">
+          </div>
+        
         </div>
 
         <div id="hebrewDateBox" class="date-input-box hidden">
@@ -2203,6 +2270,19 @@
 
     const gregorianDateHelper = document.getElementById("gregorianDateHelper");
     const birthDateInput = document.getElementById("birthDate");
+
+     const birthDateDesktopInput = document.getElementById("birthDateDesktop");
+    
+    if(birthDateDesktopInput){
+      birthDateDesktopInput.addEventListener("input", () => {
+        const normalized = normalizeGregorianDateInput(birthDateDesktopInput.value);
+        if(normalized){
+          birthDateDesktopInput.style.borderColor = "rgba(160,240,255,.70)";
+        }else{
+          birthDateDesktopInput.style.borderColor = "rgba(120,220,255,.48)";
+        }
+      });
+    }   
     
     function normalizeGregorianDateInput(value){
       const raw = String(value || "").trim();
@@ -2274,6 +2354,18 @@
       resultActions.classList.add("hidden");
     }
 
+    function getGregorianBirthDateValue(){
+      const isMobile = window.matchMedia("(max-width: 700px), (pointer: coarse)").matches;
+    
+      if(isMobile){
+        return document.getElementById("birthDate")?.value?.trim() || "";
+      }
+    
+      return normalizeGregorianDateInput(
+        document.getElementById("birthDateDesktop")?.value?.trim() || ""
+      );
+    }    
+
     generateBtn.addEventListener("click", async ()=>{
       resultActions.classList.add("hidden");
 
@@ -2285,7 +2377,7 @@
         motherName: document.getElementById("motherName").value.trim(),
         parentDisplay: document.getElementById("parentDisplay").value,
         birthType: document.querySelector('input[name="birthType"]:checked').value,
-        birthDate: normalizeGregorianDateInput(document.getElementById("birthDate").value.trim()),
+        birthDate: getGregorianBirthDateValue(),
         hebrewDay: document.getElementById("hebrewDay").value,
         hebrewMonth: document.getElementById("hebrewMonth").value,
         hebrewYear: document.getElementById("hebrewYear").value.trim(),
