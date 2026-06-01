@@ -2298,6 +2298,7 @@
     if(gregorianDateHelper && birthDateInput){
       birthDateInput.addEventListener("change", syncGregorianDateHelper);
       birthDateInput.addEventListener("input", syncGregorianDateHelper);
+      birthDateInput.addEventListener("blur", syncGregorianDateHelper);
       syncGregorianDateHelper();
     }
 
