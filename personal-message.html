@@ -2384,164 +2384,55 @@
       }
     });
 
-    document.getElementById("printBtn").addEventListener("click", () => {
-      const resultContent = document.getElementById("resultBox");
-      const userName = document.querySelector(".result-main-title")?.textContent || "האור שבי";
+    document.getElementById("printBtn").addEventListener("click", async () => {
+      const text = resultBox?.textContent?.trim() || "";
+      const isMobile = window.matchMedia("(max-width: 700px), (pointer: coarse)").matches;
     
-      if(!resultContent || !resultContent.innerHTML.trim()){
+      if(!text){
         alert("אין עדיין מסקנות לשמירה. קודם יש ללחוץ על צלילה לעומק.");
         return;
       }
     
-      const printWindow = window.open("", "_blank");
+      // בנייד: לא פותחים חלון PDF, כי זה נתקע בדפדפן פנימי.
+      // במקום זה משתפים או מעתיקים את המסקנות.
+      if(isMobile){
+        try{
+          if(navigator.share){
+            await navigator.share({
+              title: "האור שבי",
+              text
+            });
+            return;
+          }
     
-      if(!printWindow){
-        alert("הדפדפן חסם פתיחת חלון חדש. אפשר לאשר חלונות קופצים ולנסות שוב.");
-        return;
+          await navigator.clipboard.writeText(text);
+          alert("המסקנות הועתקו. אפשר להדביק אותן בוואטסאפ, מייל או מסמך.");
+          return;
+        }catch(error){
+          try{
+            await navigator.clipboard.writeText(text);
+            alert("המסקנות הועתקו. אפשר להדביק אותן בוואטסאפ, מייל או מסמך.");
+          }catch(copyError){
+            alert("הדפדפן לא מאפשר שיתוף או העתקה כרגע. אפשר לסמן ידנית את הטקסט ולהעתיק.");
+          }
+          return;
+        }
       }
     
-      printWindow.document.open();
-      printWindow.document.write(`
-        <!DOCTYPE html>
-        <html lang="he" dir="rtl">
-        <head>
-          <meta charset="UTF-8">
-          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <title>${userName} - האור שבי</title>
-    
-          <style>
-            *{
-              box-sizing:border-box;
-            }
-    
-            body{
-              margin:0;
-              padding:24px;
-              direction:rtl;
-              font-family:Arial, sans-serif;
-              background:#ffffff;
-              color:#111111;
-              line-height:1.8;
-              font-size:16px;
-            }
-    
-            .print-page{
-              max-width:760px;
-              margin:0 auto;
-            }
-    
-            .print-title{
-              text-align:center;
-              font-size:30px;
-              font-weight:900;
-              margin-bottom:18px;
-              color:#111111;
-            }
-    
-            .result-main-title,
-            .result-section-title{
-              color:#111111 !important;
-              text-shadow:none !important;
-            }
-    
-            .result-section{
-              margin-bottom:24px;
-              page-break-inside:avoid;
-            }
-    
-            .result-section-title{
-              font-size:22px;
-              font-weight:900;
-              border-bottom:1px solid #999;
-              padding-bottom:8px;
-              margin-bottom:14px;
-            }
-    
-            .result-item{
-              margin-bottom:12px;
-              page-break-inside:avoid;
-            }
-    
-            .result-label{
-              font-weight:900;
-              margin-bottom:5px;
-              color:#222222;
-            }
-    
-            .result-value{
-              border:1px solid #cccccc;
-              border-radius:10px;
-              padding:10px 12px;
-              background:#f7f7f7;
-              color:#111111;
-              box-shadow:none;
-            }
-    
-            .result-note,
-            .small-disclaimer{
-              color:#333333;
-              border-top:1px solid #cccccc;
-              padding-top:10px;
-              margin-top:16px;
-              font-size:13px;
-            }
-    
-            .ai-section{
-              border:1px solid #cccccc;
-              border-radius:12px;
-              padding:14px;
-              margin-top:20px;
-              background:#f7f7f7;
-              color:#111111;
-            }
-    
-            .ai-section-title{
-              font-size:20px;
-              font-weight:900;
-              margin-bottom:10px;
-              color:#111111;
-            }
-    
-            .ai-section-content{
-              color:#111111;
-            }
-    
-            a{
-              color:#111111;
-              text-decoration:none;
-            }
-    
-            @media print{
-              body{
-                padding:12mm;
-              }
-    
-              .print-page{
-                max-width:none;
-              }
-            }
-          </style>
-        </head>
-    
-        <body>
-          <div class="print-page">
-            <div class="print-title">האור שבי</div>
-            ${resultContent.innerHTML}
-          </div>
-    
-          <script>
-            window.onload = function(){
-              setTimeout(function(){
-                window.print();
-              }, 400);
-            };
-          <\/script>
-        </body>
-        </html>
-      `);
-    
-      printWindow.document.close();
+      // במחשב: הדפסה / שמירה כ-PDF
+      window.print();
     });
+
+    function updatePrintButtonText(){
+      const printBtn = document.getElementById("printBtn");
+      if(!printBtn) return;
+    
+      const isMobile = window.matchMedia("(max-width: 700px), (pointer: coarse)").matches;
+      printBtn.textContent = isMobile ? "שיתוף / העתקת המסקנות" : "שמירה / הדפסה כ-PDF";
+    }
+    
+    updatePrintButtonText();
+    window.addEventListener("resize", updatePrintButtonText);    
 
     document.getElementById("shareBtn").addEventListener("click", async ()=>{
       const text = resultBox.textContent;
