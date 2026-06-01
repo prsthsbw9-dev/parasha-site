@@ -260,11 +260,6 @@
       stroke-linecap:round;
     }
 
-    .tree-trunk-mobile,
-    .tree-trunk-light-mobile{
-      display:none;
-    }
-
     .pardes-tree-svg .tree-branch{
       fill:none;
       stroke:rgba(220,188,145,.68);
@@ -797,20 +792,29 @@
       }
 
       .pardes-tree-wrap{
-        height:398px;
+        height:412px;
         width:min(100%, 390px);
         margin-top:4px;
-        margin-bottom:2px;
+        margin-bottom:0;
       }
 
-      .desktop-trunk,
-      .desktop-trunk-light{
-        display:none;
+      /* תיקון נייד בלבד: הגזע עולה ומתקצר מעט, בלי להזיז את האייקונים/הפירות */
+      .pardes-tree-svg .tree-main-trunk{
+        transform-box:fill-box;
+        transform-origin:center top;
+        transform:translateY(-22px) scaleY(.91);
       }
 
-      .tree-trunk-mobile,
-      .tree-trunk-light-mobile{
-        display:block;
+      .pardes-tree-svg .tree-main-trunk-light{
+        transform-box:fill-box;
+        transform-origin:center top;
+        transform:translateY(-22px) scaleY(.91);
+      }
+
+      .pardes-tree-svg .tree-center-branch{
+        transform-box:fill-box;
+        transform-origin:center top;
+        transform:translateY(-10px) scaleY(.95);
       }
 
       .tree-head-info{
@@ -872,6 +876,7 @@
         gap:4px;
         flex-wrap:nowrap;
         justify-content:center;
+        margin-top:-8px;
       }
 
       .pardes-search-icon{
@@ -894,6 +899,20 @@
         min-height:30px;
         padding:4px 9px;
         font-size:13px;
+      }
+
+      /* כשהמקלדת נפתחת בנייד — כל הדף עולה כדי ששדות החיפוש לא יוסתרו */
+      .gate-card{
+        transition:transform .18s ease;
+      }
+
+      body.pardes-keyboard-open .page{
+        align-items:flex-start;
+        padding-top:6px;
+      }
+
+      body.pardes-keyboard-open .gate-card{
+        transform:translateY(-118px);
       }
 
       .fruit-link:hover{
@@ -971,11 +990,9 @@
             <ellipse class="tree-leaf-light" cx="215" cy="215" rx="60" ry="32" />
           </g>
 
-          <path class="tree-branch" d="M215 346 C210 280 211 205 214 126" />
-          <path class="tree-trunk desktop-trunk" d="M215 374 C212 315 213 250 216 182 C218 138 216 100 213 55" />
-          <path class="tree-trunk-light desktop-trunk-light" d="M221 364 C220 308 220 250 222 186 C224 140 222 104 220 76" />
-          <path class="tree-trunk tree-trunk-mobile" d="M215 374 C212 315 213 250 216 182 C218 138 216 112 213 86" />
-          <path class="tree-trunk-light tree-trunk-light-mobile" d="M221 364 C220 308 220 250 222 186 C224 140 222 116 220 98" />
+          <path class="tree-branch tree-center-branch" d="M215 346 C210 280 211 205 214 126" />
+          <path class="tree-trunk tree-main-trunk" d="M215 374 C212 315 213 250 216 182 C218 138 216 100 213 55" />
+          <path class="tree-trunk-light tree-main-trunk-light" d="M221 364 C220 308 220 250 222 186 C224 140 222 104 220 76" />
 
           <path class="tree-branch" d="M215 186 C174 161 132 136 78 131" />
           <path class="tree-branch" d="M214 164 C185 130 158 98 137 70" />
@@ -1456,6 +1473,52 @@
         document.getElementById("pardesVideoPanel")?.setAttribute("aria-hidden", "true");
       }
     });
+
+    function setupMobileSearchKeyboardFix(){
+      const form = document.getElementById("pardesSearchForm");
+      const inputs = [
+        document.getElementById("parashaSearchInput"),
+        document.getElementById("aliyahSearchInput")
+      ].filter(Boolean);
+
+      if(!form || !inputs.length) return;
+
+      const isMobileLayout = () => window.matchMedia("(max-width: 420px)").matches;
+      let keyboardTimer = null;
+
+      function setKeyboardMode(active){
+        const shouldOpen = active && isMobileLayout();
+        document.body.classList.toggle("pardes-keyboard-open", shouldOpen);
+
+        if(shouldOpen){
+          clearTimeout(keyboardTimer);
+          keyboardTimer = setTimeout(() => {
+            try{
+              form.scrollIntoView({ behavior:"smooth", block:"center", inline:"nearest" });
+            }catch(error){
+              form.scrollIntoView();
+            }
+          }, 140);
+        }
+      }
+
+      inputs.forEach((input) => {
+        input.addEventListener("focus", () => setKeyboardMode(true));
+        input.addEventListener("blur", () => {
+          setTimeout(() => {
+            const stillInsideSearch = inputs.includes(document.activeElement);
+            if(!stillInsideSearch){ setKeyboardMode(false); }
+          }, 180);
+        });
+      });
+
+      window.visualViewport?.addEventListener("resize", () => {
+        const stillInsideSearch = inputs.includes(document.activeElement);
+        if(stillInsideSearch){ setKeyboardMode(true); }
+      });
+    }
+
+    setupMobileSearchKeyboardFix();
 
     loadActiveAliyah();
   </script>
