@@ -111,7 +111,7 @@
     .tree-head-info{
       position:absolute;
       z-index:6;
-      top:0;
+      top:24px;
       left:50%;
       transform:translateX(-50%);
       width:190px;
@@ -124,9 +124,26 @@
       pointer-events:none;
     }
 
+
+    .tree-head-info::after{
+      content:"";
+      position:absolute;
+      left:50%;
+      top:112px;
+      width:5px;
+      height:34px;
+      transform:translateX(-50%);
+      border-radius:999px;
+      background:linear-gradient(180deg, rgba(255,255,255,.56), rgba(220,188,145,.72), rgba(220,188,145,0));
+      box-shadow:0 0 14px rgba(255,255,255,.24);
+      pointer-events:none;
+      opacity:.72;
+    }
+
     .active-parasha-title{
       min-height:22px;
       margin:0 0 8px;
+      transform:translateY(-14px);
       color:rgba(255,255,255,.96);
       font-size:clamp(16px, 4.2vw, 22px);
       font-weight:900;
@@ -137,19 +154,21 @@
     }
 
     .main-aliyah-orb{
+      position:relative;
       pointer-events:auto;
+      overflow:visible;
       width:82px;
       height:82px;
       border-radius:50%;
       border:1px solid rgba(255,255,255,.78);
       color:#fff;
       background:
-        radial-gradient(circle at 34% 26%, rgba(255,255,255,.88), rgba(255,255,255,.22) 18%, rgba(130,185,255,.18) 39%, rgba(20,34,62,.78) 68%, rgba(5,10,22,.92) 100%),
-        conic-gradient(from 210deg, rgba(120,180,255,.12), rgba(255,255,255,.45), rgba(180,130,255,.18), rgba(120,180,255,.12));
+        radial-gradient(circle at 34% 26%, rgba(255,255,255,.96), rgba(255,255,255,.48) 17%, rgba(210,195,255,.46) 34%, rgba(138,108,255,.34) 52%, rgba(24,34,66,.82) 75%, rgba(5,10,22,.94) 100%),
+        conic-gradient(from 210deg, rgba(140,120,255,.22), rgba(255,255,255,.58), rgba(180,130,255,.36), rgba(120,180,255,.18), rgba(255,255,255,.42), rgba(140,120,255,.22));
       box-shadow:
-        0 0 0 5px rgba(255,255,255,.08),
-        0 0 20px rgba(195,225,255,.44),
-        0 0 48px rgba(115,160,255,.24),
+        0 0 0 5px rgba(255,255,255,.10),
+        0 0 28px rgba(230,235,255,.60),
+        0 0 70px rgba(155,115,255,.38),
         0 14px 30px rgba(0,0,0,.42),
         inset 0 2px 0 rgba(255,255,255,.55),
         inset 0 -14px 24px rgba(0,0,0,.28);
@@ -167,10 +186,24 @@
     .main-aliyah-orb::before{
       content:"";
       position:absolute;
-      inset:-10px;
+      inset:-12px;
       border-radius:50%;
-      border:1px solid rgba(210,230,255,.28);
-      box-shadow:0 0 22px rgba(210,230,255,.20);
+      border:1px solid rgba(225,230,255,.38);
+      box-shadow:
+        0 0 26px rgba(230,235,255,.34),
+        0 0 46px rgba(150,115,255,.26);
+      pointer-events:none;
+    }
+
+    .main-aliyah-orb::after{
+      content:"";
+      position:absolute;
+      inset:10px;
+      border-radius:50%;
+      background:
+        radial-gradient(circle at 50% 48%, rgba(255,255,255,.28), rgba(188,165,255,.42) 42%, rgba(255,255,255,.10) 68%, rgba(255,255,255,0) 78%);
+      filter:blur(2px);
+      opacity:.95;
       pointer-events:none;
     }
 
@@ -188,7 +221,7 @@
 
     .main-aliyah-orb span{
       position:relative;
-      z-index:2;
+      z-index:3;
       display:block;
       color:#fff;
       font-size:17px;
@@ -329,7 +362,7 @@
 
     .fruit-pshat{
       right:118px;
-      top:122px;
+      top:132px;
       background:
         radial-gradient(circle at 30% 22%, rgba(255,255,255,.95), rgba(255,185,170,.34) 18%, rgba(255,72,78,.88) 56%, rgba(145,12,24,.94) 100%);
       --fruit-glow:rgba(255,72,78,.62);
@@ -338,7 +371,7 @@
 
     .fruit-remez{
       left:118px;
-      top:122px;
+      top:132px;
       background:
         radial-gradient(circle at 30% 22%, rgba(255,255,255,.95), rgba(220,190,255,.34) 18%, rgba(126,72,255,.90) 56%, rgba(52,22,132,.96) 100%);
       --fruit-glow:rgba(152,98,255,.68);
@@ -365,7 +398,7 @@
 
     .fruit-whatsapp{
       left:34px;
-      bottom:22px;
+      bottom:90px;
       background:
         radial-gradient(circle at 30% 22%, rgba(255,255,255,.94), rgba(180,255,210,.34) 18%, rgba(37,211,102,.90) 56%, rgba(15,105,54,.96) 100%);
       --fruit-glow:rgba(37,211,102,.64);
@@ -374,7 +407,7 @@
 
     .fruit-tikun{
       right:34px;
-      bottom:22px;
+      bottom:90px;
       background:
         radial-gradient(circle at 30% 22%, rgba(255,255,255,.96), rgba(190,235,255,.34) 18%, rgba(92,180,255,.84) 56%, rgba(23,82,145,.96) 100%);
       --fruit-glow:rgba(100,210,255,.62);
@@ -766,8 +799,13 @@
       }
 
       .tree-head-info{
-        top:0;
+        top:22px;
         width:168px;
+      }
+
+      .tree-head-info::after{
+        top:100px;
+        height:30px;
       }
 
       .active-parasha-title{
@@ -801,27 +839,46 @@
         height:32px;
       }
 
-      .fruit-pshat{ right:95px; top:116px; }
-      .fruit-remez{ left:95px; top:116px; }
+      .fruit-pshat{ right:95px; top:126px; }
+      .fruit-remez{ left:95px; top:126px; }
       .fruit-drash{ left:10px; top:184px; }
       .fruit-sod{ right:10px; top:184px; }
 
-      .fruit-whatsapp{ left:28px; bottom:24px; }
-      .fruit-tikun{ right:28px; bottom:24px; }
+      .fruit-whatsapp{ left:28px; bottom:84px; }
+      .fruit-tikun{ right:28px; bottom:84px; }
 
       .fruit-email{ left:105px; top:243px; }
       .fruit-names{ right:105px; top:243px; }
 
       .pardes-search-row{
         width:min(100%, 390px);
-        border-radius:22px;
-        padding:9px 10px;
-        gap:6px;
-        flex-wrap:wrap;
+        border-radius:999px;
+        padding:6px 6px;
+        gap:4px;
+        flex-wrap:nowrap;
+        justify-content:center;
+      }
+
+      .pardes-search-icon{
+        font-size:18px;
+      }
+
+      .pardes-search-row label{
+        font-size:13px;
       }
 
       .pardes-search-row input{
-        width:116px;
+        width:78px;
+        min-height:30px;
+        padding:4px 5px;
+        font-size:13px;
+        border-width:1.5px;
+      }
+
+      .pardes-search-row button{
+        min-height:30px;
+        padding:4px 9px;
+        font-size:13px;
       }
 
       .fruit-link:hover{
@@ -900,22 +957,22 @@
           </g>
 
           <path class="tree-branch" d="M215 346 C210 280 211 205 214 126" />
-          <path class="tree-trunk" d="M215 374 C212 315 213 250 216 182 C218 138 216 100 213 66" />
+          <path class="tree-trunk" d="M215 374 C212 315 213 250 216 182 C218 138 216 100 213 55" />
           <path class="tree-trunk-light" d="M221 364 C220 308 220 250 222 186 C224 140 222 104 220 76" />
 
           <path class="tree-branch" d="M215 186 C174 161 132 136 78 131" />
           <path class="tree-branch" d="M214 164 C185 130 158 98 137 70" />
           <path class="tree-branch" d="M216 168 C244 130 271 96 296 70" />
           <path class="tree-branch" d="M218 188 C260 161 315 138 372 134" />
-          <path class="tree-branch" d="M214 240 C164 222 110 228 72 266" />
-          <path class="tree-branch" d="M220 240 C270 222 324 228 360 266" />
+          <path class="tree-branch" d="M214 224 C164 206 110 212 72 250" />
+          <path class="tree-branch" d="M220 224 C270 206 324 212 360 250" />
 
           <path class="tree-branch thin" d="M120 122 C102 96 94 76 88 52" />
           <path class="tree-branch thin" d="M151 92 C143 64 148 42 164 22" />
           <path class="tree-branch thin" d="M276 92 C285 64 280 42 263 22" />
           <path class="tree-branch thin" d="M335 124 C352 96 360 76 366 52" />
-          <path class="tree-branch thin" d="M112 232 C82 216 58 216 30 226" />
-          <path class="tree-branch thin" d="M320 232 C350 216 374 216 402 226" />
+          <path class="tree-branch thin" d="M112 216 C82 200 58 200 30 210" />
+          <path class="tree-branch thin" d="M320 216 C350 200 374 200 402 210" />
 
           <path class="tree-branch thin" d="M202 186 C182 192 164 200 146 218" />
           <path class="tree-branch thin" d="M228 186 C248 192 266 200 284 218" />
