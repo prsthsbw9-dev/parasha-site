@@ -2316,7 +2316,7 @@
 
     const gregorianDateHelper = document.getElementById("gregorianDateHelper");
     const birthDateInput = document.getElementById("birthDate");
-    const gregorianDateBox = document.getElementById("gregorianDateBox");
+    const mobileDateBox = document.querySelector(".mobile-date-box");
 
     function syncGregorianDateHelper(){
       if(!gregorianDateHelper || !birthDateInput){
@@ -2332,13 +2332,15 @@
       }
     }
 
-    if(gregorianDateHelper && birthDateInput && gregorianDateBox){
+    if(gregorianDateHelper && birthDateInput && mobileDateBox){
       gregorianDateHelper.addEventListener("click", ()=>{
-        openDatePicker(birthDateInput);
+        if(isMobileDateLayout()){
+          openDatePicker(birthDateInput);
+        }
       });
 
-      gregorianDateBox.addEventListener("click", (event)=>{
-        if(event.target !== birthDateInput){
+      mobileDateBox.addEventListener("click", (event)=>{
+        if(isMobileDateLayout() && event.target !== birthDateInput){
           openDatePicker(birthDateInput);
         }
       });
