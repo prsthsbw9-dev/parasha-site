@@ -203,6 +203,16 @@
       display:none;
     }
     
+    @media(max-width:700px){
+      .desktop-date-box{
+        display:none !important;
+      }
+    
+      .mobile-date-box{
+        display:block !important;
+      }
+    }
+    
     #birthDateDesktop{
       text-align:center;
       direction:ltr;
@@ -567,7 +577,7 @@
 
         <div id="gregorianDateBox" class="date-input-box">
         
-          <!-- מחשב / לפטופ: הקלדה ידנית -->
+          <!-- מחשב / לפטופ -->
           <div class="desktop-date-box">
             <input
               id="birthDateDesktop"
@@ -582,7 +592,7 @@
             </div>
           </div>
         
-          <!-- נייד: כמו שהיה קודם -->
+          <!-- נייד -->
           <div class="mobile-date-box date-picker-wrap">
             <div class="date-helper" id="gregorianDateHelper">📅 לחצו כאן לבחירת תאריך לועזי</div>
             <input id="birthDate" type="date" aria-label="בחירת תאריך לידה לועזי">
@@ -2270,6 +2280,26 @@
 
     const gregorianDateHelper = document.getElementById("gregorianDateHelper");
     const birthDateInput = document.getElementById("birthDate");
+    
+    function syncGregorianDateHelper(){
+      if(!gregorianDateHelper || !birthDateInput){
+        return;
+      }
+    
+      if(birthDateInput.value){
+        gregorianDateHelper.textContent = `📅 ${formatGregorianDate(birthDateInput.value)}`;
+        gregorianDateHelper.classList.add("has-date");
+      }else{
+        gregorianDateHelper.textContent = "📅 לחצו כאן לבחירת תאריך לועזי";
+        gregorianDateHelper.classList.remove("has-date");
+      }
+    }
+    
+    if(gregorianDateHelper && birthDateInput){
+      birthDateInput.addEventListener("change", syncGregorianDateHelper);
+      birthDateInput.addEventListener("input", syncGregorianDateHelper);
+      syncGregorianDateHelper();
+    }
 
      const birthDateDesktopInput = document.getElementById("birthDateDesktop");
     
