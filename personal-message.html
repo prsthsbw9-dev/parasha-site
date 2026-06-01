@@ -583,8 +583,7 @@
     <div id="resultBox" class="result-box"></div>
 
     <div id="resultActions" class="result-actions hidden">
-      <button type="button" id="shareBtn">שיתוף המסקנות</button>
-      <button type="button" id="printBtn">שמירה / הדפסה כ-PDF</button>
+      <button type="button" id="shareBtn">שתף</button>
       <a class="main-action" href="names.html">הוספת שם / תמיכה בערוץ</a>
       <a href="index.html">חזרה לפרד״ס</a>
     </div>
@@ -2384,67 +2383,32 @@
       }
     });
 
-    document.getElementById("printBtn").addEventListener("click", async () => {
+    document.getElementById("shareBtn").addEventListener("click", async () => {
       const text = resultBox?.textContent?.trim() || "";
-      const isMobile = window.matchMedia("(max-width: 700px), (pointer: coarse)").matches;
-    
+
       if(!text){
-        alert("אין עדיין מסקנות לשמירה. קודם יש ללחוץ על צלילה לעומק.");
+        alert("אין עדיין מסקנות לשיתוף. קודם יש ללחוץ על צלילה לעומק.");
         return;
       }
-    
-      // בנייד: לא פותחים חלון PDF, כי זה נתקע בדפדפן פנימי.
-      // במקום זה משתפים או מעתיקים את המסקנות.
-      if(isMobile){
-        try{
-          if(navigator.share){
-            await navigator.share({
-              title: "האור שבי",
-              text
-            });
-            return;
-          }
-    
-          await navigator.clipboard.writeText(text);
-          alert("המסקנות הועתקו. אפשר להדביק אותן בוואטסאפ, מייל או מסמך.");
-          return;
-        }catch(error){
-          try{
-            await navigator.clipboard.writeText(text);
-            alert("המסקנות הועתקו. אפשר להדביק אותן בוואטסאפ, מייל או מסמך.");
-          }catch(copyError){
-            alert("הדפדפן לא מאפשר שיתוף או העתקה כרגע. אפשר לסמן ידנית את הטקסט ולהעתיק.");
-          }
+
+      try{
+        if(navigator.share){
+          await navigator.share({
+            title: "האור שבי",
+            text
+          });
           return;
         }
-      }
-    
-      // במחשב: הדפסה / שמירה כ-PDF
-      window.print();
-    });
 
-    function updatePrintButtonText(){
-      const printBtn = document.getElementById("printBtn");
-      if(!printBtn) return;
-    
-      const isMobile = window.matchMedia("(max-width: 700px), (pointer: coarse)").matches;
-      printBtn.textContent = isMobile ? "שיתוף / העתקת המסקנות" : "שמירה / הדפסה כ-PDF";
-    }
-    
-    updatePrintButtonText();
-    window.addEventListener("resize", updatePrintButtonText);    
-
-    document.getElementById("shareBtn").addEventListener("click", async ()=>{
-      const text = resultBox.textContent;
-
-      if(navigator.share){
-        await navigator.share({
-          title: "האור שבי",
-          text
-        });
-      }else{
         await navigator.clipboard.writeText(text);
-        alert("הסיכום הועתק ללוח. אפשר להדביק ולשתף.");
+        alert("המסקנות הועתקו. אפשר להדביק אותן בוואטסאפ, מייל, Word או כל אפליקציה אחרת.");
+      }catch(error){
+        try{
+          await navigator.clipboard.writeText(text);
+          alert("המסקנות הועתקו. אפשר להדביק אותן בוואטסאפ, מייל, Word או כל אפליקציה אחרת.");
+        }catch(copyError){
+          alert("הדפדפן לא מאפשר שיתוף או העתקה כרגע. אפשר לסמן ידנית את הטקסט ולהעתיק.");
+        }
       }
     });
   </script>
