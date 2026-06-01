@@ -901,32 +901,33 @@
         font-size:13px;
       }
 
-      /* תיקון נייד: כשהמקלדת נפתחת, אזור החיפוש עולה ונשאר גלוי */
+      /* תיקון נייד: כשהמקלדת פתוחה שורת החיפוש נשארת מעל המקלדת */
       .gate-card{
         transition:transform .22s ease;
         will-change:transform;
       }
       
-      body.pardes-keyboard-open{
-        overflow:hidden;
-      }
-      
-      body.pardes-keyboard-open .page{
-        align-items:flex-start;
-        min-height:100dvh;
-        padding-top:0;
-      }
-      
       body.pardes-keyboard-open .gate-card{
-        transform:translateY(-210px);
+        transform:translateY(-120px);
       }
       
       body.pardes-keyboard-open .pardes-search-row{
-        position:relative;
-        z-index:80;
+        position:fixed;
+        left:50%;
+        bottom:calc(var(--keyboard-height, 320px) + 12px);
+        transform:translateX(-50%);
+        width:min(96vw, 390px);
+        z-index:9999;
+        margin:0;
+        background:rgba(2,5,14,.94);
         box-shadow:
-          0 0 0 2px rgba(255,255,255,.12),
-          0 16px 32px rgba(0,0,0,.42);
+          0 0 0 2px rgba(255,255,255,.14),
+          0 16px 36px rgba(0,0,0,.60),
+          0 0 28px rgba(120,170,255,.22);
+      }
+      
+      body.pardes-keyboard-open .pardes-search-message{
+        display:none;
       }
 
       .fruit-link:hover{
