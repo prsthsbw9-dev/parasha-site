@@ -901,18 +901,32 @@
         font-size:13px;
       }
 
-      /* כשהמקלדת נפתחת בנייד — כל הדף עולה כדי ששדות החיפוש לא יוסתרו */
+      /* תיקון נייד: כשהמקלדת נפתחת, אזור החיפוש עולה ונשאר גלוי */
       .gate-card{
-        transition:transform .18s ease;
+        transition:transform .22s ease;
+        will-change:transform;
       }
-
+      
+      body.pardes-keyboard-open{
+        overflow:hidden;
+      }
+      
       body.pardes-keyboard-open .page{
         align-items:flex-start;
-        padding-top:6px;
+        min-height:100dvh;
+        padding-top:0;
       }
-
+      
       body.pardes-keyboard-open .gate-card{
-        transform:translateY(-118px);
+        transform:translateY(-210px);
+      }
+      
+      body.pardes-keyboard-open .pardes-search-row{
+        position:relative;
+        z-index:80;
+        box-shadow:
+          0 0 0 2px rgba(255,255,255,.12),
+          0 16px 32px rgba(0,0,0,.42);
       }
 
       .fruit-link:hover{
@@ -1064,9 +1078,9 @@
       <form id="pardesSearchForm" class="pardes-search-row" aria-label="חיפוש פרשה ועלייה">
         <span class="pardes-search-icon" aria-hidden="true">🔎</span>
         <label for="parashaSearchInput">פרשה:</label>
-        <input id="parashaSearchInput" type="text" placeholder="תצוה" autocomplete="off" />
+        <input id="parashaSearchInput" type="text" placeholder="תצוה" autocomplete="off" inputmode="text" enterkeyhint="next" />
         <label for="aliyahSearchInput">עלייה:</label>
-        <input id="aliyahSearchInput" type="text" placeholder="ראשונה" autocomplete="off" />
+        <input id="aliyahSearchInput" type="text" placeholder="ראשונה" autocomplete="off" inputmode="text" enterkeyhint="search" />
         <button id="pardesSearchBtn" type="submit">חפש</button>
       </form>
       <div id="pardesSearchMessage" class="pardes-search-message" aria-live="polite"></div>
@@ -1480,41 +1494,65 @@
         document.getElementById("parashaSearchInput"),
         document.getElementById("aliyahSearchInput")
       ].filter(Boolean);
-
+    
       if(!form || !inputs.length) return;
-
-      const isMobileLayout = () => window.matchMedia("(max-width: 420px)").matches;
+    
+      const isMobileLayout = () => window.matchMedia("(max-width: 700px), (pointer: coarse)").matches;
+    
       let keyboardTimer = null;
-
-      function setKeyboardMode(active){
-        const shouldOpen = active && isMobileLayout();
-        document.body.classList.toggle("pardes-keyboard-open", shouldOpen);
-
-        if(shouldOpen){
-          clearTimeout(keyboardTimer);
-          keyboardTimer = setTimeout(() => {
-            try{
-              form.scrollIntoView({ behavior:"smooth", block:"center", inline:"nearest" });
-            }catch(error){
-              form.scrollIntoView();
-            }
-          }, 140);
-        }
+    
+      function openKeyboardView(){
+        if(!isMobileLayout()) return;
+    
+        document.body.classList.add("pardes-keyboard-open");
+    
+        clearTimeout(keyboardTimer);
+        keyboardTimer = setTimeout(() => {
+          try{
+            form.scrollIntoView({
+              behavior:"smooth",
+              block:"center",
+              inline:"nearest"
+            });
+          }catch(error){
+            form.scrollIntoView();
+          }
+    
+          setTimeout(() => {
+            window.scrollBy({
+              top: 120,
+              left: 0,
+              behavior: "smooth"
+            });
+          }, 180);
+        }, 220);
       }
-
+    
+      function closeKeyboardView(){
+        clearTimeout(keyboardTimer);
+        document.body.classList.remove("pardes-keyboard-open");
+      }
+    
       inputs.forEach((input) => {
-        input.addEventListener("focus", () => setKeyboardMode(true));
+        input.addEventListener("focus", openKeyboardView);
+    
+        input.addEventListener("click", openKeyboardView);
+    
         input.addEventListener("blur", () => {
           setTimeout(() => {
             const stillInsideSearch = inputs.includes(document.activeElement);
-            if(!stillInsideSearch){ setKeyboardMode(false); }
-          }, 180);
+            if(!stillInsideSearch){
+              closeKeyboardView();
+            }
+          }, 250);
         });
       });
-
+    
       window.visualViewport?.addEventListener("resize", () => {
         const stillInsideSearch = inputs.includes(document.activeElement);
-        if(stillInsideSearch){ setKeyboardMode(true); }
+        if(stillInsideSearch){
+          openKeyboardView();
+        }
       });
     }
 
