@@ -157,6 +157,65 @@
       margin-top:8px;
     }
 
+    .date-helper{
+      margin:0;
+      min-height:52px;
+      border:1px solid rgba(120,220,255,.48);
+      border-radius:16px;
+      padding:14px 12px;
+      background:rgba(60,170,200,.12);
+      color:rgba(255,255,255,.96);
+      font-size:15px;
+      font-weight:900;
+      text-align:center;
+      text-shadow:0 2px 8px rgba(0,0,0,.55);
+      user-select:none;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+    }
+
+    .date-helper.has-date{
+      border-color:rgba(160,240,255,.70);
+      background:rgba(60,170,200,.18);
+      box-shadow:0 0 16px rgba(90,210,255,.16);
+    }
+
+    .desktop-date-box{
+      display:block;
+    }
+
+    .mobile-date-box{
+      display:none;
+    }
+
+    #birthDateDesktop{
+      text-align:center;
+      direction:ltr;
+      font-size:17px;
+      font-weight:900;
+      letter-spacing:.5px;
+      background:rgba(60,170,200,.12);
+      border:1px solid rgba(120,220,255,.48);
+      color:#fff;
+    }
+
+    #birthDateDesktop::placeholder{
+      color:rgba(255,255,255,.58);
+    }
+
+    #gregorianDateBox .desktop-date-box .date-helper{
+      margin-top:7px;
+      min-height:auto;
+      padding:7px 10px;
+      font-size:13px;
+      border:none;
+      background:transparent;
+      color:rgba(255,255,255,.78);
+      box-shadow:none;
+    }
+
     .date-picker-wrap{
       position:relative;
       cursor:pointer;
@@ -173,104 +232,25 @@
       pointer-events:auto;
       direction:ltr;
       color-scheme:dark;
-    }
-    
-    .date-helper{
-      margin:0;
-      min-height:52px;
-      border:1px solid rgba(120,220,255,.48);
-      border-radius:16px;
-      padding:14px 12px;
-      background:rgba(60,170,200,.12);
-      color:rgba(255,255,255,.96);
-      font-size:15px;
-      font-weight:900;
-      text-align:center;
-      text-shadow:0 2px 8px rgba(0,0,0,.55);
-      user-select:none;
-      pointer-events:none;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      gap:8px;
-    }
-
-    .desktop-date-box{
-      display:block;
-    }
-    
-    .mobile-date-box{
-      display:none;
-    }
-    
-    @media(max-width:700px){
-      .desktop-date-box{
-        display:none !important;
-      }
-    
-      .mobile-date-box{
-        display:block !important;
-      }
-    }
-    
-    #birthDateDesktop{
-      text-align:center;
-      direction:ltr;
-      font-size:17px;
-      font-weight:900;
-      letter-spacing:.5px;
-      background:rgba(60,170,200,.12);
-      border:1px solid rgba(120,220,255,.48);
-      color:#fff;
-    }
-    
-    #birthDateDesktop::placeholder{
-      color:rgba(255,255,255,.58);
-    }
-    
-    #gregorianDateBox .desktop-date-box .date-helper{
-      margin-top:7px;
-      min-height:auto;
-      padding:7px 10px;
-      font-size:13px;
-      border:none;
-      background:transparent;
-      color:rgba(255,255,255,.78);
-    }
-    
-    #birthDate{
-      text-align:center;
-      direction:ltr;
-      font-size:17px;
-      font-weight:900;
-      letter-spacing:.5px;
-      background:rgba(60,170,200,.12);
-      border:1px solid rgba(120,220,255,.48);
-      color:#fff;
-    }
-    
-    #birthDate::placeholder{
-      color:rgba(255,255,255,.58);
-    }
-    
-    #gregorianDateHelper{
-      margin-top:7px;
-      min-height:auto;
-      padding:7px 10px;
-      font-size:13px;
-      border:none;
-      background:transparent;
-      color:rgba(255,255,255,.78);
-    }
-    
-    .date-helper.has-date{
-      border-color:rgba(160,240,255,.70);
-      background:rgba(60,170,200,.18);
-      box-shadow:0 0 16px rgba(90,210,255,.16);
+      z-index:2;
     }
 
     .date-picker-wrap input[type="date"]::-webkit-calendar-picker-indicator{
       cursor:pointer;
+    }
+
+    .mobile-date-box .date-helper{
+      pointer-events:none;
+    }
+
+    @media(max-width:700px){
+      .desktop-date-box{
+        display:none !important;
+      }
+
+      .mobile-date-box{
+        display:block !important;
+      }
     }
 
     .hebrew-date-grid{
@@ -2280,55 +2260,24 @@
 
     const gregorianDateHelper = document.getElementById("gregorianDateHelper");
     const birthDateInput = document.getElementById("birthDate");
-    
-    function syncGregorianDateHelper(){
-      if(!gregorianDateHelper || !birthDateInput){
-        return;
-      }
-    
-      if(birthDateInput.value){
-        gregorianDateHelper.textContent = `📅 ${formatGregorianDate(birthDateInput.value)}`;
-        gregorianDateHelper.classList.add("has-date");
-      }else{
-        gregorianDateHelper.textContent = "📅 לחצו כאן לבחירת תאריך לועזי";
-        gregorianDateHelper.classList.remove("has-date");
-      }
-    }
-    
-    if(gregorianDateHelper && birthDateInput){
-      birthDateInput.addEventListener("change", syncGregorianDateHelper);
-      birthDateInput.addEventListener("input", syncGregorianDateHelper);
-      birthDateInput.addEventListener("blur", syncGregorianDateHelper);
-      syncGregorianDateHelper();
-    }
+    const birthDateDesktopInput = document.getElementById("birthDateDesktop");
+    const desktopDateBox = document.querySelector(".desktop-date-box");
+    const mobileDateBox = document.querySelector(".mobile-date-box");
 
-     const birthDateDesktopInput = document.getElementById("birthDateDesktop");
-    
-    if(birthDateDesktopInput){
-      birthDateDesktopInput.addEventListener("input", () => {
-        const normalized = normalizeGregorianDateInput(birthDateDesktopInput.value);
-        if(normalized){
-          birthDateDesktopInput.style.borderColor = "rgba(160,240,255,.70)";
-        }else{
-          birthDateDesktopInput.style.borderColor = "rgba(120,220,255,.48)";
-        }
-      });
-    }   
-    
     function normalizeGregorianDateInput(value){
       const raw = String(value || "").trim();
-    
+
       // מאפשר גם 14/05/1980 וגם 14.05.1980 וגם 14-05-1980
       const match = raw.match(/^(\d{1,2})[\/.\-](\d{1,2})[\/.\-](\d{4})$/);
-    
+
       if(!match){
         return "";
       }
-    
+
       const day = Number(match[1]);
       const month = Number(match[2]);
       const year = Number(match[3]);
-    
+
       if(
         !Number.isFinite(day) ||
         !Number.isFinite(month) ||
@@ -2342,9 +2291,9 @@
       ){
         return "";
       }
-    
+
       const testDate = new Date(year, month - 1, day, 12, 0, 0, 0);
-    
+
       if(
         testDate.getFullYear() !== year ||
         testDate.getMonth() !== month - 1 ||
@@ -2352,30 +2301,61 @@
       ){
         return "";
       }
-    
+
       return `${year}-${String(month).padStart(2,"0")}-${String(day).padStart(2,"0")}`;
     }
-    
+
+    function isVisible(element){
+      if(!element){
+        return false;
+      }
+
+      return window.getComputedStyle(element).display !== "none";
+    }
+
     function syncGregorianDateHelper(){
       if(!gregorianDateHelper || !birthDateInput){
         return;
       }
-    
-      const normalizedDate = normalizeGregorianDateInput(birthDateInput.value);
-    
-      if(normalizedDate){
-        gregorianDateHelper.textContent = `📅 ${formatGregorianDate(normalizedDate)}`;
+
+      if(birthDateInput.value){
+        gregorianDateHelper.textContent = `📅 ${formatGregorianDate(birthDateInput.value)}`;
         gregorianDateHelper.classList.add("has-date");
       }else{
-        gregorianDateHelper.textContent = "רשמו תאריך בפורמט: יום/חודש/שנה";
+        gregorianDateHelper.textContent = "📅 לחצו כאן לבחירת תאריך לועזי";
         gregorianDateHelper.classList.remove("has-date");
       }
     }
-    
+
     if(birthDateInput){
-      birthDateInput.addEventListener("input", syncGregorianDateHelper);
       birthDateInput.addEventListener("change", syncGregorianDateHelper);
+      birthDateInput.addEventListener("input", syncGregorianDateHelper);
+      birthDateInput.addEventListener("blur", syncGregorianDateHelper);
       syncGregorianDateHelper();
+    }
+
+    if(birthDateDesktopInput){
+      birthDateDesktopInput.addEventListener("input", () => {
+        const normalized = normalizeGregorianDateInput(birthDateDesktopInput.value);
+
+        if(normalized){
+          birthDateDesktopInput.style.borderColor = "rgba(160,240,255,.70)";
+        }else{
+          birthDateDesktopInput.style.borderColor = "rgba(120,220,255,.48)";
+        }
+      });
+    }
+
+    function getGregorianBirthDateValue(){
+      if(isVisible(mobileDateBox)){
+        return birthDateInput?.value?.trim() || "";
+      }
+
+      if(isVisible(desktopDateBox)){
+        return normalizeGregorianDateInput(birthDateDesktopInput?.value?.trim() || "");
+      }
+
+      return normalizeGregorianDateInput(birthDateDesktopInput?.value?.trim() || "") || birthDateInput?.value?.trim() || "";
     }
 
     function resetToFormAfterError(){
