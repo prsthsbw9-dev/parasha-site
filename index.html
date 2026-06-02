@@ -1056,6 +1056,23 @@
       color:#fff;
       opacity:0;
       pointer-events:none;
+      overflow-y:auto;
+      -webkit-overflow-scrolling:touch;
+      scrollbar-width:none;
+    }
+
+    .spiritual-screen::-webkit-scrollbar{
+      display:none;
+    }
+
+    body.spiritual-answer-open .spiritual-screen.is-active{
+      align-items:flex-start;
+      padding-top:22px;
+      padding-bottom:90px;
+    }
+
+    body.spiritual-answer-open .spiritual-screen.is-active .spiritual-card{
+      margin:0 auto 90px;
     }
 
     .spiritual-screen.is-active{
@@ -1201,8 +1218,6 @@
     .spiritual-answer-box{
       display:none;
       width:min(100%, 500px);
-      max-height:260px;
-      overflow-y:auto;
       margin:12px auto 0;
       padding:14px 14px;
       border-radius:22px;
@@ -1218,12 +1233,6 @@
       line-height:1.75;
       white-space:pre-line;
       text-shadow:0 2px 9px rgba(0,0,0,.72);
-      scrollbar-width:none;
-      -webkit-overflow-scrolling:touch;
-    }
-
-    .spiritual-answer-box::-webkit-scrollbar{
-      display:none;
     }
 
     .spiritual-answer-box.is-visible{
@@ -1281,6 +1290,11 @@
 
       .spiritual-screen{
         padding:18px 48px;
+      }
+
+      body.spiritual-answer-open .spiritual-screen.is-active{
+        padding-top:18px;
+        padding-bottom:110px;
       }
 
       .spiritual-card{
@@ -2146,7 +2160,12 @@
       if(box){
         box.classList.remove("is-visible", "is-loading");
         box.innerHTML = "";
-        box.scrollTop = 0;
+      }
+
+      document.body.classList.remove("spiritual-answer-open");
+
+      if(screen && typeof screen.scrollTo === "function"){
+        screen.scrollTo({ top: 0, behavior: "smooth" });
       }
     }
 
@@ -2156,7 +2175,15 @@
       box.classList.add("is-visible");
       box.classList.toggle("is-loading", !!options.loading);
       box.innerHTML = escapeSpiritualHtml(text || "");
-      box.scrollTop = 0;
+
+      document.body.classList.add("spiritual-answer-open");
+
+      if(screen && typeof screen.scrollTo === "function"){
+        setTimeout(() => {
+          const targetTop = Math.max(0, box.offsetTop - 18);
+          screen.scrollTo({ top: targetTop, behavior: "smooth" });
+        }, 80);
+      }
 
       if(!options.loading && text){
         const resetBtn = document.createElement("button");
@@ -2247,7 +2274,7 @@
           button.addEventListener("click", () => {
             const screen = button.closest(".spiritual-screen");
             if(screen){
-              setSpiritualAnswer(screen, "הדפדפן הזה לא תומך כרגע בזיהוי דיבור בעברית. אפשר להקליד את השאלה ידנית.");
+              setSpiritualAnswer(screen, "הדפדפן הזה לא תומך כרגע בזיהוי דיבור בעברית. אם פתחת דרך טיקטוק/אינסטגרם/פייסבוק, פתח את האתר בכרום או ספארי. אפשר גם להקליד ידנית.");
             }
           });
           return;
@@ -2299,7 +2326,7 @@
             const errorType = event?.error || "";
 
             if(errorType === "not-allowed" || errorType === "service-not-allowed"){
-              setSpiritualAnswer(screen, "הדפדפן לא אישר שימוש במיקרופון. צריך לאשר הרשאת מיקרופון, או להקליד ידנית.");
+              setSpiritualAnswer(screen, "הדפדפן לא אישר שימוש במיקרופון. אם פתחת דרך טיקטוק/אינסטגרם/פייסבוק, לרוב הדפדפן הפנימי חוסם מיקרופון. פתח את האתר בכרום או ספארי, אשר הרשאת מיקרופון, או הקלד ידנית.");
               return;
             }
 
@@ -2333,7 +2360,7 @@
           }catch(error){
             button.classList.remove("is-listening");
             button.textContent = "🎙️";
-            setSpiritualAnswer(screen, "לא ניתן להפעיל את המיקרופון כרגע. ודא שאישרת שימוש במיקרופון בדפדפן.");
+            setSpiritualAnswer(screen, "לא ניתן להפעיל את המיקרופון כרגע. אם אתה בתוך הדפדפן של טיקטוק, פתח את האתר בכרום או ספארי ואשר שימוש במיקרופון, או הקלד ידנית.");
           }
         });
       });
@@ -2364,6 +2391,8 @@
           if(index === activeIndex){
             screen.classList.add("is-active");
             screen.setAttribute("aria-hidden", "false");
+            const activeAnswer = screen.querySelector(".spiritual-answer-box.is-visible");
+            document.body.classList.toggle("spiritual-answer-open", !!activeAnswer);
             return;
           }
 
