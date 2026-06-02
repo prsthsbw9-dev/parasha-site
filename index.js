@@ -16,8 +16,8 @@ exports.createPersonalReading = onRequest(
         return res.status(405).json({
           error: "Method not allowed"
         });
-      }
-
+      }      
+      
       const input = req.body || {};
 
       const safeData = {
@@ -98,6 +98,110 @@ exports.createPersonalReading = onRequest(
 
     } catch (err) {
       console.error("createPersonalReading error:", err);
+
+      return res.status(500).json({
+        error: "AI generation failed"
+      });
+    }
+  }
+);
+
+exports.createSpiritualAnswer = onRequest(
+  {
+    region: "us-central1",
+    secrets: [openaiApiKey],
+    cors: true
+  },
+  async (req, res) => {
+    try {
+      if (req.method !== "POST") {
+        return res.status(405).json({ error: "Method not allowed" });
+      }
+
+      const input = req.body || {};
+
+      const character = cleanText(input.character, 30);
+      const question = cleanText(input.question, 1200);
+
+      if (!character || !question) {
+        return res.status(400).json({ error: "Missing required fields" });
+      }
+
+      const characterMap = {
+        yosef: {
+          title: "יוסף הצדיק",
+          field: "חלומות, ניסיון, אמונה וירידה לצורך עלייה",
+          warning: "אל תציג את פירוש החלום כנבואה או קביעה ודאית."
+        },
+        avraham: {
+          title: "אברהם אבינו",
+          field: "אמונה, חסד, דרך חיים והכנסת אורחים",
+          warning: "אל תיתן פסיקת הלכה מעשית."
+        },
+        rambam: {
+          title: "הרמב״ם",
+          field: "בריאות, תזונה, הרגלי חיים ואיזון הגוף והנפש לפי דרכו הכללית של הרמב״ם",
+          warning: "אל תיתן אבחון רפואי, טיפול רפואי או הוראות מסוכנות. הפנה לרופא כשצריך."
+        },
+        rachel: {
+          title: "רחל אמנו",
+          field: "זוגיות, קשר, תפילה מהלב, שלום בית וחיזוק רגשי",
+          warning: "אל תבטיח זיווג, שלום בית או ישועה. במצבי משבר הפנה לרב מוסמך או איש מקצוע."
+        }
+      };
+
+      const profile = characterMap[character];
+
+      if (!profile) {
+        return res.status(400).json({ error: "Invalid character" });
+      }
+
+      const client = new OpenAI({
+        apiKey: openaiApiKey.value()
+      });
+
+      const prompt = `
+אתה כותב בעברית, בסגנון יהודי עדין, מחזק, אחראי ונקי.
+
+המדור: בהשראת ${profile.title}
+תחום המדור: ${profile.field}
+
+השאלה של המשתמש:
+${question}
+
+כללים חשובים מאוד:
+- השתמש רק בשפה של השראה יהודית כללית ומקורות יהודיים ידועים.
+- אל תמציא מקורות.
+- אל תכתוב כאילו ${profile.title} עצמו מדבר.
+- אל תכתוב נבואה.
+- אל תבטיח ישועות.
+- אל תיתן פסיקת הלכה.
+- אל תיתן אבחון רפואי, נפשי, זוגי, משפטי או כלכלי.
+- כתוב בלשון זהירה: "אפשר ללמוד", "יש כאן כיוון", "ייתכן שיש כאן נקודת חיזוק".
+- ${profile.warning}
+
+כתוב תשובה במבנה הבא בלבד:
+
+1. פתיחה קצרה ומכבדת
+2. נקודת מבט לפי המדור
+3. חיזוק מעשי לחיים של היום
+4. פעולה קטנה שהאדם יכול לקחת על עצמו
+5. סיום קצר עם הסתייגות מתאימה
+
+אורך: עד 220 מילים.
+`;
+
+      const completion = await client.responses.create({
+        model: "gpt-4.1-mini",
+        input: prompt
+      });
+
+      const message = completion.output_text || "";
+
+      return res.status(200).json({ message });
+
+    } catch (err) {
+      console.error("createSpiritualAnswer error:", err);
 
       return res.status(500).json({
         error: "AI generation failed"
