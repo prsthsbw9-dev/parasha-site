@@ -1201,6 +1201,8 @@
     .spiritual-answer-box{
       display:none;
       width:min(100%, 500px);
+      max-height:260px;
+      overflow-y:auto;
       margin:12px auto 0;
       padding:14px 14px;
       border-radius:22px;
@@ -1216,6 +1218,12 @@
       line-height:1.75;
       white-space:pre-line;
       text-shadow:0 2px 9px rgba(0,0,0,.72);
+      scrollbar-width:none;
+      -webkit-overflow-scrolling:touch;
+    }
+
+    .spiritual-answer-box::-webkit-scrollbar{
+      display:none;
     }
 
     .spiritual-answer-box.is-visible{
@@ -1225,6 +1233,23 @@
     .spiritual-answer-box.is-loading{
       text-align:center;
       font-weight:900;
+    }
+
+    .spiritual-reset-btn{
+      display:block;
+      margin:14px auto 0;
+      border:1px solid rgba(255,255,255,.35);
+      border-radius:999px;
+      padding:10px 18px;
+      background:rgba(60,170,255,.28);
+      color:#fff;
+      font-weight:900;
+      cursor:pointer;
+      box-shadow:0 8px 18px rgba(0,0,0,.24), 0 0 16px rgba(120,210,255,.16);
+    }
+
+    .spiritual-reset-btn:hover{
+      background:rgba(255,255,255,.14);
     }
 
     .spiritual-mic-btn.is-listening{
@@ -2110,12 +2135,37 @@
       return box;
     }
 
+    function resetSpiritualConversation(screen){
+      const textarea = screen?.querySelector("textarea");
+      const box = screen?.querySelector(".spiritual-answer-box");
+
+      if(textarea){
+        textarea.value = "";
+      }
+
+      if(box){
+        box.classList.remove("is-visible", "is-loading");
+        box.innerHTML = "";
+        box.scrollTop = 0;
+      }
+    }
+
     function setSpiritualAnswer(screen, text, options = {}){
       const box = getOrCreateSpiritualAnswerBox(screen);
 
       box.classList.add("is-visible");
       box.classList.toggle("is-loading", !!options.loading);
       box.innerHTML = escapeSpiritualHtml(text || "");
+      box.scrollTop = 0;
+
+      if(!options.loading && text){
+        const resetBtn = document.createElement("button");
+        resetBtn.type = "button";
+        resetBtn.className = "spiritual-reset-btn";
+        resetBtn.textContent = "סיים שיחה";
+        resetBtn.addEventListener("click", () => resetSpiritualConversation(screen));
+        box.appendChild(resetBtn);
+      }
     }
 
     async function sendSpiritualQuestion(screen, textarea, sendButton){
@@ -2211,34 +2261,71 @@
 
           const recognition = new SpeechRecognition();
           recognition.lang = "he-IL";
-          recognition.interimResults = false;
+          recognition.interimResults = true;
           recognition.continuous = false;
+
+          let finalTranscript = "";
+          let heardAnySpeech = false;
 
           button.classList.add("is-listening");
           button.textContent = "●";
-          setSpiritualAnswer(screen, "מקשיב... דבר בעברית ולאחר מכן הטקסט יופיע בתיבה.", { loading:true });
+          setSpiritualAnswer(screen, "מקשיב... דבר בעברית ברור במשך כמה שניות. לאחר מכן הטקסט יופיע בתיבה.", { loading:true });
 
           recognition.onresult = (event) => {
-            const transcript = Array.from(event.results || [])
+            const results = Array.from(event.results || []);
+
+            const interimTranscript = results
               .map(result => result[0]?.transcript || "")
               .join(" ")
               .trim();
 
-            if(transcript){
-              const existingText = String(textarea.value || "").trim();
-              textarea.value = existingText ? `${existingText}\n${transcript}` : transcript;
-              setSpiritualAnswer(screen, "הדיבור הומר לטקסט. אפשר לערוך ואז ללחוץ שלח.");
-              textarea.focus();
+            const finalParts = results
+              .filter(result => result.isFinal)
+              .map(result => result[0]?.transcript || "")
+              .join(" ")
+              .trim();
+
+            if(interimTranscript){
+              heardAnySpeech = true;
+              setSpiritualAnswer(screen, `שומע אותך...\n${interimTranscript}`, { loading:true });
+            }
+
+            if(finalParts){
+              finalTranscript = `${finalTranscript} ${finalParts}`.trim();
             }
           };
 
-          recognition.onerror = () => {
+          recognition.onerror = (event) => {
+            const errorType = event?.error || "";
+
+            if(errorType === "not-allowed" || errorType === "service-not-allowed"){
+              setSpiritualAnswer(screen, "הדפדפן לא אישר שימוש במיקרופון. צריך לאשר הרשאת מיקרופון, או להקליד ידנית.");
+              return;
+            }
+
+            if(errorType === "no-speech"){
+              setSpiritualAnswer(screen, "לא נקלט דיבור ברור. לחץ שוב על המיקרופון, המתן רגע אחרי הלחיצה, ואז דבר בעברית ברור במשך כמה שניות.");
+              return;
+            }
+
             setSpiritualAnswer(screen, "לא הצלחתי לקלוט את הדיבור. אפשר לנסות שוב או להקליד ידנית.");
           };
 
           recognition.onend = () => {
             button.classList.remove("is-listening");
             button.textContent = "🎙️";
+
+            if(finalTranscript){
+              const existingText = String(textarea.value || "").trim();
+              textarea.value = existingText ? `${existingText}\n${finalTranscript}` : finalTranscript;
+              setSpiritualAnswer(screen, "הדיבור הומר לטקסט. אפשר לערוך ואז ללחוץ שלח.");
+              textarea.focus();
+              return;
+            }
+
+            if(!heardAnySpeech){
+              setSpiritualAnswer(screen, "לא שמעתי דיבור ברור. נסה שוב לדבר קרוב יותר למיקרופון, או הקלד את השאלה ידנית.");
+            }
           };
 
           try{
