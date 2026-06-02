@@ -987,9 +987,16 @@
       transform:translateY(-50%) scale(.96);
     }
 
-    .spiritual-nav-right{ right:18px; }
-    .spiritual-nav-left{ left:18px; }
+    .spiritual-nav-right{ right:46px; }
+    .spiritual-nav-left{ left:46px; }
 
+    .page[data-spiritual-screen]{
+      scrollbar-width:none;
+    }
+    
+    .page[data-spiritual-screen]::-webkit-scrollbar{
+      display:none;
+    }    
     .page[data-spiritual-screen],
     .spiritual-screen[data-spiritual-screen]{
       transition:
