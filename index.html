@@ -1105,6 +1105,19 @@
         inset 0 1px 0 rgba(255,255,255,.34);
     }
 
+    .spiritual-figure-image{
+      overflow:hidden;
+      background:
+        radial-gradient(circle at 50% 42%, rgba(255,255,255,.28), rgba(160,205,255,.12) 48%, rgba(0,0,0,.18) 100%);
+    }
+
+    .spiritual-figure-image img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+    }
+
     .spiritual-title{
       margin:0 0 8px;
       font-size:clamp(27px, 7.2vw, 44px);
@@ -1381,7 +1394,9 @@
   <section id="yosefScreen" class="spiritual-screen screen-hidden-right" data-spiritual-screen="yosef" aria-label="מדור חלומות בהשראת יוסף הצדיק">
     <div class="spiritual-card">
       <img class="spiritual-logo" src="logo.png" alt="פרשת השבוע" />
-      <div class="spiritual-figure" aria-hidden="true">🌊</div>
+      <div class="spiritual-figure spiritual-figure-image" aria-hidden="true">
+        <img src="yosef.png" alt="">
+      </div>
       <h2 class="spiritual-title">בהשראת יוסף הצדיק</h2>
       <p class="spiritual-subtitle">מדור חלומות ומשמעותם — תשובה לימודית בשפה של היום, לפי מקורות יהודיים בלבד.</p>
 
@@ -1401,7 +1416,9 @@
   <section id="avrahamScreen" class="spiritual-screen screen-hidden-right" data-spiritual-screen="avraham" aria-label="מדור דרך חיים בהשראת אברהם אבינו">
     <div class="spiritual-card">
       <img class="spiritual-logo" src="logo.png" alt="פרשת השבוע" />
-      <div class="spiritual-figure" aria-hidden="true">✨</div>
+      <div class="spiritual-figure spiritual-figure-image" aria-hidden="true">
+        <img src="avraham.png" alt="">
+      </div>
       <h2 class="spiritual-title">בהשראת אברהם אבינו</h2>
       <p class="spiritual-subtitle">שאלות אמונה, חסד ודרך חיים — תשובה לימודית לפי מקורות יהודיים, בלי להציג זאת כפסיקת הלכה.</p>
 
