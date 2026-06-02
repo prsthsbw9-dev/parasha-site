@@ -1226,6 +1226,12 @@
         border-radius:26px;
       }
 
+
+      /* תיקון נייד: כשהמקלדת פתוחה בדפי הדמויות, הכרטיס עולה למעלה כדי לראות את ההקלדה */
+      body.pardes-spiritual-keyboard-open .spiritual-screen.is-active .spiritual-card{
+        transform:translateY(-120px);
+      }
+
       .spiritual-input-row{
         gap:6px;
       }
@@ -1948,6 +1954,63 @@
     }
 
 
+    function setupSpiritualKeyboardFix(){
+      const inputs = Array.from(document.querySelectorAll(".spiritual-input-row textarea"));
+
+      if(!inputs.length) return;
+
+      const isMobileLayout = () => window.matchMedia("(max-width: 700px), (pointer: coarse)").matches;
+
+      let spiritualKeyboardTimer = null;
+
+      function openSpiritualKeyboardView(input){
+        if(!isMobileLayout()) return;
+
+        document.body.classList.add("pardes-spiritual-keyboard-open");
+
+        clearTimeout(spiritualKeyboardTimer);
+        spiritualKeyboardTimer = setTimeout(() => {
+          try{
+            input.scrollIntoView({
+              behavior:"smooth",
+              block:"center",
+              inline:"nearest"
+            });
+          }catch(error){
+            input.scrollIntoView();
+          }
+        }, 220);
+      }
+
+      function closeSpiritualKeyboardView(){
+        clearTimeout(spiritualKeyboardTimer);
+        document.body.classList.remove("pardes-spiritual-keyboard-open");
+      }
+
+      inputs.forEach((input) => {
+        input.addEventListener("focus", () => openSpiritualKeyboardView(input));
+
+        input.addEventListener("click", () => openSpiritualKeyboardView(input));
+
+        input.addEventListener("blur", () => {
+          setTimeout(() => {
+            const stillInsideSpiritualInput = inputs.includes(document.activeElement);
+            if(!stillInsideSpiritualInput){
+              closeSpiritualKeyboardView();
+            }
+          }, 250);
+        });
+      });
+
+      window.visualViewport?.addEventListener("resize", () => {
+        const activeInput = inputs.includes(document.activeElement) ? document.activeElement : null;
+        if(activeInput){
+          openSpiritualKeyboardView(activeInput);
+        }
+      });
+    }
+
+
     function setupSpiritualPageNavigation(){
       const screens = [
         document.getElementById("mainScreen"),
@@ -2012,6 +2075,8 @@
 
     setupSpiritualPageNavigation();
 
+
+    setupSpiritualKeyboardFix();
 
     setupMobileSearchKeyboardFix();
 
