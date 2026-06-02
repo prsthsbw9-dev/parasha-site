@@ -944,6 +944,284 @@
         min-width:78px;
       }
     }
+
+    /* ניווט עמודים רוחניים — חיצים קבועים */
+    .spiritual-nav-arrow{
+      position:fixed;
+      top:50%;
+      transform:translateY(-50%);
+      z-index:35;
+      width:54px;
+      height:54px;
+      border-radius:50%;
+      border:1px solid rgba(255,255,255,.46);
+      background:rgba(0,0,0,.24);
+      color:#fff;
+      font-size:34px;
+      font-weight:900;
+      line-height:1;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+      box-shadow:
+        0 10px 28px rgba(0,0,0,.38),
+        0 0 22px rgba(130,190,255,.26),
+        inset 0 1px 0 rgba(255,255,255,.18);
+      backdrop-filter:blur(8px);
+      -webkit-backdrop-filter:blur(8px);
+      transition:transform .2s ease, background .2s ease, box-shadow .2s ease;
+      user-select:none;
+    }
+
+    .spiritual-nav-arrow:hover{
+      transform:translateY(-50%) scale(1.08);
+      background:rgba(255,255,255,.14);
+      box-shadow:
+        0 14px 34px rgba(0,0,0,.44),
+        0 0 30px rgba(160,210,255,.36),
+        inset 0 1px 0 rgba(255,255,255,.24);
+    }
+
+    .spiritual-nav-arrow:active{
+      transform:translateY(-50%) scale(.96);
+    }
+
+    .spiritual-nav-right{ right:18px; }
+    .spiritual-nav-left{ left:18px; }
+
+    .page[data-spiritual-screen],
+    .spiritual-screen[data-spiritual-screen]{
+      transition:
+        transform .62s cubic-bezier(.22,.72,.18,1),
+        opacity .42s ease,
+        filter .42s ease;
+      will-change:transform, opacity;
+    }
+
+    /* דף הבית נשאר עם כל התוכן המקורי, רק מקבל התנהגות של מסך מתחלף */
+    .page[data-spiritual-screen]{
+      position:fixed;
+      inset:0;
+      z-index:2;
+      width:min(100%,560px);
+      margin:0 auto;
+      overflow-y:auto;
+      -webkit-overflow-scrolling:touch;
+    }
+
+    .page[data-spiritual-screen].is-active,
+    .spiritual-screen[data-spiritual-screen].is-active{
+      transform:translateX(0);
+      opacity:1;
+      pointer-events:auto;
+      filter:none;
+    }
+
+    .page[data-spiritual-screen].screen-hidden-left,
+    .spiritual-screen[data-spiritual-screen].screen-hidden-left{
+      transform:translateX(-115vw);
+      opacity:0;
+      pointer-events:none;
+      filter:blur(2px);
+    }
+
+    .page[data-spiritual-screen].screen-hidden-right,
+    .spiritual-screen[data-spiritual-screen].screen-hidden-right{
+      transform:translateX(115vw);
+      opacity:0;
+      pointer-events:none;
+      filter:blur(2px);
+    }
+
+    .spiritual-screen{
+      position:fixed;
+      inset:0;
+      z-index:2;
+      min-height:100vh;
+      width:100%;
+      padding:22px 72px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      direction:rtl;
+      color:#fff;
+      opacity:0;
+      pointer-events:none;
+    }
+
+    .spiritual-screen.is-active{
+      opacity:1;
+      pointer-events:auto;
+      transform:translateX(0);
+      filter:none;
+    }
+
+    .spiritual-card{
+      width:min(100%, 560px);
+      padding:22px 18px 24px;
+      border-radius:32px;
+      border:1px solid rgba(255,255,255,.26);
+      background:linear-gradient(180deg, rgba(0,0,0,.20), rgba(0,0,0,.10));
+      box-shadow:0 24px 70px rgba(0,0,0,.34), 0 0 28px rgba(160,210,255,.12);
+      backdrop-filter:blur(6px);
+      -webkit-backdrop-filter:blur(6px);
+    }
+
+    .spiritual-logo{
+      width:clamp(92px, 26vw, 136px);
+      height:clamp(92px, 26vw, 136px);
+      object-fit:cover;
+      border-radius:50%;
+      display:block;
+      margin:0 auto 12px;
+      border:2px solid rgba(255,255,255,.70);
+      box-shadow:0 0 28px rgba(255,255,255,.24), 0 12px 26px rgba(0,0,0,.42);
+    }
+
+    .spiritual-figure{
+      width:clamp(130px, 38vw, 205px);
+      height:clamp(130px, 38vw, 205px);
+      margin:6px auto 14px;
+      border-radius:50%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:clamp(58px, 17vw, 92px);
+      border:1px solid rgba(255,255,255,.38);
+      background:
+        radial-gradient(circle at 35% 24%, rgba(255,255,255,.78), rgba(255,255,255,.18) 22%, rgba(100,170,255,.18) 48%, rgba(0,0,0,.28) 100%);
+      box-shadow:
+        0 0 0 7px rgba(255,255,255,.07),
+        0 0 44px rgba(150,205,255,.30),
+        inset 0 1px 0 rgba(255,255,255,.34);
+    }
+
+    .spiritual-title{
+      margin:0 0 8px;
+      font-size:clamp(27px, 7.2vw, 44px);
+      line-height:1.08;
+      font-weight:900;
+      text-shadow:0 4px 18px rgba(0,0,0,.82);
+    }
+
+    .spiritual-subtitle{
+      margin:0 auto 14px;
+      max-width:470px;
+      font-size:clamp(15px, 4vw, 19px);
+      line-height:1.55;
+      font-weight:800;
+      color:rgba(255,255,255,.90);
+      text-shadow:0 3px 14px rgba(0,0,0,.72);
+    }
+
+    .spiritual-input-shell{
+      width:min(100%, 500px);
+      margin:0 auto;
+      padding:10px;
+      border-radius:28px;
+      border:1px solid rgba(255,255,255,.25);
+      background:rgba(0,0,0,.22);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.10), 0 12px 26px rgba(0,0,0,.25);
+    }
+
+    .spiritual-input-label{
+      display:block;
+      margin:0 0 8px;
+      font-size:15px;
+      font-weight:900;
+      color:rgba(255,255,255,.92);
+    }
+
+    .spiritual-input-row{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      direction:rtl;
+    }
+
+    .spiritual-input-row textarea{
+      flex:1;
+      min-height:58px;
+      resize:vertical;
+      border-radius:18px;
+      border:1px solid rgba(255,255,255,.36);
+      background:rgba(2,5,14,.82);
+      color:#fff;
+      font-size:15px;
+      line-height:1.45;
+      padding:10px 12px;
+      outline:none;
+      font-family:Arial,sans-serif;
+    }
+
+    .spiritual-mic-btn,
+    .spiritual-send-btn{
+      min-width:44px;
+      height:44px;
+      border-radius:50%;
+      border:1px solid rgba(255,255,255,.32);
+      background:linear-gradient(135deg, rgba(45,165,255,.92), rgba(135,92,255,.92));
+      color:#fff;
+      font-size:18px;
+      font-weight:900;
+      cursor:pointer;
+      box-shadow:0 8px 18px rgba(0,0,0,.28);
+    }
+
+    .spiritual-send-btn{
+      border-radius:999px;
+      min-width:70px;
+      padding:0 14px;
+      font-size:14px;
+    }
+
+    .spiritual-disclaimer{
+      margin:10px auto 0;
+      max-width:470px;
+      color:rgba(255,255,255,.74);
+      font-size:12px;
+      line-height:1.55;
+      text-shadow:0 2px 8px rgba(0,0,0,.7);
+    }
+
+    @media (max-width:640px){
+      .spiritual-nav-arrow{
+        width:44px;
+        height:44px;
+        font-size:29px;
+        top:52%;
+      }
+
+      .spiritual-nav-right{ right:8px; }
+      .spiritual-nav-left{ left:8px; }
+
+      .spiritual-screen{
+        padding:18px 48px;
+      }
+
+      .spiritual-card{
+        padding:18px 12px 20px;
+        border-radius:26px;
+      }
+
+      .spiritual-input-row{
+        gap:6px;
+      }
+
+      .spiritual-mic-btn,
+      .spiritual-send-btn{
+        min-width:40px;
+        height:40px;
+      }
+
+      .spiritual-send-btn{
+        min-width:58px;
+        padding:0 10px;
+      }
+    }
+
   </style>
 </head>
 
@@ -955,7 +1233,10 @@
 
   <div class="sea-bg-overlay"></div>
 
-  <div class="page">
+  <button id="spiritualNavRight" class="spiritual-nav-arrow spiritual-nav-right" type="button" aria-label="מעבר ימינה לעמוד הבא">&rsaquo;</button>
+  <button id="spiritualNavLeft" class="spiritual-nav-arrow spiritual-nav-left" type="button" aria-label="מעבר שמאלה לעמוד הקודם">&lsaquo;</button>
+
+  <div id="mainScreen" class="page is-active" data-spiritual-screen="main">
     <div class="gate-card">
 
       <img class="hero-logo" src="logo.png" alt="פרשת השבוע" />
@@ -1088,6 +1369,47 @@
 
     </div>
   </div>
+
+
+  <section id="yosefScreen" class="spiritual-screen screen-hidden-right" data-spiritual-screen="yosef" aria-label="מדור חלומות בהשראת יוסף הצדיק">
+    <div class="spiritual-card">
+      <img class="spiritual-logo" src="logo.png" alt="פרשת השבוע" />
+      <div class="spiritual-figure" aria-hidden="true">🌊</div>
+      <h2 class="spiritual-title">בהשראת יוסף הצדיק</h2>
+      <p class="spiritual-subtitle">מדור חלומות ומשמעותם — תשובה לימודית בשפה של היום, לפי מקורות יהודיים בלבד.</p>
+
+      <div class="spiritual-input-shell">
+        <label class="spiritual-input-label" for="dreamQuestion">מה החלום שחלמת?</label>
+        <div class="spiritual-input-row">
+          <button class="spiritual-mic-btn" type="button" aria-label="דיבור קולי בעברית">🎙️</button>
+          <textarea id="dreamQuestion" placeholder="אפשר להקליד כאן את החלום..."></textarea>
+          <button class="spiritual-send-btn" type="button">שלח</button>
+        </div>
+      </div>
+
+      <p class="spiritual-disclaimer">הפירוש אינו נבואה ואינו פסיקה. לחלום מטריד, פחדים או מצוקה — נכון להתייעץ עם רב מוסמך או איש מקצוע.</p>
+    </div>
+  </section>
+
+  <section id="avrahamScreen" class="spiritual-screen screen-hidden-right" data-spiritual-screen="avraham" aria-label="מדור דרך חיים בהשראת אברהם אבינו">
+    <div class="spiritual-card">
+      <img class="spiritual-logo" src="logo.png" alt="פרשת השבוע" />
+      <div class="spiritual-figure" aria-hidden="true">✨</div>
+      <h2 class="spiritual-title">בהשראת אברהם אבינו</h2>
+      <p class="spiritual-subtitle">שאלות אמונה, חסד ודרך חיים — תשובה לימודית לפי מקורות יהודיים, בלי להציג זאת כפסיקת הלכה.</p>
+
+      <div class="spiritual-input-shell">
+        <label class="spiritual-input-label" for="avrahamQuestion">מה תרצה לשאול?</label>
+        <div class="spiritual-input-row">
+          <button class="spiritual-mic-btn" type="button" aria-label="דיבור קולי בעברית">🎙️</button>
+          <textarea id="avrahamQuestion" placeholder="אפשר להקליד כאן את השאלה..."></textarea>
+          <button class="spiritual-send-btn" type="button">שלח</button>
+        </div>
+      </div>
+
+      <p class="spiritual-disclaimer">לתשובה הלכתית מעשית יש לשאול רב מוסמך. המדור נועד ללימוד, חיזוק והכוונה כללית בלבד.</p>
+    </div>
+  </section>
 
   <div id="pardesVideoPanel" class="pardes-video-panel" aria-hidden="true">
     <div class="pardes-video-card" role="dialog" aria-modal="true" aria-labelledby="pardesVideoTitle">
@@ -1556,6 +1878,70 @@
         }
       });
     }
+
+
+    function setupSpiritualPageNavigation(){
+      const screens = [
+        document.getElementById("mainScreen"),
+        document.getElementById("yosefScreen"),
+        document.getElementById("avrahamScreen")
+      ].filter(Boolean);
+
+      const rightBtn = document.getElementById("spiritualNavRight");
+      const leftBtn = document.getElementById("spiritualNavLeft");
+
+      if(!screens.length || !rightBtn || !leftBtn) return;
+
+      let activeIndex = 0;
+
+      function renderScreens(){
+        screens.forEach((screen, index) => {
+          screen.classList.remove("is-active", "screen-hidden-left", "screen-hidden-right");
+
+          if(index === activeIndex){
+            screen.classList.add("is-active");
+            screen.setAttribute("aria-hidden", "false");
+            return;
+          }
+
+          screen.setAttribute("aria-hidden", "true");
+
+          if(index < activeIndex){
+            screen.classList.add("screen-hidden-left");
+          }else{
+            screen.classList.add("screen-hidden-right");
+          }
+        });
+      }
+
+      function goToIndex(nextIndex){
+        activeIndex = (nextIndex + screens.length) % screens.length;
+        renderScreens();
+      }
+
+      rightBtn.addEventListener("click", () => {
+        goToIndex(activeIndex + 1);
+      });
+
+      leftBtn.addEventListener("click", () => {
+        goToIndex(activeIndex - 1);
+      });
+
+      document.addEventListener("keydown", (event) => {
+        if(event.key === "ArrowRight"){
+          goToIndex(activeIndex + 1);
+        }
+
+        if(event.key === "ArrowLeft"){
+          goToIndex(activeIndex - 1);
+        }
+      });
+
+      renderScreens();
+    }
+
+    setupSpiritualPageNavigation();
+
 
     setupMobileSearchKeyboardFix();
 
