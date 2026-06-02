@@ -2137,7 +2137,7 @@
       }
 
       setSpiritualAnswer(screen, "מחפש תשובה לפי מקורות יהודיים...", { loading:true });
-
+      
       try{
         const response = await fetch(apiUrl, {
           method: "POST",
@@ -2145,10 +2145,7 @@
             "Content-Type": "application/json"
           },
           body: JSON.stringify({
-            screenKey,
-            title: context.title,
-            field: context.field,
-            instruction: context.instruction,
+            character: screenKey,
             question
           })
         });
