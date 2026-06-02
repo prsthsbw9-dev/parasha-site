@@ -1435,6 +1435,50 @@
     </div>
   </section>
 
+  <section id="rambamScreen" class="spiritual-screen screen-hidden-right" data-spiritual-screen="rambam" aria-label="מדור בריאות בהשראת הרמב״ם">
+    <div class="spiritual-card">
+      <img class="spiritual-logo" src="logo.png" alt="פרשת השבוע" />
+      <div class="spiritual-figure spiritual-figure-image" aria-hidden="true">
+        <img src="rambam.png" alt="">
+      </div>
+      <h2 class="spiritual-title">בהשראת הרמב״ם</h2>
+      <p class="spiritual-subtitle">מדור בריאות, תזונה והרגלי חיים — תשובה לימודית בשפה של היום, לפי מקורות הרמב״ם ומקורות יהודיים בלבד.</p>
+
+      <div class="spiritual-input-shell">
+        <label class="spiritual-input-label" for="rambamQuestion">מה תרצה לשאול על בריאות והרגלי חיים?</label>
+        <div class="spiritual-input-row">
+          <button class="spiritual-mic-btn" type="button" aria-label="דיבור קולי בעברית">🎙️</button>
+          <textarea id="rambamQuestion" placeholder="אפשר להקליד כאן את השאלה..."></textarea>
+          <button class="spiritual-send-btn" type="button">שלח</button>
+        </div>
+      </div>
+
+      <p class="spiritual-disclaimer">המדור נועד ללימוד והכוונה כללית בלבד ואינו מחליף רופא, אבחון או טיפול רפואי. בכל בעיה רפואית יש להתייעץ עם רופא מוסמך.</p>
+    </div>
+  </section>
+
+  <section id="rachelScreen" class="spiritual-screen screen-hidden-right" data-spiritual-screen="rachel" aria-label="מדור זוגיות בהשראת רחל אמנו">
+    <div class="spiritual-card">
+      <img class="spiritual-logo" src="logo.png" alt="פרשת השבוע" />
+      <div class="spiritual-figure spiritual-figure-image" aria-hidden="true">
+        <img src="rachel.png" alt="">
+      </div>
+      <h2 class="spiritual-title">בהשראת רחל אמנו</h2>
+      <p class="spiritual-subtitle">שאלות על זוגיות, קשר, שלום בית ותפילה מהלב — תשובה לימודית בשפה של היום, לפי מקורות יהודיים בלבד.</p>
+
+      <div class="spiritual-input-shell">
+        <label class="spiritual-input-label" for="rachelQuestion">מה תרצה לשאול על זוגיות וקשר?</label>
+        <div class="spiritual-input-row">
+          <button class="spiritual-mic-btn" type="button" aria-label="דיבור קולי בעברית">🎙️</button>
+          <textarea id="rachelQuestion" placeholder="אפשר להקליד כאן את השאלה..."></textarea>
+          <button class="spiritual-send-btn" type="button">שלח</button>
+        </div>
+      </div>
+
+      <p class="spiritual-disclaimer">המדור נועד לחיזוק, הכוונה ולימוד בלבד. במצבי משבר זוגי משמעותי מומלץ לפנות לרב מוסמך או לאיש מקצוע מתאים.</p>
+    </div>
+  </section>
+
   <div id="pardesVideoPanel" class="pardes-video-panel" aria-hidden="true">
     <div class="pardes-video-card" role="dialog" aria-modal="true" aria-labelledby="pardesVideoTitle">
       <div class="pardes-video-head">
@@ -1908,7 +1952,9 @@
       const screens = [
         document.getElementById("mainScreen"),
         document.getElementById("yosefScreen"),
-        document.getElementById("avrahamScreen")
+        document.getElementById("avrahamScreen"),
+        document.getElementById("rambamScreen"),
+        document.getElementById("rachelScreen")
       ].filter(Boolean);
 
       const rightBtn = document.getElementById("spiritualNavRight");
