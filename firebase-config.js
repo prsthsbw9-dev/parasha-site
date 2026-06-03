@@ -9,6 +9,7 @@ const firebaseConfig = {
   storageBucket: "parasha-site-links.firebasestorage.app",
   messagingSenderId: "799400165769",
   appId: "1:799400165769:web:1b5cf70eee80e772df6158",
+measurementId: "G-2MGXGC1KB8"
   measurementId: "G-2MGXGC1KB8"
 };
 
