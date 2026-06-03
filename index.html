@@ -1323,11 +1323,111 @@
         padding:0 10px;
       }
     }
-
+    
+    .accessibility-toggle{
+      position:fixed;
+      right:14px;
+      bottom:14px;
+      z-index:10000;
+      width:52px;
+      height:52px;
+      border-radius:50%;
+      border:2px solid rgba(255,255,255,.82);
+      background:#005fcc;
+      color:#fff;
+      font-size:27px;
+      cursor:pointer;
+      box-shadow:0 10px 28px rgba(0,0,0,.38);
+    }
+    
+    .accessibility-toggle:focus-visible,
+    .accessibility-panel button:focus-visible,
+    .accessibility-panel a:focus-visible{
+      outline:3px solid #fff;
+      outline-offset:3px;
+    }
+    
+    .accessibility-panel{
+      position:fixed;
+      right:14px;
+      bottom:76px;
+      z-index:10000;
+      display:none;
+      width:210px;
+      padding:10px;
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.45);
+      background:rgba(0,0,0,.92);
+      box-shadow:0 14px 34px rgba(0,0,0,.45);
+      direction:rtl;
+    }
+    
+    .accessibility-panel.is-open{
+      display:grid;
+      gap:8px;
+    }
+    
+    .accessibility-panel button,
+    .accessibility-panel a{
+      width:100%;
+      min-height:38px;
+      border-radius:10px;
+      border:1px solid rgba(255,255,255,.32);
+      background:rgba(255,255,255,.12);
+      color:#fff;
+      font-size:15px;
+      font-weight:800;
+      text-decoration:none;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+    }
+    
+    body.accessibility-large-text{
+      font-size:112%;
+    }
+    
+    body.accessibility-extra-large-text{
+      font-size:125%;
+    }
+    
+    body.accessibility-high-contrast{
+      background:#000 !important;
+      color:#fff !important;
+    }
+    
+    body.accessibility-high-contrast *{
+      text-shadow:none !important;
+    }
+    
+    body.accessibility-high-contrast .sea-bg-video,
+    body.accessibility-high-contrast .sea-bg-overlay{
+      display:none !important;
+    }
+    
+    body.accessibility-highlight-links a,
+    body.accessibility-highlight-links button{
+      outline:2px solid #ffeb3b;
+      outline-offset:2px;
+    }
   </style>
 </head>
 
 <body>
+
+<button id="accessibilityToggle" class="accessibility-toggle" type="button" aria-label="פתיחת תפריט נגישות">
+  ♿
+</button>
+
+<div id="accessibilityPanel" class="accessibility-panel" aria-hidden="true">
+  <button type="button" data-accessibility-action="increase">הגדל טקסט</button>
+  <button type="button" data-accessibility-action="decrease">הקטן טקסט</button>
+  <button type="button" data-accessibility-action="contrast">ניגודיות גבוהה</button>
+  <button type="button" data-accessibility-action="links">הדגש קישורים</button>
+  <button type="button" data-accessibility-action="reset">איפוס</button>
+  <a href="accessibility.html">הצהרת נגישות</a>
+</div>  
 
   <video class="sea-bg-video" autoplay muted loop playsinline poster="ocean-poster.jpg">
     <source src="ocean.mp4" type="video/mp4">
@@ -2449,6 +2549,60 @@
     setupMobileSearchKeyboardFix();
 
     loadActiveAliyah();
+
+    const accessibilityToggle = document.getElementById("accessibilityToggle");
+    const accessibilityPanel = document.getElementById("accessibilityPanel");
+    
+    if(accessibilityToggle && accessibilityPanel){
+      accessibilityToggle.addEventListener("click", () => {
+        const isOpen = accessibilityPanel.classList.toggle("is-open");
+        accessibilityPanel.setAttribute("aria-hidden", isOpen ? "false" : "true");
+      });
+    
+      accessibilityPanel.addEventListener("click", (event) => {
+        const action = event.target?.dataset?.accessibilityAction;
+        if(!action) return;
+    
+        if(action === "increase"){
+          if(document.body.classList.contains("accessibility-large-text")){
+            document.body.classList.remove("accessibility-large-text");
+            document.body.classList.add("accessibility-extra-large-text");
+          }else{
+            document.body.classList.add("accessibility-large-text");
+          }
+        }
+    
+        if(action === "decrease"){
+          document.body.classList.remove("accessibility-extra-large-text");
+          document.body.classList.remove("accessibility-large-text");
+        }
+    
+        if(action === "contrast"){
+          document.body.classList.toggle("accessibility-high-contrast");
+        }
+    
+        if(action === "links"){
+          document.body.classList.toggle("accessibility-highlight-links");
+        }
+    
+        if(action === "reset"){
+          document.body.classList.remove(
+            "accessibility-large-text",
+            "accessibility-extra-large-text",
+            "accessibility-high-contrast",
+            "accessibility-highlight-links"
+          );
+        }
+      });
+    
+      document.addEventListener("keydown", (event) => {
+        if(event.key === "Escape"){
+          accessibilityPanel.classList.remove("is-open");
+          accessibilityPanel.setAttribute("aria-hidden", "true");
+        }
+      });
+    }
+    
   </script>
 
 </body>
