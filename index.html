@@ -2665,6 +2665,44 @@
     const accessibilityToggle = document.getElementById("accessibilityToggle");
     const accessibilityPanel = document.getElementById("accessibilityPanel");
     
+    let accessibilityTextScale = 1;
+    
+    function getAccessibilityTextElements(){
+      return Array.from(document.querySelectorAll(
+        "h1, h2, h3, p, span, label, button, a, input, textarea, div"
+      )).filter((element) => {
+        return !element.closest("svg") &&
+               !element.classList.contains("sea-bg-overlay") &&
+               !element.classList.contains("pardes-tree-svg");
+      });
+    }
+    
+    function applyAccessibilityTextScale(){
+      const elements = getAccessibilityTextElements();
+    
+      elements.forEach((element) => {
+        if(!element.dataset.originalFontSize){
+          const computedFontSize = window.getComputedStyle(element).fontSize;
+          element.dataset.originalFontSize = computedFontSize;
+        }
+    
+        const originalSize = parseFloat(element.dataset.originalFontSize);
+    
+        if(Number.isFinite(originalSize)){
+          element.style.fontSize = `${originalSize * accessibilityTextScale}px`;
+        }
+      });
+    }
+    
+    function resetAccessibilityTextScale(){
+      accessibilityTextScale = 1;
+    
+      getAccessibilityTextElements().forEach((element) => {
+        element.style.fontSize = "";
+        delete element.dataset.originalFontSize;
+      });
+    }
+    
     if(accessibilityToggle && accessibilityPanel){
       accessibilityToggle.addEventListener("click", () => {
         const isOpen = accessibilityPanel.classList.toggle("is-open");
@@ -2676,17 +2714,13 @@
         if(!action) return;
     
         if(action === "increase"){
-          if(document.body.classList.contains("accessibility-large-text")){
-            document.body.classList.remove("accessibility-large-text");
-            document.body.classList.add("accessibility-extra-large-text");
-          }else{
-            document.body.classList.add("accessibility-large-text");
-          }
+          accessibilityTextScale = Math.min(accessibilityTextScale + 0.12, 1.36);
+          applyAccessibilityTextScale();
         }
     
         if(action === "decrease"){
-          document.body.classList.remove("accessibility-extra-large-text");
-          document.body.classList.remove("accessibility-large-text");
+          accessibilityTextScale = Math.max(accessibilityTextScale - 0.12, 0.88);
+          applyAccessibilityTextScale();
         }
     
         if(action === "contrast"){
@@ -2698,6 +2732,8 @@
         }
     
         if(action === "reset"){
+          resetAccessibilityTextScale();
+    
           document.body.classList.remove(
             "accessibility-large-text",
             "accessibility-extra-large-text",
