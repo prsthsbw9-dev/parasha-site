@@ -1411,6 +1411,46 @@
       outline:2px solid #ffeb3b;
       outline-offset:2px;
     }
+
+    /* שיפור נגישות: פוקוס ברור במקלדת */
+    a:focus-visible,
+    button:focus-visible,
+    input:focus-visible,
+    textarea:focus-visible,
+    video:focus-visible,
+    [tabindex]:focus-visible{
+      outline:3px solid #ffeb3b !important;
+      outline-offset:4px !important;
+      box-shadow:
+        0 0 0 4px rgba(0,0,0,.85),
+        0 0 18px rgba(255,235,59,.55) !important;
+    }
+    
+    /* כשהמסך מוסתר במעבר בין דמויות — לא לאפשר פוקוס בטעות */
+    [aria-hidden="true"] a,
+    [aria-hidden="true"] button,
+    [aria-hidden="true"] input,
+    [aria-hidden="true"] textarea,
+    [aria-hidden="true"] video{
+      pointer-events:none;
+    }
+    
+    /* מצב למי שמעדיף פחות אנימציות */
+    @media (prefers-reduced-motion: reduce){
+      *,
+      *::before,
+      *::after{
+        animation-duration:.01ms !important;
+        animation-iteration-count:1 !important;
+        scroll-behavior:auto !important;
+        transition-duration:.01ms !important;
+      }
+    
+      .sea-bg-video{
+        display:none !important;
+      }
+    }
+    
   </style>
 </head>
 
@@ -1587,7 +1627,7 @@
         <div class="spiritual-input-row">
           <button class="spiritual-mic-btn" type="button" aria-label="דיבור קולי בעברית">🎙️</button>
           <textarea id="dreamQuestion" placeholder="אפשר להקליד כאן את החלום..."></textarea>
-          <button class="spiritual-send-btn" type="button">שלח</button>
+          <button class="spiritual-send-btn" type="button" aria-label="שליחת שאלה למדור חלומות בהשראת יוסף הצדיק">שלח</button>
         </div>
       </div>
 
@@ -1609,7 +1649,7 @@
         <div class="spiritual-input-row">
           <button class="spiritual-mic-btn" type="button" aria-label="דיבור קולי בעברית">🎙️</button>
           <textarea id="avrahamQuestion" placeholder="אפשר להקליד כאן את השאלה..."></textarea>
-          <button class="spiritual-send-btn" type="button">שלח</button>
+          <button class="spiritual-send-btn" type="button" aria-label="שליחת שאלה למדור אמונה וחסד בהשראת אברהם אבינו">שלח</button>
         </div>
       </div>
 
@@ -1631,7 +1671,7 @@
         <div class="spiritual-input-row">
           <button class="spiritual-mic-btn" type="button" aria-label="דיבור קולי בעברית">🎙️</button>
           <textarea id="rambamQuestion" placeholder="אפשר להקליד כאן את השאלה..."></textarea>
-          <button class="spiritual-send-btn" type="button">שלח</button>
+          <button class="spiritual-send-btn" type="button" aria-label="שליחת שאלה למדור בריאות בהשראת הרמב״ם">שלח</button>
         </div>
       </div>
 
@@ -1653,7 +1693,7 @@
         <div class="spiritual-input-row">
           <button class="spiritual-mic-btn" type="button" aria-label="דיבור קולי בעברית">🎙️</button>
           <textarea id="rachelQuestion" placeholder="אפשר להקליד כאן את השאלה..."></textarea>
-          <button class="spiritual-send-btn" type="button">שלח</button>
+          <button class="spiritual-send-btn" type="button" aria-label="שליחת שאלה למדור זוגיות בהשראת רחל אמנו">שלח</button>
         </div>
       </div>
 
@@ -1661,14 +1701,14 @@
     </div>
   </section>
 
-  <div id="pardesVideoPanel" class="pardes-video-panel" aria-hidden="true">
+  <div id="pardesVideoPanel" class="pardes-video-panel" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="pardesVideoTitle">
     <div class="pardes-video-card" role="dialog" aria-modal="true" aria-labelledby="pardesVideoTitle">
       <div class="pardes-video-head">
         <h2 id="pardesVideoTitle" class="pardes-video-title">עומק העלייה</h2>
         <button id="pardesVideoClose" class="pardes-video-close" type="button" aria-label="סגירה">×</button>
       </div>
       <div class="pardes-video-body">
-        <video id="pardesVideoPlayer" class="pardes-video-player" controls playsinline preload="metadata"></video>
+        <video id="pardesVideoPlayer" class="pardes-video-player" controls playsinline preload="metadata" aria-label="נגן וידאו של עומק העלייה"></video>
         <div id="pardesVideoEmpty" class="pardes-video-empty"></div>
       </div>
     </div>
@@ -1917,7 +1957,10 @@
       player.style.visibility = "visible";
     }
 
+    let lastFocusedElementBeforeVideo = null;
+    
     function openLayer(layer){
+      lastFocusedElementBeforeVideo = document.activeElement;
       stopPardesVideo();
 
       const panel = document.getElementById("pardesVideoPanel");
@@ -1999,8 +2042,17 @@
     function closePanel(){
       const panel = document.getElementById("pardesVideoPanel");
       stopPardesVideo();
-      panel.classList.remove("is-open");
-      panel.setAttribute("aria-hidden", "true");
+    
+      if(panel){
+        panel.classList.remove("is-open");
+        panel.setAttribute("aria-hidden", "true");
+      }
+    
+      if(lastFocusedElementBeforeVideo && typeof lastFocusedElementBeforeVideo.focus === "function"){
+        setTimeout(() => {
+          lastFocusedElementBeforeVideo.focus();
+        }, 50);
+      }
     }
 
     document.getElementById("mainAliyahOrb")?.addEventListener("click", (event) => {
