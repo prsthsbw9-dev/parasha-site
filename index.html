@@ -2563,6 +2563,41 @@
 
 
 
+    function setupAccessibilityLabels(){
+      const screenLabels = {
+        yosefScreen: "מדור חלומות בהשראת יוסף הצדיק",
+        avrahamScreen: "מדור אמונה וחסד בהשראת אברהם אבינו",
+        rambamScreen: "מדור בריאות בהשראת הרמב״ם",
+        rachelScreen: "מדור זוגיות בהשראת רחל אמנו"
+      };
+    
+      Object.entries(screenLabels).forEach(([screenId, label]) => {
+        const screen = document.getElementById(screenId);
+        if(!screen) return;
+    
+        const micButton = screen.querySelector(".spiritual-mic-btn");
+        const sendButton = screen.querySelector(".spiritual-send-btn");
+        const textarea = screen.querySelector("textarea");
+    
+        if(micButton){
+          micButton.setAttribute("aria-label", `הפעלת דיבור קולי עבור ${label}`);
+        }
+    
+        if(sendButton){
+          sendButton.setAttribute("aria-label", `שליחת שאלה עבור ${label}`);
+        }
+    
+        if(textarea && !textarea.getAttribute("aria-label")){
+          textarea.setAttribute("aria-label", `שדה כתיבת שאלה עבור ${label}`);
+        }
+      });
+    
+      document.getElementById("spiritualNavRight")?.setAttribute("aria-label", "מעבר למסך הבא באתר");
+      document.getElementById("spiritualNavLeft")?.setAttribute("aria-label", "מעבר למסך הקודם באתר");
+      document.getElementById("pardesVideoClose")?.setAttribute("aria-label", "סגירת חלון הווידאו");
+      document.getElementById("pardesSearchBtn")?.setAttribute("aria-label", "חיפוש פרשה ועלייה");
+    }
+
     function setupSpiritualPageNavigation(){
       const screens = [
         document.getElementById("mainScreen"),
@@ -2601,41 +2636,6 @@
         });
       }
 
-      function setupAccessibilityLabels(){
-        const screenLabels = {
-          yosefScreen: "מדור חלומות בהשראת יוסף הצדיק",
-          avrahamScreen: "מדור אמונה וחסד בהשראת אברהם אבינו",
-          rambamScreen: "מדור בריאות בהשראת הרמב״ם",
-          rachelScreen: "מדור זוגיות בהשראת רחל אמנו"
-        };
-      
-        Object.entries(screenLabels).forEach(([screenId, label]) => {
-          const screen = document.getElementById(screenId);
-          if(!screen) return;
-      
-          const micButton = screen.querySelector(".spiritual-mic-btn");
-          const sendButton = screen.querySelector(".spiritual-send-btn");
-          const textarea = screen.querySelector("textarea");
-      
-          if(micButton){
-            micButton.setAttribute("aria-label", `הפעלת דיבור קולי עבור ${label}`);
-          }
-      
-          if(sendButton){
-            sendButton.setAttribute("aria-label", `שליחת שאלה עבור ${label}`);
-          }
-      
-          if(textarea && !textarea.getAttribute("aria-label")){
-            textarea.setAttribute("aria-label", `שדה כתיבת שאלה עבור ${label}`);
-          }
-        });
-      
-        document.getElementById("spiritualNavRight")?.setAttribute("aria-label", "מעבר למסך הבא באתר");
-        document.getElementById("spiritualNavLeft")?.setAttribute("aria-label", "מעבר למסך הקודם באתר");
-        document.getElementById("pardesVideoClose")?.setAttribute("aria-label", "סגירת חלון הווידאו");
-        document.getElementById("pardesSearchBtn")?.setAttribute("aria-label", "חיפוש פרשה ועלייה");
-      }      
-
       function goToIndex(nextIndex){
         activeIndex = (nextIndex + screens.length) % screens.length;
         renderScreens();
@@ -2661,20 +2661,6 @@
 
       renderScreens();
     }
-
-    setupSpiritualSpeechRecognition();
-
-    setupSpiritualAiButtons();
-
-    setupSpiritualPageNavigation();
-
-    setupAccessibilityLabels();
-    
-    setupSpiritualKeyboardFix();
-
-    setupMobileSearchKeyboardFix();
-
-    loadActiveAliyah();
 
     const accessibilityToggle = document.getElementById("accessibilityToggle");
     const accessibilityPanel = document.getElementById("accessibilityPanel");
@@ -2728,8 +2714,22 @@
         }
       });
     }
+
+    setupSpiritualSpeechRecognition();
+
+    setupSpiritualAiButtons();
+
+    setupSpiritualPageNavigation();
+
+    setupAccessibilityLabels();
     
-  </script>
+    setupSpiritualKeyboardFix();
+
+    setupMobileSearchKeyboardFix();
+
+    loadActiveAliyah();
+
+</script>
 
 </body>
 </html>
