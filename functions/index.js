@@ -1,73 +1,71 @@
-const { onRequest } = require("firebase-functions/v2/https");
+from pathlib import Path
+
+code = r'''const { onRequest } = require("firebase-functions/v2/https");
 const { defineSecret } = require("firebase-functions/params");
 const OpenAI = require("openai");
 
 const openaiApiKey = defineSecret("OPENAI_API_KEY");
 
 exports.createPersonalReading = onRequest(
-{
-region: "us-central1",
-secrets: [openaiApiKey],
-cors: true
-},
-async (req, res) => {
-try {
-if (req.method !== "POST") {
-return res.status(405).json({
-error: "Method not allowed"
-});
-}
+  {
+    region: "us-central1",
+    secrets: [openaiApiKey],
+    cors: true
+  },
+  async (req, res) => {
+    try {
+      if (req.method !== "POST") {
+        return res.status(405).json({
+          error: "Method not allowed"
+        });
+      }
 
-```
-  const input = req.body || {};
+      const input = req.body || {};
 
-  const safeData = {
-    firstName: cleanText(input.firstName, 40),
-    jewishName: cleanText(input.jewishName, 90),
-    gender: cleanText(input.gender, 20),
+      const safeData = {
+        firstName: cleanText(input.firstName, 40),
+        jewishName: cleanText(input.jewishName, 90),
+        gender: cleanText(input.gender, 20),
 
-    hebrewDate: cleanText(input.hebrewDate, 80),
-    hebrewMonth: cleanText(input.hebrewMonth, 40),
-    weekday: cleanText(input.weekday, 40),
-    birthTime: cleanText(input.birthTime, 40),
+        hebrewDate: cleanText(input.hebrewDate, 80),
+        hebrewMonth: cleanText(input.hebrewMonth, 40),
+        weekday: cleanText(input.weekday, 40),
+        birthTime: cleanText(input.birthTime, 40),
 
-    mitzvahType: cleanText(input.mitzvahType, 30),
-    mitzvahHebrewDate: cleanText(input.mitzvahHebrewDate, 80),
-    mitzvahGregorianDate: cleanText(input.mitzvahGregorianDate, 40),
+        mitzvahType: cleanText(input.mitzvahType, 30),
+        mitzvahHebrewDate: cleanText(input.mitzvahHebrewDate, 80),
+        mitzvahGregorianDate: cleanText(input.mitzvahGregorianDate, 40),
 
-    parasha: cleanText(input.parasha, 80),
+        parasha: cleanText(input.parasha, 80),
 
-    birthParasha: cleanText(
-      input.birthParasha || input.personalParasha || input.parasha,
-      90
-    ),
+        birthParasha: cleanText(
+          input.birthParasha || input.personalParasha || input.parasha,
+          90
+        ),
 
-    mitzvahParasha: cleanText(
-      input.mitzvahParasha || input.parasha,
-      90
-    )
-  };
+        mitzvahParasha: cleanText(
+          input.mitzvahParasha || input.parasha,
+          90
+        )
+      };
 
-  if (!safeData.firstName || !safeData.jewishName) {
-    return res.status(400).json({
-      error: "Missing required fields"
-    });
-  }
+      if (!safeData.firstName || !safeData.jewishName) {
+        return res.status(400).json({
+          error: "Missing required fields"
+        });
+      }
 
-  const client = new OpenAI({
-    apiKey: openaiApiKey.value()
-  });
+      const client = new OpenAI({
+        apiKey: openaiApiKey.value()
+      });
 
-  const prompt = `
-```
-
+      const prompt = `
 גרסת פרומפט: PRDS_SHLICHUT_V3
 
 אתה כותב בעברית, בסגנון יהודי עמוק, ברור, מחזק, נקי ואחראי.
 
 המטרה:
 לכתוב לצופה קריאה אישית על "השליחות האישית שלו" לפי:
-
 1. התאריך העברי שלו
 2. פרשת השבוע האישית ששויכה לתאריך הלידה שלו
 3. פרשת השבוע שבה הגיע לגיל מצוות
@@ -95,7 +93,6 @@ error: "Method not allowed"
 גם אם נתונים כאלה נשלחו מהדף — התעלם מהם לגמרי.
 
 התשובה חייבת להתבסס רק על:
-
 1. התאריך העברי
 2. פרשת השבוע האישית לפי תאריך הלידה
 3. פרשת השבוע של גיל המצוות
@@ -196,94 +193,87 @@ ${safeData.mitzvahParasha || safeData.parasha || "לא זוהתה"}
 אורך כולל: עד 520 מילים.
 `;
 
-```
-  const completion = await client.responses.create({
-    model: "gpt-4.1-mini",
-    input: prompt
-  });
+      const completion = await client.responses.create({
+        model: "gpt-4.1-mini",
+        input: prompt
+      });
 
-  const message = completion.output_text || "";
+      const message = completion.output_text || "";
 
-  return res.status(200).json({
-    message
-  });
+      return res.status(200).json({
+        message
+      });
+    } catch (err) {
+      console.error("createPersonalReading error:", err);
 
-} catch (err) {
-  console.error("createPersonalReading error:", err);
-
-  return res.status(500).json({
-    error: "AI generation failed"
-  });
-}
-```
-
-}
+      return res.status(500).json({
+        error: "AI generation failed"
+      });
+    }
+  }
 );
 
 exports.createSpiritualAnswer = onRequest(
-{
-region: "us-central1",
-secrets: [openaiApiKey],
-cors: true
-},
-async (req, res) => {
-try {
-if (req.method !== "POST") {
-return res.status(405).json({
-error: "Method not allowed"
-});
-}
+  {
+    region: "us-central1",
+    secrets: [openaiApiKey],
+    cors: true
+  },
+  async (req, res) => {
+    try {
+      if (req.method !== "POST") {
+        return res.status(405).json({
+          error: "Method not allowed"
+        });
+      }
 
-```
-  const input = req.body || {};
+      const input = req.body || {};
 
-  const character = cleanText(input.character, 30);
-  const question = cleanText(input.question, 1200);
+      const character = cleanText(input.character, 30);
+      const question = cleanText(input.question, 1200);
 
-  if (!character || !question) {
-    return res.status(400).json({
-      error: "Missing required fields"
-    });
-  }
+      if (!character || !question) {
+        return res.status(400).json({
+          error: "Missing required fields"
+        });
+      }
 
-  const characterMap = {
-    yosef: {
-      title: "יוסף הצדיק",
-      field: "חלומות, ניסיון, אמונה וירידה לצורך עלייה",
-      warning: "אל תציג את פירוש החלום כנבואה או קביעה ודאית."
-    },
-    avraham: {
-      title: "אברהם אבינו",
-      field: "אמונה, חסד, דרך חיים והכנסת אורחים",
-      warning: "אל תיתן פסיקת הלכה מעשית."
-    },
-    rambam: {
-      title: "הרמב״ם",
-      field: "בריאות, תזונה, הרגלי חיים ואיזון הגוף והנפש לפי דרכו הכללית של הרמב״ם",
-      warning: "אל תיתן אבחון רפואי, טיפול רפואי או הוראות מסוכנות. הפנה לרופא כשצריך."
-    },
-    rachel: {
-      title: "רחל אמנו",
-      field: "זוגיות, קשר, תפילה מהלב, שלום בית וחיזוק רגשי",
-      warning: "אל תבטיח זיווג, שלום בית או ישועה. במצבי משבר הפנה לרב מוסמך או איש מקצוע."
-    }
-  };
+      const characterMap = {
+        yosef: {
+          title: "יוסף הצדיק",
+          field: "חלומות, ניסיון, אמונה וירידה לצורך עלייה",
+          warning: "אל תציג את פירוש החלום כנבואה או קביעה ודאית."
+        },
+        avraham: {
+          title: "אברהם אבינו",
+          field: "אמונה, חסד, דרך חיים והכנסת אורחים",
+          warning: "אל תיתן פסיקת הלכה מעשית."
+        },
+        rambam: {
+          title: "הרמב״ם",
+          field: "בריאות, תזונה, הרגלי חיים ואיזון הגוף והנפש לפי דרכו הכללית של הרמב״ם",
+          warning: "אל תיתן אבחון רפואי, טיפול רפואי או הוראות מסוכנות. הפנה לרופא כשצריך."
+        },
+        rachel: {
+          title: "רחל אמנו",
+          field: "זוגיות, קשר, תפילה מהלב, שלום בית וחיזוק רגשי",
+          warning: "אל תבטיח זיווג, שלום בית או ישועה. במצבי משבר הפנה לרב מוסמך או איש מקצוע."
+        }
+      };
 
-  const profile = characterMap[character];
+      const profile = characterMap[character];
 
-  if (!profile) {
-    return res.status(400).json({
-      error: "Invalid character"
-    });
-  }
+      if (!profile) {
+        return res.status(400).json({
+          error: "Invalid character"
+        });
+      }
 
-  const client = new OpenAI({
-    apiKey: openaiApiKey.value()
-  });
+      const client = new OpenAI({
+        apiKey: openaiApiKey.value()
+      });
 
-  const prompt = `
-```
-
+      const prompt = `
 אתה כותב בעברית, בסגנון יהודי עדין, מחזק, אחראי ונקי.
 
 המדור: בהשראת ${profile.title}
@@ -293,16 +283,15 @@ error: "Method not allowed"
 ${question}
 
 כללים חשובים מאוד:
-
-* השתמש רק בשפה של השראה יהודית כללית ומקורות יהודיים ידועים.
-* אל תמציא מקורות.
-* אל תכתוב כאילו ${profile.title} עצמו מדבר.
-* אל תכתוב נבואה.
-* אל תבטיח ישועות.
-* אל תיתן פסיקת הלכה.
-* אל תיתן אבחון רפואי, נפשי, זוגי, משפטי או כלכלי.
-* כתוב בלשון זהירה: "אפשר ללמוד", "יש כאן כיוון", "ייתכן שיש כאן נקודת חיזוק".
-* ${profile.warning}
+- השתמש רק בשפה של השראה יהודית כללית ומקורות יהודיים ידועים.
+- אל תמציא מקורות.
+- אל תכתוב כאילו ${profile.title} עצמו מדבר.
+- אל תכתוב נבואה.
+- אל תבטיח ישועות.
+- אל תיתן פסיקת הלכה.
+- אל תיתן אבחון רפואי, נפשי, זוגי, משפטי או כלכלי.
+- כתוב בלשון זהירה: "אפשר ללמוד", "יש כאן כיוון", "ייתכן שיש כאן נקודת חיזוק".
+- ${profile.warning}
 
 כתוב תשובה במבנה הבא בלבד:
 
@@ -315,34 +304,33 @@ ${question}
 אורך: עד 220 מילים.
 `;
 
-```
-  const completion = await client.responses.create({
-    model: "gpt-4.1-mini",
-    input: prompt
-  });
+      const completion = await client.responses.create({
+        model: "gpt-4.1-mini",
+        input: prompt
+      });
 
-  const message = completion.output_text || "";
+      const message = completion.output_text || "";
 
-  return res.status(200).json({
-    message
-  });
+      return res.status(200).json({
+        message
+      });
+    } catch (err) {
+      console.error("createSpiritualAnswer error:", err);
 
-} catch (err) {
-  console.error("createSpiritualAnswer error:", err);
-
-  return res.status(500).json({
-    error: "AI generation failed"
-  });
-}
-```
-
-}
+      return res.status(500).json({
+        error: "AI generation failed"
+      });
+    }
+  }
 );
 
 function cleanText(value, maxLength) {
-return String(value || "")
-.replace(/[<>]/g, "")
-.trim()
-.slice(0, maxLength);
+  return String(value || "")
+    .replace(/[<>]/g, "")
+    .trim()
+    .slice(0, maxLength);
 }
-
+'''
+path = Path('/mnt/data/index.js')
+path.write_text(code, encoding='utf-8')
+print(path)
