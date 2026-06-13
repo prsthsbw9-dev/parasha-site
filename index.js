@@ -35,33 +35,22 @@ exports.createPersonalReading = onRequest(
         mitzvahGregorianDate: cleanText(input.mitzvahGregorianDate, 40),
       
         parasha: cleanText(input.parasha, 80),
-        rootAliyah: cleanText(input.rootAliyah, 40),
-        gematriaValue: Number(input.gematriaValue || 0),
       
         birthParasha: cleanText(
           input.birthParasha || input.personalParasha || input.parasha,
           90
         ),
-        
+      
         mitzvahParasha: cleanText(
           input.mitzvahParasha || input.parasha,
           90
         ),
-        
+      
         aiInstruction: cleanText(
           input.aiInstruction || input.writingInstruction || "",
           3000
         )
-
-      if (!safeData.firstName || !safeData.jewishName) {
-        return res.status(400).json({
-          error: "Missing required fields"
-        });
-      }
-
-      const client = new OpenAI({
-        apiKey: openaiApiKey.value()
-      });
+      };
 
       const prompt = `
       אתה כותב בעברית, בסגנון יהודי עמוק, ברור, מחזק, נקי ואחראי.
