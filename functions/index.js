@@ -1,5 +1,3 @@
-from pathlib import Path
-
 code = r'''const { onRequest } = require("firebase-functions/v2/https");
 const { defineSecret } = require("firebase-functions/params");
 const OpenAI = require("openai");
