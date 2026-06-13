@@ -38,10 +38,20 @@ exports.createPersonalReading = onRequest(
         rootAliyah: cleanText(input.rootAliyah, 40),
         gematriaValue: Number(input.gematriaValue || 0),
       
-        birthParasha: cleanText(input.birthParasha || input.parasha, 90),
-        mitzvahParasha: cleanText(input.mitzvahParasha || input.parasha, 90),
-        aiInstruction: cleanText(input.aiInstruction, 3000)
-      };
+        birthParasha: cleanText(
+          input.birthParasha || input.personalParasha || input.parasha,
+          90
+        ),
+        
+        mitzvahParasha: cleanText(
+          input.mitzvahParasha || input.parasha,
+          90
+        ),
+        
+        aiInstruction: cleanText(
+          input.aiInstruction || input.writingInstruction || "",
+          3000
+        )
 
       if (!safeData.firstName || !safeData.jewishName) {
         return res.status(400).json({
