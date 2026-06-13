@@ -1559,259 +1559,56 @@
       const mitzvahLabel = data.gender === "female" ? "בת המצווה" : "בר המצווה";
       const bornTime = data.birthTime ? ` בזמן ה${escapeHtml(data.birthTime)}` : "";
 
-      const gregorianDateText = escapeHtml(formatGregorianDate(data.birthDate));
       const hebrewDateText = escapeHtml(formatHebrewDateWithYearNumber(data));
-      const weekdayText = escapeHtml(getWeekdayHebrew(data.birthDate));
-      const rawHebrewMonth = getHebrewMonthName(data.birthDate);
-      const hebrewMonth = normalizeHebrewMonthName(rawHebrewMonth);
-      const mazalInfo = getMazalByHebrewMonth(hebrewMonth);
-      const monthDetails = getJewishMonthDetails(hebrewMonth);
-      const rootAliyah = getAliyahByHebrewDay(data.hebcalInfo?.hebrewDay);
-      const rootAliyahMeaning = getAliyahMeaning(rootAliyah);
-      const rootAliyahBasis = data.hebcalInfo?.hebrewDay
-        ? `יום הלידה העברי שלך הוא ${hebrewNumber(data.hebcalInfo.hebrewDay)} בחודש. החישוב מחלק את ימי החודש למחזור קבוע של שבע עליות, ולכן מתקבלת עלייה ${rootAliyah}.`
-        : "לא ניתן היה לחשב את עליית השורש כי יום הלידה העברי לא זוהה.";
-      const gematriaValue = getGematriaValue(data.firstName);
-
-      const mitzvahHebrewDate =
-        data.mitzvahInfo?.mitzvahHebrewDate || "לא זוהה";
-
-      const mitzvahGregorianDate =
-        data.mitzvahInfo?.mitzvahGregorianDate
-          ? formatGregorianDate(data.mitzvahInfo.mitzvahGregorianDate)
-          : "לא זוהה";
-
-      const parashaText = data.parashaInfo?.parasha || "לא זוהתה";
-      const ageDetails = calculateAgeDetails(data.birthDate);
-      ageDetails.ageText = formatAgeText(ageDetails);
-      const lifeGuidance = getLifeGuidance(data, ageDetails);
-      const depthMap = getPersonalDepthMap(data, ageDetails);
-      const hebrewDateReduction = calculateHebrewDateReduction(data, ageDetails.isMinor);
+      const personalParashaText = data.birthParashaInfo?.parasha || "לא זוהתה";
+      const personalParashaDate = data.birthParashaInfo?.shabbatDate
+        ? formatGregorianDate(data.birthParashaInfo.shabbatDate)
+        : "לא זוהה";
+      const mitzvahHebrewDate = data.mitzvahInfo?.mitzvahHebrewDate || "לא זוהה";
+      const mitzvahGregorianDate = data.mitzvahInfo?.mitzvahGregorianDate
+        ? formatGregorianDate(data.mitzvahInfo.mitzvahGregorianDate)
+        : "לא זוהה";
+      const mitzvahParashaText = data.parashaInfo?.parasha || "לא זוהתה";
 
       return `
         <div class="result-main-title">${safeFirstName} ${escapeHtml(dear)}</div>
 
         <div class="result-section">
-          <div class="result-section-title">פרטים בסיסיים</div>
+          <div class="result-section-title">הנתונים שמהם נבנית המפה</div>
 
           <div class="result-item">
-            <div class="result-label">נולדת בתאריך הלועזי</div>
-            <div class="result-value">${gregorianDateText}</div>
-          </div>
-
-          <div class="result-item">
-            <div class="result-label">ובתאריך העברי</div>
-            <div class="result-value">${hebrewDateText}${bornTime}</div>
-          </div>
-
-          <div class="result-item">
-            <div class="result-label">השם כפי שיופיע לחיזוק ותפילה</div>
+            <div class="result-label">השם לתפילה וחיזוק</div>
             <div class="result-value">${safeJewishName}</div>
           </div>
 
           <div class="result-item">
-            <div class="result-label">גילך כיום</div>
-            <div class="result-value">${escapeHtml(ageDetails.ageText)}</div>
+            <div class="result-label">התאריך העברי שלך</div>
+            <div class="result-value">${hebrewDateText}${bornTime}</div>
           </div>
 
           <div class="result-item">
-            <div class="result-label">שנת החיים הנוכחית שלך</div>
-            <div class="result-value">את/ה נמצא/ת כעת ב${escapeHtml(ageDetails.lifeYearText)}</div>
+            <div class="result-label">פרשת השבוע המשויכת אליך לפי תאריך הלידה</div>
+            <div class="result-value">
+              ${escapeHtml(personalParashaText)}<br>
+              <span style="font-size:13px;color:rgba(255,255,255,.78);">השבת שעליה בוצע החישוב: ${escapeHtml(data.birthParashaInfo?.shabbatHebrewDate || "לא זוהה")} · ${escapeHtml(personalParashaDate)}</span>
+            </div>
           </div>
 
           <div class="result-item">
-            <div class="result-label">עד יום ההולדת הבא</div>
-            <div class="result-value">נותרו ${escapeHtml(ageDetails.daysToNextBirthday)} ימים</div>
+            <div class="result-label">פרשת השבוע שבה הגעת לגיל ${escapeHtml(mitzvahLabel)}</div>
+            <div class="result-value">
+              ${escapeHtml(mitzvahParashaText)}<br>
+              <span style="font-size:13px;color:rgba(255,255,255,.78);">תאריך ${escapeHtml(mitzvahLabel)}: ${escapeHtml(mitzvahHebrewDate)} · ${escapeHtml(mitzvahGregorianDate)}</span>
+            </div>
           </div>
-        </div>
-
-        <div class="result-section">
-          <div class="result-section-title">רמז מספרי לפי התאריך העברי</div>
-
-          <div class="result-note">
-            כדי לשמור על חיבור למסורת ישראל, הרמז המספרי מחושב לפי התאריך העברי שלך — היום, החודש ושנת הלידה העברית — ולא לפי התאריך הלועזי. זהו כלי להתבוננות בלבד ולא קביעה מוחלטת.
-          </div>
-
-          <div class="result-item">
-            <div class="result-label">דרך החישוב</div>
-            <div class="result-value">${escapeHtml(hebrewDateReduction.calculationText)}</div>
-          </div>
-
-          <div class="result-item">
-            <div class="result-label">מספר השורש לפי התאריך העברי</div>
-            <div class="result-value">${escapeHtml(hebrewDateReduction.coreNumber)}</div>
-          </div>
-
-          <div class="result-item">
-            <div class="result-label">הרמז העדין</div>
-            <div class="result-value">${escapeHtml(hebrewDateReduction.profile.title)} — ${escapeHtml(hebrewDateReduction.profile.light)}</div>
-          </div>
-
-          <div class="result-item">
-            <div class="result-label">נקודת תיקון להתבוננות</div>
-            <div class="result-value">${escapeHtml(hebrewDateReduction.profile.correction)}</div>
-          </div>
-
-          <div class="result-item">
-            <div class="result-label">שאלה אישית מתוך החישוב</div>
-            <div class="result-value">${escapeHtml(hebrewDateReduction.profile.question)}</div>
-          </div>
-        </div>
-
-        <div class="result-section">
-          <div class="result-section-title">נתוני שורש וזמן</div>
-
-          <div class="result-item">
-            <div class="result-label">יום הלידה</div>
-            <div class="result-value">${weekdayText}</div>
-          </div>
-
-          <div class="result-item">
-            <div class="result-label">חודש הלידה העברי</div>
-            <div class="result-value">${escapeHtml(rawHebrewMonth)}</div>
-          </div>
-
-          <div class="result-item">
-            <div class="result-label">המזל לפי חודש הלידה העברי</div>
-            <div class="result-value">${escapeHtml(mazalInfo.mazal)}</div>
-          </div>
-
-          <div class="result-item">
-            <div class="result-label">היסוד המקושר למזל</div>
-            <div class="result-value">${escapeHtml(monthDetails.element)}</div>
-          </div>
-
-          <div class="result-item">
-            <div class="result-label">השבט המקושר לחודש הלידה</div>
-            <div class="result-value">${escapeHtml(monthDetails.tribe)}</div>
-          </div>
-
-          <div class="result-item">
-            <div class="result-label">החוש הפנימי המקושר לחודש</div>
-            <div class="result-value">${escapeHtml(monthDetails.sense)}</div>
-          </div>
-
-          <div class="result-item">
-            <div class="result-label">גימטריית השם הפרטי</div>
-            <div class="result-value">${escapeHtml(gematriaValue)}</div>
-          </div>
-        </div>
-
-        <div class="result-section">
-          <div class="result-section-title">${escapeHtml(depthMap.title)}</div>
-
-          <div class="result-item">
-            <div class="result-label">פתיחה אישית</div>
-            <div class="result-value">${escapeHtml(depthMap.intro)}</div>
-          </div>
-
-          <div class="result-item">
-            <div class="result-label">1. האור הבולט שלך</div>
-            <div class="result-value">${escapeHtml(depthMap.visibleLight)}</div>
-          </div>
-
-          <div class="result-item">
-            <div class="result-label">2. המקום שבו את/ה נוטה להסתיר את עצמך</div>
-            <div class="result-value">${escapeHtml(depthMap.hiddenPlace)}</div>
-          </div>
-
-          <div class="result-item">
-            <div class="result-label">3. מה מחזק אותך באמת</div>
-            <div class="result-value">${escapeHtml(depthMap.strengthens)}</div>
-          </div>
-
-          <div class="result-item">
-            <div class="result-label">4. מה מחליש אותך כשלא שמים לב</div>
-            <div class="result-value">${escapeHtml(depthMap.weakens)}</div>
-          </div>
-
-          <div class="result-item">
-            <div class="result-label">5. מה הנשמה מבקשת בתקופה הזו</div>
-            <div class="result-value">${escapeHtml(depthMap.soulRequest)}</div>
-          </div>
-
-          <div class="result-item">
-            <div class="result-label">6. שאלה אחת שלא כדאי לברוח ממנה</div>
-            <div class="result-value">${escapeHtml(depthMap.innerQuestion)}</div>
-          </div>
-
-          <div class="result-item">
-            <div class="result-label">7. פעולה קטנה לשבוע הקרוב</div>
-            <div class="result-value">${escapeHtml(depthMap.weeklyStep)}</div>
-          </div>
-        </div>
-
-        <div class="result-section">
-          <div class="result-section-title">${escapeHtml(mitzvahLabel)}</div>
-
-          <div class="result-item">
-            <div class="result-label">תאריך ${escapeHtml(mitzvahLabel)}</div>
-            <div class="result-value">${escapeHtml(mitzvahHebrewDate)}<br>${escapeHtml(mitzvahGregorianDate)}</div>
-          </div>
-
-          <div class="result-item">
-            <div class="result-label">קריאת ${escapeHtml(mitzvahLabel)} המשוערת לפי שבת</div>
-            <div class="result-value">${escapeHtml(parashaText)}</div>
-          </div>
-
-          <div class="result-item">
-            <div class="result-label">סוג הקריאה</div>
-            <div class="result-value">${escapeHtml(data.parashaInfo?.readingType || "משוער לפי השבת הראשונה לאחר הכניסה למצוות")}</div>
-          </div>
-
-          <div class="result-item">
-            <div class="result-label">השבת שעליה בוצע החישוב</div>
-            <div class="result-value">${escapeHtml(data.parashaInfo?.shabbatHebrewDate || "לא זוהה")}<br>${escapeHtml(data.parashaInfo?.shabbatDate ? formatGregorianDate(data.parashaInfo.shabbatDate) : "לא זוהה")}</div>
-          </div>
-
-          <div class="result-item">
-            <div class="result-label">בסיס החישוב</div>
-            <div class="result-value">${escapeHtml(data.parashaInfo?.basis || "השבת הראשונה שבה כבר נכנסת למצוות")}</div>
-          </div>
-
-          <div class="result-item">
-            <div class="result-label">אפשרות עלייה ראשונה לאחר הכניסה למצוות</div>
-            <div class="result-value">${escapeHtml(data.parashaInfo?.firstPossibleReadingDateHebrew || "לא זוהה")}<br>${escapeHtml(data.parashaInfo?.firstPossibleReadingDate ? formatGregorianDate(data.parashaInfo.firstPossibleReadingDate) : "לא זוהה")}</div>
-          </div>
-
-          <div class="result-item">
-            <div class="result-label">הערה חשובה</div>
-            <div class="result-value">${escapeHtml(data.parashaInfo?.note || "הקריאה המוצגת כאן מחושבת לפי המנהג הנפוץ. העלייה בפועל עשויה להשתנות לפי מנהג המשפחה ובית הכנסת.")}</div>
-          </div>
-
-          <div class="result-item">
-            <div class="result-label">עליית השורש האישית</div>
-            <div class="result-value">עלייה ${escapeHtml(rootAliyah)}</div>
-          </div>
-
-          <div class="result-item">
-            <div class="result-label">איך חושבה עליית השורש?</div>
-            <div class="result-value">${escapeHtml(rootAliyahBasis)}</div>
-          </div>
-
-          <div class="result-item">
-            <div class="result-label">משמעות עליית השורש</div>
-            <div class="result-value">${escapeHtml(rootAliyahMeaning)}</div>
-          </div>
-
-          <div class="result-item">
-            <div class="result-label">דיוק חשוב</div>
-            <div class="result-value">עליית השורש כאן היא רמז אישי לפי יום הלידה העברי, ואינה בהכרח העלייה ההלכתית שבה עלו בפועל בבית הכנסת. הקריאה ההלכתית בפועל תלויה ביום שבו בחרו לעלות לתורה, במנהג המשפחה ובמנהג בית הכנסת.</div>
-          </div>
-
-          <a class="root-aliyah-link" href="#" onclick="return false;">
-            <span>הקריאה המשוערת לפי שבת: ${escapeHtml(parashaText)}</span>
-            <strong>עליית השורש האישית · עלייה ${escapeHtml(rootAliyah)}</strong>
-          </a>
         </div>
 
         <div class="result-note">
-          הנתונים כאן הם בסיס ראשוני לפי שם, תאריך עברי ושיוכים מסורתיים כלליים.
-          אין לראות בהם נבואה, קביעה מוחלטת על האדם, אבחון אישי, ייעוץ רפואי, ייעוץ נפשי, ייעוץ משפטי או ייעוץ כלכלי.
-          מטרת הדף היא לעורר מחשבה טובה, חשבון נפש, חיזוק וצמיחה.
+          הסיכום הבא נבנה כהתבוננות יהודית בלבד: תאריך עברי, פרשת השבוע המשויכת אליך, פרשת גיל המצוות וחוכמת הפרד״ס. אין לראות בכך נבואה או קביעה מוחלטת, אלא קריאה אישית לכיוון, תיקון ומעשה טוב.
         </div>
       `;
     }
+
 
     async function getHebcalDateInfo(dateValue){
       const url = `https://www.hebcal.com/converter?cfg=json&date=${dateValue}&g2h=1&strict=1`;
@@ -2082,16 +1879,25 @@
             mitzvahType: data.gender === "female" ? "בת מצווה" : "בר מצווה",
             mitzvahHebrewDate: data.mitzvahInfo?.mitzvahHebrewDate || "",
             mitzvahGregorianDate: data.mitzvahInfo?.mitzvahGregorianDate || "",
-            parasha: data.parashaInfo?.parasha || "",
-            parashaReadingType: data.parashaInfo?.readingType || "",
-            estimatedShabbatDate: data.parashaInfo?.shabbatDate || "",
-            estimatedShabbatHebrewDate: data.parashaInfo?.shabbatHebrewDate || "",
-            firstPossibleReadingDate: data.parashaInfo?.firstPossibleReadingDate || "",
-            firstPossibleReadingHebrewDate: data.parashaInfo?.firstPossibleReadingDateHebrew || "",
-            parashaCalculationBasis: data.parashaInfo?.basis || "",
-            parashaCalculationNote: data.parashaInfo?.note || "",
+
+            personalParasha: data.birthParashaInfo?.parasha || "",
+            personalParashaEnglish: data.birthParashaInfo?.parashaEnglish || "",
+            personalParashaReadingType: data.birthParashaInfo?.readingType || "",
+            personalParashaShabbatDate: data.birthParashaInfo?.shabbatDate || "",
+            personalParashaShabbatHebrewDate: data.birthParashaInfo?.shabbatHebrewDate || "",
+            personalParashaCalculationBasis: data.birthParashaInfo?.basis || "השבת הסמוכה/הראשונה לפי תאריך הלידה העברי",
+            personalParashaCalculationNote: data.birthParashaInfo?.note || "",
+
+            mitzvahParasha: data.parashaInfo?.parasha || "",
+            mitzvahParashaEnglish: data.parashaInfo?.parashaEnglish || "",
+            mitzvahParashaReadingType: data.parashaInfo?.readingType || "",
+            mitzvahShabbatDate: data.parashaInfo?.shabbatDate || "",
+            mitzvahShabbatHebrewDate: data.parashaInfo?.shabbatHebrewDate || "",
+            mitzvahParashaCalculationBasis: data.parashaInfo?.basis || "השבת הראשונה שבה כבר נכנסת למצוות",
+            mitzvahParashaCalculationNote: data.parashaInfo?.note || "",
+
             rootAliyah: getAliyahByHebrewDay(data.hebcalInfo?.hebrewDay),
-            aliyahCalculationMethod: "עליית השורש מחושבת כרמז אישי לפי יום הלידה העברי במחזור של שבע עליות; אינה קובעת את העלייה ההלכתית בפועל.",
+            aliyahCalculationMethod: "נתון עזר בלבד לפי יום הלידה העברי. אין לבסס עליו את הסיכום המרכזי ואין להציג אותו כעלייה הלכתית.",
             aliyahMeaning: getAliyahMeaning(getAliyahByHebrewDay(data.hebcalInfo?.hebrewDay)),
             gematriaValue: getGematriaValue(data.firstName),
             gematriaMeaning: getGematriaMeaning(getGematriaValue(data.firstName)),
@@ -2103,19 +1909,22 @@
             lifeGuidance: getLifeGuidance(data, ageDetails),
             depthMap,
             hebrewDateReduction,
-            desiredAiTitle: "המפה הפנימית שלך",
+
+            desiredAiTitle: "הסיכום האישי שלך",
             desiredAiStructure: [
-              "האור הבולט שלך",
-              "המקום שבו את/ה נוטה להסתיר את עצמך",
-              "מה מחזק אותך באמת",
-              "מה מחליש אותך כשלא שמים לב",
-              "מה הנשמה מבקשת בתקופה הזו",
-              "שאלה אחת שלא כדאי לברוח ממנה",
-              "פעולה קטנה לשבוע הקרוב",
-              "רמז מספרי לפי התאריך העברי"
+              "פתיחה קצרה ואישית בשם האדם",
+              "פרשת השורש שלך לפי תאריך הלידה העברי",
+              "מה פרשת גיל המצוות מוסיפה לכיוון החיים",
+              "פשט: מסר פשוט מהפרשות ומהזמן העברי",
+              "רמז: נקודת רמז יהודית עדינה מתוך התאריך והפרשות",
+              "דרש: שיעור מוסרי לחיים של היום",
+              "סוד: עומק פנימי בניסוח זהיר ולא קבלי מוחלט",
+              "מסקנות הייעוד שלך בעולם הזה",
+              "צעד מעשי אחד לשבוע הקרוב"
             ],
-            writingInstruction: "אל תציג רשימת נתונים יבשה. בנה מפת עומק אישית מתוך שילוב הנתונים, כולל את הרמז המספרי לפי התאריך העברי כנקודת התבוננות עדינה בלבד. כתוב כאילו האדם מרגיש שרואים אותו, בשפה חמה, יהודית, אחראית ומעשית. השתמש בזהירות במילים כמו ייתכן, יש כאן רמז, כדאי להתבונן. אל תכתוב שהדברים ודאיים ואל תציג את הרמז המספרי כנבואה, כהלכה או כקביעה קבלית מוחלטת.",
-            safetyInstruction: "כתוב כהתבוננות רוחנית עדינה בלבד. אל תכתוב נבואה, קביעה מוחלטת, אבחון רפואי או נפשי, תחזית עתיד, או הוראות מסוכנות. אם isMinor=true אל תכתוב הכוונה זוגית, כספית, מקצועית או דברים מפחידים; כתוב רק חיזוק עדין לגיל צעיר והמלצה להתייעץ עם הורים או מבוגר אחראי."
+            writingInstruction: "כתוב בעברית, קליל, עמוק ומרגש אך לא ארוך מדי. אל תציג טבלת נתונים ואל תחזור על כל הפרטים הטכניים. בנה סיכום אחד זורם לפי התאריך העברי ולפי פרשת השבוע האישית בלבד, והוסף את פרשת השבוע של גיל המצוות כנקודת השלמה. השתמש בפירוש יהודי בלבד ובשפת פרד״ס: פשט, רמז, דרש וסוד. בסוף כתוב כותרת ברורה: 'מסקנות הייעוד שלך', ובה 3 מסקנות קצרות ומעשיות על הכיוון שהאדם בא לחזק בעולם: מידה פנימית, השפעה על אחרים, וצעד מעשי. אל תתעסק בעליות התורה מעבר לכך שהן נתון עזר בלבד אם נדרש; הדגש הוא הפרשה, הזמן העברי והפרד״ס.",
+            sourcesInstruction: "הישען רק על עולם יהודי מסורתי: תנ״ך, חז״ל, מדרש, מוסר, חסידות וקבלה בניסוח זהיר. אל תשתמש באסטרולוגיה כללית, נומרולוגיה חילונית, ניו־אייג׳ או פסיכולוגיה כאילו הן מקור סמכות. אפשר לומר 'יש כאן רמז' או 'אפשר להתבונן בכך' אך לא לקבוע ודאות.",
+            safetyInstruction: "כתוב כהתבוננות רוחנית עדינה בלבד. אל תכתוב נבואה, קביעה מוחלטת, אבחון רפואי או נפשי, תחזית עתיד, הבטחה, או הוראה מסוכנת. אם isMinor=true אל תכתוב הכוונה זוגית, כספית או מקצועית; כתוב רק חיזוק מידות, כבוד להורים, לימוד, שמחה, חברים טובים והתייעצות עם הורים או מבוגר אחראי. גם למבוגר, אל תציג את הייעוד כגורל סגור אלא ככיוון של שליחות ותיקון."
           })
         });
 
@@ -2427,7 +2236,7 @@
       resultBox.style.display = "block";
       resultBox.innerHTML = `
         <div class="result-loading">
-          🤿 צוללים לעומק הנתונים שלך...
+          🤿 בונים לך סיכום אישי קצר לפי הפרשה והפרד״ס...
         </div>
       `;
 
@@ -2478,11 +2287,23 @@
 
       data.parashaInfo = parashaInfo;
 
+      let birthParashaInfo = null;
+
+      try{
+        birthParashaInfo = await getParashaInfo(data.birthDate);
+      }catch(err){
+        console.error("Birth parasha error:", err);
+      }
+
+      data.birthParashaInfo = birthParashaInfo;
+
       try{
         const finalDataForFirestore = {
           ...data,
           jewishName: buildJewishName(data),
           hebrewMonthDisplay: getHebrewMonthName(data.birthDate),
+          birthParashaInfo: data.birthParashaInfo,
+          mitzvahParashaInfo: data.parashaInfo,
           rootAliyah: getAliyahByHebrewDay(data.hebcalInfo?.hebrewDay),
           gematriaValue: getGematriaValue(data.firstName),
           ageDetails: calculateAgeDetails(data.birthDate),
@@ -2502,8 +2323,8 @@
         const aiLoadingBox = document.createElement("div");
         aiLoadingBox.className = "ai-section";
         aiLoadingBox.innerHTML = `
-          <div class="ai-section-title">המפה הפנימית שלך</div>
-          <div class="ai-section-content">✨ מחברים את הנתונים למפת עומק אישית...</div>
+          <div class="ai-section-title">הסיכום האישי שלך</div>
+          <div class="ai-section-content">✨ מחברים את הפרשה, התאריך העברי וחוכמת הפרד״ס...</div>
         `;
 
         resultBox.appendChild(aiLoadingBox);
@@ -2512,7 +2333,7 @@
           const aiMessage = await getAiPersonalMessage(data);
 
           aiLoadingBox.innerHTML = `
-            <div class="ai-section-title">העמקה אישית</div>
+            <div class="ai-section-title">הסיכום האישי שלך</div>
             <div class="ai-section-content">${escapeHtml(aiMessage).replace(/\n/g, "<br>")}</div>
           `;
         }catch(aiErr){
@@ -2521,7 +2342,7 @@
           aiLoadingBox.innerHTML = `
             <div class="ai-section-title">המפה הפנימית שלך</div>
             <div class="ai-section-content">
-              כרגע החלק החכם של המפה אינו זמין. מפת העומק הבסיסית למעלה חושבה בהצלחה.
+              כרגע החלק החכם של הסיכום אינו זמין. הנתונים הבסיסיים למעלה חושבו בהצלחה, ואפשר לנסות שוב בעוד רגע.
             </div>
           `;
         }
