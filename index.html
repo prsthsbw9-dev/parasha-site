@@ -2113,53 +2113,60 @@
         .replace(/^עליית\s*/g, "")
         .trim();
     
-      const aliyahCandidates = [
-        cleanAliyah,
-        cleanAliyahFemale,
-        rawAliyah,
-        rawAliyahWithoutPrefix,
-    
-        `עלית ${cleanAliyah}`,
-        `עליית ${cleanAliyah}`,
-        `עליה ${cleanAliyah}`,
-        `עלייה ${cleanAliyah}`,
-    
-        cleanAliyahFemale ? `עלית ${cleanAliyahFemale}` : "",
-        cleanAliyahFemale ? `עליית ${cleanAliyahFemale}` : "",
-        cleanAliyahFemale ? `עליה ${cleanAliyahFemale}` : "",
-        cleanAliyahFemale ? `עלייה ${cleanAliyahFemale}` : ""
-      ]
-        .filter(Boolean)
-        .map((item) => String(item).trim())
-        .filter((item, index, arr) => item && arr.indexOf(item) === index);
-    
-      let foundVideos = {};
-      let foundParasha = "";
-      let foundParashaKey = "";
-      let foundAliyah = "";
-      let foundAliyahKey = "";
-    
-      for(const parashaCandidate of parashaCandidates){
-        const parashaKey = makeSafeKey(parashaCandidate);
-        if(!parashaKey) continue;
-    
-        for(const aliyahCandidate of aliyahCandidates){
-          const aliyahKey = makeSafeKey(aliyahCandidate);
-          if(!aliyahKey) continue;
-    
-          const videosRef = doc(db, "aliyahVideos", videoDocId(parashaKey, aliyahKey));
-          const videosSnap = await getDoc(videosRef);
-          const data = videosSnap.exists() ? videosSnap.data() : {};
-    
-          if(videosSnap.exists() && hasAnyLayerVideo(data)){
-            foundVideos = data;
-            foundParasha = parashaCandidate;
-            foundParashaKey = parashaKey;
-            foundAliyah = aliyahCandidate;
-            foundAliyahKey = aliyahKey;
-            break;
-          }
-        }
+        const aliyahMaleMap = {
+          "ראשונה": "ראשון",
+          "שניה": "שני",
+          "שנייה": "שני",
+          "שלישית": "שלישי",
+          "רביעית": "רביעי",
+          "חמישית": "חמישי",
+          "שישית": "שישי",
+          "שביעית": "שביעי"
+        };
+        
+        const aliyahFemaleMap = {
+          "ראשון": "ראשונה",
+          "שני": "שנייה",
+          "שלישי": "שלישית",
+          "רביעי": "רביעית",
+          "חמישי": "חמישית",
+          "שישי": "שישית",
+          "שביעי": "שביעית"
+        };
+        
+        const canonicalAliyah = aliyahMaleMap[cleanAliyah] || cleanAliyah;
+        const cleanAliyahFemale = aliyahFemaleMap[canonicalAliyah] || "";
+        
+        const rawAliyahWithoutPrefix = rawAliyah
+          .replace(/^עלייה\s*/g, "")
+          .replace(/^עליה\s*/g, "")
+          .replace(/^עלית\s*/g, "")
+          .replace(/^עליית\s*/g, "")
+          .trim();
+        
+        const rawAliyahCanonical = aliyahMaleMap[rawAliyahWithoutPrefix] || rawAliyahWithoutPrefix;
+        
+        const aliyahCandidates = [
+          canonicalAliyah,
+          cleanAliyahFemale,
+          cleanAliyah,
+          rawAliyah,
+          rawAliyahWithoutPrefix,
+          rawAliyahCanonical,
+        
+          `עלית ${canonicalAliyah}`,
+          `עליית ${canonicalAliyah}`,
+          `עליה ${canonicalAliyah}`,
+          `עלייה ${canonicalAliyah}`,
+        
+          cleanAliyahFemale ? `עלית ${cleanAliyahFemale}` : "",
+          cleanAliyahFemale ? `עליית ${cleanAliyahFemale}` : "",
+          cleanAliyahFemale ? `עליה ${cleanAliyahFemale}` : "",
+          cleanAliyahFemale ? `עלייה ${cleanAliyahFemale}` : ""
+        ]
+          .filter(Boolean)
+          .map((item) => String(item).trim())
+          .filter((item, index, arr) => item && arr.indexOf(item) === index);
     
         if(foundAliyah) break;
       }
