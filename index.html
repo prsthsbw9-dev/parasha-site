@@ -1779,6 +1779,101 @@
       return `${parashaKey}_${aliyahKey}`;
     }
 
+    function normalizeHebrewSearchText(value){
+      return String(value || "")
+        .trim()
+        .replace(/[״"]/g, "")
+        .replace(/[׳']/g, "")
+        .replace(/[-–—_/|]+/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+    }
+    
+    function normalizeAliyahName(value){
+      const text = normalizeHebrewSearchText(value);
+    
+      const compact = text
+        .replace(/^על[יייהת]*\s*/g, "")
+        .replace(/^עלי[י]?ת\s*/g, "")
+        .replace(/^עליה\s*/g, "")
+        .replace(/^עליית\s*/g, "")
+        .trim();
+    
+      const aliases = [
+        { canonical:"ראשון", words:["ראשון", "ראשונה", "א", "א׳", "א'", "1", "01", "עלייה 1", "עליה 1", "עלית 1", "עליית 1"] },
+        { canonical:"שני", words:["שני", "שניה", "שנייה", "ב", "ב׳", "ב'", "2", "02", "עלייה 2", "עליה 2", "עלית 2", "עליית 2"] },
+        { canonical:"שלישי", words:["שלישי", "שלישית", "ג", "ג׳", "ג'", "3", "03", "עלייה 3", "עליה 3", "עלית 3", "עליית 3"] },
+        { canonical:"רביעי", words:["רביעי", "רביעית", "ד", "ד׳", "ד'", "4", "04", "עלייה 4", "עליה 4", "עלית 4", "עליית 4"] },
+        { canonical:"חמישי", words:["חמישי", "חמישית", "ה", "ה׳", "ה'", "5", "05", "עלייה 5", "עליה 5", "עלית 5", "עליית 5"] },
+        { canonical:"שישי", words:["שישי", "שישית", "ו", "ו׳", "ו'", "6", "06", "עלייה 6", "עליה 6", "עלית 6", "עליית 6"] },
+        { canonical:"שביעי", words:["שביעי", "שביעית", "ז", "ז׳", "ז'", "7", "07", "עלייה 7", "עליה 7", "עלית 7", "עליית 7"] },
+        { canonical:"מפטיר", words:["מפטיר", "הפטרה"] }
+      ];
+    
+      for(const item of aliases){
+        if(item.words.some((word) => compact === normalizeHebrewSearchText(word) || text.includes(normalizeHebrewSearchText(word)))){
+          return item.canonical;
+        }
+      }
+    
+      return compact;
+    }
+    
+    function normalizeParashaName(value){
+      let text = normalizeHebrewSearchText(value);
+    
+      text = text
+        .replace(/^פרשת\s+/g, "")
+        .replace(/^פרשה\s+/g, "")
+        .replace(/\s+פרשת\s+/g, " ")
+        .replace(/\s+פרשה\s+/g, " ")
+        .trim();
+    
+      const aliyahWords = [
+        "עלייה", "עליה", "עליית", "עלית",
+        "ראשון", "ראשונה",
+        "שני", "שניה", "שנייה",
+        "שלישי", "שלישית",
+        "רביעי", "רביעית",
+        "חמישי", "חמישית",
+        "שישי", "שישית",
+        "שביעי", "שביעית",
+        "מפטיר", "הפטרה",
+        "1", "2", "3", "4", "5", "6", "7",
+        "01", "02", "03", "04", "05", "06", "07"
+      ];
+    
+      for(const word of aliyahWords){
+        const index = text.indexOf(word);
+        if(index > -1){
+          text = text.slice(0, index).trim();
+          break;
+        }
+      }
+    
+      return text;
+    }
+    
+    function parseAliyahSearch(parashaInput, aliyahInput){
+      const combined = normalizeHebrewSearchText(`${parashaInput || ""} ${aliyahInput || ""}`);
+    
+      let parasha = normalizeParashaName(parashaInput);
+      let aliyah = normalizeAliyahName(aliyahInput);
+    
+      if(!aliyah && combined){
+        aliyah = normalizeAliyahName(combined);
+      }
+    
+      if(!parasha && combined){
+        parasha = normalizeParashaName(combined);
+      }
+    
+      return {
+        parasha,
+        aliyah
+      };
+    }
+    
     function setSearchMessage(text){
       const box = document.getElementById("pardesSearchMessage");
       if(!box) return;
