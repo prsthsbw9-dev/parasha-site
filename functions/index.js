@@ -1,5 +1,5 @@
 const { onRequest } = require("firebase-functions/v2/https");
-const { defineSecret } = require("firebase-functions/v2/params");
+const { defineSecret } = require("firebase-functions/params");
 const OpenAI = require("openai");
 
 const openaiApiKey = defineSecret("OPENAI_API_KEY");
