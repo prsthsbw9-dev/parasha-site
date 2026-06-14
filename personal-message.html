@@ -465,6 +465,47 @@
       color:#fff;
     }
 
+
+    .tribe-stone-section{
+      margin-top:30px;
+    }
+
+    .tribe-stone-card{
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+      border:1px solid rgba(255,255,255,.25);
+      border-radius:20px;
+      padding:13px;
+      background:rgba(0,0,0,.10);
+      box-shadow:0 0 18px rgba(190,140,255,.13);
+    }
+
+    .stone-image-wrap{
+      width:100%;
+      border-radius:18px;
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.30);
+      background:rgba(0,0,0,.18);
+      box-shadow:0 0 18px rgba(120,220,255,.16);
+    }
+
+    .stone-image{
+      width:100%;
+      display:block;
+      aspect-ratio:16/10;
+      object-fit:cover;
+    }
+
+    .tribe-stone-content{
+      width:100%;
+    }
+
+    .tribe-note{
+      margin-top:14px;
+      font-size:12px;
+    }
+
     .hidden{
       display:none !important;
     }
@@ -899,74 +940,193 @@
       };
     }
 
+    function createStoneSvgDataUri(stoneName, colorA, colorB, colorC){
+      const safeStoneName = String(stoneName || "אבן החושן")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+
+      const svg = `
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 360" width="520" height="360">
+          <defs>
+            <radialGradient id="bg" cx="50%" cy="35%" r="70%">
+              <stop offset="0%" stop-color="${colorC}" stop-opacity="0.55"/>
+              <stop offset="100%" stop-color="#061016"/>
+            </radialGradient>
+            <linearGradient id="gem" x1="20%" y1="5%" x2="85%" y2="100%">
+              <stop offset="0%" stop-color="#ffffff" stop-opacity="0.92"/>
+              <stop offset="22%" stop-color="${colorA}"/>
+              <stop offset="62%" stop-color="${colorB}"/>
+              <stop offset="100%" stop-color="#1b1024"/>
+            </linearGradient>
+            <filter id="glow">
+              <feGaussianBlur stdDeviation="8" result="blur"/>
+              <feMerge>
+                <feMergeNode in="blur"/>
+                <feMergeNode in="SourceGraphic"/>
+              </feMerge>
+            </filter>
+          </defs>
+          <rect width="520" height="360" rx="34" fill="url(#bg)"/>
+          <circle cx="260" cy="166" r="116" fill="${colorC}" opacity="0.18" filter="url(#glow)"/>
+          <polygon points="154,122 204,72 316,72 366,122 260,282" fill="url(#gem)" stroke="rgba(255,255,255,.72)" stroke-width="5" filter="url(#glow)"/>
+          <polyline points="154,122 260,122 366,122" fill="none" stroke="rgba(255,255,255,.42)" stroke-width="4"/>
+          <polyline points="204,72 260,122 316,72" fill="none" stroke="rgba(255,255,255,.38)" stroke-width="4"/>
+          <polyline points="260,122 260,282" fill="none" stroke="rgba(255,255,255,.28)" stroke-width="4"/>
+          <text x="260" y="326" text-anchor="middle" direction="rtl" unicode-bidi="bidi-override" font-family="Arial, sans-serif" font-size="31" font-weight="900" fill="#ffffff">${safeStoneName}</text>
+        </svg>
+      `;
+
+      return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
+    }
+
     function getJewishMonthDetails(hebrewMonth){
       const map = {
         "ניסן": {
           element: "אש",
           tribe: "יהודה",
-          sense: "דיבור"
+          sense: "דיבור",
+          tribeRole: "יהודה מסמל מלכות, הודאה, אחריות ציבורית והיכולת להוביל מתוך ענווה. ממנו יצאה מלכות בית דוד, ולכן הכוח שלו הוא להפוך עוצמה אישית לשליחות שמרימה אחרים.",
+          stoneName: "נופך",
+          stoneMeaning: "האבן מזכירה אש פנימית, אומץ ודיבור של הודאה. בעומק יהודי היא רומזת לאדם שלא נועד רק להרגיש כוח, אלא להפוך אותו למנהיגות נקייה ולמילה שמחזקת.",
+          practicalStep: "לתרגל השבוע דיבור אחד של הודאה או עידוד, ולקחת אחריות קטנה במקום שבו בדרך כלל מחכים שמישהו אחר יוביל.",
+          sourceNote: "שיוך האבנים מובא לפי אבני החושן וסדר השבטים המקובל. בזיהוי המדויק של חלק מהאבנים קיימות מסורות שונות.",
+          stoneImage: createStoneSvgDataUri("נופך", "#ff7a4d", "#b31326", "#ffb26b")
         },
         "אייר": {
           element: "אדמה",
           tribe: "יששכר",
-          sense: "הרהור / מחשבה"
+          sense: "הרהור / מחשבה",
+          tribeRole: "יששכר מזוהה עם לימוד תורה, הבנת הזמנים ועומק מחשבה. תפקידו להזכיר שהכוח האמיתי לא תמיד נמצא ברעש, אלא בהתמדה, לימוד והבחנה נכונה בין עיקר לטפל.",
+          stoneName: "ספיר",
+          stoneMeaning: "הספיר מסמל בהירות, עומק ושקט של תורה. הוא מזמין את האדם לנקות את המחשבה, ללמוד בעקביות, ולחפש אמת שאפשר לבנות עליה חיים.",
+          practicalStep: "לקבוע זמן קצר וקבוע ללימוד או התבוננות, אפילו 10 דקות, ולשאול: מה הדבר האמיתי שאני צריך להבין לפני שאני פועל?",
+          sourceNote: "שיוך האבנים מובא לפי אבני החושן וסדר השבטים המקובל. בזיהוי המדויק של חלק מהאבנים קיימות מסורות שונות.",
+          stoneImage: createStoneSvgDataUri("ספיר", "#7ec8ff", "#124fbd", "#b9e7ff")
         },
         "סיוון": {
           element: "אוויר",
           tribe: "זבולון",
-          sense: "הליכה / תנועה"
+          sense: "הליכה / תנועה",
+          tribeRole: "זבולון מזוהה עם יציאה לדרך, מסחר, תנועה בעולם ותמיכה בלומדי תורה. הכוח שלו הוא לחבר בין עולם המעשה לבין קדושה, ולהפוך פרנסה ותנועה לשליחות.",
+          stoneName: "יהלום",
+          stoneMeaning: "היהלום מסמל חוזק, זיכוך ויכולת להאיר אחרי ליטוש. הוא מזכיר שהדרך שלך יכולה להתגלות דווקא דרך תנועה, עשייה וחיבור בין אנשים.",
+          practicalStep: "לבחור פעולה מעשית אחת שתומכת באדם אחר או בערך רוחני, ולהפוך את התנועה היומיומית שלך לכלי של נתינה.",
+          sourceNote: "שיוך האבנים מובא לפי אבני החושן וסדר השבטים המקובל. בזיהוי המדויק של חלק מהאבנים קיימות מסורות שונות.",
+          stoneImage: createStoneSvgDataUri("יהלום", "#ffffff", "#9fd9ff", "#e9fbff")
         },
         "תמוז": {
           element: "מים",
           tribe: "ראובן",
-          sense: "ראייה"
+          sense: "ראייה",
+          tribeRole: "ראובן, הבכור, קשור לכוח הראייה, לפתיחת לב ולתשובה. תפקידו ללמד איך לראות נכון: לא רק את החיצוני, אלא גם את האדם, הכאב והאפשרות לתיקון.",
+          stoneName: "אודם",
+          stoneMeaning: "האודם מסמל לב, חיים והתעוררות. הוא מזכיר שהראייה שלך צריכה להפוך לרחמים ולמעשה, ולא להישאר רק התרשמות מבחוץ.",
+          practicalStep: "לפני תגובה או שיפוט, לעצור רגע ולשאול: מה אני עדיין לא רואה בסיפור של האדם שמולי?",
+          sourceNote: "שיוך האבנים מובא לפי אבני החושן וסדר השבטים המקובל. בזיהוי המדויק של חלק מהאבנים קיימות מסורות שונות.",
+          stoneImage: createStoneSvgDataUri("אודם", "#ff4d5f", "#8f001c", "#ff8fa0")
         },
         "אב": {
           element: "אש",
           tribe: "שמעון",
-          sense: "שמיעה"
+          sense: "שמיעה",
+          tribeRole: "שמעון קשור לשמיעה, גבול פנימי ועוצמה שצריכה תיקון. התפקיד שלו הוא להפוך תגובה מהירה, קנאות או סערה פנימית להקשבה, נאמנות וקדושה.",
+          stoneName: "פטדה / טופז",
+          stoneMeaning: "הפטדה מזכירה אור חם ובהירות. היא רומזת שהעוצמה שלך מתברכת כאשר היא עוברת דרך שמיעה אמיתית, איפוק ודיבור מדויק.",
+          practicalStep: "בכל יום לבחור שיחה אחת שבה לא עונים מיד, אלא מקשיבים עד הסוף ורק אחר כך מגיבים מתוך יישוב הדעת.",
+          sourceNote: "שיוך האבנים מובא לפי אבני החושן וסדר השבטים המקובל. בזיהוי המדויק של חלק מהאבנים קיימות מסורות שונות.",
+          stoneImage: createStoneSvgDataUri("פטדה", "#ffd46b", "#e28a22", "#fff1a8")
         },
         "אלול": {
           element: "אדמה",
           tribe: "גד",
-          sense: "מעשה"
+          sense: "מעשה",
+          tribeRole: "גד מזוהה עם גבורה, חלוציות ויציאה לפני המחנה. תפקידו להפוך כוח מעשי לאחריות, עמידה במשימה והגנה על מה שחשוב באמת.",
+          stoneName: "אחלמה",
+          stoneMeaning: "האחלמה מזכירה עומק, רוגע וכוח פנימי מאוזן. היא מזמינה להפוך גבורה לאיפוק, ולבחור פעולה נכונה במקום תגובה מתוך לחץ.",
+          practicalStep: "לקחת משימה אחת שלא סגרת, ולסיים אותה בפשטות ובשקט, בלי להעמיס על עצמך את כל העולם.",
+          sourceNote: "שיוך האבנים מובא לפי אבני החושן וסדר השבטים המקובל. בזיהוי המדויק של חלק מהאבנים קיימות מסורות שונות.",
+          stoneImage: createStoneSvgDataUri("אחלמה", "#c697ff", "#5b2a86", "#e4c8ff")
         },
         "תשרי": {
           element: "אוויר",
           tribe: "אפרים",
-          sense: "מישוש / חיבור"
+          sense: "מישוש / חיבור",
+          tribeRole: "אפרים, מבני יוסף, קשור לפריון, התרחבות והשפעה לדורות. הכוח שלו הוא לקחת ברכה שקיבל ולהפוך אותה לאחריות, חינוך והשפעה טובה על הסביבה.",
+          stoneName: "שוהם של יוסף",
+          stoneMeaning: "השוהם מזכיר זיכרון, נשיאה על הלב וחיבור לשורש. לבני יוסף הוא רומז לברכה שצריכה לצאת החוצה ולהשפיע בענווה.",
+          practicalStep: "לבחור אדם אחד שאתה יכול לחזק או ללמד השבוע, ולהעביר אליו משהו טוב שקיבלת בדרך שלך.",
+          sourceNote: "בחושן מופיע יוסף כאחד משנים עשר השבטים; אפרים ומנשה מובאים כאן כבני יוסף. בזיהוי המדויק של חלק מהאבנים קיימות מסורות שונות.",
+          stoneImage: createStoneSvgDataUri("שוהם", "#d8d8d8", "#2d2d36", "#ffffff")
         },
         "חשוון": {
           element: "מים",
           tribe: "מנשה",
-          sense: "ריח"
+          sense: "ריח",
+          tribeRole: "מנשה, מבני יוסף, קשור לזיכרון, עומק פנימי ויכולת להחזיק עבר בלי להישאר שבוי בו. תפקידו להפוך זיכרונות, ניסיונות ושורשים לברכה שמרפאת ומקדמת.",
+          stoneName: "שוהם של יוסף",
+          stoneMeaning: "השוהם מזכיר נשיאה פנימית של שמות ושורשים. הוא מזמין לא לברוח מהעבר, אלא לברר ממנו כוח, אמונה ותיקון.",
+          practicalStep: "לכתוב דבר אחד מהעבר שעדיין מכביד, ולצידו דבר אחד טוב שלמדת ממנו ויכול להפוך לשליחות.",
+          sourceNote: "בחושן מופיע יוסף כאחד משנים עשר השבטים; אפרים ומנשה מובאים כאן כבני יוסף. בזיהוי המדויק של חלק מהאבנים קיימות מסורות שונות.",
+          stoneImage: createStoneSvgDataUri("שוהם", "#d8d8d8", "#2d2d36", "#ffffff")
         },
         "כסלו": {
           element: "אש",
           tribe: "בנימין",
-          sense: "שינה"
+          sense: "שינה",
+          tribeRole: "בנימין קשור לבית המקדש, לשכינה ולנאמנות פנימית. תפקידו להזכיר שיש אור קדוש דווקא במקום הכי פנימי, במקום שבו האדם שומר אמונים גם כשאף אחד לא רואה.",
+          stoneName: "ישפה",
+          stoneMeaning: "הישפה מסמלת צבעים מרובים וחיבור בין חלקים שונים. היא מזכירה שהשליחות שלך יכולה להיות לבנות מקום פנימי נקי שבו השכינה יכולה לשרות.",
+          practicalStep: "ליצור השבוע רגע אחד קבוע של שקט, תפילה או הודאה, ולהפוך את הבית או הלב למקום מעט יותר נקי ומואר.",
+          sourceNote: "שיוך האבנים מובא לפי אבני החושן וסדר השבטים המקובל. בזיהוי המדויק של חלק מהאבנים קיימות מסורות שונות.",
+          stoneImage: createStoneSvgDataUri("ישפה", "#d85f6f", "#2f6f5e", "#f3c0a8")
         },
         "טבת": {
           element: "אדמה",
           tribe: "דן",
-          sense: "כעס / גבול פנימי"
+          sense: "כעס / גבול פנימי",
+          tribeRole: "דן קשור לדין, גבולות, בירור צדק ואיסוף מי שנשאר מאחור. תפקידו להפוך ביקורת וכעס פנימי למשפט ישר, גבול נקי ועזרה לחלשים.",
+          stoneName: "לשם",
+          stoneMeaning: "הלשם מזכיר אש נסתרת בתוך אבן. הוא רומז שכוח הדין צריך לעבור בירור, כדי להפוך מגבול קשה לגבול שמגן ומתקן.",
+          practicalStep: "לפני כעס או החלטה חדה, לשאול: האם הגבול הזה בא להעניש, או באמת להגן ולתקן?",
+          sourceNote: "שיוך האבנים מובא לפי אבני החושן וסדר השבטים המקובל. בזיהוי המדויק של חלק מהאבנים קיימות מסורות שונות.",
+          stoneImage: createStoneSvgDataUri("לשם", "#ff9a3d", "#6d1b7b", "#ffc37a")
         },
         "שבט": {
           element: "אוויר",
           tribe: "אשר",
-          sense: "אכילה"
+          sense: "אכילה",
+          tribeRole: "אשר מזוהה עם שפע, שמן, ברכה ותענוג בקדושה. תפקידו ללמד שהשפע אינו רק לקבל יותר, אלא להפוך טוב גשמי להודיה, נתינה ורכות.",
+          stoneName: "תרשיש",
+          stoneMeaning: "התרשיש מזכיר ים, מרחב ושפע. הוא מזמין את האדם להשתמש בברכה שלו באופן שמרגיע, מזין ומאיר לאחרים.",
+          practicalStep: "לקחת דבר טוב שיש לך — זמן, אוכל, ידע, מילה טובה — ולחלוק ממנו השבוע עם מישהו אחר.",
+          sourceNote: "שיוך האבנים מובא לפי אבני החושן וסדר השבטים המקובל. בזיהוי המדויק של חלק מהאבנים קיימות מסורות שונות.",
+          stoneImage: createStoneSvgDataUri("תרשיש", "#5eead4", "#0f766e", "#a7f3d0")
         },
         "אדר": {
           element: "מים",
           tribe: "נפתלי",
-          sense: "שחוק / שמחה"
+          sense: "שחוק / שמחה",
+          tribeRole: "נפתלי מזוהה עם זריזות, חן, שפה טובה ושמחה. תפקידו להפוך תנועה, קלילות ודיבור לכלי שמרומם את הלב ומביא בשורה טובה.",
+          stoneName: "שבו",
+          stoneMeaning: "השבו מזכיר שכבות, צבעים ותנועה פנימית. הוא רומז ששמחה אמיתית אינה בריחה, אלא דרך להפוך עומק וכאב לאור שמחזק.",
+          practicalStep: "לבחור מעשה קטן של שמחה אמיתית או מילה טובה, ולהשתמש בו כדי להרים אדם אחד — לא כדי לברוח, אלא כדי לחזק.",
+          sourceNote: "שיוך האבנים מובא לפי אבני החושן וסדר השבטים המקובל. בזיהוי המדויק של חלק מהאבנים קיימות מסורות שונות.",
+          stoneImage: createStoneSvgDataUri("שבו", "#8b5cf6", "#2563eb", "#c4b5fd")
         }
       };
 
       return map[normalizeHebrewMonthName(hebrewMonth)] || {
         element: "לא זוהה",
         tribe: "לא זוהה",
-        sense: "לא זוהה"
+        sense: "לא זוהה",
+        tribeRole: "לא זוהה מידע שבטי לפי חודש הלידה.",
+        stoneName: "לא זוהתה",
+        stoneMeaning: "לא זוהתה אבן מתאימה.",
+        practicalStep: "אפשר להתחזק במעשה טוב קטן, תפילה והקשבה פנימית.",
+        sourceNote: "המידע מובא כרמז יהודי להתבוננות ולא כקביעה מוחלטת.",
+        stoneImage: createStoneSvgDataUri("אבן", "#ffffff", "#7dd3fc", "#e0f2fe")
       };
     }
 
@@ -1569,6 +1729,104 @@
         ? formatGregorianDate(data.mitzvahInfo.mitzvahGregorianDate)
         : "לא זוהה";
       const mitzvahParashaText = data.parashaInfo?.parasha || "לא זוהתה";
+      const rawHebrewMonth = getHebrewMonthName(data.birthDate);
+      const monthDetails = getJewishMonthDetails(rawHebrewMonth);
+
+      const isSameParasha =
+        personalParashaText &&
+        mitzvahParashaText &&
+        personalParashaText !== "לא זוהתה" &&
+        mitzvahParashaText !== "לא זוהתה" &&
+        personalParashaText === mitzvahParashaText;
+
+      const parashaDisplayHtml = isSameParasha
+        ? `
+          <div class="result-item">
+            <div class="result-label">פרשת השבוע האישית שלך</div>
+            <div class="result-value">
+              ${escapeHtml(personalParashaText)}<br>
+              <span style="font-size:13px;color:rgba(255,255,255,.78);">
+                פרשה זו חוזרת גם בשיוך לפי תאריך הלידה וגם בגיל ${escapeHtml(mitzvahLabel)}.
+              </span><br>
+              <span style="font-size:13px;color:rgba(255,255,255,.78);">
+                השבת שעליה בוצע חישוב הלידה: ${escapeHtml(data.birthParashaInfo?.shabbatHebrewDate || "לא זוהה")} · ${escapeHtml(personalParashaDate)}
+              </span><br>
+              <span style="font-size:13px;color:rgba(255,255,255,.78);">
+                תאריך ${escapeHtml(mitzvahLabel)}: ${escapeHtml(mitzvahHebrewDate)} · ${escapeHtml(mitzvahGregorianDate)}
+              </span>
+            </div>
+          </div>
+        `
+        : `
+          <div class="result-item">
+            <div class="result-label">פרשת השבוע המשויכת אליך לפי תאריך הלידה</div>
+            <div class="result-value">
+              ${escapeHtml(personalParashaText)}<br>
+              <span style="font-size:13px;color:rgba(255,255,255,.78);">
+                השבת שעליה בוצע החישוב: ${escapeHtml(data.birthParashaInfo?.shabbatHebrewDate || "לא זוהה")} · ${escapeHtml(personalParashaDate)}
+              </span>
+            </div>
+          </div>
+
+          <div class="result-item">
+            <div class="result-label">פרשת השבוע שבה הגעת לגיל ${escapeHtml(mitzvahLabel)}</div>
+            <div class="result-value">
+              ${escapeHtml(mitzvahParashaText)}<br>
+              <span style="font-size:13px;color:rgba(255,255,255,.78);">
+                תאריך ${escapeHtml(mitzvahLabel)}: ${escapeHtml(mitzvahHebrewDate)} · ${escapeHtml(mitzvahGregorianDate)}
+              </span>
+            </div>
+          </div>
+        `;
+
+      const tribeStoneHtml = `
+        <div class="result-section tribe-stone-section">
+          <div class="result-section-title">השבט והאבן שלך לפי העומק היהודי</div>
+
+          <div class="tribe-stone-card">
+            <div class="stone-image-wrap">
+              <img class="stone-image" src="${escapeHtml(monthDetails.stoneImage)}" alt="האבן ${escapeHtml(monthDetails.stoneName)} של שבט ${escapeHtml(monthDetails.tribe)}">
+            </div>
+
+            <div class="tribe-stone-content">
+              <div class="result-item">
+                <div class="result-label">השבט המשויך לחודש הלידה שלך</div>
+                <div class="result-value">
+                  ${escapeHtml(monthDetails.tribe)}<br>
+                  <span style="font-size:13px;color:rgba(255,255,255,.78);">
+                    חודש ${escapeHtml(rawHebrewMonth)} · חוש פנימי: ${escapeHtml(monthDetails.sense)}
+                  </span>
+                </div>
+              </div>
+
+              <div class="result-item">
+                <div class="result-label">תפקיד השבט לפי המקורות</div>
+                <div class="result-value">${escapeHtml(monthDetails.tribeRole)}</div>
+              </div>
+
+              <div class="result-item">
+                <div class="result-label">האבן המשויכת לשבט</div>
+                <div class="result-value">${escapeHtml(monthDetails.stoneName)}</div>
+              </div>
+
+              <div class="result-item">
+                <div class="result-label">מה זה אומר לך בעומק יהודי</div>
+                <div class="result-value">${escapeHtml(monthDetails.stoneMeaning)}</div>
+              </div>
+
+              <div class="result-item">
+                <div class="result-label">כדי למצות את השליחות שלך לפי הרמז הזה</div>
+                <div class="result-value">${escapeHtml(monthDetails.practicalStep)}</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="result-note tribe-note">
+            ${escapeHtml(monthDetails.sourceNote)}<br>
+            השבט והאבן אינם קובעים את מי שאתה ואינם קובעים גורל. הם מובאים כרמז יהודי להתבוננות, חיזוק מידות וצעד מעשי טוב.
+          </div>
+        </div>
+      `;
 
       return `
         <div class="result-main-title">${safeFirstName} ${escapeHtml(dear)}</div>
@@ -1586,22 +1844,10 @@
             <div class="result-value">${hebrewDateText}${bornTime}</div>
           </div>
 
-          <div class="result-item">
-            <div class="result-label">פרשת השבוע המשויכת אליך לפי תאריך הלידה</div>
-            <div class="result-value">
-              ${escapeHtml(personalParashaText)}<br>
-              <span style="font-size:13px;color:rgba(255,255,255,.78);">השבת שעליה בוצע החישוב: ${escapeHtml(data.birthParashaInfo?.shabbatHebrewDate || "לא זוהה")} · ${escapeHtml(personalParashaDate)}</span>
-            </div>
-          </div>
-
-          <div class="result-item">
-            <div class="result-label">פרשת השבוע שבה הגעת לגיל ${escapeHtml(mitzvahLabel)}</div>
-            <div class="result-value">
-              ${escapeHtml(mitzvahParashaText)}<br>
-              <span style="font-size:13px;color:rgba(255,255,255,.78);">תאריך ${escapeHtml(mitzvahLabel)}: ${escapeHtml(mitzvahHebrewDate)} · ${escapeHtml(mitzvahGregorianDate)}</span>
-            </div>
-          </div>
+          ${parashaDisplayHtml}
         </div>
+
+        ${tribeStoneHtml}
 
         <div class="result-note">
           הסיכום הבא נבנה כהתבוננות יהודית בלבד: תאריך עברי, פרשת השבוע המשויכת אליך, פרשת גיל המצוות וחוכמת הפרד״ס. אין לראות בכך נבואה או קביעה מוחלטת, אלא קריאה אישית לכיוון, תיקון ומעשה טוב.
@@ -1912,17 +2158,17 @@
 
             desiredAiTitle: "השליחות האישית שלך",
             desiredAiStructure: [
-              "פתיחה קצרה ואישית בשם האדם",
-              "פרשת השורש שלך לפי תאריך הלידה העברי",
-              "מה פרשת גיל המצוות מוסיפה לכיוון החיים",
-              "פשט: מסר פשוט מהפרשות ומהזמן העברי",
-              "רמז: נקודת רמז יהודית עדינה מתוך התאריך והפרשות",
-              "דרש: שיעור מוסרי לחיים של היום",
-              "סוד: עומק פנימי בניסוח זהיר ולא קבלי מוחלט",
-              "סיכום השליחות האישית שלך",
-              "צעד מעשי אחד לשבוע הקרוב"
+              "פתיחה קצרה ואישית בשם האדם, עם תחושת חיבור ותקווה",
+              "פרשת השורש לפי תאריך הלידה: מה הנושא המרכזי שהיא מעוררת באדם",
+              "פרשת גיל המצוות: מה נוסף לאדם כאשר הוא נכנס לאחריות של מצווה ובחירה",
+              "פשט: המסר הפשוט והמעשי מתוך הפרשה והזמן העברי",
+              "רמז: רמז עדין שמחבר בין התאריך, הפרשה והכיוון הפנימי",
+              "דרש: שיעור מוסרי לחיים של היום, קשרים, משפחה, עבודה פנימית ונתינה",
+              "סוד: עומק פנימי זהיר ומרגש, בלי קביעה מוחלטת ובלי הבטחות",
+              "חיבור ארבעת הרבדים למשפט שליחות אחד",
+              "קבלה קטנה למעשה לשבוע הקרוב"
             ],
-            writingInstruction: "כתוב בעברית, קליל, עמוק ומרגש אך לא ארוך מדי. אל תציג טבלת נתונים ואל תחזור על כל הפרטים הטכניים. בנה סיכום אחד זורם לפי התאריך העברי, פרשת השבוע האישית ופרשת גיל המצוות. השתמש בפירוש יהודי בלבד ובשפת פרד״ס: פשט, רמז, דרש וסוד. אל תכתוב ייעוד מוחלט. כתוב על שליחות אישית אפשרית, רמז רוחני, תיקון מידה, נתינה והשפעה טובה בעולם. בסוף כתוב כותרת ברורה: 'הסיכום הכי מדויק', ובה משפט חזק שמסכם את השליחות האישית, ואז כותרת נוספת: 'במילים פשוטות יותר', עם משפט אחד קליט וברור. אל תתעסק בעליות התורה מעבר לכך שהן נתון עזר בלבד; הדגש הוא הפרשה, הזמן העברי והפרד״ס.",
+            writingInstruction: "כתוב בעברית מרגשת, נקייה ועמוקה, כאילו האדם מרגיש שמדברים אליו אישית, אך בלי להאריך מדי ובלי להציג טבלת נתונים. בנה סיכום אחד זורם לפי התאריך העברי, פרשת השבוע האישית ופרשת גיל המצוות. העמק במיוחד בארבעת רבדי הפרד״ס: בפשט תן מסר פשוט וברור לחיים; ברמז גלה נקודת עומק עדינה; בדרש הפוך את זה להדרכה מוסרית ומעשית לחיי היום־יום; ובסוד כתוב עומק פנימי זהיר שמרגש את הלב בלי לקבוע גורל ובלי להבטיח הבטחות. אל תכתוב ייעוד מוחלט. כתוב על שליחות אישית אפשרית, בחירה טובה, תיקון מידה, נתינה והשפעה טובה בעולם. בסוף כתוב כותרת ברורה: 'הסיכום הכי מדויק', ובה משפט חזק שמסכם את השליחות האישית, ואז כותרת נוספת: 'במילים פשוטות יותר', עם משפט אחד קליט וברור, ואז 'קבלה קטנה למעשה' עם צעד אחד קטן לשבוע הקרוב. אל תבסס את הסיכום המרכזי על שבט, אבן, גימטריה או עליות; הדגש המרכזי חייב להישאר הפרשה, הזמן העברי והפרד״ס.",
             sourcesInstruction: "הישען רק על עולם יהודי מסורתי: תנ״ך, חז״ל, מדרש, מוסר, חסידות וקבלה בניסוח זהיר. אל תשתמש באסטרולוגיה כללית, נומרולוגיה חילונית, ניו־אייג׳ או פסיכולוגיה כאילו הן מקור סמכות. אפשר לומר 'יש כאן רמז' או 'אפשר להתבונן בכך' אך לא לקבוע ודאות.",
             safetyInstruction: "כתוב כהתבוננות רוחנית עדינה בלבד. אל תכתוב נבואה, קביעה מוחלטת, אבחון רפואי או נפשי, תחזית עתיד, הבטחה, או הוראה מסוכנת. אם isMinor=true אל תכתוב הכוונה זוגית, כספית או מקצועית; כתוב רק חיזוק מידות, כבוד להורים, לימוד, שמחה, חברים טובים והתייעצות עם הורים או מבוגר אחראי. גם למבוגר, אל תציג את השליחות כגורל סגור אלא ככיוון של שליחות, תיקון ובחירה טובה."
           })
@@ -2323,8 +2569,8 @@
         const aiLoadingBox = document.createElement("div");
         aiLoadingBox.className = "ai-section";
         aiLoadingBox.innerHTML = `
-          <div class="ai-section-title">הסיכום האישי שלך</div>
-          <div class="ai-section-content">✨ מחברים את הפרשה, התאריך העברי וחוכמת הפרד״ס...</div>
+          <div class="ai-section-title">השליחות האישית שלך לפי פרד״ס</div>
+          <div class="ai-section-content">✨ מחברים את הפרשה, התאריך העברי ורבדי הפשט, הרמז, הדרש והסוד...</div>
         `;
 
         resultBox.appendChild(aiLoadingBox);
@@ -2333,7 +2579,7 @@
           const aiMessage = await getAiPersonalMessage(data);
 
           aiLoadingBox.innerHTML = `
-            <div class="ai-section-title">הסיכום האישי שלך</div>
+            <div class="ai-section-title">השליחות האישית שלך לפי פרד״ס</div>
             <div class="ai-section-content">${escapeHtml(aiMessage).replace(/\n/g, "<br>")}</div>
           `;
         }catch(aiErr){
