@@ -1853,7 +1853,15 @@
         }
       }
     
-      return text;
+      const parashaAliases = {
+        "תצווה": "תצוה",
+        "כי תישא": "כי תשא",
+        "כי תשא": "כי תשא",
+        "וישלח": "וישלח",
+        "ויצא": "ויצא"
+      };
+    
+      return parashaAliases[text] || text;
     }
     
     function parseAliyahSearch(parashaInput, aliyahInput){
