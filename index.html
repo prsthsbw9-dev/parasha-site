@@ -1784,40 +1784,117 @@
         .trim()
         .replace(/[״"]/g, "")
         .replace(/[׳']/g, "")
+        .replace(/[\u0591-\u05C7]/g, "")
         .replace(/[-–—_/|]+/g, " ")
         .replace(/\s+/g, " ")
         .trim();
     }
-    
-    function normalizeAliyahName(value){
-      const text = normalizeHebrewSearchText(value);
-    
-      const compact = text
-        .replace(/^על[יייהת]*\s*/g, "")
-        .replace(/^עלי[י]?ת\s*/g, "")
-        .replace(/^עליה\s*/g, "")
+
+    function removeParashaPrefix(value){
+      return normalizeHebrewSearchText(value)
+        .replace(/^פרשת\s+/g, "")
+        .replace(/^פרשה\s+/g, "")
+        .trim();
+    }
+
+    const aliyahMaleMap = {
+      "ראשונה": "ראשון",
+      "שניה": "שני",
+      "שנייה": "שני",
+      "שלישית": "שלישי",
+      "רביעית": "רביעי",
+      "חמישית": "חמישי",
+      "שישית": "שישי",
+      "שביעית": "שביעי"
+    };
+
+    const aliyahFemaleMap = {
+      "ראשון": "ראשונה",
+      "שני": "שנייה",
+      "שלישי": "שלישית",
+      "רביעי": "רביעית",
+      "חמישי": "חמישית",
+      "שישי": "שישית",
+      "שביעי": "שביעית"
+    };
+
+    const aliyahNumberMap = {
+      "1": "ראשון",
+      "01": "ראשון",
+      "א": "ראשון",
+      "2": "שני",
+      "02": "שני",
+      "ב": "שני",
+      "3": "שלישי",
+      "03": "שלישי",
+      "ג": "שלישי",
+      "4": "רביעי",
+      "04": "רביעי",
+      "ד": "רביעי",
+      "5": "חמישי",
+      "05": "חמישי",
+      "ה": "חמישי",
+      "6": "שישי",
+      "06": "שישי",
+      "ו": "שישי",
+      "7": "שביעי",
+      "07": "שביעי",
+      "ז": "שביעי"
+    };
+
+    const aliyahCanonicalNames = ["ראשון", "שני", "שלישי", "רביעי", "חמישי", "שישי", "שביעי", "מפטיר"];
+
+    function stripAliyahPrefix(value){
+      return normalizeHebrewSearchText(value)
         .replace(/^עלייה\s*/g, "")
+        .replace(/^עליה\s*/g, "")
         .replace(/^עלית\s*/g, "")
         .replace(/^עליית\s*/g, "")
         .trim();
-    
+    }
+
+    function normalizeAliyahName(value){
+      const text = normalizeHebrewSearchText(value);
+      const compact = stripAliyahPrefix(text);
+
+      if(!compact) return "";
+
+      if(compact === "מפטיר" || compact === "הפטרה"){
+        return "מפטיר";
+      }
+
+      if(aliyahNumberMap[compact]){
+        return aliyahNumberMap[compact];
+      }
+
+      if(aliyahCanonicalNames.includes(compact)){
+        return compact;
+      }
+
+      if(aliyahMaleMap[compact]){
+        return aliyahMaleMap[compact];
+      }
+
       const aliases = [
-        { canonical:"ראשון", words:["ראשון", "ראשונה", "א", "א׳", "א'", "1", "01", "עלייה 1", "עליה 1", "עלית 1", "עליית 1"] },
-        { canonical:"שני", words:["שני", "שניה", "שנייה", "ב", "ב׳", "ב'", "2", "02", "עלייה 2", "עליה 2", "עלית 2", "עליית 2"] },
-        { canonical:"שלישי", words:["שלישי", "שלישית", "ג", "ג׳", "ג'", "3", "03", "עלייה 3", "עליה 3", "עלית 3", "עליית 3"] },
-        { canonical:"רביעי", words:["רביעי", "רביעית", "ד", "ד׳", "ד'", "4", "04", "עלייה 4", "עליה 4", "עלית 4", "עליית 4"] },
-        { canonical:"חמישי", words:["חמישי", "חמישית", "ה", "ה׳", "ה'", "5", "05", "עלייה 5", "עליה 5", "עלית 5", "עליית 5"] },
-        { canonical:"שישי", words:["שישי", "שישית", "ו", "ו׳", "ו'", "6", "06", "עלייה 6", "עליה 6", "עלית 6", "עליית 6"] },
-        { canonical:"שביעי", words:["שביעי", "שביעית", "ז", "ז׳", "ז'", "7", "07", "עלייה 7", "עליה 7", "עלית 7", "עליית 7"] },
-        { canonical:"מפטיר", words:["מפטיר", "הפטרה"] }
+        { canonical:"ראשון", words:["ראשון", "ראשונה", "א", "1", "01", "עלייה 1", "עליה 1", "עלית 1", "עליית 1", "עלית ראשון", "עליית ראשון", "עליה ראשון", "עלייה ראשון", "עלית ראשונה", "עליית ראשונה", "עליה ראשונה", "עלייה ראשונה"] },
+        { canonical:"שני", words:["שני", "שניה", "שנייה", "ב", "2", "02", "עלייה 2", "עליה 2", "עלית 2", "עליית 2", "עלית שני", "עליית שני", "עליה שני", "עלייה שני", "עלית שניה", "עליית שנייה", "עליה שנייה", "עלייה שנייה"] },
+        { canonical:"שלישי", words:["שלישי", "שלישית", "ג", "3", "03", "עלייה 3", "עליה 3", "עלית 3", "עליית 3", "עלית שלישי", "עליית שלישי", "עליה שלישי", "עלייה שלישי", "עלית שלישית", "עליית שלישית", "עליה שלישית", "עלייה שלישית"] },
+        { canonical:"רביעי", words:["רביעי", "רביעית", "ד", "4", "04", "עלייה 4", "עליה 4", "עלית 4", "עליית 4", "עלית רביעי", "עליית רביעי", "עליה רביעי", "עלייה רביעי", "עלית רביעית", "עליית רביעית", "עליה רביעית", "עלייה רביעית"] },
+        { canonical:"חמישי", words:["חמישי", "חמישית", "ה", "5", "05", "עלייה 5", "עליה 5", "עלית 5", "עליית 5", "עלית חמישי", "עליית חמישי", "עליה חמישי", "עלייה חמישי", "עלית חמישית", "עליית חמישית", "עליה חמישית", "עלייה חמישית"] },
+        { canonical:"שישי", words:["שישי", "שישית", "ו", "6", "06", "עלייה 6", "עליה 6", "עלית 6", "עליית 6", "עלית שישי", "עליית שישי", "עליה שישי", "עלייה שישי", "עלית שישית", "עליית שישית", "עליה שישית", "עלייה שישית"] },
+        { canonical:"שביעי", words:["שביעי", "שביעית", "ז", "7", "07", "עלייה 7", "עליה 7", "עלית 7", "עליית 7", "עלית שביעי", "עליית שביעי", "עליה שביעי", "עלייה שביעי", "עלית שביעית", "עליית שביעית", "עליה שביעית", "עלייה שביעית"] },
+        { canonical:"מפטיר", words:["מפטיר", "הפטרה", "עלית מפטיר", "עליית מפטיר", "עליה מפטיר", "עלייה מפטיר"] }
       ];
-    
+
       for(const item of aliases){
-        if(item.words.some((word) => compact === normalizeHebrewSearchText(word) || text.includes(normalizeHebrewSearchText(word)))){
+        if(item.words.some((word) => {
+          const normalizedWord = normalizeHebrewSearchText(word);
+          return compact === stripAliyahPrefix(normalizedWord) || text === normalizedWord || text.includes(normalizedWord);
+        })){
           return item.canonical;
         }
       }
-    
+
       return compact;
     }
 
@@ -1829,6 +1906,7 @@
       "לךלך": "לך לך",
       "וירא": "וירא",
       "חיי שרה": "חיי שרה",
+      "חיי שרה": "חיי שרה",
       "חישרה": "חיי שרה",
       "תולדות": "תולדות",
       "יצא": "ויצא",
@@ -1839,12 +1917,13 @@
       "מיקץ": "מקץ",
       "ויגש": "ויגש",
       "ויחי": "ויחי",
-    
+
       "שמות": "שמות",
       "וארא": "וארא",
       "ואראה": "וארא",
       "בא": "בא",
       "בוא": "בא",
+      "בשלח": "בשלח",
       "בשלח": "בשלח",
       "יתרו": "יתרו",
       "משפטים": "משפטים",
@@ -1857,9 +1936,14 @@
       "ויקהל": "ויקהל",
       "פקודי": "פקודי",
       "פקודיי": "פקודי",
-    
+
+      "ויקהל פקודי": "ויקהל פקודי",
+      "ויקהל פקודיי": "ויקהל פקודי",
+      "ויקהל ופקודי": "ויקהל פקודי",
+
       "ויקרא": "ויקרא",
       "צו": "צו",
+      "צוו": "צו",
       "שמיני": "שמיני",
       "תזריע": "תזריע",
       "מצורע": "מצורע",
@@ -1873,13 +1957,26 @@
       "בחוקותיי": "בחוקותי",
       "בחקתי": "בחוקותי",
       "בחקותי": "בחוקותי",
-    
+
+      "תזריע מצורע": "תזריע מצורע",
+      "תזריע ומצורע": "תזריע מצורע",
+      "אחרי מות קדושים": "אחרי מות קדושים",
+      "אחרי מות וקדושים": "אחרי מות קדושים",
+      "אחרימות קדושים": "אחרי מות קדושים",
+      "אחרי קדושים": "אחרי מות קדושים",
+      "בהר בחוקותי": "בהר בחוקותי",
+      "בהר בחוקותיי": "בהר בחוקותי",
+      "בהר בחקתי": "בהר בחוקותי",
+      "בהר בחקותי": "בהר בחוקותי",
+      "בהר ובחוקותי": "בהר בחוקותי",
+
       "במדבר": "במדבר",
       "נשא": "נשא",
       "נשאא": "נשא",
       "בהעלותך": "בהעלותך",
       "בהעלתך": "בהעלותך",
       "שלח": "שלח",
+      "שלח לך": "שלח",
       "שלח לך": "שלח",
       "שלח-לך": "שלח",
       "קורח": "קרח",
@@ -1892,7 +1989,16 @@
       "מטות": "מטות",
       "מסעי": "מסעי",
       "מסעיי": "מסעי",
-    
+
+      "חקת בלק": "חקת בלק",
+      "חוקת בלק": "חקת בלק",
+      "חקת ובלק": "חקת בלק",
+      "חוקת ובלק": "חקת בלק",
+      "מטות מסעי": "מטות מסעי",
+      "מטות מסעיי": "מטות מסעי",
+      "מטות ומסעי": "מטות מסעי",
+      "מטות ומסעיי": "מטות מסעי",
+
       "דברים": "דברים",
       "ואתחנן": "ואתחנן",
       "עקב": "עקב",
@@ -1907,27 +2013,19 @@
       "נצבים": "נצבים",
       "ניצבים": "נצבים",
       "וילך": "וילך",
+      "נצבים וילך": "נצבים וילך",
+      "ניצבים וילך": "נצבים וילך",
+      "נצבים וילך": "נצבים וילך",
+      "ניצבים-וילך": "נצבים וילך",
       "האזינו": "האזינו",
       "וזאת הברכה": "וזאת הברכה",
       "וזאת ברכה": "וזאת הברכה",
       "זאת הברכה": "וזאת הברכה"
     };
-    
-    function isKnownParashaName(value){
-      const text = normalizeHebrewSearchText(value);
-      return Boolean(parashaAliases[text]);
-    }
-    
+
     function normalizeParashaName(value){
-      let text = normalizeHebrewSearchText(value);
-    
-      text = text
-        .replace(/^פרשת\s+/g, "")
-        .replace(/^פרשה\s+/g, "")
-        .replace(/\s+פרשת\s+/g, " ")
-        .replace(/\s+פרשה\s+/g, " ")
-        .trim();
-    
+      let text = removeParashaPrefix(value);
+
       const aliyahWords = [
         "עלייה", "עליה", "עליית", "עלית",
         "ראשון", "ראשונה",
@@ -1941,7 +2039,7 @@
         "1", "2", "3", "4", "5", "6", "7",
         "01", "02", "03", "04", "05", "06", "07"
       ];
-    
+
       for(const word of aliyahWords){
         const index = text.indexOf(word);
         if(index > -1){
@@ -1949,30 +2047,119 @@
           break;
         }
       }
-    
+
       return parashaAliases[text] || text;
     }
-    
+
+    function isKnownParashaName(value){
+      const text = normalizeParashaName(value);
+      return Boolean(parashaAliases[text] || Object.values(parashaAliases).includes(text));
+    }
+
     function parseAliyahSearch(parashaInput, aliyahInput){
       const combined = normalizeHebrewSearchText(`${parashaInput || ""} ${aliyahInput || ""}`);
-    
+
       let parasha = normalizeParashaName(parashaInput);
       let aliyah = normalizeAliyahName(aliyahInput);
-    
+
       if(!aliyah && combined){
         aliyah = normalizeAliyahName(combined);
       }
-    
+
       if(!parasha && combined){
         parasha = normalizeParashaName(combined);
       }
-    
+
       return {
         parasha,
         aliyah
       };
     }
-    
+
+    function getParashaSearchCandidates(cleanParasha, rawParasha){
+      const baseValues = [
+        cleanParasha,
+        removeParashaPrefix(rawParasha),
+        normalizeParashaName(rawParasha)
+      ];
+
+      const expanded = [];
+
+      baseValues.forEach((value) => {
+        const normalized = normalizeParashaName(value);
+        const noPrefix = removeParashaPrefix(value);
+
+        [value, normalized, noPrefix].forEach((item) => {
+          if(item) expanded.push(item);
+        });
+
+        if(normalized){
+          expanded.push(`פרשת ${normalized}`);
+          if(normalized.includes("תצוה")) expanded.push(normalized.replace("תצוה", "תצווה"), `פרשת ${normalized.replace("תצוה", "תצווה")}`);
+          if(normalized.includes("תצווה")) expanded.push(normalized.replace("תצווה", "תצוה"), `פרשת ${normalized.replace("תצווה", "תצוה")}`);
+          if(normalized.includes("תשא")) expanded.push(normalized.replace("תשא", "תישא"), `פרשת ${normalized.replace("תשא", "תישא")}`);
+          if(normalized.includes("תישא")) expanded.push(normalized.replace("תישא", "תשא"), `פרשת ${normalized.replace("תישא", "תשא")}`);
+        }
+      });
+
+      return expanded
+        .filter(Boolean)
+        .map((item) => String(item).trim())
+        .filter((item, index, arr) => item && arr.indexOf(item) === index);
+    }
+
+    function getAliyahSearchCandidates(cleanAliyah, rawAliyah){
+      const canonicalAliyah = aliyahMaleMap[cleanAliyah] || cleanAliyah;
+      const feminineAliyah = aliyahFemaleMap[canonicalAliyah] || "";
+      const withoutPrefix = stripAliyahPrefix(rawAliyah);
+      const withoutPrefixCanonical = aliyahMaleMap[withoutPrefix] || aliyahNumberMap[withoutPrefix] || withoutPrefix;
+
+      const baseValues = [
+        canonicalAliyah,
+        feminineAliyah,
+        cleanAliyah,
+        rawAliyah,
+        withoutPrefix,
+        withoutPrefixCanonical
+      ];
+
+      if(canonicalAliyah && canonicalAliyah !== "מפטיר"){
+        baseValues.push(
+          `עלית ${canonicalAliyah}`,
+          `עליית ${canonicalAliyah}`,
+          `עליה ${canonicalAliyah}`,
+          `עלייה ${canonicalAliyah}`
+        );
+      }
+
+      if(feminineAliyah){
+        baseValues.push(
+          `עלית ${feminineAliyah}`,
+          `עליית ${feminineAliyah}`,
+          `עליה ${feminineAliyah}`,
+          `עלייה ${feminineAliyah}`
+        );
+      }
+
+      if(withoutPrefixCanonical && withoutPrefixCanonical !== canonicalAliyah){
+        baseValues.push(
+          `עלית ${withoutPrefixCanonical}`,
+          `עליית ${withoutPrefixCanonical}`,
+          `עליה ${withoutPrefixCanonical}`,
+          `עלייה ${withoutPrefixCanonical}`
+        );
+      }
+
+      if(canonicalAliyah === "מפטיר"){
+        baseValues.push("עלית מפטיר", "עליית מפטיר", "עליה מפטיר", "עלייה מפטיר", "הפטרה");
+      }
+
+      return baseValues
+        .filter(Boolean)
+        .map((item) => String(item).trim())
+        .filter((item, index, arr) => item && arr.indexOf(item) === index);
+    }
+
     function setSearchMessage(text){
       const box = document.getElementById("pardesSearchMessage");
       if(!box) return;
@@ -2066,135 +2253,75 @@
 
     async function loadSpecificAliyah(parasha, aliyah, options = {}){
       const parsedSearch = parseAliyahSearch(parasha, aliyah);
-    
+
       const cleanParasha = parsedSearch.parasha;
       const cleanAliyah = parsedSearch.aliyah;
-    
+
       if(!cleanParasha || !cleanAliyah){
         throw new Error("נא להזין שם פרשה ושם עלייה בצורה ברורה, לדוגמה: תצווה — שביעית.");
       }
-    
+
       const rawParasha = normalizeHebrewSearchText(parasha);
       const rawAliyah = normalizeHebrewSearchText(aliyah);
-    
-      const cleanParashaNoPrefix = rawParasha
-        .replace(/^פרשת\s*/g, "")
-        .replace(/^פרשה\s*/g, "")
-        .trim();
-    
-      const parashaCandidates = [
-        cleanParasha,
-        rawParasha,
-        cleanParashaNoPrefix,
-        cleanParasha.replace("תצוה", "תצווה"),
-        cleanParasha.replace("תצווה", "תצוה"),
-        cleanParasha.replace(/וו/g, "ו")
-      ]
-        .filter(Boolean)
-        .map((item) => String(item).trim())
-        .filter((item, index, arr) => item && arr.indexOf(item) === index);
-    
-      const aliyahFemaleMap = {
-        "ראשון": "ראשונה",
-        "שני": "שנייה",
-        "שלישי": "שלישית",
-        "רביעי": "רביעית",
-        "חמישי": "חמישית",
-        "שישי": "שישית",
-        "שביעי": "שביעית"
-      };
-    
-      const cleanAliyahFemale = aliyahFemaleMap[cleanAliyah] || "";
-    
-      const rawAliyahWithoutPrefix = rawAliyah
-        .replace(/^עלייה\s*/g, "")
-        .replace(/^עליה\s*/g, "")
-        .replace(/^עלית\s*/g, "")
-        .replace(/^עליית\s*/g, "")
-        .trim();
-    
-        const aliyahMaleMap = {
-          "ראשונה": "ראשון",
-          "שניה": "שני",
-          "שנייה": "שני",
-          "שלישית": "שלישי",
-          "רביעית": "רביעי",
-          "חמישית": "חמישי",
-          "שישית": "שישי",
-          "שביעית": "שביעי"
-        };
-        
-        const aliyahFemaleMap = {
-          "ראשון": "ראשונה",
-          "שני": "שנייה",
-          "שלישי": "שלישית",
-          "רביעי": "רביעית",
-          "חמישי": "חמישית",
-          "שישי": "שישית",
-          "שביעי": "שביעית"
-        };
-        
-        const canonicalAliyah = aliyahMaleMap[cleanAliyah] || cleanAliyah;
-        const cleanAliyahFemale = aliyahFemaleMap[canonicalAliyah] || "";
-        
-        const rawAliyahWithoutPrefix = rawAliyah
-          .replace(/^עלייה\s*/g, "")
-          .replace(/^עליה\s*/g, "")
-          .replace(/^עלית\s*/g, "")
-          .replace(/^עליית\s*/g, "")
-          .trim();
-        
-        const rawAliyahCanonical = aliyahMaleMap[rawAliyahWithoutPrefix] || rawAliyahWithoutPrefix;
-        
-        const aliyahCandidates = [
-          canonicalAliyah,
-          cleanAliyahFemale,
-          cleanAliyah,
-          rawAliyah,
-          rawAliyahWithoutPrefix,
-          rawAliyahCanonical,
-        
-          `עלית ${canonicalAliyah}`,
-          `עליית ${canonicalAliyah}`,
-          `עליה ${canonicalAliyah}`,
-          `עלייה ${canonicalAliyah}`,
-        
-          cleanAliyahFemale ? `עלית ${cleanAliyahFemale}` : "",
-          cleanAliyahFemale ? `עליית ${cleanAliyahFemale}` : "",
-          cleanAliyahFemale ? `עליה ${cleanAliyahFemale}` : "",
-          cleanAliyahFemale ? `עלייה ${cleanAliyahFemale}` : ""
-        ]
-          .filter(Boolean)
-          .map((item) => String(item).trim())
-          .filter((item, index, arr) => item && arr.indexOf(item) === index);
-    
+
+      const parashaCandidates = getParashaSearchCandidates(cleanParasha, rawParasha);
+      const aliyahCandidates = getAliyahSearchCandidates(cleanAliyah, rawAliyah);
+
+      let foundVideos = {};
+      let foundParasha = "";
+      let foundParashaKey = "";
+      let foundAliyah = "";
+      let foundAliyahKey = "";
+
+      for(const parashaCandidate of parashaCandidates){
+        const parashaKey = makeSafeKey(parashaCandidate);
+        if(!parashaKey) continue;
+
+        for(const aliyahCandidate of aliyahCandidates){
+          const aliyahKey = makeSafeKey(aliyahCandidate);
+          if(!aliyahKey) continue;
+
+          const videosRef = doc(db, "aliyahVideos", videoDocId(parashaKey, aliyahKey));
+          const videosSnap = await getDoc(videosRef);
+          const data = videosSnap.exists() ? videosSnap.data() : {};
+
+          if(videosSnap.exists() && hasAnyLayerVideo(data)){
+            foundVideos = data;
+            foundParasha = parashaCandidate;
+            foundParashaKey = parashaKey;
+            foundAliyah = aliyahCandidate;
+            foundAliyahKey = aliyahKey;
+            break;
+          }
+        }
+
         if(foundAliyah) break;
       }
-    
+
       if(!foundAliyah){
         if(isKnownParashaName(cleanParasha)){
-          setSearchMessage(`הפרשה זוהתה, אבל עדיין לא הועלתה העלייה המבוקשת.`);
+          setSearchMessage("הפרשה זוהתה, אבל עדיין לא הועלתה העלייה המבוקשת.");
         }else{
-          setSearchMessage(`לא זיהיתי את שם הפרשה. נסה לכתוב למשל: כי תשא — ראשון.`);
+          setSearchMessage("לא זיהיתי את שם הפרשה. נסה לכתוב למשל: כי תשא — ראשון.");
         }
         return false;
       }
-    
-      currentParasha = foundParasha;
+
+      currentParasha = normalizeParashaName(foundParasha) || foundParasha;
       currentAliyah = foundAliyah;
       currentParashaKey = foundParashaKey;
       currentAliyahKey = foundAliyahKey;
       activeVideos = foundVideos;
-    
+
       setTreeHead(currentParasha, currentAliyah);
-    
+
       if(options.saveLocal !== false){
         localStorage.setItem("pardesSearchParasha", currentParasha);
         localStorage.setItem("pardesSearchAliyah", currentAliyah);
       }
-    
+
       setSearchMessage(`מוצג עכשיו: פרשת ${currentParasha} — ${currentAliyah}`);
-    
+
       return true;
     }
 
@@ -2402,12 +2529,21 @@
 
     document.getElementById("pardesSearchForm")?.addEventListener("submit", async (event) => {
       event.preventDefault();
-      const parasha = document.getElementById("parashaSearchInput")?.value || "";
-      const aliyah = document.getElementById("aliyahSearchInput")?.value || "";
+
+      const parashaInput = document.getElementById("parashaSearchInput");
+      const aliyahInput = document.getElementById("aliyahSearchInput");
+
+      const parasha = parashaInput?.value || "";
+      const aliyah = aliyahInput?.value || "";
 
       try{
         setSearchMessage("מחפש את העלייה...");
-        await loadSpecificAliyah(parasha, aliyah);
+        const found = await loadSpecificAliyah(parasha, aliyah);
+
+        if(found && parashaInput && aliyahInput){
+          parashaInput.value = currentParasha;
+          aliyahInput.value = currentAliyah;
+        }
       }catch(error){
         console.error("שגיאה בחיפוש העלייה:", error);
         setSearchMessage(error?.message || "לא הצלחתי למצוא את העלייה המבוקשת.");
