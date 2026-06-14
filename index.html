@@ -2070,53 +2070,112 @@
       const cleanParasha = parsedSearch.parasha;
       const cleanAliyah = parsedSearch.aliyah;
     
-      const parashaKey = makeSafeKey(cleanParasha);
-    
-      if(!parashaKey || !cleanAliyah){
-        throw new Error("נא להזין שם פרשה ושם עלייה בצורה ברורה, לדוגמה: תצוה — שביעי.");
+      if(!cleanParasha || !cleanAliyah){
+        throw new Error("נא להזין שם פרשה ושם עלייה בצורה ברורה, לדוגמה: תצווה — שביעית.");
       }
+    
+      const rawParasha = normalizeHebrewSearchText(parasha);
+      const rawAliyah = normalizeHebrewSearchText(aliyah);
+    
+      const cleanParashaNoPrefix = rawParasha
+        .replace(/^פרשת\s*/g, "")
+        .replace(/^פרשה\s*/g, "")
+        .trim();
+    
+      const parashaCandidates = [
+        cleanParasha,
+        rawParasha,
+        cleanParashaNoPrefix,
+        cleanParasha.replace("תצוה", "תצווה"),
+        cleanParasha.replace("תצווה", "תצוה"),
+        cleanParasha.replace(/וו/g, "ו")
+      ]
+        .filter(Boolean)
+        .map((item) => String(item).trim())
+        .filter((item, index, arr) => item && arr.indexOf(item) === index);
+    
+      const aliyahFemaleMap = {
+        "ראשון": "ראשונה",
+        "שני": "שנייה",
+        "שלישי": "שלישית",
+        "רביעי": "רביעית",
+        "חמישי": "חמישית",
+        "שישי": "שישית",
+        "שביעי": "שביעית"
+      };
+    
+      const cleanAliyahFemale = aliyahFemaleMap[cleanAliyah] || "";
+    
+      const rawAliyahWithoutPrefix = rawAliyah
+        .replace(/^עלייה\s*/g, "")
+        .replace(/^עליה\s*/g, "")
+        .replace(/^עלית\s*/g, "")
+        .replace(/^עליית\s*/g, "")
+        .trim();
     
       const aliyahCandidates = [
         cleanAliyah,
-        aliyah,
-        String(aliyah || "").replace(/^עלייה\s*/g, "").replace(/^עליה\s*/g, "").replace(/^עלית\s*/g, "").replace(/^עליית\s*/g, "").trim()
+        cleanAliyahFemale,
+        rawAliyah,
+        rawAliyahWithoutPrefix,
+    
+        `עלית ${cleanAliyah}`,
+        `עליית ${cleanAliyah}`,
+        `עליה ${cleanAliyah}`,
+        `עלייה ${cleanAliyah}`,
+    
+        cleanAliyahFemale ? `עלית ${cleanAliyahFemale}` : "",
+        cleanAliyahFemale ? `עליית ${cleanAliyahFemale}` : "",
+        cleanAliyahFemale ? `עליה ${cleanAliyahFemale}` : "",
+        cleanAliyahFemale ? `עלייה ${cleanAliyahFemale}` : ""
       ]
         .filter(Boolean)
         .map((item) => String(item).trim())
         .filter((item, index, arr) => item && arr.indexOf(item) === index);
     
       let foundVideos = {};
+      let foundParasha = "";
+      let foundParashaKey = "";
       let foundAliyah = "";
       let foundAliyahKey = "";
     
-      for(const candidate of aliyahCandidates){
-        const candidateKey = makeSafeKey(candidate);
-        if(!candidateKey) continue;
+      for(const parashaCandidate of parashaCandidates){
+        const parashaKey = makeSafeKey(parashaCandidate);
+        if(!parashaKey) continue;
     
-        const videosRef = doc(db, "aliyahVideos", videoDocId(parashaKey, candidateKey));
-        const videosSnap = await getDoc(videosRef);
-        const data = videosSnap.exists() ? videosSnap.data() : {};
+        for(const aliyahCandidate of aliyahCandidates){
+          const aliyahKey = makeSafeKey(aliyahCandidate);
+          if(!aliyahKey) continue;
     
-        if(videosSnap.exists() && hasAnyLayerVideo(data)){
-          foundVideos = data;
-          foundAliyah = candidate;
-          foundAliyahKey = candidateKey;
-          break;
+          const videosRef = doc(db, "aliyahVideos", videoDocId(parashaKey, aliyahKey));
+          const videosSnap = await getDoc(videosRef);
+          const data = videosSnap.exists() ? videosSnap.data() : {};
+    
+          if(videosSnap.exists() && hasAnyLayerVideo(data)){
+            foundVideos = data;
+            foundParasha = parashaCandidate;
+            foundParashaKey = parashaKey;
+            foundAliyah = aliyahCandidate;
+            foundAliyahKey = aliyahKey;
+            break;
+          }
         }
+    
+        if(foundAliyah) break;
       }
     
       if(!foundAliyah){
         if(isKnownParashaName(cleanParasha)){
-          setSearchMessage(`עדיין לא הועלתה פרשה זו.`);
+          setSearchMessage(`הפרשה זוהתה, אבל עדיין לא הועלתה העלייה המבוקשת.`);
         }else{
           setSearchMessage(`לא זיהיתי את שם הפרשה. נסה לכתוב למשל: כי תשא — ראשון.`);
         }
         return false;
       }
     
-      currentParasha = cleanParasha;
+      currentParasha = foundParasha;
       currentAliyah = foundAliyah;
-      currentParashaKey = parashaKey;
+      currentParashaKey = foundParashaKey;
       currentAliyahKey = foundAliyahKey;
       activeVideos = foundVideos;
     
