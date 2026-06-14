@@ -1,4 +1,3 @@
-code = r'''const { onRequest } = require("firebase-functions/v2/https");
 const { defineSecret } = require("firebase-functions/params");
 const OpenAI = require("openai");
 
@@ -328,7 +327,3 @@ function cleanText(value, maxLength) {
     .trim()
     .slice(0, maxLength);
 }
-'''
-path = Path('/mnt/data/index.js')
-path.write_text(code, encoding='utf-8')
-print(path)
