@@ -1796,6 +1796,8 @@
         .replace(/^על[יייהת]*\s*/g, "")
         .replace(/^עלי[י]?ת\s*/g, "")
         .replace(/^עליה\s*/g, "")
+        .replace(/^עלייה\s*/g, "")
+        .replace(/^עלית\s*/g, "")
         .replace(/^עליית\s*/g, "")
         .trim();
     
@@ -1965,35 +1967,68 @@
       }
     }
 
-
     async function loadSpecificAliyah(parasha, aliyah, options = {}){
-      const parashaKey = makeSafeKey(parasha);
-      const aliyahKey = makeSafeKey(aliyah);
-
-      if(!parashaKey || !aliyahKey){
-        throw new Error("נא להזין גם שם פרשה וגם שם עלייה.");
+      const parsedSearch = parseAliyahSearch(parasha, aliyah);
+    
+      const cleanParasha = parsedSearch.parasha;
+      const cleanAliyah = parsedSearch.aliyah;
+    
+      const parashaKey = makeSafeKey(cleanParasha);
+    
+      if(!parashaKey || !cleanAliyah){
+        throw new Error("נא להזין שם פרשה ושם עלייה בצורה ברורה, לדוגמה: תצוה — שביעי.");
       }
-
-      currentParasha = String(parasha || "").trim();
-      currentAliyah = String(aliyah || "").trim();
+    
+      const aliyahCandidates = [
+        cleanAliyah,
+        aliyah,
+        String(aliyah || "").replace(/^עלייה\s*/g, "").replace(/^עליה\s*/g, "").replace(/^עלית\s*/g, "").replace(/^עליית\s*/g, "").trim()
+      ]
+        .filter(Boolean)
+        .map((item) => String(item).trim())
+        .filter((item, index, arr) => item && arr.indexOf(item) === index);
+    
+      let foundVideos = {};
+      let foundAliyah = "";
+      let foundAliyahKey = "";
+    
+      for(const candidate of aliyahCandidates){
+        const candidateKey = makeSafeKey(candidate);
+        if(!candidateKey) continue;
+    
+        const videosRef = doc(db, "aliyahVideos", videoDocId(parashaKey, candidateKey));
+        const videosSnap = await getDoc(videosRef);
+        const data = videosSnap.exists() ? videosSnap.data() : {};
+    
+        if(videosSnap.exists() && hasAnyLayerVideo(data)){
+          foundVideos = data;
+          foundAliyah = candidate;
+          foundAliyahKey = candidateKey;
+          break;
+        }
+      }
+    
+      if(!foundAliyah){
+        setSearchMessage(`לא מצאתי עלייה מתאימה. נסה לכתוב למשל: תצוה — שביעי או תצוה — 7.`);
+        return false;
+      }
+    
+      currentParasha = cleanParasha;
+      currentAliyah = foundAliyah;
       currentParashaKey = parashaKey;
-      currentAliyahKey = aliyahKey;
+      currentAliyahKey = foundAliyahKey;
+      activeVideos = foundVideos;
+    
       setTreeHead(currentParasha, currentAliyah);
-
-      const videosRef = doc(db, "aliyahVideos", videoDocId(parashaKey, aliyahKey));
-      const videosSnap = await getDoc(videosRef);
-      activeVideos = videosSnap.exists() ? videosSnap.data() : {};
-
+    
       if(options.saveLocal !== false){
         localStorage.setItem("pardesSearchParasha", currentParasha);
         localStorage.setItem("pardesSearchAliyah", currentAliyah);
       }
-
-      if(hasAnyLayerVideo(activeVideos)){
-        setSearchMessage(`מוצג עכשיו: פרשת ${currentParasha} — ${currentAliyah}`);
-      }else{
-        setSearchMessage(`לא נמצאו עדיין סרטונים שמורים עבור פרשת ${currentParasha} — ${currentAliyah}.`);
-      }
+    
+      setSearchMessage(`מוצג עכשיו: פרשת ${currentParasha} — ${currentAliyah}`);
+    
+      return true;
     }
 
     function isMobileViewer(){
