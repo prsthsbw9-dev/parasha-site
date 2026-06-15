@@ -2097,6 +2097,12 @@
 
       try{
         const ageDetails = calculateAgeDetails(data.birthDate);
+        
+        const isBeforeMitzvah = data.mitzvahInfo?.mitzvahGregorianDate
+          ? getTodayLocalNoon() < parseLocalDate(data.mitzvahInfo.mitzvahGregorianDate)
+          : ageDetails.isMinor;
+        
+        const ageDetails = calculateAgeDetails(data.birthDate);
         ageDetails.ageText = formatAgeText(ageDetails);
         const depthMap = getPersonalDepthMap(data, ageDetails);
         const hebrewDateReduction = calculateHebrewDateReduction(data, ageDetails.isMinor);
@@ -2110,6 +2116,9 @@
             firstName: data.firstName,
             jewishName: buildJewishName(data),
             gender: data.gender,
+            isBeforeMitzvah,
+            ageYears: ageDetails.years,
+            pronounGender: data.gender === "female" ? "female" : "male",
             relationType: data.relationType,
             fatherName: data.fatherName,
             motherName: data.motherName,
