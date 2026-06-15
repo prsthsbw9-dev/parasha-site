@@ -2097,13 +2097,12 @@
 
       try{
         const ageDetails = calculateAgeDetails(data.birthDate);
-        
+        ageDetails.ageText = formatAgeText(ageDetails);
+
         const isBeforeMitzvah = data.mitzvahInfo?.mitzvahGregorianDate
           ? getTodayLocalNoon() < parseLocalDate(data.mitzvahInfo.mitzvahGregorianDate)
           : ageDetails.isMinor;
-        
-        const ageDetails = calculateAgeDetails(data.birthDate);
-        ageDetails.ageText = formatAgeText(ageDetails);
+
         const depthMap = getPersonalDepthMap(data, ageDetails);
         const hebrewDateReduction = calculateHebrewDateReduction(data, ageDetails.isMinor);
 
