@@ -570,8 +570,6 @@
       text-align:center;
     }
 
-
-
     .pardes-video-panel{
       position:fixed;
       inset:0;
@@ -584,11 +582,11 @@
       backdrop-filter:blur(9px);
       -webkit-backdrop-filter:blur(9px);
     }
-
+    
     .pardes-video-panel.is-open{
       display:flex;
     }
-
+    
     .pardes-video-card{
       width:min(100%, 560px);
       border-radius:26px;
@@ -598,7 +596,7 @@
       overflow:hidden;
       text-align:right;
     }
-
+    
     .pardes-video-head{
       display:flex;
       align-items:center;
@@ -606,7 +604,7 @@
       gap:10px;
       padding:14px 16px 10px;
     }
-
+    
     .pardes-video-title{
       margin:0;
       font-size:19px;
@@ -615,7 +613,7 @@
       color:#fff;
       text-shadow:0 3px 12px rgba(0,0,0,.65);
     }
-
+    
     .pardes-video-close{
       width:38px;
       height:38px;
@@ -628,11 +626,11 @@
       cursor:pointer;
       box-shadow:0 8px 18px rgba(0,0,0,.25);
     }
-
+    
     .pardes-video-body{
       padding:0 14px 16px;
     }
-
+    
     .pardes-video-player{
       width:min(100%, 430px);
       max-height:min(76vh, 760px);
@@ -644,12 +642,12 @@
       outline:none;
       object-fit:contain;
     }
-
+    
     .pardes-youtube-player{
       border:0;
       object-fit:initial;
     }
-
+    
     .pardes-youtube-open-btn{
       display:none;
       width:min(100%, 430px);
@@ -666,23 +664,23 @@
       line-height:1.35;
       box-shadow:0 10px 22px rgba(0,0,0,.32), 0 0 22px rgba(255,40,40,.20);
     }
-
+    
     .pardes-youtube-open-btn .mobile-break{
       display:none;
     }
-
+    
     .pardes-video-player.is-horizontal{
       width:100%;
       max-height:62vh;
       aspect-ratio:16 / 9;
     }
-
+    
     .pardes-video-player.is-square{
       width:min(100%, 520px);
       max-height:70vh;
       aspect-ratio:1 / 1;
     }
-
+    
     .pardes-video-empty{
       display:none;
       padding:26px 18px;
@@ -693,6 +691,71 @@
       font-size:16px;
       line-height:1.65;
       text-align:center;
+    }
+    
+    /* תיקון תצוגת נייד — מקטין מעט את הסרטון כדי שכפתור היוטיוב ייראה ברור */
+    @media (max-width:640px){
+      .pardes-video-panel{
+        padding:10px;
+        align-items:center;
+      }
+    
+      .pardes-video-card{
+        width:100%;
+        max-height:96dvh;
+        border-radius:22px;
+        overflow:auto;
+      }
+    
+      .pardes-video-head{
+        padding:12px 12px 8px;
+      }
+    
+      .pardes-video-title{
+        font-size:18px;
+        line-height:1.3;
+      }
+    
+      .pardes-video-close{
+        width:38px;
+        height:38px;
+        min-width:38px;
+        font-size:26px;
+      }
+    
+      .pardes-video-body{
+        padding:0 10px 12px;
+      }
+    
+      .pardes-video-player{
+        width:min(100%, 390px);
+        max-height:calc(100dvh - 175px);
+        border-radius:18px;
+      }
+    
+      .pardes-video-player.is-horizontal{
+        width:100%;
+        max-height:42vh;
+        aspect-ratio:16 / 9;
+      }
+    
+      .pardes-video-player.is-square{
+        width:min(100%, 390px);
+        max-height:calc(100dvh - 175px);
+        aspect-ratio:1 / 1;
+      }
+    
+      .pardes-youtube-open-btn{
+        width:min(100%, 390px);
+        margin:8px auto 0;
+        padding:9px 10px;
+        font-size:13px;
+        line-height:1.25;
+      }
+    
+      .pardes-youtube-open-btn .mobile-break{
+        display:block;
+      }
     }
 
     .pardes-search-row{
