@@ -628,6 +628,7 @@
     }
     
     .pardes-video-body{
+      position:relative;
       padding:0 14px 16px;
     }
     
@@ -746,11 +747,24 @@
       }
     
       .pardes-youtube-open-btn{
-        width:min(100%, 390px);
-        margin:8px auto 0;
+        position:absolute;
+        left:14px;
+        right:74px;
+        bottom:20px;
+        z-index:6;
+      
+        width:auto;
+        margin:0;
         padding:9px 10px;
-        font-size:13px;
+      
+        border-radius:999px;
+        background:linear-gradient(135deg, rgba(255,20,20,.82), rgba(170,0,0,.78));
+        backdrop-filter:blur(4px);
+        -webkit-backdrop-filter:blur(4px);
+      
+        font-size:12.5px;
         line-height:1.25;
+        box-shadow:0 8px 18px rgba(0,0,0,.38), 0 0 18px rgba(255,40,40,.22);
       }
     
       .pardes-youtube-open-btn .mobile-break{
