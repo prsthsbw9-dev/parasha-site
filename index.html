@@ -650,6 +650,27 @@
       object-fit:initial;
     }
 
+    .pardes-youtube-open-btn{
+      display:none;
+      width:min(100%, 430px);
+      margin:12px auto 0;
+      padding:12px 16px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.28);
+      background:linear-gradient(135deg, rgba(255,20,20,.94), rgba(170,0,0,.92));
+      color:#fff;
+      text-decoration:none;
+      text-align:center;
+      font-size:15px;
+      font-weight:900;
+      line-height:1.35;
+      box-shadow:0 10px 22px rgba(0,0,0,.32), 0 0 22px rgba(255,40,40,.20);
+    }
+
+    .pardes-youtube-open-btn .mobile-break{
+      display:none;
+    }
+
     .pardes-video-player.is-horizontal{
       width:100%;
       max-height:62vh;
@@ -787,6 +808,20 @@
       .pardes-video-player.is-horizontal{
         width:100%;
         max-height:calc(100dvh - 130px);
+      }
+
+      .pardes-youtube-open-btn{
+        width:min(100%, 420px);
+        padding:11px 12px;
+        font-size:14px;
+      }
+
+      .pardes-youtube-open-btn .mobile-break{
+        display:block;
+      }
+
+      .pardes-youtube-open-btn .desktop-only{
+        display:none;
       }
     }
 
@@ -1727,6 +1762,7 @@
       <div class="pardes-video-body">
         <video id="pardesVideoPlayer" class="pardes-video-player" controls playsinline preload="metadata" aria-label="נגן וידאו של עומק העלייה"></video>
         <iframe id="pardesYoutubePlayer" class="pardes-video-player pardes-youtube-player" title="נגן YouTube של עומק העלייה" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen referrerpolicy="strict-origin-when-cross-origin" style="display:none;"></iframe>
+        <a id="pardesYoutubeOpenBtn" class="pardes-youtube-open-btn" href="#" target="_blank" rel="noopener noreferrer" aria-label="פתיחה ביוטיוב ללייק, תגובה ושיתוף לזיכוי הרבים">פתח ביוטיוב ללייק, תגובה ושיתוף<span class="mobile-break">לזיכוי הרבים</span><span class="desktop-only"> לזיכוי הרבים</span></a>
         <div id="pardesVideoEmpty" class="pardes-video-empty"></div>
       </div>
     </div>
@@ -2398,6 +2434,21 @@
       return `https://www.youtube.com/embed/${youtubeId}`;
     }
 
+    function getYouTubeWatchUrl(video){
+      const rawUrl = String(video?.url || "").trim();
+      const youtubeId = video?.youtubeId || (rawUrl.match(/(?:v=|youtu\.be\/|embed\/|shorts\/|live\/)([a-zA-Z0-9_-]{8,20})/)?.[1] || "");
+
+      return youtubeId ? `https://www.youtube.com/watch?v=${youtubeId}` : rawUrl;
+    }
+
+    function hideYouTubeOpenButton(){
+      const youtubeOpenBtn = document.getElementById("pardesYoutubeOpenBtn");
+      if(!youtubeOpenBtn) return;
+
+      youtubeOpenBtn.style.display = "none";
+      youtubeOpenBtn.href = "#";
+    }
+
     let videoSessionId = 0;
 
     function stopPardesVideo(){
@@ -2405,6 +2456,8 @@
 
       const player = document.getElementById("pardesVideoPlayer");
       const youtubePlayer = document.getElementById("pardesYoutubePlayer");
+
+      hideYouTubeOpenButton();
 
       if(youtubePlayer){
         youtubePlayer.removeAttribute("src");
@@ -2454,6 +2507,7 @@
       const title = document.getElementById("pardesVideoTitle");
       const player = document.getElementById("pardesVideoPlayer");
       const youtubePlayer = document.getElementById("pardesYoutubePlayer");
+      const youtubeOpenBtn = document.getElementById("pardesYoutubeOpenBtn");
       const empty = document.getElementById("pardesVideoEmpty");
 
       const item = activeVideos?.[layer];
@@ -2493,6 +2547,11 @@
               youtubePlayer.style.visibility = "visible";
               youtubePlayer.style.display = "block";
             }
+
+            if(youtubeOpenBtn){
+              youtubeOpenBtn.href = getYouTubeWatchUrl(selectedVideo);
+              youtubeOpenBtn.style.display = "block";
+            }
           }
 
           panel.classList.add("is-open");
@@ -2513,6 +2572,7 @@
           youtubePlayer.classList.remove("is-horizontal", "is-square");
         }
 
+        hideYouTubeOpenButton();
         player.style.display = "block";
         player.classList.remove("is-horizontal", "is-square");
         player.style.visibility = "hidden";
