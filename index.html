@@ -645,6 +645,11 @@
       object-fit:contain;
     }
 
+    .pardes-youtube-player{
+      border:0;
+      object-fit:initial;
+    }
+
     .pardes-video-player.is-horizontal{
       width:100%;
       max-height:62vh;
@@ -1721,6 +1726,7 @@
       </div>
       <div class="pardes-video-body">
         <video id="pardesVideoPlayer" class="pardes-video-player" controls playsinline preload="metadata" aria-label="נגן וידאו של עומק העלייה"></video>
+        <iframe id="pardesYoutubePlayer" class="pardes-video-player pardes-youtube-player" title="נגן YouTube של עומק העלייה" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen referrerpolicy="strict-origin-when-cross-origin" style="display:none;"></iframe>
         <div id="pardesVideoEmpty" class="pardes-video-empty"></div>
       </div>
     </div>
@@ -2329,6 +2335,14 @@
       return window.matchMedia("(max-width: 700px), (pointer: coarse)").matches;
     }
 
+    function withSelectedVariant(video, variant){
+      if(!video) return null;
+      return {
+        ...video,
+        __variant: variant || video.__variant || ""
+      };
+    }
+
     function chooseVideoForViewer(item){
       if(!item) return null;
 
@@ -2351,10 +2365,37 @@
       );
 
       if(isMobileViewer()){
-        return mobile || wide || (item.url ? item : null);
+        return withSelectedVariant(mobile, "mobile") || withSelectedVariant(wide, "wide") || withSelectedVariant(item.url ? item : null, "mobile");
       }
 
-      return wide || mobile || (item.url ? item : null);
+      return withSelectedVariant(wide, "wide") || withSelectedVariant(mobile, "mobile") || withSelectedVariant(item.url ? item : null, "wide");
+    }
+
+    function isYouTubeVideo(video){
+      return !!(
+        video &&
+        (
+          video.provider === "youtube" ||
+          video.youtubeId ||
+          video.embedUrl ||
+          /(?:youtube\.com|youtu\.be)/i.test(String(video.url || ""))
+        )
+      );
+    }
+
+    function getYouTubeEmbedUrl(video){
+      if(video?.embedUrl) return video.embedUrl;
+
+      const rawUrl = String(video?.url || "").trim();
+      let youtubeId = video?.youtubeId || "";
+
+      if(!youtubeId){
+        const match = rawUrl.match(/(?:v=|youtu\.be\/|embed\/|shorts\/|live\/)([a-zA-Z0-9_-]{8,20})/);
+        youtubeId = match ? match[1] : "";
+      }
+
+      if(!youtubeId) return "";
+      return `https://www.youtube.com/embed/${youtubeId}`;
     }
 
     let videoSessionId = 0;
@@ -2363,6 +2404,15 @@
       videoSessionId += 1;
 
       const player = document.getElementById("pardesVideoPlayer");
+      const youtubePlayer = document.getElementById("pardesYoutubePlayer");
+
+      if(youtubePlayer){
+        youtubePlayer.removeAttribute("src");
+        youtubePlayer.src = "";
+        youtubePlayer.style.display = "none";
+        youtubePlayer.classList.remove("is-horizontal", "is-square");
+      }
+
       if(!player) return;
 
       player.onloadedmetadata = null;
@@ -2391,6 +2441,7 @@
 
       player.classList.remove("is-horizontal", "is-square");
       player.style.visibility = "visible";
+      player.style.display = "block";
     }
 
     let lastFocusedElementBeforeVideo = null;
@@ -2402,6 +2453,7 @@
       const panel = document.getElementById("pardesVideoPanel");
       const title = document.getElementById("pardesVideoTitle");
       const player = document.getElementById("pardesVideoPlayer");
+      const youtubePlayer = document.getElementById("pardesYoutubePlayer");
       const empty = document.getElementById("pardesVideoEmpty");
 
       const item = activeVideos?.[layer];
@@ -2416,6 +2468,51 @@
 
       if(selectedVideo?.url){
         empty.style.display = "none";
+
+        if(isYouTubeVideo(selectedVideo)){
+          const embedUrl = getYouTubeEmbedUrl(selectedVideo);
+
+          if(!embedUrl){
+            player.style.display = "none";
+            if(youtubePlayer) youtubePlayer.style.display = "none";
+            empty.style.display = "block";
+            empty.innerHTML = `קישור YouTube של <b>${layerName}</b> אינו תקין.`;
+          }else{
+            player.style.display = "none";
+            player.removeAttribute("src");
+            player.src = "";
+
+            if(youtubePlayer){
+              youtubePlayer.classList.remove("is-horizontal", "is-square");
+
+              if(selectedVideo.__variant === "wide"){
+                youtubePlayer.classList.add("is-horizontal");
+              }
+
+              youtubePlayer.src = `${embedUrl}?rel=0&modestbranding=1&playsinline=1`;
+              youtubePlayer.style.visibility = "visible";
+              youtubePlayer.style.display = "block";
+            }
+          }
+
+          panel.classList.add("is-open");
+          panel.setAttribute("aria-hidden", "false");
+
+          setTimeout(() => {
+            const closeButton = document.getElementById("pardesVideoClose");
+            closeButton?.focus();
+          }, 80);
+
+          return;
+        }
+
+        if(youtubePlayer){
+          youtubePlayer.removeAttribute("src");
+          youtubePlayer.src = "";
+          youtubePlayer.style.display = "none";
+          youtubePlayer.classList.remove("is-horizontal", "is-square");
+        }
+
         player.style.display = "block";
         player.classList.remove("is-horizontal", "is-square");
         player.style.visibility = "hidden";
@@ -2432,11 +2529,11 @@
 
           const ratio = player.videoWidth && player.videoHeight
             ? player.videoWidth / player.videoHeight
-            : 9 / 16;
+            : (selectedVideo.__variant === "wide" ? 16 / 9 : 9 / 16);
 
           player.classList.remove("is-horizontal", "is-square");
 
-          if(ratio > 1.2){
+          if(ratio > 1.2 || selectedVideo.__variant === "wide"){
             player.classList.add("is-horizontal");
           }else if(ratio > 0.82 && ratio < 1.2){
             player.classList.add("is-square");
@@ -2452,7 +2549,7 @@
           const closeButton = document.getElementById("pardesVideoClose");
           closeButton?.focus();
         }, 80);
-        
+
         player.load();
 
         const playPromise = player.play();
@@ -2472,6 +2569,7 @@
       }else{
         stopPardesVideo();
         player.style.display = "none";
+        if(youtubePlayer) youtubePlayer.style.display = "none";
         empty.style.display = "block";
         empty.innerHTML = `עדיין לא הועלה סרטון <b>${layerName}</b> עבור העלייה הפעילה.`;
 
@@ -2482,7 +2580,7 @@
           const closeButton = document.getElementById("pardesVideoClose");
           closeButton?.focus();
         }, 80);
-        
+
       }
     }
 
