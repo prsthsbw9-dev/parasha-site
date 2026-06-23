@@ -658,7 +658,7 @@
       position:static;
       transform:none;
     
-      border-radius:999px;
+      border-radius:0;
       border:1px solid rgba(255,255,255,.28);
       background:linear-gradient(135deg, rgba(255,20,20,.94), rgba(170,0,0,.92));
       color:#fff !important;
@@ -712,7 +712,7 @@
       text-align:center;
     }
     
-    /* תיקון תצוגת נייד — מציג את כפתור היוטיוב מעל הסרטון בלי לשבור את תצוגת המחשב */
+    /* תצוגת נייד — כפתור יוטיוב מעל הסרטון בלבד, בלי להשפיע על מחשב */
     @media (max-width:640px){
       .pardes-video-panel{
         padding:10px;
@@ -769,7 +769,7 @@
         position:absolute;
         left:34px;
         right:auto;
-        top:calc(100% - 88px);
+        top:calc(100% - 92px);
         bottom:auto;
         z-index:6;
     
@@ -781,7 +781,7 @@
     
         transform:none;
     
-        border-radius:18px;
+        border-radius:0;
         border:1px solid rgba(255,255,255,.24);
         background:linear-gradient(135deg, rgba(255,20,20,.74), rgba(170,0,0,.70));
         backdrop-filter:blur(5px);
@@ -792,7 +792,7 @@
         text-align:center;
     
         font-size:11.5px;
-        line-height:1.00;
+        line-height:1.15;
         font-weight:900;
     
         box-sizing:border-box;
