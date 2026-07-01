@@ -2512,7 +2512,12 @@
     function isMobileViewer(){
       return window.matchMedia("(max-width: 700px), (pointer: coarse)").matches;
     }
-
+    
+    function isLandscapeMobile(){
+      return isMobileViewer() &&
+             window.matchMedia("(orientation: landscape)").matches;
+    }
+    
     function withSelectedVariant(video, variant){
       if(!video) return null;
       return {
@@ -2520,10 +2525,10 @@
         __variant: variant || video.__variant || ""
       };
     }
-
+    
     function chooseVideoForViewer(item){
       if(!item) return null;
-
+    
       const mobile = item.mobile?.url ? item.mobile : (
         item.mobileUrl ? {
           url: item.mobileUrl,
@@ -2532,7 +2537,7 @@
           contentType: item.mobileContentType
         } : null
       );
-
+    
       const wide = item.wide?.url ? item.wide : (
         item.wideUrl ? {
           url: item.wideUrl,
@@ -2541,24 +2546,22 @@
           contentType: item.wideContentType
         } : null
       );
-
-      if(isMobileViewer()){
-        return withSelectedVariant(mobile, "mobile") || withSelectedVariant(wide, "wide") || withSelectedVariant(item.url ? item : null, "mobile");
+    
+      if(isLandscapeMobile()){
+        return withSelectedVariant(wide, "wide")
+            || withSelectedVariant(mobile, "mobile")
+            || withSelectedVariant(item.url ? item : null, "wide");
       }
-
-      return withSelectedVariant(wide, "wide") || withSelectedVariant(mobile, "mobile") || withSelectedVariant(item.url ? item : null, "wide");
-    }
-
-    function isYouTubeVideo(video){
-      return !!(
-        video &&
-        (
-          video.provider === "youtube" ||
-          video.youtubeId ||
-          video.embedUrl ||
-          /(?:youtube\.com|youtu\.be)/i.test(String(video.url || ""))
-        )
-      );
+    
+      if(isMobileViewer()){
+        return withSelectedVariant(mobile, "mobile")
+            || withSelectedVariant(wide, "wide")
+            || withSelectedVariant(item.url ? item : null, "mobile");
+      }
+    
+      return withSelectedVariant(wide, "wide")
+          || withSelectedVariant(mobile, "mobile")
+          || withSelectedVariant(item.url ? item : null, "wide");
     }
 
     function getYouTubeEmbedUrl(video){
