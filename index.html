@@ -2728,7 +2728,10 @@
             }
 
             if(youtubeOpenBtn){
-              youtubeOpenBtn.href = getYouTubeWatchUrl(selectedVideo);
+              const wideVideo = item?.wide?.url ? item.wide : null;
+              const buttonVideo = isLandscapeMobile() && wideVideo ? wideVideo : selectedVideo;
+            
+              youtubeOpenBtn.href = getYouTubeWatchUrl(buttonVideo);
               youtubeOpenBtn.style.display = "block";
             }
           }
