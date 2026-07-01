@@ -2528,7 +2528,13 @@
     
     function chooseVideoForViewer(item){
       if(!item) return null;
-    
+      console.log({
+        mobile: isMobileViewer(),
+        landscape: isLandscapeMobile(),
+        width: window.innerWidth,
+        height: window.innerHeight
+      });
+      
       const mobile = item.mobile?.url ? item.mobile : (
         item.mobileUrl ? {
           url: item.mobileUrl,
@@ -2606,6 +2612,8 @@
       youtubeOpenBtn.href = "#";
     }
 
+    let currentOpenLayer = "";    
+    
     let videoSessionId = 0;
 
     function stopPardesVideo(){
