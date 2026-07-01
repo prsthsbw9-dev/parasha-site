@@ -2220,33 +2220,107 @@
       "זאת הברכה": "וזאת הברכה"
     };
 
-    function normalizeParashaName(value){
-      let text = removeParashaPrefix(value);
+function compactParashaKey(value){
+  return normalizeHebrewSearchText(value)
+    .replace(/\s+/g, "")
+    .replace(/וו/g, "ו")
+    .trim();
+}
 
-      const aliyahWords = [
-        "עלייה", "עליה", "עליית", "עלית",
-        "ראשון", "ראשונה",
-        "שני", "שניה", "שנייה",
-        "שלישי", "שלישית",
-        "רביעי", "רביעית",
-        "חמישי", "חמישית",
-        "שישי", "שישית",
-        "שביעי", "שביעית",
-        "מפטיר", "הפטרה",
-        "1", "2", "3", "4", "5", "6", "7",
-        "01", "02", "03", "04", "05", "06", "07"
-      ];
+function levenshteinDistance(a, b){
+  const matrix = Array.from({ length: a.length + 1 }, () => []);
 
-      for(const word of aliyahWords){
-        const index = text.indexOf(word);
-        if(index > -1){
-          text = text.slice(0, index).trim();
-          break;
-        }
-      }
+  for(let i = 0; i <= a.length; i++) matrix[i][0] = i;
+  for(let j = 0; j <= b.length; j++) matrix[0][j] = j;
 
-      return parashaAliases[text] || text;
+  for(let i = 1; i <= a.length; i++){
+    for(let j = 1; j <= b.length; j++){
+      const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+
+      matrix[i][j] = Math.min(
+        matrix[i - 1][j] + 1,
+        matrix[i][j - 1] + 1,
+        matrix[i - 1][j - 1] + cost
+      );
     }
+  }
+
+  return matrix[a.length][b.length];
+}
+
+function findClosestParashaName(value){
+  const inputKey = compactParashaKey(value);
+
+  if(!inputKey || inputKey.length < 2){
+    return "";
+  }
+
+  const canonicalNames = [...new Set(Object.values(parashaAliases))];
+
+  let bestName = "";
+  let bestScore = Infinity;
+
+  canonicalNames.forEach((name) => {
+    const score = levenshteinDistance(
+      inputKey,
+      compactParashaKey(name)
+    );
+
+    if(score < bestScore){
+      bestScore = score;
+      bestName = name;
+    }
+  });
+
+  const maxDistance =
+    inputKey.length <= 4 ? 1 :
+    inputKey.length <= 7 ? 2 : 3;
+
+  return bestScore <= maxDistance ? bestName : "";
+}
+
+function normalizeParashaName(value){
+  let text = removeParashaPrefix(value);
+
+  const aliyahWords = [
+    "עלייה", "עליה", "עליית", "עלית",
+    "ראשון", "ראשונה",
+    "שני", "שניה", "שנייה",
+    "שלישי", "שלישית",
+    "רביעי", "רביעית",
+    "חמישי", "חמישית",
+    "שישי", "שישית",
+    "שביעי", "שביעית",
+    "מפטיר", "הפטרה",
+    "1", "2", "3", "4", "5", "6", "7",
+    "01", "02", "03", "04", "05", "06", "07"
+  ];
+
+  for(const word of aliyahWords){
+    const index = text.indexOf(word);
+
+    if(index > -1){
+      text = text.slice(0, index).trim();
+      break;
+    }
+  }
+
+  if(parashaAliases[text]){
+    return parashaAliases[text];
+  }
+
+  const compactText = compactParashaKey(text);
+
+  for(const [alias, canonical] of Object.entries(parashaAliases)){
+    if(compactParashaKey(alias) === compactText){
+      return canonical;
+    }
+  }
+
+  const closest = findClosestParashaName(text);
+
+  return closest || text;
+}
 
     function isKnownParashaName(value){
       const text = normalizeParashaName(value);
@@ -2274,35 +2348,53 @@
     }
 
     function getParashaSearchCandidates(cleanParasha, rawParasha){
-      const baseValues = [
-        cleanParasha,
-        removeParashaPrefix(rawParasha),
-        normalizeParashaName(rawParasha)
-      ];
-
-      const expanded = [];
-
-      baseValues.forEach((value) => {
-        const normalized = normalizeParashaName(value);
-        const noPrefix = removeParashaPrefix(value);
-
-        [value, normalized, noPrefix].forEach((item) => {
-          if(item) expanded.push(item);
-        });
-
+      const candidates = new Set();
+    
+      const addCandidate = (value) => {
+        if(!value) return;
+    
+        const trimmed = String(value).trim();
+        if(!trimmed) return;
+    
+        candidates.add(trimmed);
+    
+        const normalized = normalizeParashaName(trimmed);
         if(normalized){
-          expanded.push(`פרשת ${normalized}`);
-          if(normalized.includes("תצוה")) expanded.push(normalized.replace("תצוה", "תצווה"), `פרשת ${normalized.replace("תצוה", "תצווה")}`);
-          if(normalized.includes("תצווה")) expanded.push(normalized.replace("תצווה", "תצוה"), `פרשת ${normalized.replace("תצווה", "תצוה")}`);
-          if(normalized.includes("תשא")) expanded.push(normalized.replace("תשא", "תישא"), `פרשת ${normalized.replace("תשא", "תישא")}`);
-          if(normalized.includes("תישא")) expanded.push(normalized.replace("תישא", "תשא"), `פרשת ${normalized.replace("תישא", "תשא")}`);
+          candidates.add(normalized);
+          candidates.add(`פרשת ${normalized}`);
         }
-      });
-
-      return expanded
-        .filter(Boolean)
-        .map((item) => String(item).trim())
-        .filter((item, index, arr) => item && arr.indexOf(item) === index);
+    
+        const compact = compactParashaKey(trimmed);
+    
+        Object.entries(parashaAliases).forEach(([alias, canonical]) => {
+          if(compactParashaKey(alias) === compact){
+            candidates.add(alias);
+            candidates.add(canonical);
+            candidates.add(`פרשת ${alias}`);
+            candidates.add(`פרשת ${canonical}`);
+          }
+        });
+      };
+    
+      addCandidate(cleanParasha);
+      addCandidate(rawParasha);
+      addCandidate(removeParashaPrefix(rawParasha));
+    
+      const closest = findClosestParashaName(rawParasha);
+    
+      if(closest){
+        candidates.add(closest);
+        candidates.add(`פרשת ${closest}`);
+    
+        Object.entries(parashaAliases).forEach(([alias, canonical]) => {
+          if(canonical === closest){
+            candidates.add(alias);
+            candidates.add(`פרשת ${alias}`);
+          }
+        });
+      }
+    
+      return [...candidates];
     }
 
     function getAliyahSearchCandidates(cleanAliyah, rawAliyah){
