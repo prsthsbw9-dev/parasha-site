@@ -2564,6 +2564,18 @@
           || withSelectedVariant(item.url ? item : null, "wide");
     }
 
+    function isYouTubeVideo(video){
+      return !!(
+        video &&
+        (
+          video.provider === "youtube" ||
+          video.youtubeId ||
+          video.embedUrl ||
+          /(?:youtube\.com|youtu\.be)/i.test(String(video.url || ""))
+        )
+      );
+    }
+    
     function getYouTubeEmbedUrl(video){
       if(video?.embedUrl) return video.embedUrl;
 
