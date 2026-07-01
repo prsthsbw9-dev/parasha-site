@@ -2814,7 +2814,7 @@ function normalizeParashaName(value){
                 youtubePlayer.classList.add("is-horizontal");
               }
 
-              youtubePlayer.src = `${embedUrl}?rel=0&modestbranding=1&playsinline=1`;
+              youtubePlayer.src = `${embedUrl}?rel=0&modestbranding=1&playsinline=1&origin=${encodeURIComponent(window.location.origin)}`;
               youtubePlayer.style.visibility = "visible";
               youtubePlayer.style.display = "block";
             }
