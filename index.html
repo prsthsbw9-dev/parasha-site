@@ -2814,10 +2814,7 @@ function normalizeParashaName(value){
             }
 
             if(youtubeOpenBtn){
-              const wideVideo = item?.wide?.url ? item.wide : null;
-              const buttonVideo = isLandscapeMobile() && wideVideo ? wideVideo : selectedVideo;
-            
-              youtubeOpenBtn.href = getYouTubeWatchUrl(buttonVideo);
+              youtubeOpenBtn.href = getYouTubeWatchUrl(selectedVideo);
               youtubeOpenBtn.style.display = "block";
             }
           }
