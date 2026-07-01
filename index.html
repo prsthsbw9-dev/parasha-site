@@ -2634,12 +2634,6 @@ function normalizeParashaName(value){
     
     function chooseVideoForViewer(item){
       if(!item) return null;
-      console.log({
-        mobile: isMobileViewer(),
-        landscape: isLandscapeMobile(),
-        width: window.innerWidth,
-        height: window.innerHeight
-      });
       
       const mobile = item.mobile?.url ? item.mobile : (
         item.mobileUrl ? {
@@ -2814,7 +2808,7 @@ function normalizeParashaName(value){
                 youtubePlayer.classList.add("is-horizontal");
               }
 
-              youtubePlayer.src = `${embedUrl}?rel=0&modestbranding=1&playsinline=1&origin=${encodeURIComponent(window.location.origin)}`;
+              youtubePlayer.src = `${embedUrl}?rel=0&modestbranding=1&playsinline=1`;
               youtubePlayer.style.visibility = "visible";
               youtubePlayer.style.display = "block";
             }
