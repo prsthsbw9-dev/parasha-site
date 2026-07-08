@@ -360,6 +360,45 @@
         0 0 14px rgba(255,255,255,.24);
     }
 
+    .heart-fruit-icon{
+      position:relative;
+      z-index:2;
+      width:38px;
+      height:38px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      transform:translateY(-1px);
+      filter:
+        drop-shadow(0 3px 8px rgba(0,0,0,.38))
+        drop-shadow(0 0 12px rgba(255,255,255,.22));
+    }
+
+    .heart-fruit-icon::before{
+      content:"🍎";
+      position:absolute;
+      inset:0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:36px;
+      line-height:1;
+    }
+
+    .heart-fruit-icon::after{
+      content:"❤";
+      position:absolute;
+      left:50%;
+      top:52%;
+      transform:translate(-50%,-50%);
+      font-size:18px;
+      line-height:1;
+      color:#fff;
+      text-shadow:
+        0 2px 6px rgba(0,0,0,.60),
+        0 0 10px rgba(255,255,255,.60);
+    }
+
     .fruit-pshat{
       right:118px;
       top:132px;
@@ -418,9 +457,9 @@
       left:125px;
       top:240px;
       background:
-        radial-gradient(circle at 30% 22%, rgba(255,255,255,.96), rgba(235,245,255,.36) 18%, rgba(110,165,245,.84) 56%, rgba(24,61,130,.96) 100%);
-      --fruit-glow:rgba(120,190,255,.58);
-      --fruit-glow-soft:rgba(120,190,255,.24);
+        radial-gradient(circle at 30% 22%, rgba(255,255,255,.96), rgba(255,210,225,.40) 18%, rgba(235,72,118,.88) 56%, rgba(120,18,55,.96) 100%);
+      --fruit-glow:rgba(255,95,145,.62);
+      --fruit-glow-soft:rgba(255,95,145,.26);
     }
 
     .fruit-names{
@@ -1782,9 +1821,9 @@
           <span class="fruit-letter fruit-word">פשט</span>
         </a>
 
-        <a id="whatsappLink" class="fruit-link fruit-whatsapp" href="#" target="_blank" rel="noopener noreferrer" aria-label="ערוץ וואטסאפ">
-          <i class="fa-brands fa-whatsapp"></i>
-          <span class="fruit-letter fruit-word">וואטסאפ</span>
+        <a id="whatsappLink" class="fruit-link fruit-whatsapp" href="#" target="_blank" rel="noopener noreferrer" aria-label="הפרי שלי - ערוץ העדכונים">
+          <span class="pardes-fruit-icon" aria-hidden="true">🍏</span>
+          <span class="fruit-letter fruit-word">הפרי שלי</span>
         </a>
 
         <a id="tikunLink" class="fruit-link fruit-tikun" href="personal-message.html" aria-label="האור שבי">
@@ -1792,9 +1831,9 @@
           <span class="fruit-letter fruit-word">האור שבי</span>
         </a>
 
-        <a id="emailLink" class="fruit-link fruit-email" href="mailto:prsthsbw9@gmail.com" aria-label="שליחת מייל">
-          <i class="fa-regular fa-envelope"></i>
-          <span class="fruit-letter fruit-word">מייל</span>
+        <a id="heartLink" class="fruit-link fruit-email" href="#heart" data-open-screen="heartScreen" aria-label="מה שבלב">
+          <span class="heart-fruit-icon" aria-hidden="true"></span>
+          <span class="fruit-letter fruit-word">מה שבלב</span>
         </a>
 
         <a id="namesLink" class="fruit-link fruit-names" href="names.html" aria-label="הוספת שמות">
@@ -1905,6 +1944,26 @@
       </div>
 
       <p class="spiritual-disclaimer">המדור נועד לחיזוק, הכוונה ולימוד בלבד. במצבי משבר זוגי משמעותי מומלץ לפנות לרב מוסמך או לאיש מקצוע מתאים.</p>
+    </div>
+  </section>
+
+  <section id="heartScreen" class="spiritual-screen screen-hidden-right" data-spiritual-screen="heart" aria-label="מדור מה שבלב">
+    <div class="spiritual-card">
+      <img class="spiritual-logo" src="logo.png" alt="פרשת השבוע" />
+      <div class="spiritual-figure" aria-hidden="true">❤️</div>
+      <h2 class="spiritual-title">מה שבלב</h2>
+      <p class="spiritual-subtitle">מקום לשתף, לשאול ולקבל כיוון מחזק מתוך רוח היהדות — על מה שמעסיק את הלב ביום־יום.</p>
+
+      <div class="spiritual-input-shell">
+        <label class="spiritual-input-label" for="heartQuestion">מה יושב לך על הלב?</label>
+        <div class="spiritual-input-row">
+          <button class="spiritual-mic-btn" type="button" aria-label="דיבור קולי בעברית">🎙️</button>
+          <textarea id="heartQuestion" placeholder="אפשר לכתוב כאן שאלה, קושי, מחשבה, פחד, התלבטות או כל דבר שמכביד על הלב..."></textarea>
+          <button class="spiritual-send-btn" type="button" aria-label="שליחת שאלה למדור מה שבלב">שלח</button>
+        </div>
+      </div>
+
+      <p class="spiritual-disclaimer">המדור נועד להקשבה, חיזוק והכוונה כללית בלבד. במצוקה נפשית, סכנה, משבר חריף או שאלה הלכתית מעשית — יש לפנות מיד לאיש מקצוע, רב מוסמך או גורם מתאים.</p>
     </div>
   </section>
 
@@ -3180,6 +3239,11 @@ function normalizeParashaName(value){
           title: "בהשראת רחל אמנו",
           field: "זוגיות, קשר, שלום בית ותפילה מהלב",
           instruction: "ענה בעברית על זוגיות, קשר, שלום בית ותפילה מהלב, כתשובה לימודית ומחזקת לפי מקורות יהודיים בלבד. אין להחליף רב מוסמך או איש מקצוע במצבי משבר."
+        },
+        heart: {
+          title: "מה שבלב",
+          field: "שיתוף אישי, התלבטויות, קושי, חיזוק והכוונה מהלב",
+          instruction: "ענה בעברית ברגישות ובכבוד על מה שהאדם משתף מהלב. תן הקשבה, חיזוק וכיוון מעשי עדין מתוך רוח התורה ומקורות יהודיים בלבד. אל תציג זאת כפסיקת הלכה, טיפול נפשי או אבחון. במצוקה חריפה, סכנה, דיכאון קשה, אלימות, או שאלה הלכתית מעשית — הפנה לרב מוסמך, איש מקצוע או גורם חירום מתאים."
         }
       };
 
@@ -3286,7 +3350,10 @@ function normalizeParashaName(value){
           },
           body: JSON.stringify({
             character: screenKey,
-            question
+            question,
+            title: context.title,
+            field: context.field,
+            instruction: context.instruction
           })
         });
 
@@ -3436,7 +3503,8 @@ function normalizeParashaName(value){
         yosefScreen: "מדור חלומות בהשראת יוסף הצדיק",
         avrahamScreen: "מדור אמונה וחסד בהשראת אברהם אבינו",
         rambamScreen: "מדור בריאות בהשראת הרמב״ם",
-        rachelScreen: "מדור זוגיות בהשראת רחל אמנו"
+        rachelScreen: "מדור זוגיות בהשראת רחל אמנו",
+        heartScreen: "מדור מה שבלב"
       };
     
       Object.entries(screenLabels).forEach(([screenId, label]) => {
@@ -3472,7 +3540,8 @@ function normalizeParashaName(value){
         document.getElementById("yosefScreen"),
         document.getElementById("avrahamScreen"),
         document.getElementById("rambamScreen"),
-        document.getElementById("rachelScreen")
+        document.getElementById("rachelScreen"),
+        document.getElementById("heartScreen")
       ].filter(Boolean);
 
       const rightBtn = document.getElementById("spiritualNavRight");
@@ -3525,6 +3594,20 @@ function normalizeParashaName(value){
         if(event.key === "ArrowLeft"){
           goToIndex(activeIndex - 1);
         }
+      });
+
+      document.querySelectorAll("[data-open-screen]").forEach((link) => {
+        link.addEventListener("click", (event) => {
+          const targetId = link.getAttribute("data-open-screen");
+          const targetIndex = screens.findIndex(screen => screen.id === targetId);
+
+          if(targetIndex === -1){
+            return;
+          }
+
+          event.preventDefault();
+          goToIndex(targetIndex);
+        });
       });
 
       renderScreens();
