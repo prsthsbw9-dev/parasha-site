@@ -1535,54 +1535,110 @@
     }
 
 
+    /* עיצוב ייחודי לדף "מה שבלב" — מרווח יותר, אישי יותר, מותאם לנייד ולמחשב */
+    .heart-screen{
+      --heart-soft:rgba(255,92,140,.30);
+      --heart-strong:rgba(255,72,118,.58);
+    }
+
+    .heart-screen .spiritual-card{
+      position:relative;
+      overflow:hidden;
+      width:min(100%, 620px);
+      padding:clamp(18px, 3vw, 26px) clamp(14px, 3vw, 24px) 24px;
+      border-radius:34px;
+      border:1px solid rgba(255,255,255,.24);
+      background:
+        radial-gradient(circle at 50% 0%, rgba(255,255,255,.13), rgba(255,255,255,0) 34%),
+        radial-gradient(circle at 50% 24%, rgba(255,92,140,.16), rgba(255,92,140,0) 48%),
+        linear-gradient(180deg, rgba(3,10,18,.38), rgba(0,0,0,.14));
+      box-shadow:
+        0 22px 70px rgba(0,0,0,.34),
+        0 0 44px rgba(255,92,140,.10),
+        inset 0 1px 0 rgba(255,255,255,.10);
+    }
+
+    .heart-screen .spiritual-card::before{
+      content:"";
+      position:absolute;
+      inset:16px;
+      border-radius:30px;
+      border:1px solid rgba(255,255,255,.10);
+      pointer-events:none;
+    }
+
+    .heart-screen .spiritual-logo{
+      width:clamp(48px, 8vw, 70px);
+      height:clamp(48px, 8vw, 70px);
+      margin:0 auto 4px;
+      box-shadow:0 0 18px rgba(255,255,255,.20), 0 8px 18px rgba(0,0,0,.35);
+      opacity:.96;
+    }
+
     .heart-page-figure{
       position:relative;
       overflow:visible;
+      width:clamp(88px, 16vw, 118px);
+      height:clamp(88px, 16vw, 118px);
+      margin:2px auto 6px;
+      border:0;
+      background:transparent;
+      box-shadow:none;
+    }
+
+    .heart-page-figure::before{
+      content:"";
+      position:absolute;
+      inset:7px;
+      border-radius:50%;
       background:
-        radial-gradient(circle at 50% 46%, rgba(255,255,255,.26), rgba(255,95,145,.14) 44%, rgba(0,0,0,.18) 100%);
+        radial-gradient(circle at 50% 50%, rgba(255,255,255,.20), rgba(255,92,140,.12) 44%, rgba(255,255,255,0) 72%);
       box-shadow:
-        0 0 0 7px rgba(255,255,255,.07),
-        0 0 48px rgba(255,95,145,.26),
-        0 0 74px rgba(255,255,255,.10),
-        inset 0 1px 0 rgba(255,255,255,.34);
+        0 0 0 1px rgba(255,255,255,.22),
+        0 0 34px rgba(255,92,140,.28),
+        0 0 54px rgba(255,255,255,.10);
+      pointer-events:none;
     }
 
     .heart-fruit-large{
-      position:relative;
-      width:clamp(82px, 23vw, 118px);
-      height:clamp(82px, 23vw, 118px);
+      position:absolute;
+      left:50%;
+      top:52%;
+      width:clamp(68px, 13vw, 88px);
+      height:clamp(68px, 13vw, 88px);
       display:block;
+      transform:translate(-50%,-50%);
       filter:
-        drop-shadow(0 8px 20px rgba(0,0,0,.36))
-        drop-shadow(0 0 18px rgba(255,255,255,.26));
+        drop-shadow(0 8px 18px rgba(0,0,0,.38))
+        drop-shadow(0 0 16px rgba(255,255,255,.28));
     }
 
     .heart-fruit-large::before{
       content:"";
       position:absolute;
       left:50%;
-      top:54%;
+      top:55%;
       width:86%;
       height:88%;
       transform:translate(-50%,-50%);
       border-radius:48% 52% 54% 46% / 43% 43% 62% 62%;
       background:
-        radial-gradient(circle at 30% 20%, rgba(255,255,255,.95), rgba(255,220,225,.50) 16%, rgba(255,90,125,.95) 48%, rgba(170,14,55,.98) 100%);
-      border:2px solid rgba(255,255,255,.70);
+        radial-gradient(circle at 30% 20%, rgba(255,255,255,.96), rgba(255,220,225,.52) 16%, rgba(255,90,125,.95) 48%, rgba(170,14,55,.98) 100%);
+      border:2px solid rgba(255,255,255,.72);
       box-shadow:
         inset 0 2px 0 rgba(255,255,255,.56),
-        inset 0 -18px 26px rgba(70,0,20,.22),
-        0 0 0 5px rgba(255,255,255,.06),
-        0 0 34px rgba(255,95,145,.40);
+        inset 0 -16px 24px rgba(70,0,20,.22),
+        0 0 0 5px rgba(255,255,255,.05),
+        0 0 30px rgba(255,95,145,.36);
     }
 
     .heart-fruit-large::after{
       content:"❤";
       position:absolute;
       left:50%;
-      top:55%;
+      top:56%;
       transform:translate(-50%,-50%);
-      font-size:clamp(42px, 12vw, 62px);
+      font-size:clamp(32px, 6.5vw, 46px);
       line-height:1;
       color:#fff7dc;
       text-shadow:
@@ -1595,9 +1651,9 @@
     .heart-fruit-large .heart-stem{
       position:absolute;
       left:49%;
-      top:3%;
-      width:12px;
-      height:30px;
+      top:4%;
+      width:10px;
+      height:23px;
       border-radius:10px;
       background:linear-gradient(180deg,#9b642a,#5e3414);
       transform:translateX(-50%) rotate(5deg);
@@ -1607,10 +1663,10 @@
 
     .heart-fruit-large .heart-leaf{
       position:absolute;
-      left:54%;
-      top:6%;
-      width:38px;
-      height:22px;
+      left:55%;
+      top:8%;
+      width:31px;
+      height:18px;
       border-radius:100% 0 100% 0;
       background:linear-gradient(135deg, #c8ff93, #3fae45 58%, #156b2a);
       transform:rotate(-20deg);
@@ -1620,18 +1676,25 @@
       z-index:2;
     }
 
+    .heart-screen .spiritual-title{
+      margin:2px 0 8px;
+      font-size:clamp(34px, 6.8vw, 50px);
+      letter-spacing:.01em;
+    }
+
     .heart-opening{
-      width:min(100%, 500px);
-      margin:0 auto 14px;
-      padding:12px 14px;
-      border-radius:22px;
-      border:1px solid rgba(255,255,255,.20);
-      background:rgba(255,255,255,.07);
-      color:rgba(255,255,255,.94);
-      font-size:clamp(14px, 3.8vw, 18px);
-      line-height:1.65;
-      font-weight:800;
-      text-shadow:0 3px 12px rgba(0,0,0,.70);
+      width:min(100%, 520px);
+      margin:0 auto 12px;
+      padding:12px 16px;
+      border-radius:24px;
+      border:1px solid rgba(255,255,255,.18);
+      background:linear-gradient(180deg, rgba(255,255,255,.09), rgba(255,255,255,.045));
+      color:rgba(255,255,255,.96);
+      font-size:clamp(15px, 3.2vw, 18px);
+      line-height:1.62;
+      font-weight:850;
+      text-shadow:0 3px 12px rgba(0,0,0,.72);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.08), 0 12px 26px rgba(0,0,0,.16);
     }
 
     .heart-opening strong{
@@ -1639,16 +1702,57 @@
       font-weight:900;
     }
 
+    .heart-screen .spiritual-subtitle{
+      max-width:520px;
+      margin:0 auto 12px;
+      font-size:clamp(15px, 3vw, 18px);
+      line-height:1.62;
+    }
+
+    .heart-screen .spiritual-input-shell{
+      width:min(100%, 520px);
+      padding:12px;
+      border-radius:28px;
+      border:1px solid rgba(255,255,255,.22);
+      background:linear-gradient(180deg, rgba(0,0,0,.25), rgba(0,0,0,.16));
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.09),
+        0 14px 30px rgba(0,0,0,.24),
+        0 0 24px rgba(255,92,140,.08);
+    }
+
+    .heart-screen .spiritual-input-label{
+      font-size:clamp(15px, 3.4vw, 18px);
+      margin-bottom:9px;
+    }
+
+    .heart-screen .spiritual-input-row textarea{
+      min-height:76px;
+      border-radius:20px;
+      border-color:rgba(255,255,255,.32);
+      background:rgba(2,5,14,.76);
+      font-size:15px;
+      line-height:1.55;
+    }
+
+    .heart-screen .spiritual-send-btn{
+      background:linear-gradient(135deg, rgba(70,170,255,.96), rgba(135,92,255,.96));
+    }
+
+    .heart-screen .spiritual-mic-btn{
+      background:linear-gradient(135deg, rgba(80,175,255,.92), rgba(145,96,255,.92));
+    }
+
     .heart-possibilities{
-      width:min(100%, 500px);
+      width:min(100%, 520px);
       margin:12px auto 0;
-      padding:11px 14px;
-      border-radius:22px;
-      border:1px solid rgba(255,255,255,.18);
-      background:rgba(255,255,255,.06);
-      color:rgba(255,255,255,.86);
+      padding:12px 15px;
+      border-radius:24px;
+      border:1px solid rgba(255,255,255,.16);
+      background:linear-gradient(180deg, rgba(255,255,255,.075), rgba(255,255,255,.04));
+      color:rgba(255,255,255,.88);
       font-size:13px;
-      line-height:1.7;
+      line-height:1.78;
       font-weight:800;
       text-shadow:0 2px 9px rgba(0,0,0,.70);
     }
@@ -1656,9 +1760,126 @@
     .heart-small-note{
       display:block;
       margin-top:6px;
-      color:rgba(255,255,255,.72);
+      color:rgba(255,255,255,.74);
       font-size:12px;
-      font-weight:700;
+      font-weight:750;
+    }
+
+    .heart-screen .spiritual-answer-box{
+      width:min(100%, 520px);
+      margin-top:14px;
+      border-color:rgba(255,150,185,.42);
+      background:linear-gradient(180deg, rgba(18,5,14,.36), rgba(0,0,0,.20));
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.08),
+        0 14px 30px rgba(0,0,0,.24),
+        0 0 22px rgba(255,92,140,.12);
+    }
+
+    .heart-screen .spiritual-disclaimer{
+      max-width:520px;
+      margin-top:10px;
+    }
+
+    @media (min-width:900px){
+      .heart-screen .spiritual-card{
+        transform:translateY(-8px);
+      }
+    }
+
+    @media (max-width:640px){
+      .heart-screen{
+        padding:10px 22px 80px;
+        align-items:flex-start;
+      }
+
+      .heart-screen .spiritual-card{
+        margin-top:0;
+        padding:12px 12px 16px;
+        border-radius:28px;
+      }
+
+      .heart-screen .spiritual-card::before{
+        inset:10px;
+        border-radius:24px;
+      }
+
+      .heart-screen .spiritual-logo{
+        width:42px;
+        height:42px;
+        margin-bottom:0;
+      }
+
+      .heart-page-figure{
+        width:78px;
+        height:78px;
+        margin:0 auto 2px;
+      }
+
+      .heart-fruit-large{
+        width:62px;
+        height:62px;
+      }
+
+      .heart-fruit-large::after{
+        font-size:31px;
+      }
+
+      .heart-fruit-large .heart-stem{
+        width:8px;
+        height:19px;
+      }
+
+      .heart-fruit-large .heart-leaf{
+        width:26px;
+        height:16px;
+      }
+
+      .heart-screen .spiritual-title{
+        margin:0 0 6px;
+        font-size:35px;
+      }
+
+      .heart-opening{
+        margin-bottom:10px;
+        padding:9px 12px;
+        border-radius:20px;
+        font-size:15px;
+        line-height:1.55;
+      }
+
+      .heart-screen .spiritual-subtitle{
+        margin-bottom:10px;
+        font-size:15px;
+        line-height:1.58;
+      }
+
+      .heart-screen .spiritual-input-shell{
+        padding:9px;
+        border-radius:24px;
+      }
+
+      .heart-screen .spiritual-input-row textarea{
+        min-height:72px;
+        font-size:14px;
+        padding:9px 10px;
+      }
+
+      .heart-screen .spiritual-input-label{
+        font-size:15px;
+      }
+
+      .heart-possibilities{
+        margin-top:10px;
+        padding:10px 12px;
+        border-radius:21px;
+        font-size:12.5px;
+        line-height:1.7;
+      }
+
+      .heart-screen .spiritual-disclaimer{
+        font-size:11.5px;
+      }
     }
 
     .spiritual-disclaimer{
@@ -2106,7 +2327,7 @@
     </div>
   </section>
 
-  <section id="heartScreen" class="spiritual-screen screen-hidden-right" data-spiritual-screen="heart" aria-label="מדור מה שבלב">
+  <section id="heartScreen" class="spiritual-screen heart-screen screen-hidden-right" data-spiritual-screen="heart" aria-label="מדור מה שבלב">
     <div class="spiritual-card">
       <img class="spiritual-logo" src="logo.png" alt="פרשת השבוע" />
 
@@ -2124,13 +2345,13 @@
         פשוט כתבו את מה שיושב על הלב.
       </div>
 
-      <p class="spiritual-subtitle">מקום לשתף, לשאול ולקבל כיוון מחזק מתוך רוח היהדות — על מה שמעסיק את הלב ביום־יום.</p>
+      <p class="spiritual-subtitle">מקום שקט לשתף, לשאול ולקבל כיוון מחזק מתוך רוח היהדות — בלי לבחור קטגוריה ובלי לחשוש מהמילים.</p>
 
       <div class="spiritual-input-shell">
         <label class="spiritual-input-label" for="heartQuestion">מה יושב על הלב שלך היום?</label>
         <div class="spiritual-input-row">
           <button class="spiritual-mic-btn" type="button" aria-label="דיבור קולי בעברית">🎙️</button>
-          <textarea id="heartQuestion" placeholder="שתף אותי במה שמעסיק אותך... שאלה, קושי, פחד, התלבטות, מחשבה או כל דבר שיושב על הלב."></textarea>
+          <textarea id="heartQuestion" placeholder="שתף אותי במה שמעסיק אותך... קושי, פחד, התלבטות, מחשבה או כל דבר שיושב על הלב."></textarea>
           <button class="spiritual-send-btn" type="button" aria-label="שליחת שאלה למדור מה שבלב">שלח</button>
         </div>
       </div>
