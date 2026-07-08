@@ -1534,6 +1534,133 @@
         0 0 22px rgba(255,95,145,.34);
     }
 
+
+    .heart-page-figure{
+      position:relative;
+      overflow:visible;
+      background:
+        radial-gradient(circle at 50% 46%, rgba(255,255,255,.26), rgba(255,95,145,.14) 44%, rgba(0,0,0,.18) 100%);
+      box-shadow:
+        0 0 0 7px rgba(255,255,255,.07),
+        0 0 48px rgba(255,95,145,.26),
+        0 0 74px rgba(255,255,255,.10),
+        inset 0 1px 0 rgba(255,255,255,.34);
+    }
+
+    .heart-fruit-large{
+      position:relative;
+      width:clamp(82px, 23vw, 118px);
+      height:clamp(82px, 23vw, 118px);
+      display:block;
+      filter:
+        drop-shadow(0 8px 20px rgba(0,0,0,.36))
+        drop-shadow(0 0 18px rgba(255,255,255,.26));
+    }
+
+    .heart-fruit-large::before{
+      content:"";
+      position:absolute;
+      left:50%;
+      top:54%;
+      width:86%;
+      height:88%;
+      transform:translate(-50%,-50%);
+      border-radius:48% 52% 54% 46% / 43% 43% 62% 62%;
+      background:
+        radial-gradient(circle at 30% 20%, rgba(255,255,255,.95), rgba(255,220,225,.50) 16%, rgba(255,90,125,.95) 48%, rgba(170,14,55,.98) 100%);
+      border:2px solid rgba(255,255,255,.70);
+      box-shadow:
+        inset 0 2px 0 rgba(255,255,255,.56),
+        inset 0 -18px 26px rgba(70,0,20,.22),
+        0 0 0 5px rgba(255,255,255,.06),
+        0 0 34px rgba(255,95,145,.40);
+    }
+
+    .heart-fruit-large::after{
+      content:"❤";
+      position:absolute;
+      left:50%;
+      top:55%;
+      transform:translate(-50%,-50%);
+      font-size:clamp(42px, 12vw, 62px);
+      line-height:1;
+      color:#fff7dc;
+      text-shadow:
+        0 3px 10px rgba(90,0,30,.55),
+        0 0 16px rgba(255,255,255,.72),
+        0 0 30px rgba(255,215,155,.46);
+      z-index:3;
+    }
+
+    .heart-fruit-large .heart-stem{
+      position:absolute;
+      left:49%;
+      top:3%;
+      width:12px;
+      height:30px;
+      border-radius:10px;
+      background:linear-gradient(180deg,#9b642a,#5e3414);
+      transform:translateX(-50%) rotate(5deg);
+      box-shadow:0 0 5px rgba(255,255,255,.18);
+      z-index:2;
+    }
+
+    .heart-fruit-large .heart-leaf{
+      position:absolute;
+      left:54%;
+      top:6%;
+      width:38px;
+      height:22px;
+      border-radius:100% 0 100% 0;
+      background:linear-gradient(135deg, #c8ff93, #3fae45 58%, #156b2a);
+      transform:rotate(-20deg);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.35),
+        0 0 9px rgba(145,255,155,.28);
+      z-index:2;
+    }
+
+    .heart-opening{
+      width:min(100%, 500px);
+      margin:0 auto 14px;
+      padding:12px 14px;
+      border-radius:22px;
+      border:1px solid rgba(255,255,255,.20);
+      background:rgba(255,255,255,.07);
+      color:rgba(255,255,255,.94);
+      font-size:clamp(14px, 3.8vw, 18px);
+      line-height:1.65;
+      font-weight:800;
+      text-shadow:0 3px 12px rgba(0,0,0,.70);
+    }
+
+    .heart-opening strong{
+      color:#fff;
+      font-weight:900;
+    }
+
+    .heart-possibilities{
+      width:min(100%, 500px);
+      margin:12px auto 0;
+      padding:11px 14px;
+      border-radius:22px;
+      border:1px solid rgba(255,255,255,.18);
+      background:rgba(255,255,255,.06);
+      color:rgba(255,255,255,.86);
+      font-size:13px;
+      line-height:1.7;
+      font-weight:800;
+      text-shadow:0 2px 9px rgba(0,0,0,.70);
+    }
+
+    .heart-small-note{
+      display:block;
+      margin-top:6px;
+      color:rgba(255,255,255,.72);
+      font-size:12px;
+      font-weight:700;
+    }
+
     .spiritual-disclaimer{
       margin:10px auto 0;
       max-width:470px;
@@ -1982,17 +2109,35 @@
   <section id="heartScreen" class="spiritual-screen screen-hidden-right" data-spiritual-screen="heart" aria-label="מדור מה שבלב">
     <div class="spiritual-card">
       <img class="spiritual-logo" src="logo.png" alt="פרשת השבוע" />
-      <div class="spiritual-figure" aria-hidden="true">❤️</div>
+
+      <div class="spiritual-figure heart-page-figure" aria-hidden="true">
+        <span class="heart-fruit-large">
+          <span class="heart-stem"></span>
+          <span class="heart-leaf"></span>
+        </span>
+      </div>
+
       <h2 class="spiritual-title">מה שבלב</h2>
+
+      <div class="heart-opening">
+        <strong>לפעמים לא צריך לדעת איך לנסח את השאלה.</strong><br>
+        פשוט כתבו את מה שיושב על הלב.
+      </div>
+
       <p class="spiritual-subtitle">מקום לשתף, לשאול ולקבל כיוון מחזק מתוך רוח היהדות — על מה שמעסיק את הלב ביום־יום.</p>
 
       <div class="spiritual-input-shell">
-        <label class="spiritual-input-label" for="heartQuestion">מה יושב לך על הלב?</label>
+        <label class="spiritual-input-label" for="heartQuestion">מה יושב על הלב שלך היום?</label>
         <div class="spiritual-input-row">
           <button class="spiritual-mic-btn" type="button" aria-label="דיבור קולי בעברית">🎙️</button>
-          <textarea id="heartQuestion" placeholder="אפשר לכתוב כאן שאלה, קושי, מחשבה, פחד, התלבטות או כל דבר שמכביד על הלב..."></textarea>
+          <textarea id="heartQuestion" placeholder="שתף אותי במה שמעסיק אותך... שאלה, קושי, פחד, התלבטות, מחשבה או כל דבר שיושב על הלב."></textarea>
           <button class="spiritual-send-btn" type="button" aria-label="שליחת שאלה למדור מה שבלב">שלח</button>
         </div>
+      </div>
+
+      <div class="heart-possibilities" aria-label="נושאים שאפשר לשתף">
+        💙 אפשר לשתף על: אמונה • זוגיות • פחדים • שמחה • חינוך • עבודה • החלטות • תפילה • וכל דבר אחר.
+        <span class="heart-small-note">אין צורך לבחור קטגוריה — פשוט כתבו את מה שעל הלב.</span>
       </div>
 
       <p class="spiritual-disclaimer">המדור נועד להקשבה, חיזוק והכוונה כללית בלבד. במצוקה נפשית, סכנה, משבר חריף או שאלה הלכתית מעשית — יש לפנות מיד לאיש מקצוע, רב מוסמך או גורם מתאים.</p>
@@ -3275,7 +3420,7 @@ function normalizeParashaName(value){
         heart: {
           title: "מה שבלב",
           field: "שיתוף אישי, התלבטויות, קושי, חיזוק והכוונה מהלב",
-          instruction: "ענה בעברית ברגישות ובכבוד על מה שהאדם משתף מהלב. תן הקשבה, חיזוק וכיוון מעשי עדין מתוך רוח התורה ומקורות יהודיים בלבד. אל תציג זאת כפסיקת הלכה, טיפול נפשי או אבחון. במצוקה חריפה, סכנה, דיכאון קשה, אלימות, או שאלה הלכתית מעשית — הפנה לרב מוסמך, איש מקצוע או גורם חירום מתאים."
+          instruction: "ענה בעברית ברגישות, בכבוד ובשפה חמה על מה שהאדם משתף מהלב. פתח בהקשבה קצרה שמראה שהבנת את הכאב או ההתלבטות, אחר כך תן כיוון מחזק מתוך רוח התורה ומקורות יהודיים בלבד, בלי להציג זאת כפסיקת הלכה, טיפול נפשי או אבחון. סיים תמיד בפסקה קבועה בשם: 🌱 קבלה קטנה להיום — עם פעולה אחת קטנה, מעשית ועדינה שהאדם יכול לעשות היום. במצוקה חריפה, סכנה, דיכאון קשה, אלימות, או שאלה הלכתית מעשית — הפנה לרב מוסמך, איש מקצוע או גורם חירום מתאים."
         }
       };
 
