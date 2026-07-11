@@ -2172,7 +2172,49 @@
       }
     }
     
-  </style>
+  
+    /* שלב 2: הצגת הרקע החדש ושורת בחירת הפרשה/העלייה בלבד */
+    #mainScreen .hero-logo,
+    #mainScreen .gate-title,
+    #mainScreen .gate-subtitle,
+    #mainScreen .pardes-tree-wrap,
+    .spiritual-nav-arrow{
+      display:none !important;
+    }
+
+    #mainScreen .gate-card{
+      width:100%;
+    }
+
+    #mainScreen .pardes-search-row{
+      margin:0 auto;
+    }
+
+  
+    /* שלב 3 — מיקום בחירת פרשה ועלייה בתחתית העץ */
+    .pardes-search-row{
+      position:fixed !important;
+      left:50% !important;
+      bottom:54px !important;
+      transform:translateX(-50%) !important;
+      z-index:30 !important;
+      margin:0 !important;
+    }
+
+    .pardes-search-message{
+      position:fixed !important;
+      left:50% !important;
+      bottom:24px !important;
+      transform:translateX(-50%) !important;
+      z-index:30 !important;
+      margin:0 !important;
+    }
+
+    @media (max-width:640px){
+      .pardes-search-row{ bottom:48px !important; }
+      .pardes-search-message{ bottom:18px !important; }
+    }
+</style>
 </head>
 
 <body>
