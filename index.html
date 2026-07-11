@@ -2191,11 +2191,19 @@
     }
 
   
-    /* שלב 3 — מיקום בחירת פרשה ועלייה בתחתית העץ */
+    /* שלב 4 — גובה נפרד למחשב ולנייד עבור בחירת פרשה ועלייה */
+    :root{
+      --pardes-search-desktop-top: 84vh;
+      --pardes-message-desktop-top: calc(84vh + 58px);
+      --pardes-search-mobile-top: 78dvh;
+      --pardes-message-mobile-top: calc(78dvh + 68px);
+    }
+
     .pardes-search-row{
       position:fixed !important;
       left:50% !important;
-      bottom:54px !important;
+      top:var(--pardes-search-desktop-top) !important;
+      bottom:auto !important;
       transform:translateX(-50%) !important;
       z-index:30 !important;
       margin:0 !important;
@@ -2204,15 +2212,23 @@
     .pardes-search-message{
       position:fixed !important;
       left:50% !important;
-      bottom:24px !important;
+      top:var(--pardes-message-desktop-top) !important;
+      bottom:auto !important;
       transform:translateX(-50%) !important;
       z-index:30 !important;
       margin:0 !important;
     }
 
     @media (max-width:640px){
-      .pardes-search-row{ bottom:48px !important; }
-      .pardes-search-message{ bottom:18px !important; }
+      .pardes-search-row{
+        top:var(--pardes-search-mobile-top) !important;
+        bottom:auto !important;
+      }
+
+      .pardes-search-message{
+        top:var(--pardes-message-mobile-top) !important;
+        bottom:auto !important;
+      }
     }
 </style>
 </head>
