@@ -2156,6 +2156,58 @@
       }
     }
     
+  
+    /* ===== העץ החי החדש ===== */
+    .pardes-tree-wrap{
+      width:min(96vw,1180px) !important;
+      height:min(62vw,680px) !important;
+      max-height:72vh;
+      border-radius:28px;
+      overflow:hidden;
+      margin:12px auto 18px !important;
+      background:#142014;
+      box-shadow:0 22px 60px rgba(0,0,0,.42);
+    }
+    .living-tree-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;pointer-events:none}
+    .tree-mobile{display:none}
+    .living-tree-shade{position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(0,0,0,.04),rgba(0,0,0,.03) 58%,rgba(0,0,0,.16));pointer-events:none}
+    .live-item,.live-video-button{
+      position:absolute;z-index:5;display:flex;flex-direction:column;align-items:center;justify-content:center;
+      width:10%;aspect-ratio:1/1;text-decoration:none;border:0;background:transparent;padding:0;cursor:pointer;
+      transition:transform .22s ease,filter .22s ease;
+    }
+    .live-item:hover,.live-video-button:hover{transform:scale(1.08);filter:brightness(1.08)}
+    .live-item video,.live-video-button video{
+      width:100%;height:100%;object-fit:cover;border-radius:50%;display:block;
+      mix-blend-mode:normal;box-shadow:0 5px 16px rgba(0,0,0,.28);
+    }
+    .live-item span,.live-video-button span{
+      position:absolute;top:100%;margin-top:3px;color:#fff;font-size:clamp(12px,1.45vw,21px);font-weight:900;
+      white-space:nowrap;text-shadow:0 2px 3px #000,0 0 7px #000;direction:rtl;pointer-events:none;
+    }
+    .live-main-aliyah{top:5%;left:50%;transform:translateX(-50%);width:14%;min-height:0;z-index:6}
+    .live-main-aliyah .active-parasha-title{display:none}
+    .live-rimon{position:relative;width:100%;aspect-ratio:1/1}
+    .live-rimon span{top:29%;margin:0;font-size:clamp(12px,1.35vw,20px)}
+    .live-sod{left:7%;top:12%}.live-remez{left:23%;top:7%}.live-drash{right:24%;top:7%}.live-pshat{right:7%;top:34%}
+    .live-myfruit{left:3%;top:44%}.live-names{left:29%;top:34%}.live-dreams{left:17%;top:31%}
+    .live-health{right:16%;top:28%}.live-halachot{right:28%;top:43%}.live-relationship{right:3%;top:10%}
+    .live-light{left:45%;top:38%;width:11%}.live-heart{left:46%;top:59%;width:9%}
+    .live-light span,.live-heart span{font-size:clamp(12px,1.25vw,18px)}
+
+    @media(max-width:700px){
+      .pardes-tree-wrap{width:100% !important;height:150vw !important;max-height:none;border-radius:22px}
+      .tree-desktop{display:none}.tree-mobile{display:block}
+      .live-item,.live-video-button{width:18%}
+      .live-main-aliyah{top:5%;width:24%}
+      .live-sod{left:3%;top:14%}.live-remez{left:23%;top:20%}.live-drash{right:22%;top:18%}.live-pshat{right:2%;top:30%}
+      .live-myfruit{left:2%;top:43%}.live-dreams{left:20%;top:36%}.live-names{left:24%;top:51%}
+      .live-health{right:18%;top:39%}.live-halachot{right:25%;top:53%}.live-relationship{right:2%;top:12%}
+      .live-light{left:40%;top:61%;width:20%}.live-heart{left:42%;top:76%;width:17%}
+      .live-item span,.live-video-button span{font-size:13px}
+      .live-rimon span{font-size:12px}
+    }
+
   </style>
 </head>
 
@@ -2201,108 +2253,64 @@
       </div>
 
       <div class="pardes-tree-wrap" aria-label="קישורי פרדס העלייה">
+        <video class="living-tree-bg tree-desktop" autoplay muted loop playsinline preload="auto">
+          <source src="tree-background-desktop.mp4" type="video/mp4">
+        </video>
+        <video class="living-tree-bg tree-mobile" autoplay muted loop playsinline preload="auto">
+          <source src="tree-background-mobile.mp4" type="video/mp4">
+        </video>
 
-        <div class="tree-head-info" aria-label="העלייה הראשית של הפרשה">
+        <div class="living-tree-shade" aria-hidden="true"></div>
+
+        <div class="tree-head-info live-main-aliyah" aria-label="העלייה הראשית של הפרשה">
           <div id="activeParashaTitle" class="active-parasha-title">פרשת השבוע</div>
-          <button id="mainAliyahOrb" class="main-aliyah-orb" type="button" aria-label="פתיחת הסרטון הראשי של העלייה">
+          <button id="mainAliyahOrb" class="live-video-button live-rimon" type="button" aria-label="פתיחת הסרטון הראשי של העלייה">
+            <video autoplay muted loop playsinline preload="metadata"><source src="rimon-first-ascent.mp4" type="video/mp4"></video>
             <span id="mainAliyahOrbText">עלייה<br>פעילה</span>
           </button>
         </div>
 
-        <svg class="pardes-tree-svg" viewBox="0 0 430 390" aria-hidden="true" focusable="false">
-          <defs>
-            <radialGradient id="treeGlow" cx="50%" cy="45%" r="62%">
-              <stop offset="0%" stop-color="rgba(255,255,255,.18)" />
-              <stop offset="65%" stop-color="rgba(255,255,255,.04)" />
-              <stop offset="100%" stop-color="rgba(255,255,255,0)" />
-            </radialGradient>
-          </defs>
-
-          <ellipse cx="215" cy="185" rx="198" ry="148" fill="url(#treeGlow)" />
-
-          <g opacity=".95">
-            <ellipse class="tree-leaf" cx="82" cy="132" rx="34" ry="20" transform="rotate(-28 82 132)" />
-            <ellipse class="tree-leaf" cx="126" cy="82" rx="34" ry="20" transform="rotate(22 126 82)" />
-            <ellipse class="tree-leaf" cx="178" cy="60" rx="32" ry="19" transform="rotate(-18 178 60)" />
-            <ellipse class="tree-leaf" cx="256" cy="60" rx="32" ry="19" transform="rotate(18 256 60)" />
-            <ellipse class="tree-leaf" cx="304" cy="82" rx="34" ry="20" transform="rotate(-22 304 82)" />
-            <ellipse class="tree-leaf" cx="362" cy="132" rx="34" ry="20" transform="rotate(28 362 132)" />
-            <ellipse class="tree-leaf" cx="96" cy="236" rx="34" ry="20" transform="rotate(24 96 236)" />
-            <ellipse class="tree-leaf" cx="336" cy="236" rx="34" ry="20" transform="rotate(-24 336 236)" />
-            <ellipse class="tree-leaf-light" cx="215" cy="110" rx="48" ry="26" />
-            <ellipse class="tree-leaf-light" cx="215" cy="215" rx="60" ry="32" />
-          </g>
-
-          <path class="tree-branch tree-center-branch" d="M215 346 C210 280 211 205 214 126" />
-          <path class="tree-trunk tree-main-trunk" d="M215 374 C212 315 213 250 216 182 C218 138 216 100 213 55" />
-          <path class="tree-trunk-light tree-main-trunk-light" d="M221 364 C220 308 220 250 222 186 C224 140 222 104 220 76" />
-
-          <path class="tree-branch" d="M215 186 C174 161 132 136 78 131" />
-          <path class="tree-branch" d="M214 164 C185 130 158 98 137 70" />
-          <path class="tree-branch" d="M216 168 C244 130 271 96 296 70" />
-          <path class="tree-branch" d="M218 188 C260 161 315 138 372 134" />
-          <path class="tree-branch" d="M214 224 C164 206 110 212 72 250" />
-          <path class="tree-branch" d="M220 224 C270 206 324 212 360 250" />
-
-          <path class="tree-branch thin" d="M120 122 C102 96 94 76 88 52" />
-          <path class="tree-branch thin" d="M151 92 C143 64 148 42 164 22" />
-          <path class="tree-branch thin" d="M276 92 C285 64 280 42 263 22" />
-          <path class="tree-branch thin" d="M335 124 C352 96 360 76 366 52" />
-          <path class="tree-branch thin" d="M112 216 C82 200 58 200 30 210" />
-          <path class="tree-branch thin" d="M320 216 C350 200 374 200 402 210" />
-
-          <path class="tree-branch thin" d="M202 186 C182 192 164 200 146 218" />
-          <path class="tree-branch thin" d="M228 186 C248 192 266 200 284 218" />
-        </svg>
-
-        <a id="sodLink" class="fruit-link fruit-drash" href="#" aria-label="סוד העלייה">
-          <span class="pardes-fruit-icon" aria-hidden="true">🍇</span>
-          <span class="fruit-letter fruit-word">סוד</span>
+        <a id="sodLink" class="live-item live-sod" href="#" aria-label="סוד העלייה">
+          <video autoplay muted loop playsinline preload="metadata"><source src="grapes-sod.mp4" type="video/mp4"></video><span>סוד</span>
+        </a>
+        <a id="remezLink" class="live-item live-remez" href="#" aria-label="רמז העלייה">
+          <video autoplay muted loop playsinline preload="metadata"><source src="fig-remez.mp4" type="video/mp4"></video><span>רמז</span>
+        </a>
+        <a id="drashLink" class="live-item live-drash" href="#" aria-label="דרש העלייה">
+          <video autoplay muted loop playsinline preload="metadata"><source src="etrog-drash.mp4" type="video/mp4"></video><span>דרש</span>
+        </a>
+        <a id="pshatLink" class="live-item live-pshat" href="#" aria-label="פשט העלייה">
+          <video autoplay muted loop playsinline preload="metadata"><source src="wheat-pshat.mp4" type="video/mp4"></video><span>פשט</span>
         </a>
 
-        <a id="drashLink" class="fruit-link fruit-remez" href="#" aria-label="דרש העלייה">
-          <span class="fig-icon" aria-hidden="true">
-            <span class="fig-stem"></span>
-            <span class="fig-leaf fig-leaf-left"></span>
-            <span class="fig-leaf fig-leaf-right"></span>
-            <span class="fig-fruit"></span>
-          </span>
-          <span class="fruit-letter fruit-word">דרש</span>
+        <a id="whatsappLink" class="live-item live-myfruit" href="my-fruit.html" aria-label="הפרי שלי">
+          <video autoplay muted loop playsinline preload="metadata"><source src="apple-my-fruit.mp4" type="video/mp4"></video><span>הפרי שלי</span>
+        </a>
+        <a id="namesLink" class="live-item live-names" href="names.html" aria-label="נ־שמות">
+          <video autoplay muted loop playsinline preload="metadata"><source src="butterfly-n-shamot.mp4" type="video/mp4"></video><span>נ־שמות</span>
+        </a>
+        <a class="live-item live-dreams" href="#yosefScreen" data-live-screen="yosefScreen" aria-label="חלומות">
+          <video autoplay muted loop playsinline preload="metadata"><source src="dreams.mp4" type="video/mp4"></video><span>חלומות</span>
+        </a>
+        <a class="live-item live-health" href="#rambamScreen" data-live-screen="rambamScreen" aria-label="בריאות">
+          <video autoplay muted loop playsinline preload="metadata"><source src="health.mp4" type="video/mp4"></video><span>בריאות</span>
+        </a>
+        <a class="live-item live-halachot" href="#avrahamScreen" data-live-screen="avrahamScreen" aria-label="הלכות">
+          <video autoplay muted loop playsinline preload="metadata"><source src="halachot.mp4" type="video/mp4"></video><span>הלכות</span>
+        </a>
+        <a class="live-item live-relationship" href="#rachelScreen" data-live-screen="rachelScreen" aria-label="זוגיות">
+          <video autoplay muted loop playsinline preload="metadata"><source src="pair-of-pigeons-relationship.mp4" type="video/mp4"></video><span>זוגיות</span>
         </a>
 
-        <a id="remezLink" class="fruit-link fruit-pshat" href="#" aria-label="רמז העלייה">
-          <span class="pardes-fruit-icon" aria-hidden="true">🍋</span>
-          <span class="fruit-letter fruit-word">רמז</span>
+        <a id="tikunLink" class="live-item live-light" href="personal-message.html" aria-label="האור שבי">
+          <video autoplay muted loop playsinline preload="metadata"><source src="haor-shebi.mp4" type="video/mp4"></video><span>האור שבי</span>
         </a>
-
-        <a id="pshatLink" class="fruit-link fruit-sod" href="#" aria-label="פשט העלייה">
-          <span class="pardes-fruit-icon" aria-hidden="true">🌾</span>
-          <span class="fruit-letter fruit-word">פשט</span>
-        </a>
-
-        <a id="whatsappLink" class="fruit-link fruit-whatsapp" href="my-fruit.html" aria-label="הפרי שלי">
-          <img class="custom-fruit-img" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjAgMTIwIj4KPGRlZnM+CiA8cmFkaWFsR3JhZGllbnQgaWQ9ImciIGN4PSIzMiUiIGN5PSIyMCUiIHI9Ijc4JSI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjZmZmIi8+PHN0b3Agb2Zmc2V0PSIwLjE4IiBzdG9wLWNvbG9yPSIjZDdmZmQzIi8+PHN0b3Agb2Zmc2V0PSIwLjU1IiBzdG9wLWNvbG9yPSIjN2ZkMzQyIi8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjMjQ2YjIwIi8+PC9yYWRpYWxHcmFkaWVudD4KIDxyYWRpYWxHcmFkaWVudCBpZD0iZ2xvdyIgY3g9IjUwJSIgY3k9IjUwJSIgcj0iNTAlIj48c3RvcCBvZmZzZXQ9IjAuNjIiIHN0b3AtY29sb3I9InJnYmEoMjU1LDI1NSwyNTUsMCkiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNmZmZmZmYiIHN0b3Atb3BhY2l0eT0iLjU1Ii8+PC9yYWRpYWxHcmFkaWVudD4KIDxsaW5lYXJHcmFkaWVudCBpZD0ibGVhZiIgeDE9IjAiIHkxPSIwIiB4Mj0iMSIgeTI9IjEiPjxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI2I4ZmY4YSIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzE5OGUzZCIvPjwvbGluZWFyR3JhZGllbnQ+CjwvZGVmcz4KPGNpcmNsZSBjeD0iNjAiIGN5PSI2MiIgcj0iNTQiIGZpbGw9InVybCgjZ2xvdykiIG9wYWNpdHk9Ii41NSIvPgo8cGF0aCBkPSJNNjEgMjVjOS0xMCAyMy03IDMxIDEgMTMgMTMgMTIgNDItMSA2Mi04IDEzLTE5IDIxLTMxIDIxUzM3IDEwMSAyOSA4OEMxNiA2OCAxNSAzOSAyOCAyNmM4LTggMjItMTEgMzEtMSAxIDEgMSAxIDIgMHoiIGZpbGw9InVybCgjZykiIHN0cm9rZT0icmdiYSgyNTUsMjU1LDI1NSwuNzUpIiBzdHJva2Utd2lkdGg9IjMiLz4KPHBhdGggZD0iTTU2IDI0YzItOCA3LTE0IDE1LTE4IiBmaWxsPSJub25lIiBzdHJva2U9IiM3YTRhMjEiIHN0cm9rZS13aWR0aD0iNyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CjxwYXRoIGQ9Ik02NyAxM2MxNy03IDI5IDAgMzQgMTItMTUgNi0yOCA0LTM0LTEyeiIgZmlsbD0idXJsKCNsZWFmKSIgc3Ryb2tlPSJyZ2JhKDI1NSwyNTUsMjU1LC41NSkiIHN0cm9rZS13aWR0aD0iMiIvPgo8cGF0aCBkPSJNMzggMzhjNy0xMCAyMC0xMiAzMS03IiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgb3BhY2l0eT0iLjM4Ii8+CjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDAsMikiIG9wYWNpdHk9Ii45MiI+CiA8cGF0aCBkPSJNNjAgNzZjMC0xOCAwLTIyIDAtMjgiIHN0cm9rZT0iI2ZmZiIgc3Ryb2tlLXdpZHRoPSI2IiBzdHJva2UtbGluZWNhcD0icm91bmQiIGZpbGw9Im5vbmUiLz4KIDxwYXRoIGQ9Ik02MCA1NWMtMTEtMTUtMjQtMTQtMzAtNiAxMCA2IDIwIDggMzAgNnoiIGZpbGw9IiNmZmYiIG9wYWNpdHk9Ii45MiIvPgogPHBhdGggZD0iTTYwIDU1YzExLTE1IDI0LTE0IDMwLTYtMTAgNi0yMCA4LTMwIDZ6IiBmaWxsPSIjZmZmIiBvcGFjaXR5PSIuOTIiLz4KIDxwYXRoIGQ9Ik02MCA0NWMtNS0xMyAwLTIyIDEwLTI5IDUgMTIgMiAyMi0xMCAyOXoiIGZpbGw9IiNmZmYiIG9wYWNpdHk9Ii45MiIvPgogPHBhdGggZD0iTTI4IDg0YzI0LTE4IDQwLTE2IDY0LTYiIHN0cm9rZT0iI2ZmZiIgc3Ryb2tlLXdpZHRoPSI1IiBzdHJva2UtbGluZWNhcD0icm91bmQiIGZpbGw9Im5vbmUiIG9wYWNpdHk9Ii44NSIvPgo8L2c+Cjwvc3ZnPg==" alt="" aria-hidden="true">
-          <span class="fruit-letter fruit-word">הפרי שלי</span>
-        </a>
-
-        <a id="tikunLink" class="fruit-link fruit-tikun" href="personal-message.html" aria-label="האור שבי">
-          <img class="fruit-logo-icon" src="logo.png" alt="האור שבי">
-          <span class="fruit-letter fruit-word">האור שבי</span>
-        </a>
-
-       <a id="heartLink" class="fruit-link fruit-email" href="heart.html" aria-label="מה שבלב">
-          <img class="custom-fruit-img" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjAgMTIwIj4KPGRlZnM+CiA8cmFkaWFsR3JhZGllbnQgaWQ9InIiIGN4PSIzMiUiIGN5PSIyMCUiIHI9Ijc4JSI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjZmZmIi8+PHN0b3Agb2Zmc2V0PSIwLjE4IiBzdG9wLWNvbG9yPSIjZmZkOGQyIi8+PHN0b3Agb2Zmc2V0PSIwLjU1IiBzdG9wLWNvbG9yPSIjZTc0MTMyIi8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjN2QwYjE2Ii8+PC9yYWRpYWxHcmFkaWVudD4KIDxyYWRpYWxHcmFkaWVudCBpZD0iaCIgY3g9IjUwJSIgY3k9IjUwJSIgcj0iNjAlIj48c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiNmZmY4YzciLz48c3RvcCBvZmZzZXQ9IjAuNTUiIHN0b3AtY29sb3I9IiNmZmNmN2EiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNmZjcyNGYiLz48L3JhZGlhbEdyYWRpZW50PgogPHJhZGlhbEdyYWRpZW50IGlkPSJnbG93IiBjeD0iNTAlIiBjeT0iNTAlIiByPSI1MCUiPjxzdG9wIG9mZnNldD0iMC42MiIgc3RvcC1jb2xvcj0icmdiYSgyNTUsMjU1LDI1NSwwKSIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIgc3RvcC1vcGFjaXR5PSIuNjIiLz48L3JhZGlhbEdyYWRpZW50PgogPGxpbmVhckdyYWRpZW50IGlkPSJsZWFmIiB4MT0iMCIgeTE9IjAiIHgyPSIxIiB5Mj0iMSI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjZmZiNDlhIi8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjYjUxYTIyIi8+PC9saW5lYXJHcmFkaWVudD4KPC9kZWZzPgo8Y2lyY2xlIGN4PSI2MCIgY3k9IjYyIiByPSI1NCIgZmlsbD0idXJsKCNnbG93KSIgb3BhY2l0eT0iLjYyIi8+CjxwYXRoIGQ9Ik02MSAyNWM5LTEwIDIzLTcgMzEgMSAxMyAxMyAxMiA0Mi0xIDYyLTggMTMtMTkgMjEtMzEgMjFTMzcgMTAxIDI5IDg4QzE2IDY4IDE1IDM5IDI4IDI2YzgtOCAyMi0xMSAzMS0xIDEgMSAxIDEgMiAweiIgZmlsbD0idXJsKCNyKSIgc3Ryb2tlPSJyZ2JhKDI1NSwyNTUsMjU1LC43NSkiIHN0cm9rZS13aWR0aD0iMyIvPgo8cGF0aCBkPSJNNTYgMjRjMi04IDctMTQgMTUtMTgiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzdhMzQxZCIgc3Ryb2tlLXdpZHRoPSI3IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KPHBhdGggZD0iTTY3IDEzYzE3LTcgMjkgMCAzNCAxMi0xNSA2LTI4IDQtMzQtMTJ6IiBmaWxsPSJ1cmwoI2xlYWYpIiBzdHJva2U9InJnYmEoMjU1LDI1NSwyNTUsLjU1KSIgc3Ryb2tlLXdpZHRoPSIyIi8+CjxwYXRoIGQ9Ik0zOCAzOGM3LTEwIDIwLTEyIDMxLTciIGZpbGw9Im5vbmUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iNiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBvcGFjaXR5PSIuMzYiLz4KPHBhdGggZD0iTTYwIDg4UzMwIDY1IDM0IDQ3YzMtMTQgMjEtMTcgMjYtNCA1LTEzIDIzLTEwIDI2IDQgNCAxOC0yNiA0MS0yNiA0MXoiIGZpbGw9InVybCgjaCkiIHN0cm9rZT0icmdiYSgyNTUsMjU1LDI1NSwuOTIpIiBzdHJva2Utd2lkdGg9IjQiLz4KPGNpcmNsZSBjeD0iNjAiIGN5PSI2MCIgcj0iMTEiIGZpbGw9IiNmZmYiIG9wYWNpdHk9Ii4yNSIvPgo8L3N2Zz4=" alt="" aria-hidden="true">
-          <span class="fruit-letter fruit-word">מה שבלב</span>
-        </a>
-
-        <a id="namesLink" class="fruit-link fruit-names" href="names.html" aria-label="הוספת שמות">
-          <i class="fa-solid fa-user-group"></i>
-          <span class="fruit-letter fruit-word">שמות</span>
+        <a id="heartLink" class="live-item live-heart" href="heart.html" aria-label="מה שבלב">
+          <video autoplay muted loop playsinline preload="metadata"><source src="ma-shebalev.mp4" type="video/mp4"></video><span>מה שבלב</span>
         </a>
 
         <a href="secret-admin.html" class="secret-admin-hit" aria-label="כניסה נסתרת לניהול"></a>
 
-      </div>
 
       <form id="pardesSearchForm" class="pardes-search-row" aria-label="חיפוש פרשה ועלייה">
         <span class="pardes-search-icon" aria-hidden="true">🔎</span>
@@ -2406,7 +2414,43 @@
     </div>
   </section>
 
-  
+  <section id="heartScreen" class="spiritual-screen heart-screen screen-hidden-right" data-spiritual-screen="heart" aria-label="מדור מה שבלב">
+    <div class="spiritual-card">
+      <img class="spiritual-logo" src="logo.png" alt="פרשת השבוע" />
+
+      <div class="spiritual-figure heart-page-figure" aria-hidden="true">
+        <span class="heart-fruit-large">
+          <span class="heart-stem"></span>
+          <span class="heart-leaf"></span>
+        </span>
+      </div>
+
+      <h2 class="spiritual-title">מה שבלב</h2>
+
+      <div class="heart-opening">
+        <strong>לפעמים לא צריך לדעת איך לנסח את השאלה.</strong><br>
+        פשוט כתבו את מה שיושב על הלב.
+      </div>
+
+      <p class="spiritual-subtitle">מקום שקט לשתף, לשאול ולקבל כיוון מחזק מתוך רוח היהדות — בלי לבחור קטגוריה ובלי לחשוש מהמילים.</p>
+
+      <div class="spiritual-input-shell">
+        <label class="spiritual-input-label" for="heartQuestion">מה יושב על הלב שלך היום?</label>
+        <div class="spiritual-input-row">
+          <button class="spiritual-mic-btn" type="button" aria-label="דיבור קולי בעברית">🎙️</button>
+          <textarea id="heartQuestion" placeholder="שתף אותי במה שמעסיק אותך... קושי, פחד, התלבטות, מחשבה או כל דבר שיושב על הלב."></textarea>
+          <button class="spiritual-send-btn" type="button" aria-label="שליחת שאלה למדור מה שבלב">שלח</button>
+        </div>
+      </div>
+
+      <div class="heart-possibilities" aria-label="נושאים שאפשר לשתף">
+        💙 אפשר לשתף על: אמונה • זוגיות • פחדים • שמחה • חינוך • עבודה • החלטות • תפילה • וכל דבר אחר.
+        <span class="heart-small-note">אין צורך לבחור קטגוריה — פשוט כתבו את מה שעל הלב.</span>
+      </div>
+
+      <p class="spiritual-disclaimer">המדור נועד להקשבה, חיזוק והכוונה כללית בלבד. במצוקה נפשית, סכנה, משבר חריף או שאלה הלכתית מעשית — יש לפנות מיד לאיש מקצוע, רב מוסמך או גורם מתאים.</p>
+    </div>
+  </section>
 
   <div id="pardesVideoPanel" class="pardes-video-panel" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="pardesVideoTitle">
     <div class="pardes-video-card" role="dialog" aria-modal="true" aria-labelledby="pardesVideoTitle">
@@ -4158,6 +4202,28 @@ function normalizeParashaName(value){
     loadActiveAliyah();
 
 </script>
+
+
+  <script>
+    document.querySelectorAll("[data-live-screen]").forEach(function(link){
+      link.addEventListener("click", function(e){
+        e.preventDefault();
+        var targetId = link.getAttribute("data-live-screen");
+        var target = document.getElementById(targetId);
+        var main = document.getElementById("mainScreen");
+        if(!target || !main) return;
+        document.querySelectorAll("[data-spiritual-screen], #mainScreen").forEach(function(screen){
+          screen.classList.remove("is-active");
+          screen.classList.add("screen-hidden-right");
+        });
+        main.classList.remove("is-active");
+        main.classList.add("screen-hidden-left");
+        target.classList.remove("screen-hidden-left","screen-hidden-right");
+        target.classList.add("is-active");
+        window.scrollTo({top:0,behavior:"smooth"});
+      });
+    });
+  </script>
 
 </body>
 </html>
