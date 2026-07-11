@@ -1186,7 +1186,7 @@
       /* תיקון נייד: כשהמקלדת פתוחה שורת החיפוש נשארת מעל המקלדת */
       .gate-card{
         transition:transform .22s ease;
-        will-change:transform;
+        will-change:auto;
       }
       
       body.pardes-keyboard-open .gate-card{
@@ -2220,15 +2220,37 @@
     }
 
     @media (max-width:640px){
-      /* בנייד מצמידים לתחתית אזור התצוגה הנראה, כולל פסי הדפדפן */
+    
+      /* מיקום רגיל — בתחתית גזע העץ */
       .pardes-search-row{
+        position:fixed !important;
+        left:50% !important;
         top:auto !important;
-        bottom:calc(env(safe-area-inset-bottom, 0px) + 18px) !important;
+        bottom:calc(env(safe-area-inset-bottom, 0px) + 175px) !important;
+        transform:translateX(-50%) !important;
+        z-index:30 !important;
+        margin:0 !important;
       }
-
+    
       .pardes-search-message{
+        position:fixed !important;
+        left:50% !important;
         top:auto !important;
-        bottom:calc(env(safe-area-inset-bottom, 0px) + 2px) !important;
+        bottom:calc(env(safe-area-inset-bottom, 0px) + 137px) !important;
+        transform:translateX(-50%) !important;
+        z-index:30 !important;
+        margin:0 !important;
+      }
+    
+      /* כשהמקלדת נפתחת — השורה עולה מעל המקלדת */
+      body.pardes-keyboard-open .pardes-search-row{
+        top:auto !important;
+        bottom:calc(var(--keyboard-height, 320px) + 12px) !important;
+        z-index:9999 !important;
+      }
+    
+      body.pardes-keyboard-open .pardes-search-message{
+        display:none !important;
       }
     }
 </style>
