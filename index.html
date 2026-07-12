@@ -4674,14 +4674,16 @@ if(maShebalevLive){
   }
 </script>
 
-<script>
-  const isTikTokBrowser =
-    /TikTok|BytedanceWebview|musical_ly/i.test(navigator.userAgent);
+ @media (max-width:640px) and (orientation:portrait){
 
-  if (isTikTokBrowser) {
-    document.body.classList.add("tiktok-browser");
+  html.tiktok-browser .pardes-search-row{
+    bottom:30px !important;
   }
-</script>  
+
+  html.tiktok-browser .pardes-search-message{
+    bottom:0px !important;
+  }
+}
 
 </body>
 </html>
