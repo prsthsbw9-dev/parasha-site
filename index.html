@@ -2416,10 +2416,54 @@
         font-size:13px;
       }
     }
+
+
+    /* כפתור קטן לשליטה בצלילי הטבע של סרטון העץ */
+    .tree-sound-toggle{
+      position:fixed;
+      left:14px;
+      bottom:14px;
+      z-index:10001;
+      width:42px;
+      height:42px;
+      border-radius:50%;
+      border:1px solid rgba(255,255,255,.55);
+      background:rgba(0,0,0,.35);
+      color:#fff;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:0;
+      font-size:20px;
+      line-height:1;
+      cursor:pointer;
+      box-shadow:
+        0 8px 20px rgba(0,0,0,.35),
+        0 0 14px rgba(255,255,255,.15);
+      backdrop-filter:blur(7px);
+      -webkit-backdrop-filter:blur(7px);
+    }
+
+    @media (max-width:640px){
+      .tree-sound-toggle{
+        left:10px;
+        bottom:10px;
+        width:38px;
+        height:38px;
+        font-size:18px;
+      }
+    }
+
   </style>
 </head>
   
 <body>
+
+
+<button id="treeSoundToggle" class="tree-sound-toggle" type="button" aria-label="הפעלת צלילי הטבע" aria-pressed="false">
+  🔇
+</button>
+
 
 <button id="accessibilityToggle" class="accessibility-toggle" type="button" aria-label="פתיחת תפריט נגישות">
   <i class="fa-solid fa-universal-access" aria-hidden="true"></i>
@@ -4471,6 +4515,66 @@ if(maShebalevLive){
   });
 }
 </script>
+
+
+<script>
+  const treeSoundToggle = document.getElementById("treeSoundToggle");
+
+  function getActiveTreeVideo() {
+    const isMobile = window.matchMedia("(max-width: 640px)").matches;
+
+    return document.querySelector(
+      isMobile
+        ? ".sea-bg-video-mobile"
+        : ".sea-bg-video-desktop"
+    );
+  }
+
+  function setTreeSound(enabled) {
+    const treeVideo = getActiveTreeVideo();
+    if (!treeVideo || !treeSoundToggle) return;
+
+    treeVideo.muted = !enabled;
+    treeVideo.volume = 0.35;
+
+    if (enabled) {
+      treeVideo.play().catch(() => {});
+      treeSoundToggle.textContent = "🔊";
+      treeSoundToggle.setAttribute("aria-label", "השתקת צלילי הטבע");
+      treeSoundToggle.setAttribute("aria-pressed", "true");
+    } else {
+      treeSoundToggle.textContent = "🔇";
+      treeSoundToggle.setAttribute("aria-label", "הפעלת צלילי הטבע");
+      treeSoundToggle.setAttribute("aria-pressed", "false");
+    }
+  }
+
+  function enableTreeNatureSound() {
+    setTreeSound(true);
+
+    document.removeEventListener("click", enableTreeNatureSound);
+    document.removeEventListener("touchstart", enableTreeNatureSound);
+  }
+
+  document.addEventListener("click", enableTreeNatureSound);
+  document.addEventListener("touchstart", enableTreeNatureSound, { passive: true });
+
+  if (treeSoundToggle) {
+    treeSoundToggle.addEventListener("click", function(event) {
+      event.stopPropagation();
+
+      const treeVideo = getActiveTreeVideo();
+      if (!treeVideo) return;
+
+      setTreeSound(treeVideo.muted);
+    });
+
+    treeSoundToggle.addEventListener("touchstart", function(event) {
+      event.stopPropagation();
+    }, { passive: true });
+  }
+</script>
+
 
 </body>
 </html>
