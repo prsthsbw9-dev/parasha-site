@@ -2516,22 +2516,31 @@
           font-size:11px !important;
         }
       
-        /* שורת בחירת הפרשה והעלייה */
+        /* שורת בחירת הפרשה והעלייה — רוחב */
         .pardes-search-row{
           left:50% !important;
           top:auto !important;
-          bottom:calc(env(safe-area-inset-bottom, 0px) + 120px) !important;
+          bottom:18dvh !important;
           width:min(92vw, 560px) !important;
           transform:translateX(-50%) !important;
           padding:5px 8px !important;
         }
-      
+        
         .pardes-search-message{
           left:50% !important;
           top:auto !important;
-          bottom:8px !important;
+          bottom:0dvh !important;
           transform:translateX(-50%) !important;
           font-size:11px !important;
+        }
+        
+        /* דפדפנים פנימיים — רוחב */
+        body.in-app-browser .pardes-search-row{
+          bottom:10dvh !important;
+        }
+        
+        body.in-app-browser .pardes-search-message{
+          bottom:0dvh !important;
         }
       
         .pardes-search-row input{
