@@ -2564,7 +2564,19 @@
         .accessibility-toggle i{
           font-size:22px !important;
         }
-      } 
+      }
+
+      /* תיקון סופי — מיקום שורת החיפוש בנייד רגיל */
+      @media (max-width:640px) and (orientation:portrait){
+        body:not(.tiktok-browser) .pardes-search-row{
+          bottom:145px !important;
+        }
+      
+        body:not(.tiktok-browser) .pardes-search-message{
+          bottom:105px !important;
+        }
+      }
+      
   </style>
 </head>
   
