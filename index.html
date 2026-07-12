@@ -2575,52 +2575,32 @@
         }
       }
 
-      /* דפדפן רגיל בנייד:
-         Chrome, Safari, Samsung Internet, Firefox, Edge */
-      @media (max-width:640px) and (orientation:portrait){
-        .pardes-search-row{
-          bottom:17dvh !important;
-        }
-      
-        .pardes-search-message{
-          bottom:11dvh !important;
-        }
-      }
-      
-      /* דפדפן פנימי של אפליקציה:
-         TikTok, Instagram, Facebook, YouTube */
-      @media (max-width:640px) and (orientation:portrait){
-        body.in-app-browser .pardes-search-row{
-          bottom:10dvh !important;
-        }
-      
-        body.in-app-browser .pardes-search-message{
-          bottom:0dvh !important;
-        }
-      }
-
       /* לפטופ */
       @media (min-width:951px) and (max-width:1600px){
         .pardes-search-row{
-          top:0dvh  !important;
-          bottom:0dvh !important;
+          position:fixed !important;
+          top:auto !important;
+          bottom:10dvh !important;
         }
       
         .pardes-search-message{
-          top:0dvh !important;
+          position:fixed !important;
+          top:auto !important;
           bottom:0dvh !important;
         }
       }
-           
+      
       /* מחשב נייח / מסך גדול */
       @media (min-width:1601px){
         .pardes-search-row{
-          top:0dvh  !important;
-          bottom:0dvh !important;
+          position:fixed !important;
+          top:auto !important;
+          bottom:10dvh !important;
         }
       
         .pardes-search-message{
-          top:0dvh !important;
+          position:fixed !important;
+          top:auto !important;
           bottom:0dvh !important;
         }
       }
