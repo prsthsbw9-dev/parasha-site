@@ -2566,13 +2566,26 @@
         }
       }
 
-      /* מיקום אחיד בכל דפדפני הנייד */
+      /* דפדפן רגיל בנייד:
+         Chrome, Safari, Samsung Internet, Firefox, Edge */
       @media (max-width:640px) and (orientation:portrait){
         .pardes-search-row{
-          bottom:10dvh !important;
+          bottom:15dvh !important;
         }
       
         .pardes-search-message{
+          bottom:4dvh !important;
+        }
+      }
+      
+      /* דפדפן פנימי של אפליקציה:
+         TikTok, Instagram, Facebook, YouTube */
+      @media (max-width:640px) and (orientation:portrait){
+        body.in-app-browser .pardes-search-row{
+          bottom:10dvh !important;
+        }
+      
+        body.in-app-browser .pardes-search-message{
           bottom:-1dvh !important;
         }
       }
@@ -2582,6 +2595,24 @@
   
 <body>
 
+<script>
+(function () {
+  const ua = navigator.userAgent || "";
+
+  const isInAppBrowser =
+    /TikTok|musical_ly/i.test(ua) ||
+    /Instagram/i.test(ua) ||
+    /FBAN|FBAV|FB_IAB/i.test(ua) ||
+    /YouTube/i.test(ua);
+
+  if (isInAppBrowser) {
+    document.body.classList.add("in-app-browser");
+  } else {
+    document.body.classList.add("regular-mobile-browser");
+  }
+})();
+</script>  
+  
 <button id="treeSoundToggle" class="tree-sound-toggle" type="button" aria-label="הפעלת צלילי הטבע" aria-pressed="false">
   🔇
 </button>
