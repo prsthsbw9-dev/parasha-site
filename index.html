@@ -2539,19 +2539,7 @@
         .accessibility-toggle i{
           font-size:22px !important;
         }
-      }            
-    }
-        /* תיקון מיקום רק בדפדפן הפנימי של TikTok */
-        @media (max-width:640px) and (orientation:portrait){
-        
-          body.tiktok-browser .pardes-search-row{
-            bottom:30px !important;
-          }
-        
-          body.tiktok-browser .pardes-search-message{
-            bottom:0px !important;
-          }
-        }
+      } 
   </style>
 </head>
   
@@ -4670,26 +4658,7 @@ if(maShebalevLive){
       event.stopPropagation();
     }, { passive: true });
   }
-</script>
-
- @media (max-width:640px) and (orientation:portrait){
-
-  body.tiktok-browser .pardes-search-row{
-    bottom:30px !important;
-  }
-
-  body.tiktok-browser .pardes-search-message{
-    bottom:0px !important;
-  }
-}
-
-<script>
-  const isTikTokBrowser =
-    /TikTok|BytedanceWebview|musical_ly/i.test(navigator.userAgent);
-
-  if (isTikTokBrowser) {
-    document.body.classList.add("tiktok-browser");
-  }
-</script>  
+</script> 
+  
 </body>
 </html>
