@@ -2199,14 +2199,39 @@
       --pardes-message-mobile-top: calc(78dvh + 68px);
     }
 
+    /* מיקום רגיל — בתחתית גזע העץ */
     .pardes-search-row{
       position:fixed !important;
       left:50% !important;
-      top:var(--pardes-search-desktop-top) !important;
-      bottom:auto !important;
+      top:auto !important;
+      bottom:calc(env(safe-area-inset-bottom, 0px) + 120px) !important;
       transform:translateX(-50%) !important;
       z-index:30 !important;
       margin:0 !important;
+    
+      /* גובה זהה בכל הדפדפנים */
+      min-height:44px !important;
+      padding:6px 6px !important;
+      gap:4px !important;
+      box-sizing:border-box !important;
+    }
+    
+    .pardes-search-row input{
+      height:30px !important;
+      min-height:30px !important;
+      padding:4px 5px !important;
+      font-size:13px !important;
+      line-height:20px !important;
+      box-sizing:border-box !important;
+    }
+    
+    .pardes-search-row button{
+      height:30px !important;
+      min-height:30px !important;
+      padding:4px 9px !important;
+      font-size:13px !important;
+      line-height:20px !important;
+      box-sizing:border-box !important;
     }
 
     .pardes-search-message{
