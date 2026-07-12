@@ -2520,7 +2520,7 @@
         .pardes-search-row{
           left:50% !important;
           top:auto !important;
-          bottom:38px !important;
+          bottom:calc(env(safe-area-inset-bottom, 0px) + 120px) !important;
           width:min(92vw, 560px) !important;
           transform:translateX(-50%) !important;
           padding:5px 8px !important;
