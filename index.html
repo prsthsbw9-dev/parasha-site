@@ -2542,14 +2542,14 @@
         /* תיקון מיקום רק בדפדפן הפנימי של TikTok */
         @media (max-width:640px) and (orientation:portrait){
         
-          body.tiktok-browser .pardes-search-row{
-            transform:translateY(80px) !important;
+          html.tiktok-browser .pardes-search-row{
+            bottom:30px !important;
           }
         
-          body.tiktok-browser .pardes-search-message{
-            transform:translateY(80px) !important;
+          html.tiktok-browser .pardes-search-message{
+            bottom:0px !important;
           }
-        }     
+        }
       }            
     }
 
@@ -4685,5 +4685,13 @@ if(maShebalevLive){
   }
 }
 
+<script>
+  const isTikTokBrowser =
+    /TikTok|BytedanceWebview|musical_ly/i.test(navigator.userAgent);
+
+  if (isTikTokBrowser) {
+    document.body.classList.add("tiktok-browser");
+  }
+</script>  
 </body>
 </html>
