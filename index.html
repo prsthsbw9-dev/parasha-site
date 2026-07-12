@@ -2254,10 +2254,10 @@
       }
     }
 
-    /* מה שבלב — סרטון חי בתחתית גזע העץ */
+    /* מה שבלב — מחשב */
     .ma-shebalev-live{
       position:fixed;
-      left:52.5%;
+      left:54%;
       top:66vh;
       width:120px;
       height:120px;
@@ -2266,8 +2266,12 @@
       display:block;
       text-decoration:none;
       cursor:pointer;
+      transition:
+        transform 1.15s cubic-bezier(.22,.8,.18,1),
+        filter .8s ease;
+      transform-origin:center center;
     }
-
+    
     .ma-shebalev-live video{
       width:100%;
       height:100%;
@@ -2276,43 +2280,46 @@
       pointer-events:none;
       background:transparent !important;
     }
-
-    .ma-shebalev-live{
-      transition:
-        transform 1.15s cubic-bezier(.22,.8,.18,1),
-        filter .8s ease;
-      transform-origin:center center;
-    }
     
-    .ma-shebalev-live.enter-heart{
-      transform:
-        translateX(-50%)
-        scale(22);
-    
-      filter:
-        brightness(.55)
-        saturate(1.5);
-    
-      z-index:99999;
+    .ma-shebalev-label{
+      position:absolute;
+      left:50%;
+      top:calc(100% + 6px);
+      transform:translateX(-50%);
+      color:#fff !important;
+      font-size:14px;
+      font-weight:900;
+      line-height:1;
+      white-space:nowrap;
+      text-decoration:none !important;
+      text-shadow:
+        0 2px 7px rgba(0,0,0,.95),
+        0 0 8px rgba(255,255,255,.35);
       pointer-events:none;
     }
     
-    body.entering-heart .pardes-search-row,
-    body.entering-heart .pardes-search-message{
-      opacity:0;
-      transition:opacity .35s ease;
+    .ma-shebalev-live:visited .ma-shebalev-label,
+    .ma-shebalev-live:hover .ma-shebalev-label,
+    .ma-shebalev-live:active .ma-shebalev-label{
+      color:#fff !important;
+      text-decoration:none !important;
     }
     
+    /* נייד */
     @media (max-width:640px){
       .ma-shebalev-live{
-        left:50%;
+        left:56%;
         top:62dvh;
         width:90px;
         height:90px;
         transform:translateX(-50%);
-      }      
+      }
+    
+      .ma-shebalev-label{
+        top:calc(100% + 8px);
+        font-size:13px;
+      }
     }
-  </style>
 </head>
   
 <body>
