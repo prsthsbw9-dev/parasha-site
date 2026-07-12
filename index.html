@@ -2452,6 +2452,94 @@
         height:38px;
         font-size:18px;
       }
+
+      /* נייד מסובב לרוחב */
+      @media (max-width:950px) and (orientation:landscape){
+      
+        /* להמשיך להציג את סרטון הנייד ולא את סרטון המחשב */
+        .sea-bg-video-desktop{
+          display:none !important;
+        }
+      
+        .sea-bg-video-mobile{
+          display:block !important;
+        }
+      
+        /* האור שבי */
+        .haor-shebi-live{
+          left:52% !important;
+          top:31dvh !important;
+          width:58px !important;
+          height:58px !important;
+        }
+      
+        .haor-shebi-label{
+          top:calc(100% + 4px) !important;
+          font-size:11px !important;
+        }
+      
+        /* מה שבלב */
+        .ma-shebalev-live{
+          left:52% !important;
+          top:55dvh !important;
+          width:68px !important;
+          height:68px !important;
+        }
+      
+        .ma-shebalev-label{
+          top:calc(100% - 2px) !important;
+          font-size:11px !important;
+        }
+      
+        /* שורת בחירת הפרשה והעלייה */
+        .pardes-search-row{
+          left:50% !important;
+          top:auto !important;
+          bottom:38px !important;
+          width:min(92vw, 560px) !important;
+          transform:translateX(-50%) !important;
+          padding:5px 8px !important;
+        }
+      
+        .pardes-search-message{
+          left:50% !important;
+          top:auto !important;
+          bottom:8px !important;
+          transform:translateX(-50%) !important;
+          font-size:11px !important;
+        }
+      
+        .pardes-search-row input{
+          min-height:28px !important;
+          font-size:12px !important;
+        }
+      
+        .pardes-search-row button{
+          min-height:28px !important;
+          font-size:12px !important;
+          padding:4px 10px !important;
+        }
+      
+        /* כפתורי קול ונגישות */
+        .tree-sound-toggle{
+          width:34px !important;
+          height:34px !important;
+          left:8px !important;
+          bottom:8px !important;
+          font-size:16px !important;
+        }
+      
+        .accessibility-toggle{
+          width:42px !important;
+          height:42px !important;
+          right:8px !important;
+          bottom:8px !important;
+        }
+      
+        .accessibility-toggle i{
+          font-size:22px !important;
+        }
+      }            
     }
 
   </style>
