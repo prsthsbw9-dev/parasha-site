@@ -3111,7 +3111,61 @@
     /* הסתרת רמקול הדף הראשי בזמן שסרטון פרד״ס פתוח */
     body.pardes-video-open #homeSoundToggle{
       display:none !important;
-    }    
+    } 
+
+     /* אפקט כניסה משותף לפירות פרד״ס */
+    .tree-pshat-live,
+    .tree-remez-live,
+    .tree-drash-live,
+    .tree-sod-live{
+      transition:
+        transform .9s cubic-bezier(.22,.8,.18,1),
+        filter .7s ease,
+        opacity .35s ease;
+      transform-origin:center center;
+    }
+    
+    /* הפרי שנלחץ מתרחב על כל המסך */
+    .tree-pshat-live.pardes-fruit-enter,
+    .tree-remez-live.pardes-fruit-enter,
+    .tree-drash-live.pardes-fruit-enter,
+    .tree-sod-live.pardes-fruit-enter{
+      transform:translateX(50%) scale(24) !important;
+      filter:brightness(.48) saturate(1.45);
+      z-index:99999 !important;
+      pointer-events:none;
+    }
+    
+    /* מסתירים את הכיתוב בזמן ההתרחבות */
+    .pardes-fruit-enter .tree-pshat-label,
+    .pardes-fruit-enter .tree-remez-label,
+    .pardes-fruit-enter .tree-drash-label,
+    .pardes-fruit-enter .tree-sod-label{
+      opacity:0;
+      transition:opacity .18s ease;
+    }
+    
+    /* בזמן המעבר מסתירים את שאר ממשק העץ */
+    body.entering-pardes-fruit .pardes-search-row,
+    body.entering-pardes-fruit .pardes-search-message,
+    body.entering-pardes-fruit .haor-shebi-live,
+    body.entering-pardes-fruit .ma-shebalev-live,
+    body.entering-pardes-fruit .home-sound-toggle,
+    body.entering-pardes-fruit .accessibility-toggle{
+      opacity:0;
+      pointer-events:none;
+      transition:opacity .3s ease;
+    }
+    
+    /* גם הפירות שלא נלחצו נעלמים */
+    body.entering-pardes-fruit .tree-pshat-live:not(.pardes-fruit-enter),
+    body.entering-pardes-fruit .tree-remez-live:not(.pardes-fruit-enter),
+    body.entering-pardes-fruit .tree-drash-live:not(.pardes-fruit-enter),
+    body.entering-pardes-fruit .tree-sod-live:not(.pardes-fruit-enter){
+      opacity:0;
+      pointer-events:none;
+    }   
+    
   </style>
 </head>
   
@@ -4332,6 +4386,33 @@ function normalizeParashaName(value){
     }
 
     let lastFocusedElementBeforeVideo = null;
+
+    let pardesFruitTransitionRunning = false;
+    
+    function openLayerWithFruitEffect(element, layer){
+      if(!element || pardesFruitTransitionRunning) return;
+    
+      pardesFruitTransitionRunning = true;
+    
+      document.body.classList.add("entering-pardes-fruit");
+      element.classList.add("pardes-fruit-enter");
+    
+      const homeIntroAudio = document.getElementById("pardesHomeIntroAudio");
+    
+      if(homeIntroAudio){
+        homeIntroAudio.pause();
+        homeIntroAudio.muted = true;
+      }
+    
+      setTimeout(() => {
+        openLayer(layer);
+    
+        document.body.classList.remove("entering-pardes-fruit");
+        element.classList.remove("pardes-fruit-enter");
+    
+        pardesFruitTransitionRunning = false;
+      }, 850);
+    }
     
     function openLayer(layer){
       document.body.classList.add("pardes-video-open");
@@ -4526,12 +4607,20 @@ function normalizeParashaName(value){
 
     document.getElementById("pshatLink")?.addEventListener("click", (event) => {
       event.preventDefault();
-      openLayer("pshat");
+    
+      openLayerWithFruitEffect(
+        event.currentTarget,
+        "pshat"
+      );
     });
-
+    
     document.getElementById("remezLink")?.addEventListener("click", (event) => {
       event.preventDefault();
-      openLayer("remez");
+    
+      openLayerWithFruitEffect(
+        event.currentTarget,
+        "remez"
+      );
     });
 
     document.getElementById("drashLink")?.addEventListener("click", (event) => {
