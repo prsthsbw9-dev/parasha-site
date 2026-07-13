@@ -590,8 +590,6 @@
       box-shadow:0 0 3px rgba(255,255,255,.18);
     }
 
-
-
     .custom-fruit-img{
       position:relative;
       z-index:2;
@@ -2443,12 +2441,7 @@
 
       /* נייד מסובב לרוחב */
       @media (max-width:950px) and (orientation:landscape){
-      
-        
-
-      
-
-      
+                    
         /* האור שבי */
         .haor-shebi-live{
           left:52% !important;
@@ -2727,19 +2720,6 @@
       --view-light-size:90px;
     }
 
-    
-
-
-
-    
-
-
-
-
-
-
-
-
     /* =========================================================
        התאמות לדפדפנים רגילים — קיימת מחלקה נפרדת לכל דפדפן.
        כרגע הערכים זהים; ניתן לשנות כל דפדפן בנפרד בעת הצורך.
@@ -2849,8 +2829,7 @@
         font-size:18px;
       }
     }
-
-  
+ 
     /* =========================================================
        תיקוני מיקום סופיים — לפטופ ומחשב נייח בלבד
        אין השפעה על נייד או טאבלט.
@@ -2897,6 +2876,121 @@
       }
     }
 
+    /* פשט — שיבולת שעורה חיה על העץ */
+    .tree-pshat-live{
+      position:fixed;
+    
+      /* מחשב / לפטופ */
+      right:9%;
+      top:25vh;
+    
+      width:94px;
+      height:160px;
+    
+      z-index:25;
+      display:block;
+      text-decoration:none;
+      cursor:pointer;
+    
+      transform:translateX(50%);
+      transform-origin:center center;
+    
+      transition:
+        transform .25s ease,
+        filter .25s ease;
+    
+      filter:
+        drop-shadow(0 8px 15px rgba(0,0,0,.48))
+        drop-shadow(0 0 10px rgba(255,225,165,.18));
+    }
+    
+    .tree-pshat-video{
+      width:100%;
+      height:100%;
+      display:block;
+      object-fit:contain;
+      background:transparent !important;
+      pointer-events:none;
+    }
+    
+    .tree-pshat-label{
+      position:absolute;
+      left:50%;
+      top:calc(100% + 5px);
+      transform:translateX(-50%);
+    
+      color:#fff !important;
+      font-size:14px;
+      font-weight:900;
+      line-height:1;
+      white-space:nowrap;
+      text-align:center;
+      text-decoration:none !important;
+    
+      text-shadow:
+        0 2px 7px rgba(0,0,0,.98),
+        0 0 8px rgba(255,255,255,.32);
+    
+      pointer-events:none;
+    }
+    
+    .tree-pshat-live:visited .tree-pshat-label,
+    .tree-pshat-live:hover .tree-pshat-label,
+    .tree-pshat-live:active .tree-pshat-label{
+      color:#fff !important;
+      text-decoration:none !important;
+    }
+    
+    .tree-pshat-live:hover{
+      transform:translateX(50%) scale(1.05);
+    
+      filter:
+        drop-shadow(0 10px 18px rgba(0,0,0,.52))
+        drop-shadow(0 0 15px rgba(255,225,165,.30));
+    }
+    
+    
+    /* פשט — נייד */
+    @media (max-width:640px){
+    
+      .tree-pshat-live{
+        right:12%;
+        top:37svh;
+    
+        width:48px;
+        height:86px;
+    
+        transform:translateX(50%);
+      }
+    
+      .tree-pshat-label{
+        top:calc(100% + 4px);
+        font-size:11px;
+      }
+    
+      .tree-pshat-live:hover{
+        transform:translateX(50%) scale(1.05);
+      }
+    }
+    
+    
+    /* פשט — נייד מסובב לרוחב */
+    @media (max-width:950px) and (orientation:landscape){
+    
+      .tree-pshat-live{
+        right:9%;
+        top:24dvh;
+    
+        width:70px;
+        height:118px;
+      }
+    
+      .tree-pshat-label{
+        top:calc(100% + 4px);
+        font-size:11px;
+      }
+    }
+    
   </style>
 </head>
   
@@ -3012,10 +3106,6 @@
 })();
 </script>
   
-  
-
-
-
 <audio id="pardesHomeIntroAudio" preload="auto">
   <source src="pardes-home-intro.mp3" type="audio/mpeg">
 </audio>
@@ -3145,11 +3235,6 @@
           <span class="fruit-letter fruit-word">רמז</span>
         </a>
 
-        <a id="pshatLink" class="fruit-link fruit-sod" href="#" aria-label="פשט העלייה">
-          <span class="pardes-fruit-icon" aria-hidden="true">🌾</span>
-          <span class="fruit-letter fruit-word">פשט</span>
-        </a>
-
         <a id="whatsappLink" class="fruit-link fruit-whatsapp" href="my-fruit.html" aria-label="הפרי שלי">
           <img class="custom-fruit-img" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjAgMTIwIj4KPGRlZnM+CiA8cmFkaWFsR3JhZGllbnQgaWQ9ImciIGN4PSIzMiUiIGN5PSIyMCUiIHI9Ijc4JSI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjZmZmIi8+PHN0b3Agb2Zmc2V0PSIwLjE4IiBzdG9wLWNvbG9yPSIjZDdmZmQzIi8+PHN0b3Agb2Zmc2V0PSIwLjU1IiBzdG9wLWNvbG9yPSIjN2ZkMzQyIi8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjMjQ2YjIwIi8+PC9yYWRpYWxHcmFkaWVudD4KIDxyYWRpYWxHcmFkaWVudCBpZD0iZ2xvdyIgY3g9IjUwJSIgY3k9IjUwJSIgcj0iNTAlIj48c3RvcCBvZmZzZXQ9IjAuNjIiIHN0b3AtY29sb3I9InJnYmEoMjU1LDI1NSwyNTUsMCkiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNmZmZmZmYiIHN0b3Atb3BhY2l0eT0iLjU1Ii8+PC9yYWRpYWxHcmFkaWVudD4KIDxsaW5lYXJHcmFkaWVudCBpZD0ibGVhZiIgeDE9IjAiIHkxPSIwIiB4Mj0iMSIgeTI9IjEiPjxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI2I4ZmY4YSIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzE5OGUzZCIvPjwvbGluZWFyR3JhZGllbnQ+CjwvZGVmcz4KPGNpcmNsZSBjeD0iNjAiIGN5PSI2MiIgcj0iNTQiIGZpbGw9InVybCgjZ2xvdykiIG9wYWNpdHk9Ii41NSIvPgo8cGF0aCBkPSJNNjEgMjVjOS0xMCAyMy03IDMxIDEgMTMgMTMgMTIgNDItMSA2Mi04IDEzLTE5IDIxLTMxIDIxUzM3IDEwMSAyOSA4OEMxNiA2OCAxNSAzOSAyOCAyNmM4LTggMjItMTEgMzEtMSAxIDEgMSAxIDIgMHoiIGZpbGw9InVybCgjZykiIHN0cm9rZT0icmdiYSgyNTUsMjU1LDI1NSwuNzUpIiBzdHJva2Utd2lkdGg9IjMiLz4KPHBhdGggZD0iTTU2IDI0YzItOCA3LTE0IDE1LTE4IiBmaWxsPSJub25lIiBzdHJva2U9IiM3YTRhMjEiIHN0cm9rZS13aWR0aD0iNyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CjxwYXRoIGQ9Ik02NyAxM2MxNy03IDI5IDAgMzQgMTItMTUgNi0yOCA0LTM0LTEyeiIgZmlsbD0idXJsKCNsZWFmKSIgc3Ryb2tlPSJyZ2JhKDI1NSwyNTUsMjU1LC41NSkiIHN0cm9rZS13aWR0aD0iMiIvPgo8cGF0aCBkPSJNMzggMzhjNy0xMCAyMC0xMiAzMS03IiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgb3BhY2l0eT0iLjM4Ii8+CjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDAsMikiIG9wYWNpdHk9Ii45MiI+CiA8cGF0aCBkPSJNNjAgNzZjMC0xOCAwLTIyIDAtMjgiIHN0cm9rZT0iI2ZmZiIgc3Ryb2tlLXdpZHRoPSI2IiBzdHJva2UtbGluZWNhcD0icm91bmQiIGZpbGw9Im5vbmUiLz4KIDxwYXRoIGQ9Ik02MCA1NWMtMTEtMTUtMjQtMTQtMzAtNiAxMCA2IDIwIDggMzAgNnoiIGZpbGw9IiNmZmYiIG9wYWNpdHk9Ii45MiIvPgogPHBhdGggZD0iTTYwIDU1YzExLTE1IDI0LTE0IDMwLTYtMTAgNi0yMCA4LTMwIDZ6IiBmaWxsPSIjZmZmIiBvcGFjaXR5PSIuOTIiLz4KIDxwYXRoIGQ9Ik02MCA0NWMtNS0xMyAwLTIyIDEwLTI5IDUgMTIgMiAyMi0xMCAyOXoiIGZpbGw9IiNmZmYiIG9wYWNpdHk9Ii45MiIvPgogPHBhdGggZD0iTTI4IDg0YzI0LTE4IDQwLTE2IDY0LTYiIHN0cm9rZT0iI2ZmZiIgc3Ryb2tlLXdpZHRoPSI1IiBzdHJva2UtbGluZWNhcD0icm91bmQiIGZpbGw9Im5vbmUiIG9wYWNpdHk9Ii44NSIvPgo8L2c+Cjwvc3ZnPg==" alt="" aria-hidden="true">
           <span class="fruit-letter fruit-word">הפרי שלי</span>
@@ -3275,8 +3360,6 @@
       <p class="spiritual-disclaimer">המדור נועד לחיזוק, הכוונה ולימוד בלבד. במצבי משבר זוגי משמעותי מומלץ לפנות לרב מוסמך או לאיש מקצוע מתאים.</p>
     </div>
   </section>
-
-  
 
   <div id="pardesVideoPanel" class="pardes-video-panel" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="pardesVideoTitle">
     <div class="pardes-video-card" role="dialog" aria-modal="true" aria-labelledby="pardesVideoTitle">
@@ -4807,8 +4890,6 @@ function normalizeParashaName(value){
       });
     }
 
-
-
     function setupAccessibilityLabels(){
       const screenLabels = {
         yosefScreen: "מדור חלומות בהשראת יוסף הצדיק",
@@ -5029,6 +5110,23 @@ function normalizeParashaName(value){
 
 </script>
 
+<!-- פשט — שיבולת שעורה חיה על העץ -->
+<a id="pshatLink" class="tree-pshat-live" href="#" aria-label="פשט העלייה">
+
+  <video
+    class="tree-pshat-video"
+    autoplay
+    muted
+    loop
+    playsinline
+    aria-hidden="true">
+    <source src="pshat-barley.webm" type="video/webm">
+  </video>
+
+  <span class="tree-pshat-label">פשט</span>
+
+</a>  
+  
 <!-- האור שבי — אלמנט חי מעל מה שבלב -->
 <a href="personal-message.html" class="haor-shebi-live" id="haorShebiLive" aria-label="האור שבי">
   <video autoplay muted loop playsinline preload="metadata">
