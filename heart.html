@@ -157,48 +157,20 @@
       50%{ transform:scale(1.07); opacity:.92; }
     }
 
-    .heart-glow{
-      position:relative;
-      width:112px;
-      height:112px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      transform:translateY(3px);
-      animation:heartFloat 3.8s ease-in-out infinite;
-    }
-
-    .heart-glow::before{
-      content:"";
-      position:absolute;
-      inset:5px;
-      border-radius:50%;
-      background:radial-gradient(circle, rgba(255,255,255,.30), rgba(255,75,135,.24) 38%, rgba(255,75,135,0) 72%);
-      filter:blur(4px);
-      animation:heartPulse 3.2s ease-in-out infinite;
-    }
-
-    .heart-glow::after{
-      content:"❤";
+    .heart-original-icon{
       position:relative;
       z-index:2;
-      font-size:82px;
-      line-height:1;
-      color:#ff4f87;
-      text-shadow:
-        0 0 8px rgba(255,255,255,.92),
-        0 0 18px rgba(255,92,145,.95),
-        0 0 38px rgba(255,55,125,.82),
-        0 0 68px rgba(255,55,125,.52);
-      filter:drop-shadow(0 12px 18px rgba(0,0,0,.34));
+      width:112px;
+      height:112px;
+      object-fit:contain;
+      display:block;
+      filter:
+        drop-shadow(0 0 7px rgba(255,255,255,.34))
+        drop-shadow(0 0 14px rgba(255,85,145,.42));
+      animation:heartIconFloat 3.8s ease-in-out infinite;
     }
 
-    @keyframes heartPulse{
-      0%,100%{ transform:scale(.92); opacity:.62; }
-      50%{ transform:scale(1.12); opacity:1; }
-    }
-
-    @keyframes heartFloat{
+    @keyframes heartIconFloat{
       0%,100%{ transform:translateY(3px) scale(.98); }
       50%{ transform:translateY(-2px) scale(1.03); }
     }
@@ -434,13 +406,9 @@
         margin:-2px auto 2px;
       }
 
-      .heart-glow{
+      .heart-original-icon{
         width:94px;
         height:94px;
-      }
-
-      .heart-glow::after{
-        font-size:68px;
       }
 
 .heart-title{
@@ -505,7 +473,9 @@
       </div>
 
       <div class="heart-figure" aria-hidden="true">
-        <div class="heart-glow"></div>
+        <video class="heart-original-icon" autoplay muted loop playsinline preload="metadata">
+          <source src="ma-shebalev.webm" type="video/webm">
+        </video>
       </div>
 
       <h1 class="heart-title">מה שבלב</h1>
