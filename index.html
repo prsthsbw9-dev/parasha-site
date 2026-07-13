@@ -2573,36 +2573,39 @@
         .accessibility-toggle i{
           font-size:22px !important;
         }
-      }
-/* לפטופ */
-      @media (min-width:951px) and (max-width:1600px){
-        .pardes-search-row{
-          position:fixed !important;
-          top:auto !important;
-          bottom:10dvh !important;
+        } /* סוף נייד מסובב לרוחב */
+        } /* סוף max-width:640px */
+        
+        
+        /* לפטופ */
+        @media (min-width:951px) and (max-width:1600px){
+          .pardes-search-row{
+            position:fixed !important;
+            top:auto !important;
+            bottom:10dvh !important;
+          }
+        
+          .pardes-search-message{
+            position:fixed !important;
+            top:auto !important;
+            bottom:0dvh !important;
+          }
         }
-      
-        .pardes-search-message{
-          position:fixed !important;
-          top:auto !important;
-          bottom:0dvh !important;
+        
+        /* מחשב נייח / מסך גדול */
+        @media (min-width:1601px){
+          .pardes-search-row{
+            position:fixed !important;
+            top:auto !important;
+            bottom:10dvh !important;
+          }
+        
+          .pardes-search-message{
+            position:fixed !important;
+            top:auto !important;
+            bottom:0dvh !important;
+          }
         }
-      }
-      
-      /* מחשב נייח / מסך גדול */
-      @media (min-width:1601px){
-        .pardes-search-row{
-          position:fixed !important;
-          top:auto !important;
-          bottom:10dvh !important;
-        }
-      
-        .pardes-search-message{
-          position:fixed !important;
-          top:auto !important;
-          bottom:0dvh !important;
-        }
-      }
       
   </style>
 </head>
