@@ -312,6 +312,18 @@
       font-size:18px;
     }
 
+    .sound-btn{
+      width:46px;
+      min-width:46px;
+      background:linear-gradient(135deg, rgba(70,185,210,.90), rgba(65,105,225,.88));
+      font-size:18px;
+    }
+
+    .sound-btn.is-muted{
+      background:rgba(0,0,0,.42);
+      opacity:.82;
+    }
+
     .send-btn{
       min-width:118px;
       padding:0 22px;
@@ -481,6 +493,10 @@
   </video>
   <div class="sea-bg-overlay"></div>
 
+  <audio id="heartIntroAudio" preload="auto">
+    <source src="ma-shebalev-intro.mp3" type="audio/mpeg">
+  </audio>
+
   <main class="heart-page">
     <section class="heart-card" aria-label="מה שבלב">
       <div class="top-row">
@@ -510,6 +526,7 @@
         <div class="heart-actions">
           <button id="heartMicBtn" class="heart-btn mic-btn" type="button" aria-label="דיבור קולי בעברית">🎙️</button>
           <button id="heartSendBtn" class="heart-btn send-btn" type="button">שלח</button>
+          <button id="heartSoundBtn" class="heart-btn sound-btn" type="button" aria-label="השתקת קול הפתיחה">🔊</button>
         </div>
 
         <p class="topics-line">
@@ -534,6 +551,8 @@
     const micBtn = document.getElementById("heartMicBtn");
     const answerEl = document.getElementById("heartAnswer");
     const resetBtn = document.getElementById("heartResetBtn");
+    const introAudio = document.getElementById("heartIntroAudio");
+    const soundBtn = document.getElementById("heartSoundBtn");
 
     function setAnswer(text, options = {}){
       answerEl.className = "answer-box is-visible" + (options.loading ? " is-loading" : "");
@@ -646,6 +665,49 @@
         try{ recognition.start(); }catch(e){}
       });
     }
+
+    let introMuted = false;
+    let introStarted = false;
+
+    function updateSoundButton(){
+      soundBtn.textContent = introMuted ? "🔇" : "🔊";
+      soundBtn.classList.toggle("is-muted", introMuted);
+      soundBtn.setAttribute("aria-label", introMuted ? "הפעלת קול הפתיחה" : "השתקת קול הפתיחה");
+    }
+
+    async function playIntro(){
+      if(introMuted || introStarted) return;
+      try{
+        introAudio.currentTime = 0;
+        await introAudio.play();
+        introStarted = true;
+      }catch(err){
+        // Some mobile and in-app browsers require the first user interaction.
+      }
+    }
+
+    soundBtn.addEventListener("click", async () => {
+      introMuted = !introMuted;
+      introAudio.muted = introMuted;
+
+      if(introMuted){
+        introAudio.pause();
+      }else{
+        introStarted = false;
+        await playIntro();
+      }
+
+      updateSoundButton();
+    });
+
+    window.addEventListener("load", () => {
+      updateSoundButton();
+      playIntro();
+    });
+
+    document.addEventListener("pointerdown", () => {
+      playIntro();
+    }, { once:true });
 
     setupSpeech();
   </script>
