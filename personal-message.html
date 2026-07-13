@@ -141,33 +141,17 @@
       animation:lightBreath 3.6s ease-in-out infinite;
     }
 
-    .light-glow{
-      position:relative;
-      width:106px;
-      height:106px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      animation:lightFloat 3.8s ease-in-out infinite;
-    }
-
-    .light-glow::before{
-      content:"";
-      position:absolute;
-      inset:6px;
-      border-radius:50%;
-      background:radial-gradient(circle at 50% 45%, rgba(255,255,255,.98), rgba(255,247,190,.78) 23%, rgba(255,205,85,.34) 48%, rgba(120,190,255,.10) 68%, transparent 76%);
-      box-shadow:0 0 16px rgba(255,255,255,.86), 0 0 34px rgba(255,225,120,.72), 0 0 64px rgba(120,200,255,.28);
-    }
-
-    .light-glow::after{
-      content:"✦";
+    .light-original-icon{
       position:relative;
       z-index:2;
-      font-size:68px;
-      line-height:1;
-      color:#fff8cf;
-      text-shadow:0 0 8px rgba(255,255,255,.95), 0 0 20px rgba(255,226,120,.90), 0 0 38px rgba(120,200,255,.54);
+      width:112px;
+      height:112px;
+      object-fit:contain;
+      display:block;
+      filter:
+        drop-shadow(0 0 7px rgba(255,255,255,.28))
+        drop-shadow(0 0 15px rgba(255,220,110,.42));
+      animation:lightFloat 3.8s ease-in-out infinite;
     }
 
     @keyframes lightBreath{
@@ -671,13 +655,9 @@
         margin:-2px auto 2px;
       }
 
-      .light-glow{
-        width:88px;
-        height:88px;
-      }
-
-      .light-glow::after{
-        font-size:58px;
+      .light-original-icon{
+        width:94px;
+        height:94px;
       }
 
       .glass-box{
@@ -709,7 +689,9 @@
       </div>
 
       <div class="light-figure" aria-hidden="true">
-        <div class="light-glow"></div>
+        <video class="light-original-icon" autoplay muted loop playsinline preload="metadata">
+          <source src="haor-shebi-transparent.webm" type="video/webm">
+        </video>
       </div>
 
       <h1>האור שבי</h1>
