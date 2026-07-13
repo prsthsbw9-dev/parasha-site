@@ -23,32 +23,29 @@
       overflow-x:hidden;
     }
 
-    .sea-bg-video{
+    .tree-background-picture{
       position:fixed;
       inset:0;
       width:100vw;
       height:100dvh;
       min-width:100%;
       min-height:100%;
-      object-fit:cover;
-      object-position:center center;
       z-index:0;
+      display:block;
+      overflow:hidden;
       background:#071014;
       pointer-events:none;
     }
 
-    .sea-bg-video-mobile{
-      display:none;
-    }
-
-    @media (max-width:640px){
-      .sea-bg-video-desktop{
-        display:none;
-      }
-
-      .sea-bg-video-mobile{
-        display:block;
-      }
+    .sea-bg-image{
+      width:100%;
+      height:100%;
+      min-width:100%;
+      min-height:100%;
+      object-fit:cover;
+      object-position:center center;
+      display:block;
+      pointer-events:none;
     }
 
     .sea-bg-overlay{
@@ -2122,7 +2119,7 @@
       text-shadow:none !important;
     }
     
-    body.accessibility-high-contrast .sea-bg-video,
+    body.accessibility-high-contrast .tree-background-picture,
     body.accessibility-high-contrast .sea-bg-overlay{
       display:none !important;
     }
@@ -2167,7 +2164,7 @@
         transition-duration:.01ms !important;
       }
     
-      .sea-bg-video{
+      .tree-background-picture{
         display:none !important;
       }
     }
@@ -2442,53 +2439,15 @@
       }
     }
 
-
-    /* כפתור קטן לשליטה בצלילי הטבע של סרטון העץ */
-    .tree-sound-toggle{
-      position:fixed;
-      left:14px;
-      bottom:14px;
-      z-index:10001;
-      width:42px;
-      height:42px;
-      border-radius:50%;
-      border:1px solid rgba(255,255,255,.55);
-      background:rgba(0,0,0,.35);
-      color:#fff;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:0;
-      font-size:20px;
-      line-height:1;
-      cursor:pointer;
-      box-shadow:
-        0 8px 20px rgba(0,0,0,.35),
-        0 0 14px rgba(255,255,255,.15);
-      backdrop-filter:blur(7px);
-      -webkit-backdrop-filter:blur(7px);
-    }
-
     @media (max-width:640px){
-      .tree-sound-toggle{
-        left:10px;
-        bottom:10px;
-        width:38px;
-        height:38px;
-        font-size:18px;
-      }
 
       /* נייד מסובב לרוחב */
       @media (max-width:950px) and (orientation:landscape){
       
-        /* להמשיך להציג את סרטון הנייד ולא את סרטון המחשב */
-        .sea-bg-video-desktop{
-          display:none !important;
-        }
+        
+
       
-        .sea-bg-video-mobile{
-          display:block !important;
-        }
+
       
         /* האור שבי */
         .haor-shebi-live{
@@ -2554,14 +2513,7 @@
           padding:4px 10px !important;
         }
       
-        /* כפתורי קול ונגישות */
-        .tree-sound-toggle{
-          width:34px !important;
-          height:34px !important;
-          left:8px !important;
-          bottom:8px !important;
-          font-size:16px !important;
-        }
+        /* כפתור נגישות */
       
         .accessibility-toggle{
           width:42px !important;
@@ -2775,20 +2727,18 @@
       --view-light-size:90px;
     }
 
-    /* רקע: טלפון תמיד מקבל את גרסת הנייד */
-    body.device-phone .sea-bg-video-desktop{ display:none !important; }
-    body.device-phone .sea-bg-video-mobile{ display:block !important; }
+    
 
-    /* טאבלט אנכי מקבל נייד; טאבלט לרוחב מקבל מחשב */
-    body.device-tablet.orientation-portrait .sea-bg-video-desktop{ display:none !important; }
-    body.device-tablet.orientation-portrait .sea-bg-video-mobile{ display:block !important; }
-    body.device-tablet.orientation-landscape .sea-bg-video-desktop{ display:block !important; }
-    body.device-tablet.orientation-landscape .sea-bg-video-mobile{ display:none !important; }
 
-    body.device-laptop .sea-bg-video-desktop,
-    body.device-desktop .sea-bg-video-desktop{ display:block !important; }
-    body.device-laptop .sea-bg-video-mobile,
-    body.device-desktop .sea-bg-video-mobile{ display:none !important; }
+
+    
+
+
+
+
+
+
+
 
     /* =========================================================
        התאמות לדפדפנים רגילים — קיימת מחלקה נפרדת לכל דפדפן.
@@ -2990,9 +2940,7 @@
 </script>
   
   
-<button id="treeSoundToggle" class="tree-sound-toggle" type="button" aria-label="הפעלת צלילי הטבע" aria-pressed="false">
-  🔇
-</button>
+
 
 
 <button id="accessibilityToggle" class="accessibility-toggle" type="button" aria-label="פתיחת תפריט נגישות">
@@ -3008,21 +2956,16 @@
   <a href="accessibility.html">הצהרת נגישות</a>
 </div>  
 
-<video class="sea-bg-video sea-bg-video-desktop"
-       autoplay muted loop playsinline
-       preload="metadata"
-       poster="tree-background-desktop-poster.jpg"
-       aria-hidden="true">
-  <source src="tree-background-desktop.mp4" type="video/mp4">
-</video>
-
-<video class="sea-bg-video sea-bg-video-mobile"
-       autoplay muted loop playsinline
-       preload="metadata"
-       poster="tree-background-mobile-poster.jpg"
-       aria-hidden="true">
-  <source src="tree-background-mobile.mp4" type="video/mp4">
-</video>
+<picture class="tree-background-picture" aria-hidden="true">
+  <source media="(max-width: 640px)" srcset="tree-background-mobile-poster.jpg">
+  <img
+    class="sea-bg-image"
+    src="tree-background-desktop-poster.jpg"
+    alt=""
+    decoding="async"
+    fetchpriority="high"
+  >
+</picture>
 
   <div class="sea-bg-overlay"></div>
 
@@ -5055,63 +4998,7 @@ if(maShebalevLive){
 </script>
 
 
-<script>
-  const treeSoundToggle = document.getElementById("treeSoundToggle");
-
-  function getActiveTreeVideo() {
-    const isMobile = window.matchMedia("(max-width: 640px)").matches;
-
-    return document.querySelector(
-      isMobile
-        ? ".sea-bg-video-mobile"
-        : ".sea-bg-video-desktop"
-    );
-  }
-
-  function setTreeSound(enabled) {
-    const treeVideo = getActiveTreeVideo();
-    if (!treeVideo || !treeSoundToggle) return;
-
-    treeVideo.muted = !enabled;
-    treeVideo.volume = 0.35;
-
-    if (enabled) {
-      treeVideo.play().catch(() => {});
-      treeSoundToggle.textContent = "🔊";
-      treeSoundToggle.setAttribute("aria-label", "השתקת צלילי הטבע");
-      treeSoundToggle.setAttribute("aria-pressed", "true");
-    } else {
-      treeSoundToggle.textContent = "🔇";
-      treeSoundToggle.setAttribute("aria-label", "הפעלת צלילי הטבע");
-      treeSoundToggle.setAttribute("aria-pressed", "false");
-    }
-  }
-
-  function enableTreeNatureSound() {
-    setTreeSound(true);
-
-    document.removeEventListener("click", enableTreeNatureSound);
-    document.removeEventListener("touchstart", enableTreeNatureSound);
-  }
-
-  document.addEventListener("click", enableTreeNatureSound);
-  document.addEventListener("touchstart", enableTreeNatureSound, { passive: true });
-
-  if (treeSoundToggle) {
-    treeSoundToggle.addEventListener("click", function(event) {
-      event.stopPropagation();
-
-      const treeVideo = getActiveTreeVideo();
-      if (!treeVideo) return;
-
-      setTreeSound(treeVideo.muted);
-    });
-
-    treeSoundToggle.addEventListener("touchstart", function(event) {
-      event.stopPropagation();
-    }, { passive: true });
-  }
-</script> 
+ 
   
 </body>
 </html>
