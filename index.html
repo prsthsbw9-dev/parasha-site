@@ -2828,23 +2828,10 @@
     /* קול פתיחה — דף ראשי */
     .home-sound-toggle{
       position:fixed;
-      right:14px;
-      bottom:80px;
+      left:14px;
+      right:auto;
+      bottom:14px;
       z-index:10001;
-      width:48px;
-      height:48px;
-      border-radius:50%;
-      border:1px solid rgba(255,255,255,.72);
-      background:rgba(0,0,0,.34);
-      color:#fff;
-      font-size:21px;
-      cursor:pointer;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      box-shadow:0 10px 26px rgba(0,0,0,.38), 0 0 20px rgba(160,210,255,.22);
-      backdrop-filter:blur(5px);
-      -webkit-backdrop-filter:blur(5px);
     }
 
     .home-sound-toggle.is-muted{
@@ -5088,8 +5075,9 @@ if(maShebalevLive){
   });
 
   window.addEventListener("load", function(){
+    introMuted = true;
+    introAudio.muted = true;
     updateHomeSoundButton();
-    playHomeIntro();
   });
 
   document.addEventListener("pointerdown", function(event){
