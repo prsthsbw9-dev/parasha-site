@@ -448,10 +448,159 @@
         border-radius:22px;
       }
     }
+  
+    /* נגישות — משותף לדפים הפנימיים */
+    .accessibility-toggle{
+      position:fixed;
+      right:14px;
+      bottom:14px;
+      z-index:10000;
+      width:52px;
+      height:52px;
+      border-radius:50%;
+      border:2px solid rgba(255,255,255,.82);
+      background:
+        radial-gradient(circle at 32% 22%, rgba(255,255,255,.72), rgba(255,255,255,.18) 18%, rgba(255,255,255,0) 34%),
+        linear-gradient(145deg, #0074ff 0%, #005fcc 48%, #003f91 100%);
+      color:#fff;
+      cursor:pointer;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      box-shadow:
+        0 0 0 5px rgba(255,255,255,.08),
+        0 10px 28px rgba(0,0,0,.38),
+        0 0 24px rgba(0,95,204,.58),
+        inset 0 2px 0 rgba(255,255,255,.38),
+        inset 0 -8px 16px rgba(0,0,0,.22);
+    }
+
+    .accessibility-toggle i{
+      font-size:28px;
+      line-height:1;
+      color:#fff;
+    }
+
+    .accessibility-panel{
+      position:fixed;
+      right:14px;
+      bottom:76px;
+      z-index:10000;
+      display:none;
+      width:210px;
+      padding:10px;
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.45);
+      background:rgba(0,0,0,.94);
+      box-shadow:0 14px 34px rgba(0,0,0,.45);
+      direction:rtl;
+    }
+
+    .accessibility-panel.is-open{
+      display:grid;
+      gap:8px;
+    }
+
+    .accessibility-panel button,
+    .accessibility-panel a{
+      width:100%;
+      min-height:38px;
+      border-radius:10px;
+      border:1px solid rgba(255,255,255,.32);
+      background:rgba(255,255,255,.12);
+      color:#fff;
+      font-size:15px;
+      font-weight:800;
+      text-decoration:none;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+    }
+
+    body.accessibility-high-contrast{
+      background:#000 !important;
+      color:#fff !important;
+    }
+
+    body.accessibility-high-contrast *{
+      text-shadow:none !important;
+    }
+
+    body.accessibility-high-contrast .sea-bg-video,
+    body.accessibility-high-contrast .sea-bg-overlay{
+      display:none !important;
+    }
+
+    body.accessibility-highlight-links a,
+    body.accessibility-highlight-links button{
+      outline:2px solid #ffeb3b !important;
+      outline-offset:2px !important;
+    }
+
+    a:focus-visible,
+    button:focus-visible,
+    input:focus-visible,
+    select:focus-visible,
+    textarea:focus-visible,
+    [tabindex]:focus-visible{
+      outline:3px solid #ffeb3b !important;
+      outline-offset:4px !important;
+      box-shadow:
+        0 0 0 4px rgba(0,0,0,.85),
+        0 0 18px rgba(255,235,59,.55) !important;
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      *,
+      *::before,
+      *::after{
+        animation-duration:.01ms !important;
+        animation-iteration-count:1 !important;
+        scroll-behavior:auto !important;
+        transition-duration:.01ms !important;
+      }
+    }
+
+    @media (max-width:640px){
+      .accessibility-toggle{
+        right:10px;
+        bottom:10px;
+        width:46px;
+        height:46px;
+      }
+
+      .accessibility-toggle i{
+        font-size:25px;
+      }
+
+      .accessibility-panel{
+        right:10px;
+        bottom:66px;
+        width:min(210px, calc(100vw - 20px));
+      }
+    }
+
   </style>
 </head>
 
 <body>
+
+  <button id="accessibilityToggle" class="accessibility-toggle" type="button"
+          aria-label="פתיחת תפריט נגישות" aria-expanded="false"
+          aria-controls="accessibilityPanel">
+    <i class="fa-solid fa-universal-access" aria-hidden="true"></i>
+  </button>
+
+  <div id="accessibilityPanel" class="accessibility-panel" aria-hidden="true">
+    <button type="button" data-accessibility-action="increase">הגדל טקסט</button>
+    <button type="button" data-accessibility-action="decrease">הקטן טקסט</button>
+    <button type="button" data-accessibility-action="contrast">ניגודיות גבוהה</button>
+    <button type="button" data-accessibility-action="links">הדגש קישורים</button>
+    <button type="button" data-accessibility-action="reset">איפוס</button>
+    <a href="accessibility.html">הצהרת נגישות</a>
+  </div>
+
   <video class="sea-bg-video sea-bg-video-desktop" autoplay muted loop playsinline preload="metadata">
     <source src="tree-inside-desktop.mp4" type="video/mp4">
   </video>
@@ -683,5 +832,103 @@
 
     setupSpeech();
   </script>
+
+  <script>
+  (function(){
+    const accessibilityToggle = document.getElementById("accessibilityToggle");
+    const accessibilityPanel = document.getElementById("accessibilityPanel");
+    if(!accessibilityToggle || !accessibilityPanel) return;
+
+    let accessibilityTextScale = 1;
+
+    function getAccessibilityTextElements(){
+      return Array.from(document.querySelectorAll(
+        "h1, h2, h3, p, span, label, button, a, input, select, textarea"
+      )).filter((element) => !element.closest("#accessibilityPanel"));
+    }
+
+    function applyAccessibilityTextScale(){
+      getAccessibilityTextElements().forEach((element) => {
+        if(!element.dataset.originalFontSize){
+          element.dataset.originalFontSize = window.getComputedStyle(element).fontSize;
+        }
+
+        const originalSize = parseFloat(element.dataset.originalFontSize);
+        if(Number.isFinite(originalSize)){
+          element.style.fontSize = `${originalSize * accessibilityTextScale}px`;
+        }
+      });
+    }
+
+    function resetAccessibilityTextScale(){
+      accessibilityTextScale = 1;
+      getAccessibilityTextElements().forEach((element) => {
+        element.style.fontSize = "";
+        delete element.dataset.originalFontSize;
+      });
+    }
+
+    function closeAccessibilityPanel(){
+      accessibilityPanel.classList.remove("is-open");
+      accessibilityPanel.setAttribute("aria-hidden", "true");
+      accessibilityToggle.setAttribute("aria-expanded", "false");
+    }
+
+    accessibilityToggle.addEventListener("click", () => {
+      const isOpen = accessibilityPanel.classList.toggle("is-open");
+      accessibilityPanel.setAttribute("aria-hidden", isOpen ? "false" : "true");
+      accessibilityToggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
+    });
+
+    accessibilityPanel.addEventListener("click", (event) => {
+      const action = event.target?.dataset?.accessibilityAction;
+      if(!action) return;
+
+      if(action === "increase"){
+        accessibilityTextScale = Math.min(accessibilityTextScale + 0.12, 1.36);
+        applyAccessibilityTextScale();
+      }
+
+      if(action === "decrease"){
+        accessibilityTextScale = Math.max(accessibilityTextScale - 0.12, 0.88);
+        applyAccessibilityTextScale();
+      }
+
+      if(action === "contrast"){
+        document.body.classList.toggle("accessibility-high-contrast");
+      }
+
+      if(action === "links"){
+        document.body.classList.toggle("accessibility-highlight-links");
+      }
+
+      if(action === "reset"){
+        resetAccessibilityTextScale();
+        document.body.classList.remove(
+          "accessibility-high-contrast",
+          "accessibility-highlight-links"
+        );
+      }
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if(event.key === "Escape"){
+        closeAccessibilityPanel();
+        accessibilityToggle.focus();
+      }
+    });
+
+    document.addEventListener("click", (event) => {
+      if(
+        accessibilityPanel.classList.contains("is-open") &&
+        !accessibilityPanel.contains(event.target) &&
+        !accessibilityToggle.contains(event.target)
+      ){
+        closeAccessibilityPanel();
+      }
+    });
+  })();
+  </script>
+
 </body>
 </html>
