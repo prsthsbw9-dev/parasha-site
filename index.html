@@ -2553,20 +2553,7 @@
           font-size:12px !important;
           padding:4px 10px !important;
         }
-
-        /* נייד רגיל — דפדפנים פנימיים של אפליקציות בלבד */
-        @media (max-width:640px) and (orientation:portrait){
-        
-          body.in-app-browser .pardes-search-row{
-            bottom:10dvh !important;
-          }
-        
-          body.in-app-browser .pardes-search-message{
-            bottom:0dvh !important;
-          }
-        
-        }
-                
+      
         /* כפתורי קול ונגישות */
         .tree-sound-toggle{
           width:34px !important;
@@ -2620,6 +2607,273 @@
           }
         }
       
+  
+    /* =========================================================
+       מערכת תצוגה מרכזית — מכשירים, דפדפנים ודפדפני אפליקציות
+       כל שינוי עתידי במיקום מתבצע כאן בלבד.
+       ========================================================= */
+
+    :root{
+      --view-search-left:50%;
+      --view-search-bottom:10dvh;
+      --view-search-width:min(92vw, 560px);
+      --view-message-left:50%;
+      --view-message-bottom:0dvh;
+      --view-message-width:min(92vw, 560px);
+      --view-heart-left:52.5%;
+      --view-heart-top:66vh;
+      --view-heart-size:120px;
+      --view-light-left:52.5%;
+      --view-light-top:54vh;
+      --view-light-size:90px;
+    }
+
+    /* בסיס משותף לכל המכשירים */
+    body.device-phone .pardes-search-row,
+    body.device-tablet .pardes-search-row,
+    body.device-laptop .pardes-search-row,
+    body.device-desktop .pardes-search-row{
+      position:fixed !important;
+      left:var(--view-search-left) !important;
+      right:auto !important;
+      top:auto !important;
+      bottom:var(--view-search-bottom) !important;
+      width:var(--view-search-width) !important;
+      transform:translateX(-50%) !important;
+      margin:0 !important;
+      z-index:30 !important;
+    }
+
+    body.device-phone .pardes-search-message,
+    body.device-tablet .pardes-search-message,
+    body.device-laptop .pardes-search-message,
+    body.device-desktop .pardes-search-message{
+      position:fixed !important;
+      left:var(--view-message-left) !important;
+      right:auto !important;
+      top:auto !important;
+      bottom:var(--view-message-bottom) !important;
+      width:var(--view-message-width) !important;
+      transform:translateX(-50%) !important;
+      margin:0 !important;
+      z-index:30 !important;
+    }
+
+    body.device-phone .ma-shebalev-live,
+    body.device-tablet .ma-shebalev-live,
+    body.device-laptop .ma-shebalev-live,
+    body.device-desktop .ma-shebalev-live{
+      left:var(--view-heart-left) !important;
+      top:var(--view-heart-top) !important;
+      width:var(--view-heart-size) !important;
+      height:var(--view-heart-size) !important;
+    }
+
+    body.device-phone .haor-shebi-live,
+    body.device-tablet .haor-shebi-live,
+    body.device-laptop .haor-shebi-live,
+    body.device-desktop .haor-shebi-live{
+      left:var(--view-light-left) !important;
+      top:var(--view-light-top) !important;
+      width:var(--view-light-size) !important;
+      height:var(--view-light-size) !important;
+    }
+
+    /* 1. נייד אנכי */
+    body.device-phone.orientation-portrait{
+      --view-search-left:50%;
+      --view-search-bottom:calc(env(safe-area-inset-bottom, 0px) + 120px);
+      --view-search-width:min(96vw, 390px);
+      --view-message-left:53%;
+      --view-message-bottom:calc(env(safe-area-inset-bottom, 0px) + 85px);
+      --view-message-width:min(94vw, 390px);
+      --view-heart-left:53%;
+      --view-heart-top:63dvh;
+      --view-heart-size:90px;
+      --view-light-left:53%;
+      --view-light-top:51svh;
+      --view-light-size:70px;
+    }
+
+    /* 2. נייד לרוחב */
+    body.device-phone.orientation-landscape{
+      --view-search-left:50%;
+      --view-search-bottom:18dvh;
+      --view-search-width:min(92vw, 560px);
+      --view-message-left:50%;
+      --view-message-bottom:0dvh;
+      --view-message-width:min(92vw, 560px);
+      --view-heart-left:52%;
+      --view-heart-top:63svh;
+      --view-heart-size:68px;
+      --view-light-left:52%;
+      --view-light-top:31dvh;
+      --view-light-size:58px;
+    }
+
+    /* 3. טאבלט אנכי */
+    body.device-tablet.orientation-portrait{
+      --view-search-left:50%;
+      --view-search-bottom:9dvh;
+      --view-search-width:min(78vw, 620px);
+      --view-message-left:50%;
+      --view-message-bottom:3dvh;
+      --view-message-width:min(78vw, 620px);
+      --view-heart-left:52.5%;
+      --view-heart-top:65vh;
+      --view-heart-size:105px;
+      --view-light-left:52.5%;
+      --view-light-top:52vh;
+      --view-light-size:78px;
+    }
+
+    /* 4. טאבלט לרוחב */
+    body.device-tablet.orientation-landscape{
+      --view-search-left:50%;
+      --view-search-bottom:8dvh;
+      --view-search-width:min(70vw, 680px);
+      --view-message-left:50%;
+      --view-message-bottom:2dvh;
+      --view-message-width:min(70vw, 680px);
+      --view-heart-left:52%;
+      --view-heart-top:65vh;
+      --view-heart-size:96px;
+      --view-light-left:52%;
+      --view-light-top:50vh;
+      --view-light-size:72px;
+    }
+
+    /* 5. מחשב נייד / לפטופ */
+    body.device-laptop{
+      --view-search-left:50%;
+      --view-search-bottom:10dvh;
+      --view-search-width:min(52vw, 560px);
+      --view-message-left:50%;
+      --view-message-bottom:2dvh;
+      --view-message-width:min(52vw, 560px);
+      --view-heart-left:52.5%;
+      --view-heart-top:66vh;
+      --view-heart-size:120px;
+      --view-light-left:52.5%;
+      --view-light-top:54vh;
+      --view-light-size:90px;
+    }
+
+    /* 6. מחשב נייח / מסך גדול */
+    body.device-desktop{
+      --view-search-left:50%;
+      --view-search-bottom:10dvh;
+      --view-search-width:min(42vw, 600px);
+      --view-message-left:50%;
+      --view-message-bottom:2dvh;
+      --view-message-width:min(42vw, 600px);
+      --view-heart-left:52.5%;
+      --view-heart-top:66vh;
+      --view-heart-size:120px;
+      --view-light-left:52.5%;
+      --view-light-top:54vh;
+      --view-light-size:90px;
+    }
+
+    /* רקע: טלפון תמיד מקבל את גרסת הנייד */
+    body.device-phone .sea-bg-video-desktop{ display:none !important; }
+    body.device-phone .sea-bg-video-mobile{ display:block !important; }
+
+    /* טאבלט אנכי מקבל נייד; טאבלט לרוחב מקבל מחשב */
+    body.device-tablet.orientation-portrait .sea-bg-video-desktop{ display:none !important; }
+    body.device-tablet.orientation-portrait .sea-bg-video-mobile{ display:block !important; }
+    body.device-tablet.orientation-landscape .sea-bg-video-desktop{ display:block !important; }
+    body.device-tablet.orientation-landscape .sea-bg-video-mobile{ display:none !important; }
+
+    body.device-laptop .sea-bg-video-desktop,
+    body.device-desktop .sea-bg-video-desktop{ display:block !important; }
+    body.device-laptop .sea-bg-video-mobile,
+    body.device-desktop .sea-bg-video-mobile{ display:none !important; }
+
+    /* =========================================================
+       התאמות לדפדפנים רגילים — קיימת מחלקה נפרדת לכל דפדפן.
+       כרגע הערכים זהים; ניתן לשנות כל דפדפן בנפרד בעת הצורך.
+       ========================================================= */
+    body.browser-chrome{ --browser-search-adjust:0px; --browser-message-adjust:0px; }
+    body.browser-edge{ --browser-search-adjust:0px; --browser-message-adjust:0px; }
+    body.browser-firefox{ --browser-search-adjust:0px; --browser-message-adjust:0px; }
+    body.browser-safari{ --browser-search-adjust:0px; --browser-message-adjust:0px; }
+    body.browser-samsung{ --browser-search-adjust:0px; --browser-message-adjust:0px; }
+    body.browser-opera{ --browser-search-adjust:0px; --browser-message-adjust:0px; }
+    body.browser-other{ --browser-search-adjust:0px; --browser-message-adjust:0px; }
+
+    body.regular-browser.device-phone .pardes-search-row,
+    body.regular-browser.device-tablet .pardes-search-row,
+    body.regular-browser.device-laptop .pardes-search-row,
+    body.regular-browser.device-desktop .pardes-search-row{
+      bottom:calc(var(--view-search-bottom) + var(--browser-search-adjust, 0px)) !important;
+    }
+
+    body.regular-browser.device-phone .pardes-search-message,
+    body.regular-browser.device-tablet .pardes-search-message,
+    body.regular-browser.device-laptop .pardes-search-message,
+    body.regular-browser.device-desktop .pardes-search-message{
+      bottom:calc(var(--view-message-bottom) + var(--browser-message-adjust, 0px)) !important;
+    }
+
+    /* =========================================================
+       דפדפנים פנימיים של אפליקציות
+       לכל אפליקציה מחלקה משלה: TikTok, Instagram, Facebook,
+       Messenger, YouTube, WhatsApp, Telegram, X, LinkedIn ועוד.
+       ========================================================= */
+    body.in-app-browser.device-phone.orientation-portrait{
+      --view-search-bottom:calc(env(safe-area-inset-bottom, 0px) + 102px);
+      --view-message-bottom:calc(env(safe-area-inset-bottom, 0px) + 67px);
+    }
+
+    body.in-app-browser.device-phone.orientation-landscape{
+      --view-search-bottom:10dvh;
+      --view-message-bottom:0dvh;
+    }
+
+    body.in-app-browser.device-tablet.orientation-portrait{
+      --view-search-bottom:8dvh;
+      --view-message-bottom:2dvh;
+    }
+
+    body.in-app-browser.device-tablet.orientation-landscape{
+      --view-search-bottom:7dvh;
+      --view-message-bottom:1dvh;
+    }
+
+    /* נקודות התאמה נפרדות לכל אפליקציה — ניתן לשנות בהמשך */
+    body.app-tiktok{ --app-search-adjust:0px; --app-message-adjust:0px; }
+    body.app-instagram{ --app-search-adjust:0px; --app-message-adjust:0px; }
+    body.app-facebook{ --app-search-adjust:0px; --app-message-adjust:0px; }
+    body.app-messenger{ --app-search-adjust:0px; --app-message-adjust:0px; }
+    body.app-youtube{ --app-search-adjust:0px; --app-message-adjust:0px; }
+    body.app-whatsapp{ --app-search-adjust:0px; --app-message-adjust:0px; }
+    body.app-telegram{ --app-search-adjust:0px; --app-message-adjust:0px; }
+    body.app-x{ --app-search-adjust:0px; --app-message-adjust:0px; }
+    body.app-linkedin{ --app-search-adjust:0px; --app-message-adjust:0px; }
+    body.app-snapchat{ --app-search-adjust:0px; --app-message-adjust:0px; }
+    body.app-pinterest{ --app-search-adjust:0px; --app-message-adjust:0px; }
+    body.app-other{ --app-search-adjust:0px; --app-message-adjust:0px; }
+
+    body.in-app-browser .pardes-search-row{
+      bottom:calc(var(--view-search-bottom) + var(--app-search-adjust, 0px)) !important;
+    }
+
+    body.in-app-browser .pardes-search-message{
+      bottom:calc(var(--view-message-bottom) + var(--app-message-adjust, 0px)) !important;
+    }
+
+    /* המקלדת תמיד גוברת על כל גרסת מכשיר או דפדפן */
+    body.pardes-keyboard-open .pardes-search-row{
+      top:auto !important;
+      bottom:calc(var(--keyboard-height, 100px) + 12px) !important;
+      z-index:9999 !important;
+    }
+
+    body.pardes-keyboard-open .pardes-search-message{
+      display:none !important;
+    }
+
   </style>
 </head>
   
@@ -2627,21 +2881,114 @@
 
 <script>
 (function () {
+  "use strict";
+
   const ua = navigator.userAgent || "";
+  const platform = navigator.platform || "";
+  const maxTouchPoints = navigator.maxTouchPoints || 0;
+  const body = document.body;
 
-  const isInAppBrowser =
-    /TikTok|musical_ly/i.test(ua) ||
-    /Instagram/i.test(ua) ||
-    /FBAN|FBAV|FB_IAB/i.test(ua) ||
-    /YouTube/i.test(ua);
-
-  if (isInAppBrowser) {
-    document.body.classList.add("in-app-browser");
-  } else {
-    document.body.classList.add("regular-mobile-browser");
+  function addClass(name) {
+    if (name) body.classList.add(name);
   }
+
+  function removeClasses(prefixes) {
+    Array.from(body.classList).forEach(function (className) {
+      if (prefixes.some(function (prefix) { return className.indexOf(prefix) === 0; })) {
+        body.classList.remove(className);
+      }
+    });
+  }
+
+  function detectBrowser() {
+    if (/SamsungBrowser/i.test(ua)) return "samsung";
+    if (/EdgA|EdgiOS|Edg\//i.test(ua)) return "edge";
+    if (/OPR\/|Opera|OPT\//i.test(ua)) return "opera";
+    if (/Firefox|FxiOS/i.test(ua)) return "firefox";
+    if (/CriOS|Chrome/i.test(ua)) return "chrome";
+    if (/Safari/i.test(ua) && !/Chrome|CriOS|Chromium|Android/i.test(ua)) return "safari";
+    return "other";
+  }
+
+  function detectInApp() {
+    const apps = [
+      ["tiktok", /TikTok|musical_ly|BytedanceWebview/i],
+      ["instagram", /Instagram/i],
+      ["messenger", /Messenger|FB_IAB\/MESSENGER/i],
+      ["facebook", /FBAN|FBAV|FB_IAB/i],
+      ["youtube", /YouTube/i],
+      ["whatsapp", /WhatsApp/i],
+      ["telegram", /Telegram/i],
+      ["x", /Twitter|TwitterAndroid|XApp/i],
+      ["linkedin", /LinkedInApp/i],
+      ["snapchat", /Snapchat/i],
+      ["pinterest", /Pinterest/i]
+    ];
+
+    for (let i = 0; i < apps.length; i += 1) {
+      if (apps[i][1].test(ua)) return apps[i][0];
+    }
+
+    const genericInApp = /; wv\)|\bwv\b|WebView|Version\/\d+\.\d+.*Chrome\/.*Mobile/i.test(ua);
+    return genericInApp ? "other" : "";
+  }
+
+  function detectDevice() {
+    const width = Math.min(window.innerWidth || screen.width, window.innerHeight || screen.height);
+    const longSide = Math.max(window.innerWidth || screen.width, window.innerHeight || screen.height);
+    const isIPadOS = platform === "MacIntel" && maxTouchPoints > 1;
+    const isTabletUA = /iPad|Tablet|PlayBook|Silk/i.test(ua) ||
+      (/Android/i.test(ua) && !/Mobile/i.test(ua));
+    const isPhoneUA = /iPhone|iPod|Android.*Mobile|Windows Phone|IEMobile|Opera Mini/i.test(ua);
+    const touchDevice = maxTouchPoints > 0 || "ontouchstart" in window;
+
+    if (isIPadOS || isTabletUA || (touchDevice && width >= 600 && width <= 1100)) return "tablet";
+    if (isPhoneUA || (touchDevice && width < 600)) return "phone";
+    if (longSide <= 1600) return "laptop";
+    return "desktop";
+  }
+
+  function applyEnvironmentClasses() {
+    removeClasses(["device-", "orientation-", "browser-", "app-"]);
+    body.classList.remove("in-app-browser", "regular-browser", "regular-mobile-browser");
+
+    const device = detectDevice();
+    const browser = detectBrowser();
+    const app = detectInApp();
+    const orientation = window.innerWidth > window.innerHeight ? "landscape" : "portrait";
+
+    addClass("device-" + device);
+    addClass("orientation-" + orientation);
+    addClass("browser-" + browser);
+
+    if (app) {
+      addClass("in-app-browser");
+      addClass("app-" + app);
+    } else {
+      addClass("regular-browser");
+      addClass("regular-mobile-browser");
+    }
+
+    body.dataset.device = device;
+    body.dataset.orientation = orientation;
+    body.dataset.browser = browser;
+    body.dataset.appBrowser = app || "none";
+  }
+
+  applyEnvironmentClasses();
+
+  let resizeTimer = null;
+  window.addEventListener("resize", function () {
+    window.clearTimeout(resizeTimer);
+    resizeTimer = window.setTimeout(applyEnvironmentClasses, 120);
+  }, { passive:true });
+
+  window.addEventListener("orientationchange", function () {
+    window.setTimeout(applyEnvironmentClasses, 180);
+  }, { passive:true });
 })();
-</script>  
+</script>
+  
   
 <button id="treeSoundToggle" class="tree-sound-toggle" type="button" aria-label="הפעלת צלילי הטבע" aria-pressed="false">
   🔇
