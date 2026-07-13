@@ -705,20 +705,11 @@
       sessionStorage.removeItem("pardesHeartEntryAudio");
     }
 
-    window.addEventListener("load", async () => {
+    window.addEventListener("load", () => {
+      introMuted = true;
+      introAudio.muted = true;
       updateSoundButton();
-
-      if(enteredFromHeart){
-        introStarted = false;
-        await playIntro();
-      }else{
-        playIntro();
-      }
     });
-
-    document.addEventListener("pointerdown", () => {
-      playIntro();
-    }, { once:true });
 
     setupSpeech();
   </script>
