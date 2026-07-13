@@ -2850,6 +2850,53 @@
       }
     }
 
+  
+    /* =========================================================
+       תיקוני מיקום סופיים — לפטופ ומחשב נייח בלבד
+       אין השפעה על נייד או טאבלט.
+       ========================================================= */
+    @media (min-width:951px){
+
+      /* רמקול: שמאל למטה */
+      #homeSoundToggle.home-sound-toggle{
+        position:fixed !important;
+        left:18px !important;
+        right:auto !important;
+        top:auto !important;
+        bottom:18px !important;
+        width:48px !important;
+        height:48px !important;
+        min-width:48px !important;
+        min-height:48px !important;
+        margin:0 !important;
+        transform:none !important;
+        z-index:10001 !important;
+      }
+
+      /* הטקסט של הפרשה הפעילה קרוב יותר מתחת לשורת החיפוש */
+      body.device-laptop{
+        --view-message-bottom:calc(10dvh - 32px);
+        --view-heart-left:54%;
+        --view-light-left:54%;
+      }
+
+      body.device-desktop{
+        --view-message-bottom:calc(10dvh - 32px);
+        --view-heart-left:54%;
+        --view-light-left:54%;
+      }
+
+      /* גיבוי גם אם מחלקות זיהוי המכשיר לא נטענו */
+      .pardes-search-message{
+        bottom:calc(10dvh - 32px) !important;
+      }
+
+      .ma-shebalev-live,
+      .haor-shebi-live{
+        left:54% !important;
+      }
+    }
+
   </style>
 </head>
   
@@ -2973,8 +3020,8 @@
   <source src="pardes-home-intro.mp3" type="audio/mpeg">
 </audio>
 
-<button id="homeSoundToggle" class="home-sound-toggle" type="button" aria-label="השתקת הסבר קולי" aria-pressed="false">
-  🔊
+<button id="homeSoundToggle" class="home-sound-toggle is-muted" type="button" aria-label="הפעלת הסבר קולי" aria-pressed="true">
+  🔇
 </button>
 
 <button id="accessibilityToggle" class="accessibility-toggle" type="button" aria-label="פתיחת תפריט נגישות">
@@ -5041,8 +5088,9 @@ if(maShebalevLive){
   const soundBtn = document.getElementById("homeSoundToggle");
   if(!introAudio || !soundBtn) return;
 
-  let introMuted = false;
+  let introMuted = true;
   let introStarted = false;
+  introAudio.muted = true;
 
   function updateHomeSoundButton(){
     soundBtn.textContent = introMuted ? "🔇" : "🔊";
