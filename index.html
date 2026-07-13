@@ -2876,6 +2876,120 @@
       }
     }
 
+    /* רמז — אתרוג חי על העץ */
+    .tree-remez-live{
+      position:fixed;
+    
+      /* מחשב / לפטופ */
+      right:25%;
+      top:11vh;
+    
+      width:72px;
+      height:110px;
+    
+      z-index:25;
+      display:block;
+      text-decoration:none;
+      cursor:pointer;
+    
+      transform:translateX(50%);
+      transform-origin:center center;
+    
+      transition:
+        transform .25s ease,
+        filter .25s ease;
+    
+      filter:
+        drop-shadow(0 8px 15px rgba(0,0,0,.48))
+        drop-shadow(0 0 10px rgba(255,230,100,.18));
+    }
+    
+    .tree-remez-video{
+      width:100%;
+      height:100%;
+      display:block;
+      object-fit:contain;
+      background:transparent !important;
+      pointer-events:none;
+    }
+    
+    .tree-remez-label{
+      position:absolute;
+      left:50%;
+      top:calc(100% - 8px);
+      transform:translateX(-50%);
+    
+      color:#fff !important;
+      font-size:14px;
+      font-weight:900;
+      line-height:1;
+      white-space:nowrap;
+      text-align:center;
+      text-decoration:none !important;
+    
+      text-shadow:
+        0 2px 7px rgba(0,0,0,.98),
+        0 0 8px rgba(255,255,255,.32);
+    
+      pointer-events:none;
+    }
+    
+    .tree-remez-live:visited .tree-remez-label,
+    .tree-remez-live:hover .tree-remez-label,
+    .tree-remez-live:active .tree-remez-label{
+      color:#fff !important;
+      text-decoration:none !important;
+    }
+    
+    .tree-remez-live:hover{
+      transform:translateX(50%) scale(1.05);
+    
+      filter:
+        drop-shadow(0 10px 18px rgba(0,0,0,.52))
+        drop-shadow(0 0 15px rgba(255,230,100,.30));
+    }
+    
+    
+    /* רמז — נייד */
+    @media (max-width:640px){
+    
+      .tree-remez-live{
+        right:29%;
+        top:17svh;
+    
+        width:58px;
+        height:88px;
+    
+        transform:translateX(50%);
+      }
+    
+      .tree-remez-label{
+        top:calc(100% - 8px);
+        font-size:11px;
+      }
+    
+      .tree-remez-live:hover{
+        transform:translateX(50%) scale(1.05);
+      }
+    }
+    
+    
+    /* רמז — נייד מסובב לרוחב */
+    @media (max-width:950px) and (orientation:landscape){
+    
+      .tree-remez-live{
+        right:25%;
+        top:10dvh;
+    
+        width:60px;
+        height:92px;
+      }
+    
+      .tree-remez-label{
+        font-size:11px;
+      }
+    }
+    
     /* פשט — שיבולת שעורה חיה על העץ */
     .tree-pshat-live{
       position:fixed;
