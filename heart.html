@@ -700,9 +700,20 @@
       updateSoundButton();
     });
 
-    window.addEventListener("load", () => {
+    const enteredFromHeart = sessionStorage.getItem("pardesHeartEntryAudio") === "1";
+    if(enteredFromHeart){
+      sessionStorage.removeItem("pardesHeartEntryAudio");
+    }
+
+    window.addEventListener("load", async () => {
       updateSoundButton();
-      playIntro();
+
+      if(enteredFromHeart){
+        introStarted = false;
+        await playIntro();
+      }else{
+        playIntro();
+      }
     });
 
     document.addEventListener("pointerdown", () => {
