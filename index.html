@@ -5106,16 +5106,18 @@ if(maShebalevLive){
       await introAudio.play();
       introStarted = true;
     }catch(err){
-      /* בדפדפנים שחוסמים autoplay הקול יתחיל בנגיעה הראשונה */
+      console.error("Home intro audio could not play:", err);
     }
   }
 
   soundBtn.addEventListener("click", async function(){
     if(!introMuted && !introAudio.paused){
       introMuted = true;
+      introAudio.muted = true;
       introAudio.pause();
     }else{
       introMuted = false;
+      introAudio.muted = false;
       introStarted = false;
       await playHomeIntro();
     }
