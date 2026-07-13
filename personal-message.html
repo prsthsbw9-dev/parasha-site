@@ -33,6 +33,13 @@
       pointer-events:none;
     }
 
+    .sea-bg-video-mobile{ display:none; }
+
+    @media (max-width:640px){
+      .sea-bg-video-desktop{ display:none; }
+      .sea-bg-video-mobile{ display:block; }
+    }
+
     .sea-bg-overlay{
       position:fixed;
       inset:0;
@@ -45,10 +52,132 @@
       position:relative;
       z-index:2;
       min-height:100vh;
-      width:min(100%,560px);
+      width:min(100%,760px);
       margin:0 auto;
-      padding:20px 10px 34px;
+      padding:18px 14px 34px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
       text-align:center;
+    }
+
+    .light-card{
+      width:min(100%,640px);
+      position:relative;
+      padding:18px 16px 22px;
+      border-radius:34px;
+      border:1px solid rgba(255,255,255,.20);
+      background:
+        radial-gradient(circle at 50% 0%, rgba(255,235,130,.07), rgba(255,235,130,0) 42%),
+        linear-gradient(180deg, rgba(0,0,0,.05), rgba(0,0,0,.02));
+      box-shadow:
+        0 24px 70px rgba(0,0,0,.34),
+        0 0 34px rgba(255,220,120,.10),
+        inset 0 1px 0 rgba(255,255,255,.10);
+      backdrop-filter:blur(1px);
+      -webkit-backdrop-filter:blur(1px);
+      overflow:hidden;
+    }
+
+    .light-card::before{
+      content:"";
+      position:absolute;
+      inset:14px;
+      border-radius:28px;
+      border:1px solid rgba(255,255,255,.08);
+      pointer-events:none;
+    }
+
+    .top-row{
+      position:relative;
+      z-index:2;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom:2px;
+    }
+
+    .back-btn{
+      min-height:38px;
+      padding:8px 13px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.28);
+      background:rgba(0,0,0,.18);
+      color:#fff;
+      text-decoration:none;
+      font-size:14px;
+      font-weight:900;
+      box-shadow:0 8px 20px rgba(0,0,0,.24);
+    }
+
+    .small-logo{
+      width:58px;
+      height:58px;
+      object-fit:cover;
+      border-radius:50%;
+      border:1px solid rgba(255,255,255,.60);
+      box-shadow:0 0 18px rgba(255,255,255,.18), 0 8px 20px rgba(0,0,0,.30);
+    }
+
+    .light-figure{
+      position:relative;
+      width:150px;
+      height:150px;
+      margin:0 auto 4px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      filter:drop-shadow(0 16px 28px rgba(0,0,0,.34));
+    }
+
+    .light-figure::before{
+      content:"";
+      position:absolute;
+      inset:5px;
+      border-radius:50%;
+      background:radial-gradient(circle, rgba(255,255,255,.46), rgba(255,236,150,.25) 36%, rgba(120,200,255,.08) 58%, transparent 74%);
+      filter:blur(3px);
+      animation:lightBreath 3.6s ease-in-out infinite;
+    }
+
+    .light-glow{
+      position:relative;
+      width:106px;
+      height:106px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      animation:lightFloat 3.8s ease-in-out infinite;
+    }
+
+    .light-glow::before{
+      content:"";
+      position:absolute;
+      inset:6px;
+      border-radius:50%;
+      background:radial-gradient(circle at 50% 45%, rgba(255,255,255,.98), rgba(255,247,190,.78) 23%, rgba(255,205,85,.34) 48%, rgba(120,190,255,.10) 68%, transparent 76%);
+      box-shadow:0 0 16px rgba(255,255,255,.86), 0 0 34px rgba(255,225,120,.72), 0 0 64px rgba(120,200,255,.28);
+    }
+
+    .light-glow::after{
+      content:"✦";
+      position:relative;
+      z-index:2;
+      font-size:68px;
+      line-height:1;
+      color:#fff8cf;
+      text-shadow:0 0 8px rgba(255,255,255,.95), 0 0 20px rgba(255,226,120,.90), 0 0 38px rgba(120,200,255,.54);
+    }
+
+    @keyframes lightBreath{
+      0%,100%{ transform:scale(.94); opacity:.58; }
+      50%{ transform:scale(1.08); opacity:1; }
+    }
+
+    @keyframes lightFloat{
+      0%,100%{ transform:translateY(3px) scale(.98); }
+      50%{ transform:translateY(-3px) scale(1.04); }
     }
 
     .hero-logo{
@@ -83,12 +212,17 @@
     }
 
     .glass-box{
+      position:relative;
+      z-index:2;
       width:100%;
-      background:transparent;
-      border:1px solid rgba(255,255,255,.28);
-      border-radius:24px;
-      padding:16px 12px;
-      box-shadow:none;
+      background:rgba(0,0,0,.10);
+      border:1px solid rgba(255,255,255,.22);
+      border-radius:28px;
+      padding:16px 14px;
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.08),
+        0 14px 30px rgba(0,0,0,.20),
+        0 0 22px rgba(255,225,120,.07);
     }
 
     .field{
@@ -509,26 +643,80 @@
     .hidden{
       display:none !important;
     }
+      @media(max-width:640px){
+      .page{
+        align-items:flex-start;
+        padding:10px 10px 26px;
+      }
+
+      .light-card{
+        padding:12px 10px 18px;
+        border-radius:28px;
+      }
+
+      .small-logo{
+        width:46px;
+        height:46px;
+      }
+
+      .back-btn{
+        min-height:34px;
+        padding:7px 11px;
+        font-size:13px;
+      }
+
+      .light-figure{
+        width:122px;
+        height:122px;
+        margin:-2px auto 2px;
+      }
+
+      .light-glow{
+        width:88px;
+        height:88px;
+      }
+
+      .light-glow::after{
+        font-size:58px;
+      }
+
+      .glass-box{
+        border-radius:24px;
+        padding:13px 10px;
+      }
+    }
   </style>
 </head>
 
 <body>
 
-  <video class="sea-bg-video" autoplay muted loop playsinline poster="ocean-poster.jpg">
-    <source src="ocean.mp4" type="video/mp4">
+  <video class="sea-bg-video sea-bg-video-desktop" autoplay muted loop playsinline preload="metadata">
+    <source src="tree-inside-desktop.mp4" type="video/mp4">
+  </video>
+
+  <video class="sea-bg-video sea-bg-video-mobile" autoplay muted loop playsinline preload="metadata">
+    <source src="tree-inside-mobile.mp4" type="video/mp4">
   </video>
 
   <div class="sea-bg-overlay"></div>
 
   <div class="page">
+    <section class="light-card" aria-label="האור שבי">
 
-    <img class="hero-logo" src="logo.png" alt="התיקון שלי" />
+      <div class="top-row">
+        <a class="back-btn" href="index.html" aria-label="חזרה לעץ הפרדס">חזרה לפרדס</a>
+        <img class="small-logo" src="logo.png" alt="פרשת השבוע" />
+      </div>
 
-    <h1>האור שבי</h1>
+      <div class="light-figure" aria-hidden="true">
+        <div class="light-glow"></div>
+      </div>
 
-    <div class="subtitle">
-       הצצה אישית אל האור שמסתתר בתוכך
-    </div>
+      <h1>האור שבי</h1>
+
+      <div class="subtitle">
+        הצצה אישית אל האור שמסתתר בתוכך
+      </div>
 
     <div id="formBox" class="glass-box">
 
@@ -692,6 +880,7 @@
       <a href="index.html">חזרה לפרד״ס</a>
     </div>
 
+    </section>
   </div>
 
   <script type="module">
