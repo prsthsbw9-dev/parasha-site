@@ -3477,13 +3477,14 @@
         
           <video
             class="tree-drash-video"
+            src="/parasha-site/fig-drash.webm"
             autoplay
             muted
             loop
             playsinline
-            preload="metadata"
-            aria-hidden="true">
-            <source src="fig-drash.webm" type="video/webm">
+            preload="auto"
+            aria-hidden="true"
+            onloadeddata="this.muted=true; this.play();">
           </video>
         
           <span class="tree-drash-label">דרש</span>
