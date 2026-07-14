@@ -5402,7 +5402,6 @@ function normalizeParashaName(value){
     class="tree-remez-video"
     autoplay
     muted
-    loop
     playsinline
     preload="metadata"
     aria-hidden="true">
@@ -5498,10 +5497,6 @@ if(maShebalevLive){
 }
 </script>
 
-
- 
-  
-
 <script>
 (function(){
   const introAudio = document.getElementById("pardesHomeIntroAudio");
@@ -5555,6 +5550,23 @@ if(maShebalevLive){
     playHomeIntro();
   }, { once:true });
 })();
+
+
+/* אתרוג רמז — לולאה רק של הנדנוד הראשוני */
+const remezEtrogVideo = document.querySelector(".tree-remez-video");
+
+if(remezEtrogVideo){
+  const REMEZ_LOOP_START = 0;
+  const REMEZ_LOOP_END = 1.5;
+
+  remezEtrogVideo.addEventListener("timeupdate", () => {
+    if(remezEtrogVideo.currentTime >= REMEZ_LOOP_END){
+      remezEtrogVideo.currentTime = REMEZ_LOOP_START;
+      remezEtrogVideo.play().catch(() => {});
+    }
+  });
+}
+
 </script>
 
 </body>
