@@ -3131,6 +3131,16 @@
       display:none !important;
     } 
 
+    /* הסתרת פירות פרד״ס בזמן שחלון הסרטון פתוח */
+    body.pardes-video-open .tree-pshat-live,
+    body.pardes-video-open .tree-remez-live,
+    body.pardes-video-open .tree-drash-live,
+    body.pardes-video-open .tree-sod-live{
+      opacity:0 !important;
+      visibility:hidden !important;
+      pointer-events:none !important;
+    }
+    
      /* אפקט כניסה משותף לפירות פרד״ס */
     .tree-pshat-live,
     .tree-remez-live,
@@ -4632,7 +4642,11 @@ function normalizeParashaName(value){
 
     document.getElementById("drashLink")?.addEventListener("click", (event) => {
       event.preventDefault();
-      openLayer("drash");
+    
+      openLayerWithFruitEffect(
+        event.currentTarget,
+        "drash"
+      );
     });
 
     document.getElementById("sodLink")?.addEventListener("click", (event) => {
