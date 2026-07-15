@@ -5530,7 +5530,6 @@ function normalizeParashaName(value){
     class="tree-sod-video"
     autoplay
     muted
-    loop
     playsinline
     preload="auto"
     aria-hidden="true">
@@ -5659,6 +5658,20 @@ if(remezEtrogVideo){
     }
   });
 }
+
+/* סוד — לולאה מקוצרת לענבים לפני קטע ההיעלמות */
+const sodGrapesVideo = document.querySelector(".tree-sod-video");
+
+if (sodGrapesVideo) {
+  const sodLoopEnd = 8.6;
+
+  sodGrapesVideo.addEventListener("timeupdate", () => {
+    if (sodGrapesVideo.currentTime >= sodLoopEnd) {
+      sodGrapesVideo.currentTime = 0;
+      sodGrapesVideo.play().catch(() => {});
+    }
+  });
+}  
 
 </script>
 
