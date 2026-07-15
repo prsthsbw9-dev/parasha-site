@@ -3222,6 +3222,107 @@
         transform:translateX(-50%) scale(1.05) !important;
       }
     }
+
+    /* העלייה הראשית — אייקון חי במרכז הגזע */
+    .main-aliyah-live{
+      position:fixed !important;
+    
+      left:54.5% !important;
+      top:40.5vh !important;
+      transform:translate(-50%, -50%);
+    
+      width:118px !important;
+      height:118px !important;
+    
+      z-index:1200 !important;
+      display:block !important;
+      border:0;
+      padding:0;
+      background:transparent;
+      cursor:pointer;
+    
+      border-radius:50%;
+      overflow:visible;
+    
+      filter:
+        drop-shadow(0 0 10px rgba(120,190,255,.38))
+        drop-shadow(0 0 22px rgba(80,145,255,.20));
+    
+      transition:
+        transform .22s ease,
+        filter .22s ease;
+    }
+    
+    .main-aliyah-live:hover{
+      transform:translate(-50%, -50%) scale(1.05);
+      filter:
+        drop-shadow(0 0 14px rgba(155,215,255,.50))
+        drop-shadow(0 0 30px rgba(90,150,255,.28));
+    }
+    
+    .main-aliyah-video{
+      width:100% !important;
+      height:100% !important;
+      display:block !important;
+      object-fit:contain !important;
+      pointer-events:none;
+    }
+    
+    /* שם הפרשה והעלייה בתוך מרכז האייקון */
+    .main-aliyah-dynamic-text{
+      position:absolute;
+      left:50%;
+      top:50%;
+      transform:translate(-50%, -50%);
+      z-index:5;
+    
+      width:62%;
+      text-align:center;
+      direction:rtl;
+      pointer-events:none;
+    
+      color:#fff;
+      font-weight:900;
+      line-height:1.05;
+    
+      text-shadow:
+        0 2px 5px rgba(0,0,0,1),
+        0 0 7px rgba(0,0,0,.95),
+        0 0 4px rgba(255,255,255,.22);
+    }
+    
+    .main-aliyah-parasha-text{
+      display:block;
+      font-size:15px;
+      white-space:nowrap;
+    }
+    
+    .main-aliyah-number-text{
+      display:block;
+      margin-top:4px;
+      font-size:17px;
+      white-space:nowrap;
+    }
+    
+    /* העלייה הראשית — נייד */
+    @media (max-width:640px){
+      .main-aliyah-live{
+        left:50% !important;
+        top:39.5dvh !important;
+    
+        width:92px !important;
+        height:92px !important;
+      }
+    
+      .main-aliyah-parasha-text{
+        font-size:12px;
+      }
+    
+      .main-aliyah-number-text{
+        margin-top:3px;
+        font-size:14px;
+      }
+    }
     
     /* הסתרת רמקול הדף הראשי בזמן שסרטון פרד״ס פתוח */
     body.pardes-video-open #homeSoundToggle{
@@ -3537,6 +3638,36 @@
         </a>
         
       </div>
+
+       <!-- אייקון העלייה הראשית החי -->
+      <button
+        id="mainAliyahLive"
+        class="main-aliyah-live"
+        type="button"
+        aria-label="פתיחת הסרטון הראשי של העלייה"
+      >
+        <video
+          class="main-aliyah-video"
+          autoplay
+          muted
+          loop
+          playsinline
+          preload="auto"
+          aria-hidden="true"
+        >
+          <source src="main-aliyah.webm" type="video/webm">
+        </video>
+      
+        <span class="main-aliyah-dynamic-text">
+          <span id="mainAliyahParashaText" class="main-aliyah-parasha-text">
+            כי תשא
+          </span>
+      
+          <span id="mainAliyahNumberText" class="main-aliyah-number-text">
+            ראשון
+          </span>
+        </span>
+      </button>     
 
       <!-- קישור שקוף ללחצן הסודי בערוץ -->
       <a href="secret-admin.html"
@@ -4196,25 +4327,52 @@ function normalizeParashaName(value){
       const parashaTitle = document.getElementById("activeParashaTitle");
       const orbText = document.getElementById("mainAliyahOrbText");
       const orb = document.getElementById("mainAliyahOrb");
+    
+      const liveButton = document.getElementById("mainAliyahLive");
+      const liveParashaText = document.getElementById("mainAliyahParashaText");
+      const liveAliyahText = document.getElementById("mainAliyahNumberText");
+    
       const parashaSearchInput = document.getElementById("parashaSearchInput");
       const aliyahSearchInput = document.getElementById("aliyahSearchInput");
-
+    
       if(parashaTitle){
-        parashaTitle.textContent = parasha ? `פרשת ${parasha}` : "פרשת השבוע";
+        parashaTitle.textContent = parasha
+          ? `פרשת ${parasha}`
+          : "פרשת השבוע";
       }
-
+    
       if(orbText){
-        const shownAliyah = aliyah || "עלייה פעילה";
-        const parts = String(shownAliyah).trim().split(/\s+/);
-        orbText.innerHTML = parts.length > 1 ? `${parts[0]}<br>${parts.slice(1).join(" ")}` : shownAliyah;
+        orbText.textContent = aliyah || "עלייה פעילה";
       }
-
+    
+      /* הטקסט הדינמי בתוך האייקון החדש */
+      if(liveParashaText){
+        liveParashaText.textContent = parasha || "פרשת השבוע";
+      }
+    
+      if(liveAliyahText){
+        liveAliyahText.textContent = aliyah || "";
+      }
+    
+      const accessibleLabel = aliyah
+        ? `פתיחת הסרטון הראשי של ${aliyah} בפרשת ${parasha}`
+        : "פתיחת הסרטון הראשי של העלייה";
+    
       if(orb){
-        orb.setAttribute("aria-label", aliyah ? `פתיחת הסרטון הראשי של ${aliyah} בפרשת ${parasha}` : "פתיחת הסרטון הראשי של העלייה");
+        orb.setAttribute("aria-label", accessibleLabel);
       }
-
-      if(parashaSearchInput && !parashaSearchInput.value){ parashaSearchInput.value = parasha || ""; }
-      if(aliyahSearchInput && !aliyahSearchInput.value){ aliyahSearchInput.value = aliyah || ""; }
+    
+      if(liveButton){
+        liveButton.setAttribute("aria-label", accessibleLabel);
+      }
+    
+      if(parashaSearchInput && !parashaSearchInput.value){
+        parashaSearchInput.value = parasha || "";
+      }
+    
+      if(aliyahSearchInput && !aliyahSearchInput.value){
+        aliyahSearchInput.value = aliyah || "";
+      }
     }
 
     function hasAnyLayerVideo(data){
@@ -4718,6 +4876,11 @@ function normalizeParashaName(value){
       event.preventDefault();
       openLayer("main");
     });
+
+     document.getElementById("mainAliyahLive")?.addEventListener("click", (event) => {
+      event.preventDefault();
+      openLayer("main");
+    });   
 
     document.getElementById("pshatLink")?.addEventListener("click", (event) => {
       event.preventDefault();
