@@ -3125,6 +3125,82 @@
         transform:translateX(-50%) scale(1.05) !important;
       }
     }
+
+    /* סוד — ענבים חיים על העץ */
+    .tree-sod-live{
+      position:fixed !important;
+    
+      left:14% !important;
+      top:39vh !important;
+    
+      width:92px !important;
+      height:145px !important;
+    
+      z-index:1000 !important;
+      display:block !important;
+      opacity:1 !important;
+      visibility:visible !important;
+      overflow:visible !important;
+    
+      text-decoration:none;
+      cursor:pointer;
+    
+      transform:translateX(-50%);
+      transform-origin:center center;
+    }
+    
+    .tree-sod-video{
+      width:100%;
+      height:100%;
+      display:block;
+      object-fit:contain;
+      background:transparent !important;
+      pointer-events:none;
+    }
+    
+    .tree-sod-label{
+      position:absolute;
+      left:50%;
+      top:calc(100% - 5px);
+      transform:translateX(-50%);
+    
+      color:#fff;
+      font-size:12px;
+      font-weight:900;
+      line-height:1;
+      white-space:nowrap;
+      pointer-events:none;
+    
+      text-shadow:
+        0 3px 10px rgba(0,0,0,.95),
+        0 0 8px rgba(255,255,255,.35);
+    }
+    
+    .tree-sod-live:hover{
+      transform:translateX(-50%) scale(1.06);
+    }
+
+    /* סוד — נייד עומד */
+    @media (max-width:640px){
+      .tree-sod-live{
+        left:11% !important;
+        top:37dvh !important;
+    
+        width:67px !important;
+        height:106px !important;
+    
+        transform:translateX(-50%) !important;
+      }
+    
+      .tree-sod-label{
+        top:calc(100% - 3px);
+        font-size:11px;
+      }
+    
+      .tree-sod-live:hover{
+        transform:translateX(-50%) scale(1.05) !important;
+      }
+    }
     
     /* הסתרת רמקול הדף הראשי בזמן שסרטון פרד״ס פתוח */
     body.pardes-video-open #homeSoundToggle{
@@ -3140,7 +3216,7 @@
       visibility:hidden !important;
       pointer-events:none !important;
     }
-    
+
      /* אפקט כניסה משותף לפירות פרד״ס */
     .tree-pshat-live,
     .tree-remez-live,
@@ -3172,7 +3248,7 @@
       opacity:0;
       transition:opacity .18s ease;
     }
-    
+
     /* בזמן המעבר מסתירים את שאר ממשק העץ */
     body.entering-pardes-fruit .pardes-search-row,
     body.entering-pardes-fruit .pardes-search-message,
@@ -3184,7 +3260,7 @@
       pointer-events:none;
       transition:opacity .3s ease;
     }
-    
+  
     /* גם הפירות שלא נלחצו נעלמים */
     body.entering-pardes-fruit .tree-pshat-live:not(.pardes-fruit-enter),
     body.entering-pardes-fruit .tree-remez-live:not(.pardes-fruit-enter),
@@ -3193,6 +3269,7 @@
       opacity:0;
       pointer-events:none;
     }   
+
     
   </style>
 </head>
@@ -4651,9 +4728,12 @@ function normalizeParashaName(value){
 
     document.getElementById("sodLink")?.addEventListener("click", (event) => {
       event.preventDefault();
-      openLayer("sod");
+    
+      openLayerWithFruitEffect(
+        event.currentTarget,
+        "sod"
+      );
     });
-
 
     document.getElementById("pardesSearchForm")?.addEventListener("submit", async (event) => {
       event.preventDefault();
@@ -5446,7 +5526,23 @@ function normalizeParashaName(value){
   <span class="tree-drash-label">דרש</span>
 
 </a>
-  
+
+<!-- סוד — ענבים חיים -->
+<a href="#" id="sodLink" class="tree-sod-live" aria-label="סוד">
+  <video
+    class="tree-sod-video"
+    autoplay
+    muted
+    loop
+    playsinline
+    preload="metadata"
+    aria-hidden="true">
+
+    <source src="grapes-sod.webm" type="video/webm">
+  </video>
+
+  <span class="tree-sod-label">סוד</span>
+</a>  
   
 <!-- האור שבי — אלמנט חי מעל מה שבלב -->
 <a href="personal-message.html" class="haor-shebi-live" id="haorShebiLive" aria-label="האור שבי">
