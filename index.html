@@ -828,24 +828,36 @@
       text-shadow:0 2px 10px rgba(0,0,0,.75);
     }
     
-    /* לחצן סודי שקוף — ליד הגזע מצד שמאל */
+    /* לחצן סודי שקוף מעל לוגו פרשת השבוע — מחשב */
     .secret-admin-hit{
       position:fixed !important;
     
-      left:43% !important;
-      top:58vh !important;
+      left:94% !important;
+      top:86% !important;
+      transform:translate(-50%, -50%) !important;
     
-      width:45px !important;
-      height:70px !important;
+      width:150px !important;
+      height:150px !important;
     
       opacity:0 !important;
-      z-index:2000 !important;
+      z-index:5000 !important;
     
       display:block !important;
-      cursor:pointer;
+      cursor:pointer !important;
+      border-radius:50% !important;
     }
 
-
+    /* לחצן סודי שקוף מעל לוגו פרשת השבוע — נייד */
+    @media (max-width:640px){
+      .secret-admin-hit{
+        left:79% !important;
+        top:71% !important;
+    
+        width:150px !important;
+        height:150px !important;
+      }
+    }
+    
     @media (max-width:640px){
       .pardes-video-panel{
         padding:10px;
