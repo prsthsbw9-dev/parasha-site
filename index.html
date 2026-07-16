@@ -3576,6 +3576,211 @@
     }   
 
     
+  
+
+    /* =========================================================
+       איזון סופי של האייקונים — כל המכשירים והדפדפנים
+       הבלוק הזה נמצא בסוף ה-CSS ולכן הוא גובר על הגדרות ישנות.
+       ========================================================= */
+
+    :root{
+      --icon-env-x:0px;
+      --icon-env-y:0px;
+
+      --dror-left:52%; --dror-top:11vh; --dror-size:104px;
+      --drash-left:29%; --drash-top:15vh; --drash-w:92px; --drash-h:122px;
+      --remez-right:24%; --remez-top:3vh; --remez-w:70px; --remez-h:106px;
+      --sod-left:12%; --sod-top:31vh; --sod-w:82px; --sod-h:128px;
+      --pshat-right:7%; --pshat-top:22vh; --pshat-w:82px; --pshat-h:138px;
+      --main-left:54%; --main-top:43vh; --main-size:112px;
+      --lion-left:8%; --lion-bottom:10vh; --lion-size:150px;
+    }
+
+    /* התאמות קלות בין מנועי דפדפן */
+    body.browser-chrome{ --icon-env-y:0px; }
+    body.browser-edge{ --icon-env-y:0px; }
+    body.browser-firefox{ --icon-env-y:1px; }
+    body.browser-safari{ --icon-env-y:2px; }
+    body.browser-samsung{ --icon-env-y:2px; }
+    body.browser-opera{ --icon-env-y:1px; }
+    body.browser-other{ --icon-env-y:0px; }
+
+    /* דפדפנים פנימיים באפליקציות מקבלים פיצוי קטן על סרגלי הממשק */
+    body.in-app-browser{ --icon-env-y:6px; }
+    body.app-tiktok{ --icon-env-y:8px; }
+    body.app-instagram{ --icon-env-y:7px; }
+    body.app-facebook,
+    body.app-messenger{ --icon-env-y:7px; }
+    body.app-youtube,
+    body.app-whatsapp,
+    body.app-telegram{ --icon-env-y:6px; }
+
+    /* לפטופ */
+    body.device-laptop{
+      --dror-left:52%; --dror-top:10vh; --dror-size:100px;
+      --drash-left:29%; --drash-top:15vh; --drash-w:92px; --drash-h:122px;
+      --remez-right:24%; --remez-top:3vh; --remez-w:68px; --remez-h:104px;
+      --sod-left:12%; --sod-top:31vh; --sod-w:80px; --sod-h:126px;
+      --pshat-right:7%; --pshat-top:23vh; --pshat-w:80px; --pshat-h:136px;
+      --main-left:54%; --main-top:43vh; --main-size:110px;
+      --lion-left:8%; --lion-bottom:11vh; --lion-size:145px;
+    }
+
+    /* מחשב נייח רחב */
+    body.device-desktop{
+      --dror-left:52%; --dror-top:10vh; --dror-size:108px;
+      --drash-left:29%; --drash-top:15vh; --drash-w:98px; --drash-h:130px;
+      --remez-right:24%; --remez-top:3vh; --remez-w:72px; --remez-h:110px;
+      --sod-left:12%; --sod-top:31vh; --sod-w:86px; --sod-h:134px;
+      --pshat-right:7%; --pshat-top:23vh; --pshat-w:86px; --pshat-h:144px;
+      --main-left:54%; --main-top:43vh; --main-size:116px;
+      --lion-left:9%; --lion-bottom:10vh; --lion-size:152px;
+    }
+
+    /* טאבלט אנכי */
+    body.device-tablet.orientation-portrait{
+      --dror-left:54%; --dror-top:13dvh; --dror-size:98px;
+      --drash-left:23%; --drash-top:17dvh; --drash-w:80px; --drash-h:106px;
+      --remez-right:20%; --remez-top:18dvh; --remez-w:64px; --remez-h:98px;
+      --sod-left:11%; --sod-top:39dvh; --sod-w:72px; --sod-h:114px;
+      --pshat-right:9%; --pshat-top:39dvh; --pshat-w:70px; --pshat-h:116px;
+      --main-left:52%; --main-top:47dvh; --main-size:100px;
+      --lion-left:4%; --lion-bottom:16dvh; --lion-size:128px;
+    }
+
+    /* טאבלט לרוחב */
+    body.device-tablet.orientation-landscape{
+      --dror-left:52%; --dror-top:10dvh; --dror-size:92px;
+      --drash-left:26%; --drash-top:16dvh; --drash-w:78px; --drash-h:104px;
+      --remez-right:22%; --remez-top:8dvh; --remez-w:62px; --remez-h:96px;
+      --sod-left:11%; --sod-top:34dvh; --sod-w:70px; --sod-h:110px;
+      --pshat-right:8%; --pshat-top:27dvh; --pshat-w:68px; --pshat-h:112px;
+      --main-left:53%; --main-top:43dvh; --main-size:94px;
+      --lion-left:5%; --lion-bottom:13dvh; --lion-size:120px;
+    }
+
+    /* טלפון אנכי */
+    body.device-phone.orientation-portrait{
+      --dror-left:55%; --dror-top:15dvh; --dror-size:82px;
+      --drash-left:23%; --drash-top:17dvh; --drash-w:66px; --drash-h:88px;
+      --remez-right:19%; --remez-top:27dvh; --remez-w:58px; --remez-h:88px;
+      --sod-left:10%; --sod-top:43dvh; --sod-w:58px; --sod-h:92px;
+      --pshat-right:8%; --pshat-top:43dvh; --pshat-w:58px; --pshat-h:96px;
+      --main-left:52%; --main-top:48dvh; --main-size:86px;
+      --lion-left:2%; --lion-bottom:18dvh; --lion-size:104px;
+    }
+
+    /* טלפון לרוחב */
+    body.device-phone.orientation-landscape{
+      --dror-left:52%; --dror-top:10dvh; --dror-size:76px;
+      --drash-left:17%; --drash-top:28dvh; --drash-w:64px; --drash-h:84px;
+      --remez-right:15%; --remez-top:18dvh; --remez-w:54px; --remez-h:82px;
+      --sod-left:8%; --sod-top:43dvh; --sod-w:54px; --sod-h:86px;
+      --pshat-right:7%; --pshat-top:35dvh; --pshat-w:54px; --pshat-h:90px;
+      --main-left:52%; --main-top:42dvh; --main-size:78px;
+      --lion-left:3%; --lion-bottom:16dvh; --lion-size:96px;
+    }
+
+    /* יישום המשתנים — שמות */
+    .dror-names-live{
+      left:calc(var(--dror-left) + var(--icon-env-x)) !important;
+      top:calc(var(--dror-top) + var(--icon-env-y)) !important;
+      width:var(--dror-size) !important;
+      height:var(--dror-size) !important;
+    }
+
+    /* דרש */
+    .tree-drash-live{
+      left:calc(var(--drash-left) + var(--icon-env-x)) !important;
+      top:calc(var(--drash-top) + var(--icon-env-y)) !important;
+      width:var(--drash-w) !important;
+      height:var(--drash-h) !important;
+    }
+
+    /* רמז */
+    .tree-remez-live{
+      right:calc(var(--remez-right) - var(--icon-env-x)) !important;
+      top:calc(var(--remez-top) + var(--icon-env-y)) !important;
+      width:var(--remez-w) !important;
+      height:var(--remez-h) !important;
+    }
+
+    /* סוד */
+    .tree-sod-live{
+      left:calc(var(--sod-left) + var(--icon-env-x)) !important;
+      top:calc(var(--sod-top) + var(--icon-env-y)) !important;
+      width:var(--sod-w) !important;
+      height:var(--sod-h) !important;
+    }
+
+    /* פשט */
+    .tree-pshat-live{
+      right:calc(var(--pshat-right) - var(--icon-env-x)) !important;
+      top:calc(var(--pshat-top) + var(--icon-env-y)) !important;
+      width:var(--pshat-w) !important;
+      height:var(--pshat-h) !important;
+    }
+
+    /* העלייה הראשית */
+    .main-aliyah-live{
+      left:calc(var(--main-left) + var(--icon-env-x)) !important;
+      top:calc(var(--main-top) + var(--icon-env-y)) !important;
+      width:var(--main-size) !important;
+      height:var(--main-size) !important;
+    }
+
+    /* האריה — יחידה אחת: סרטון וכיתוב זזים יחד */
+    .lion-guide-live{
+      left:calc(var(--lion-left) + var(--icon-env-x)) !important;
+      right:auto !important;
+      top:auto !important;
+      bottom:var(--lion-bottom) !important;
+      width:var(--lion-size) !important;
+      height:var(--lion-size) !important;
+      transform:none !important;
+      z-index:24 !important;
+    }
+
+    .lion-guide-label{
+      top:calc(100% + 3px) !important;
+      font-size:clamp(11px, 1.15vw, 14px) !important;
+    }
+
+    /* כיתובים מאוזנים לפי גודל המסך */
+    body.device-phone .dror-names-label,
+    body.device-phone .tree-drash-label,
+    body.device-phone .tree-remez-label,
+    body.device-phone .tree-sod-label,
+    body.device-phone .tree-pshat-label{
+      font-size:11px !important;
+    }
+
+    body.device-tablet .dror-names-label,
+    body.device-tablet .tree-drash-label,
+    body.device-tablet .tree-remez-label,
+    body.device-tablet .tree-sod-label,
+    body.device-tablet .tree-pshat-label{
+      font-size:12px !important;
+    }
+
+    /* בדפדפן פנימי בנייד מזיזים את האייקונים מעט למעלה כדי לפצות על סרגל תחתון */
+    body.in-app-browser.device-phone{
+      --icon-env-y:-4px;
+    }
+
+    /* בזמן פתיחת המקלדת: כל האייקונים שעלולים לחסום את שורת החיפוש נעלמים */
+    body.pardes-keyboard-open .lion-guide-live,
+    body.pardes-keyboard-open .dror-names-live,
+    body.pardes-keyboard-open .tree-pshat-live,
+    body.pardes-keyboard-open .tree-remez-live,
+    body.pardes-keyboard-open .tree-drash-live,
+    body.pardes-keyboard-open .tree-sod-live,
+    body.pardes-keyboard-open .main-aliyah-live{
+      opacity:0 !important;
+      visibility:hidden !important;
+      pointer-events:none !important;
+    }
+
   </style>
 </head>
   
@@ -3880,7 +4085,7 @@
       id="lionGuideLink"
       class="lion-guide-live"
       href="#"
-      aria-label="הפרי שלי — ליווי אישי"
+      aria-label="חיזוק אישי — ליווי אישי"
     >
     
       <video
@@ -3895,7 +4100,7 @@
         <source src="lion-guide.webm" type="video/webm">
       </video>
     
-      <span class="lion-guide-label">הפרי שלי</span>
+      <span class="lion-guide-label">חיזוק אישי</span>
     
     </a>     
 
