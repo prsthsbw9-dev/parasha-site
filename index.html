@@ -2169,6 +2169,17 @@
       body.pardes-keyboard-open .pardes-search-message{
         display:none !important;
       }
+
+      /* בזמן הקלדה מסתירים את כל האייקונים החיים */
+      body.pardes-keyboard-open .tree-pshat-live,
+      body.pardes-keyboard-open .tree-remez-live,
+      body.pardes-keyboard-open .tree-drash-live,
+      body.pardes-keyboard-open .tree-sod-live,
+      body.pardes-keyboard-open .main-aliyah-live{
+        opacity:0 !important;
+        visibility:hidden !important;
+        pointer-events:none !important;
+      }      
     }
 
     /* מה שבלב — מחשב */
