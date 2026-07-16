@@ -1084,6 +1084,12 @@
       body.pardes-keyboard-open .gate-card{
         transform:translateY(-120px);
       }
+
+      body.pardes-keyboard-open .dror-names-live{
+        opacity:0 !important;
+        visibility:hidden !important;
+        pointer-events:none !important;
+      }
       
       body.pardes-keyboard-open .pardes-search-row{
         position:fixed;
@@ -2783,6 +2789,82 @@
         left:54% !important;
       }
     }
+
+    /* שמות — דרור חי בקן על העץ */
+    .dror-names-live{
+      position:fixed !important;
+    
+      /* מחשב / לפטופ */
+      left:51% !important;
+      top:13vh !important;
+    
+      width:145px !important;
+      height:145px !important;
+    
+      transform:translate(-50%, -50%);
+      transform-origin:center center;
+    
+      z-index:1100 !important;
+      display:block !important;
+      overflow:visible !important;
+    
+      text-decoration:none;
+      cursor:pointer;
+    
+      transition:
+        transform .25s ease,
+        filter .25s ease;
+    
+      filter:
+        drop-shadow(0 8px 15px rgba(0,0,0,.48))
+        drop-shadow(0 0 12px rgba(220,245,255,.20));
+    }
+    
+    .dror-names-live:hover{
+      transform:translate(-50%, -50%) scale(1.06);
+    }
+    
+    .dror-names-video{
+      width:100% !important;
+      height:100% !important;
+      display:block !important;
+      object-fit:contain !important;
+      pointer-events:none;
+    }
+    
+    .dror-names-label{
+      position:absolute;
+      left:50%;
+      top:calc(100% - 4px);
+      transform:translateX(-50%);
+    
+      color:#fff;
+      font-size:13px;
+      font-weight:900;
+      line-height:1;
+      white-space:nowrap;
+      pointer-events:none;
+    
+      text-shadow:
+        0 3px 10px rgba(0,0,0,.95),
+        0 0 8px rgba(255,255,255,.30);
+    }
+    
+    /* שמות — דרור בנייד */
+    @media (max-width:640px){
+      .dror-names-live{
+        left:51% !important;
+        top:11dvh !important;
+    
+        width:100px !important;
+        height:100px !important;
+      }
+    
+      .dror-names-label{
+        top:calc(100% - 2px);
+        font-size:11px;
+      }
+    }
     
     /* רמז — אתרוג חי על העץ */
     .tree-remez-live{
@@ -3688,7 +3770,30 @@
             ראשון
           </span>
         </span>
-      </button>     
+      </button>
+
+      <!-- שמות — דרור חי בקן על העץ -->
+    <a
+      id="drorNamesLink"
+      class="dror-names-live"
+      href="names.html"
+      aria-label="מעבר לעמוד שמות"
+    >
+      <video
+        id="drorNamesVideo"
+        class="dror-names-video"
+        autoplay
+        muted
+        loop
+        playsinline
+        preload="auto"
+        aria-hidden="true"
+      >
+        <source src="dror-names-green.webm?v=1" type="video/webm">
+      </video>
+    
+      <span class="dror-names-label">שמות</span>
+    </a>    
 
       <!-- קישור שקוף ללחצן הסודי בערוץ -->
       <a href="secret-admin.html"
