@@ -3333,7 +3333,8 @@
     body.pardes-video-open .tree-pshat-live,
     body.pardes-video-open .tree-remez-live,
     body.pardes-video-open .tree-drash-live,
-    body.pardes-video-open .tree-sod-live{
+    body.pardes-video-open .tree-sod-live,
+    body.pardes-video-open .main-aliyah-live{
       opacity:0 !important;
       visibility:hidden !important;
       pointer-events:none !important;
@@ -3362,6 +3363,14 @@
       z-index:99999 !important;
       pointer-events:none;
     }
+
+    /* העלייה הראשית מתרחבת על כל המסך */
+    .main-aliyah-live.pardes-fruit-enter{
+      transform:translate(-50%, -50%) scale(24) !important;
+      filter:brightness(.48) saturate(1.45);
+      z-index:99999 !important;
+      pointer-events:none;
+    }    
     
     /* מסתירים את הכיתוב בזמן ההתרחבות */
     .pardes-fruit-enter .tree-pshat-label,
@@ -4878,10 +4887,14 @@ function normalizeParashaName(value){
       openLayer("main");
     });
 
-     document.getElementById("mainAliyahLive")?.addEventListener("click", (event) => {
+    document.getElementById("mainAliyahLive")?.addEventListener("click", (event) => {
       event.preventDefault();
-      openLayer("main");
-    });   
+    
+      openLayerWithFruitEffect(
+        event.currentTarget,
+        "main"
+      );
+    });
 
     document.getElementById("pshatLink")?.addEventListener("click", (event) => {
       event.preventDefault();
