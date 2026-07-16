@@ -1090,6 +1090,12 @@
         visibility:hidden !important;
         pointer-events:none !important;
       }
+
+      body.pardes-keyboard-open .lion-guide-live{
+        opacity:0 !important;
+        visibility:hidden !important;
+        pointer-events:none !important;
+      }     
       
       body.pardes-keyboard-open .pardes-search-row{
         position:fixed;
@@ -2865,7 +2871,76 @@
         font-size:11px;
       }
     }
+
+    /* האריה — הפרי שלי */
+    .lion-guide-live{
+      position:fixed;
+      left:4%;
+      bottom:70px;
     
+      width:190px;
+      height:190px;
+    
+      z-index:18; /* האריה מאחורי שורת החיפוש */
+      display:block;
+      text-decoration:none;
+      cursor:pointer;
+    
+      overflow:visible;
+      transform:translateZ(0);
+      -webkit-tap-highlight-color:transparent;
+    }
+    
+    .lion-guide-video{
+      width:100%;
+      height:100%;
+      display:block;
+      object-fit:contain;
+    
+      pointer-events:none;
+    
+      filter:
+        drop-shadow(0 10px 18px rgba(0,0,0,.45))
+        drop-shadow(0 0 12px rgba(255,215,150,.16));
+    }
+    
+    .lion-guide-label{
+      position:absolute;
+      left:50%;
+      top:calc(100% - 12px);
+      transform:translateX(-50%);
+    
+      color:#fff;
+      font-size:14px;
+      line-height:1.2;
+      font-weight:900;
+      white-space:nowrap;
+    
+      text-shadow:
+        0 3px 10px rgba(0,0,0,.95),
+        0 0 8px rgba(0,0,0,.85);
+    
+      pointer-events:none;
+    }
+    
+    /* נייד */
+    @media (max-width:640px){
+      .lion-guide-live{
+        left:-6px;
+        bottom:66px;
+    
+        width:125px;
+        height:125px;
+    
+        z-index:18;
+      }
+    
+      .lion-guide-label{
+        top:calc(100% - 9px);
+        font-size:12px;
+      }
+    }
+ 
     /* רמז — אתרוג חי על העץ */
     .tree-remez-live{
       position:fixed;
@@ -3793,7 +3868,31 @@
       </video>
     
       <span class="dror-names-label">שמות</span>
-    </a>    
+    </a>
+
+     <!-- האריה — המדריך האישי ליד העץ -->
+    <a
+      id="lionGuideLink"
+      class="lion-guide-live"
+      href="#"
+      aria-label="הפרי שלי — ליווי אישי"
+    >
+    
+      <video
+        class="lion-guide-video"
+        autoplay
+        muted
+        loop
+        playsinline
+        preload="metadata"
+        aria-hidden="true"
+      >
+        <source src="lion-guide.webm" type="video/webm">
+      </video>
+    
+      <span class="lion-guide-label">הפרי שלי</span>
+    
+    </a>     
 
       <!-- קישור שקוף ללחצן הסודי בערוץ -->
       <a href="secret-admin.html"
