@@ -4079,6 +4079,24 @@
       <span class="dror-names-label">שמות</span>
     </a>
 
+      <!-- קישור שקוף ללחצן הסודי בערוץ -->
+      <a href="secret-admin.html"
+         class="secret-admin-hit"
+         aria-label="כניסה נסתרת לניהול"></a>
+      
+      <form id="pardesSearchForm" class="pardes-search-row" aria-label="חיפוש פרשה ועלייה">
+        <span class="pardes-search-icon" aria-hidden="true">🔎</span>
+        <label for="parashaSearchInput">פרשה:</label>
+        <input id="parashaSearchInput" type="text" placeholder="תצוה" autocomplete="off" inputmode="text" enterkeyhint="next" />
+        <label for="aliyahSearchInput">עלייה:</label>
+        <input id="aliyahSearchInput" type="text" placeholder="ראשונה" autocomplete="off" inputmode="text" enterkeyhint="search" />
+        <button id="pardesSearchBtn" type="submit">חפש</button>
+      </form>
+      <div id="pardesSearchMessage" class="pardes-search-message" aria-live="polite"></div>
+
+    </div>
+  </div>
+
      <!-- האריה — המדריך האישי ליד העץ -->
     <a
       id="lionGuideLink"
@@ -4102,26 +4120,7 @@
       <span class="lion-guide-label">חיזוק אישי</span>
     
     </a>     
-
-      <!-- קישור שקוף ללחצן הסודי בערוץ -->
-      <a href="secret-admin.html"
-         class="secret-admin-hit"
-         aria-label="כניסה נסתרת לניהול"></a>
-      
-      <form id="pardesSearchForm" class="pardes-search-row" aria-label="חיפוש פרשה ועלייה">
-        <span class="pardes-search-icon" aria-hidden="true">🔎</span>
-        <label for="parashaSearchInput">פרשה:</label>
-        <input id="parashaSearchInput" type="text" placeholder="תצוה" autocomplete="off" inputmode="text" enterkeyhint="next" />
-        <label for="aliyahSearchInput">עלייה:</label>
-        <input id="aliyahSearchInput" type="text" placeholder="ראשונה" autocomplete="off" inputmode="text" enterkeyhint="search" />
-        <button id="pardesSearchBtn" type="submit">חפש</button>
-      </form>
-      <div id="pardesSearchMessage" class="pardes-search-message" aria-live="polite"></div>
-
-    </div>
-  </div>
-
-
+  
   <section id="yosefScreen" class="spiritual-screen screen-hidden-right" data-spiritual-screen="yosef" aria-label="מדור חלומות בהשראת יוסף הצדיק">
     <div class="spiritual-card">
       <img class="spiritual-logo" src="logo.png" alt="פרשת השבוע" />
