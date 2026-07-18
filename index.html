@@ -2474,24 +2474,9 @@
       
   
     /* =========================================================
-       מערכת תצוגה מרכזית — מכשירים, דפדפנים ודפדפני אפליקציות
-       כל שינוי עתידי במיקום מתבצע כאן בלבד.
+       מערכת תצוגה מרכזית — יישום המשתנים בלבד
+       ערכי המיקום והמידות עצמם מרוכזים בבלוק "איזון סופי" בסוף ה-CSS.
        ========================================================= */
-
-    :root{
-      --view-search-left:50%;
-      --view-search-bottom:10dvh;
-      --view-search-width:min(92vw, 560px);
-      --view-message-left:50%;
-      --view-message-bottom:0dvh;
-      --view-message-width:min(92vw, 560px);
-      --view-heart-left:52.5%;
-      --view-heart-top:66vh;
-      --view-heart-size:120px;
-      --view-light-left:52.5%;
-      --view-light-top:54vh;
-      --view-light-size:90px;
-    }
 
     /* בסיס משותף לכל המכשירים */
     body.device-phone .pardes-search-row,
@@ -2544,114 +2529,13 @@
       height:var(--view-light-size) !important;
     }
 
-    /* 1. נייד אנכי */
-    body.device-phone.orientation-portrait{
-      --view-search-left:50%;
-      --view-search-bottom:calc(env(safe-area-inset-bottom, 0px) + 120px);
-      --view-search-width:min(96vw, 390px);
-      --view-message-left:53%;
-      --view-message-bottom:calc(env(safe-area-inset-bottom, 0px) + 85px);
-      --view-message-width:min(94vw, 390px);
-      --view-heart-left:53%;
-      --view-heart-top:63dvh;
-      --view-heart-size:90px;
-      --view-light-left:53%;
-      --view-light-top:51svh;
-      --view-light-size:70px;
-    }
 
-    /* 2. נייד לרוחב */
-    body.device-phone.orientation-landscape{
-      --view-search-left:50%;
-      --view-search-bottom:18dvh;
-      --view-search-width:min(92vw, 560px);
-      --view-message-left:50%;
-      --view-message-bottom:0dvh;
-      --view-message-width:min(92vw, 560px);
-      --view-heart-left:52%;
-      --view-heart-top:63svh;
-      --view-heart-size:68px;
-      --view-light-left:52%;
-      --view-light-top:31dvh;
-      --view-light-size:58px;
-    }
-
-    /* 3. טאבלט אנכי */
-    body.device-tablet.orientation-portrait{
-      --view-search-left:50%;
-      --view-search-bottom:9dvh;
-      --view-search-width:min(78vw, 620px);
-      --view-message-left:50%;
-      --view-message-bottom:3dvh;
-      --view-message-width:min(78vw, 620px);
-      --view-heart-left:52.5%;
-      --view-heart-top:65vh;
-      --view-heart-size:105px;
-      --view-light-left:52.5%;
-      --view-light-top:52vh;
-      --view-light-size:78px;
-    }
-
-    /* 4. טאבלט לרוחב */
-    body.device-tablet.orientation-landscape{
-      --view-search-left:50%;
-      --view-search-bottom:8dvh;
-      --view-search-width:min(70vw, 680px);
-      --view-message-left:50%;
-      --view-message-bottom:2dvh;
-      --view-message-width:min(70vw, 680px);
-      --view-heart-left:52%;
-      --view-heart-top:65vh;
-      --view-heart-size:96px;
-      --view-light-left:52%;
-      --view-light-top:50vh;
-      --view-light-size:72px;
-    }
-
-    /* 5. מחשב נייד / לפטופ */
-    body.device-laptop{
-      --view-search-left:50%;
-      --view-search-bottom:10dvh;
-      --view-search-width:min(52vw, 560px);
-      --view-message-left:50%;
-      --view-message-bottom:2dvh;
-      --view-message-width:min(52vw, 560px);
-      --view-heart-left:52.5%;
-      --view-heart-top:66vh;
-      --view-heart-size:120px;
-      --view-light-left:52.5%;
-      --view-light-top:54vh;
-      --view-light-size:90px;
-    }
-
-    /* 6. מחשב נייח / מסך גדול */
-    body.device-desktop{
-      --view-search-left:50%;
-      --view-search-bottom:10dvh;
-      --view-search-width:min(42vw, 600px);
-      --view-message-left:50%;
-      --view-message-bottom:2dvh;
-      --view-message-width:min(42vw, 600px);
-      --view-heart-left:52.5%;
-      --view-heart-top:66vh;
-      --view-heart-size:120px;
-      --view-light-left:52.5%;
-      --view-light-top:54vh;
-      --view-light-size:90px;
-    }
+    /* ערכי כל ששת סוגי המכשירים הועברו לבלוק האיזון הסופי בסוף ה-CSS. */
 
     /* =========================================================
        התאמות לדפדפנים רגילים — קיימת מחלקה נפרדת לכל דפדפן.
        כרגע הערכים זהים; ניתן לשנות כל דפדפן בנפרד בעת הצורך.
        ========================================================= */
-    body.browser-chrome{ --browser-search-adjust:0px; --browser-message-adjust:0px; }
-    body.browser-edge{ --browser-search-adjust:0px; --browser-message-adjust:0px; }
-    body.browser-firefox{ --browser-search-adjust:0px; --browser-message-adjust:0px; }
-    body.browser-safari{ --browser-search-adjust:0px; --browser-message-adjust:0px; }
-    body.browser-samsung{ --browser-search-adjust:0px; --browser-message-adjust:0px; }
-    body.browser-opera{ --browser-search-adjust:0px; --browser-message-adjust:0px; }
-    body.browser-other{ --browser-search-adjust:0px; --browser-message-adjust:0px; }
-
     body.regular-browser.device-phone .pardes-search-row,
     body.regular-browser.device-tablet .pardes-search-row,
     body.regular-browser.device-laptop .pardes-search-row,
@@ -2671,40 +2555,6 @@
        לכל אפליקציה מחלקה משלה: TikTok, Instagram, Facebook,
        Messenger, YouTube, WhatsApp, Telegram, X, LinkedIn ועוד.
        ========================================================= */
-    body.in-app-browser.device-phone.orientation-portrait{
-      --view-search-bottom:calc(env(safe-area-inset-bottom, 0px) + 102px);
-      --view-message-bottom:calc(env(safe-area-inset-bottom, 0px) + 67px);
-    }
-
-    body.in-app-browser.device-phone.orientation-landscape{
-      --view-search-bottom:10dvh;
-      --view-message-bottom:0dvh;
-    }
-
-    body.in-app-browser.device-tablet.orientation-portrait{
-      --view-search-bottom:8dvh;
-      --view-message-bottom:2dvh;
-    }
-
-    body.in-app-browser.device-tablet.orientation-landscape{
-      --view-search-bottom:7dvh;
-      --view-message-bottom:1dvh;
-    }
-
-    /* נקודות התאמה נפרדות לכל אפליקציה — ניתן לשנות בהמשך */
-    body.app-tiktok{ --app-search-adjust:0px; --app-message-adjust:0px; }
-    body.app-instagram{ --app-search-adjust:0px; --app-message-adjust:0px; }
-    body.app-facebook{ --app-search-adjust:0px; --app-message-adjust:0px; }
-    body.app-messenger{ --app-search-adjust:0px; --app-message-adjust:0px; }
-    body.app-youtube{ --app-search-adjust:0px; --app-message-adjust:0px; }
-    body.app-whatsapp{ --app-search-adjust:0px; --app-message-adjust:0px; }
-    body.app-telegram{ --app-search-adjust:0px; --app-message-adjust:0px; }
-    body.app-x{ --app-search-adjust:0px; --app-message-adjust:0px; }
-    body.app-linkedin{ --app-search-adjust:0px; --app-message-adjust:0px; }
-    body.app-snapchat{ --app-search-adjust:0px; --app-message-adjust:0px; }
-    body.app-pinterest{ --app-search-adjust:0px; --app-message-adjust:0px; }
-    body.app-other{ --app-search-adjust:0px; --app-message-adjust:0px; }
-
     body.in-app-browser .pardes-search-row{
       bottom:calc(var(--view-search-bottom) + var(--app-search-adjust, 0px)) !important;
     }
@@ -2772,28 +2622,6 @@
         z-index:10001 !important;
       }
 
-      /* הטקסט של הפרשה הפעילה קרוב יותר מתחת לשורת החיפוש */
-      body.device-laptop{
-        --view-message-bottom:calc(10dvh - 32px);
-        --view-heart-left:54%;
-        --view-light-left:54%;
-      }
-
-      body.device-desktop{
-        --view-message-bottom:calc(10dvh - 32px);
-        --view-heart-left:54%;
-        --view-light-left:54%;
-      }
-
-      /* גיבוי גם אם מחלקות זיהוי המכשיר לא נטענו */
-      .pardes-search-message{
-        bottom:calc(10dvh - 32px) !important;
-      }
-
-      .ma-shebalev-live,
-      .haor-shebi-live{
-        left:54% !important;
-      }
     }
 
     /* שמות — דרור חי בקן על העץ */
@@ -3578,14 +3406,38 @@
   
 
     /* =========================================================
-       איזון סופי של האייקונים — כל המכשירים והדפדפנים
-       הבלוק הזה נמצא בסוף ה-CSS ולכן הוא גובר על הגדרות ישנות.
+       איזון סופי — כל המיקומים והמידות במקום אחד
+
+       סדר העבודה:
+       א. דפדפנים רגילים — שישה סוגי מכשירים.
+       ב. דפדפנים פנימיים של אפליקציות — שישה סוגי מכשירים.
+       ג. תיקון קטן לפי מנוע הדפדפן או האפליקציה.
+
+       שינוי ערך בתוך מכשיר אחד אינו אמור להשפיע על מכשיר אחר.
        ========================================================= */
 
     :root{
+      /* פיצוי כללי לדפדפן או לאפליקציה */
       --icon-env-x:0px;
       --icon-env-y:0px;
+      --browser-search-adjust:0px;
+      --browser-message-adjust:0px;
+      --app-search-adjust:0px;
+      --app-message-adjust:0px;
 
+      /* ערכי גיבוי בלבד, למקרה שמחלקת זיהוי המכשיר טרם נטענה */
+      --view-search-left:50%;
+      --view-search-bottom:10dvh;
+      --view-search-width:min(92vw,560px);
+      --view-message-left:50%;
+      --view-message-bottom:0dvh;
+      --view-message-width:min(92vw,560px);
+      --view-heart-left:52.5%;
+      --view-heart-top:66vh;
+      --view-heart-size:120px;
+      --view-light-left:52.5%;
+      --view-light-top:54vh;
+      --view-light-size:90px;
       --dror-left:52%; --dror-top:11vh; --dror-size:104px;
       --drash-left:29%; --drash-top:15vh; --drash-w:92px; --drash-h:122px;
       --remez-right:24%; --remez-top:3vh; --remez-w:70px; --remez-h:106px;
@@ -3595,49 +3447,71 @@
       --lion-left:0%; --lion-bottom:10vh; --lion-size:150px;
     }
 
-    /* התאמות קלות בין מנועי דפדפן */
-    body.browser-chrome{ --icon-env-y:0px; }
-    body.browser-edge{ --icon-env-y:0px; }
-    body.browser-firefox{ --icon-env-y:1px; }
-    body.browser-safari{ --icon-env-y:2px; }
-    body.browser-samsung{ --icon-env-y:2px; }
-    body.browser-opera{ --icon-env-y:1px; }
-    body.browser-other{ --icon-env-y:0px; }
+    /* =========================================================
+       א. דפדפנים רגילים — חלוקה מלאה לפי מכשיר
+       ========================================================= */
 
-    /* דפדפנים פנימיים באפליקציות מקבלים פיצוי קטן על סרגלי הממשק */
-    body.in-app-browser{ --icon-env-y:6px; }
-    body.app-tiktok{ --icon-env-y:8px; }
-    body.app-instagram{ --icon-env-y:7px; }
-    body.app-facebook,
-    body.app-messenger{ --icon-env-y:7px; }
-    body.app-youtube,
-    body.app-whatsapp,
-    body.app-telegram{ --icon-env-y:6px; }
-
-    /* לפטופ */
-    body.device-laptop{
-      --dror-left:55%; --dror-top:15vh; --dror-size:73px;
-      --drash-left:29%; --drash-top:15vh; --drash-w:92px; --drash-h:122px;
-      --remez-right:24%; --remez-top:3vh; --remez-w:68px; --remez-h:104px;
-      --sod-left:12%; --sod-top:31vh; --sod-w:80px; --sod-h:126px;
-      --pshat-right:7%; --pshat-top:23vh; --pshat-w:80px; --pshat-h:136px;
-      --main-left:61%; --main-top:46vh; --main-size:110px;
-      --lion-left:12%; --lion-bottom:14vh; --lion-size:255px;
-    }
-
-    /* מחשב נייח רחב */
+    /* 1. מחשב שולחני / מסך גדול */
+    body.regular-browser.device-desktop,
     body.device-desktop{
+      /* שורת חיפוש */
+      --view-search-left:50%; --view-search-bottom:10dvh; --view-search-width:min(42vw,600px);
+      /* הטקסט שמתחת לשורת החיפוש */
+      --view-message-left:50%; --view-message-bottom:calc(10dvh - 32px); --view-message-width:min(42vw,600px);
+      /* מה שבלב */
+      --view-heart-left:54%; --view-heart-top:66vh; --view-heart-size:120px;
+      /* האור שבי */
+      --view-light-left:54%; --view-light-top:54vh; --view-light-size:90px;
+      /* שמות — דרור בקן */
       --dror-left:52%; --dror-top:10vh; --dror-size:108px;
+      /* דרש — תאנה */
       --drash-left:29%; --drash-top:15vh; --drash-w:98px; --drash-h:130px;
+      /* רמז — אתרוג */
       --remez-right:24%; --remez-top:3vh; --remez-w:72px; --remez-h:110px;
+      /* סוד — ענבים */
       --sod-left:12%; --sod-top:31vh; --sod-w:86px; --sod-h:134px;
+      /* פשט — שעורה */
       --pshat-right:7%; --pshat-top:23vh; --pshat-w:86px; --pshat-h:144px;
+      /* העלייה הראשית */
       --main-left:54%; --main-top:43vh; --main-size:116px;
+      /* האריה */
       --lion-left:9%; --lion-bottom:10vh; --lion-size:152px;
     }
 
-    /* טאבלט אנכי */
+    /* 2. מחשב נייד / לפטופ */
+    body.regular-browser.device-laptop,
+    body.device-laptop{
+      /* שורת חיפוש */
+      --view-search-left:50%; --view-search-bottom:10dvh; --view-search-width:min(52vw,560px);
+      /* הטקסט שמתחת לשורת החיפוש */
+      --view-message-left:50%; --view-message-bottom:calc(10dvh - 32px); --view-message-width:min(52vw,560px);
+      /* מה שבלב */
+      --view-heart-left:54%; --view-heart-top:66vh; --view-heart-size:120px;
+      /* האור שבי */
+      --view-light-left:54%; --view-light-top:54vh; --view-light-size:90px;
+      /* שמות — דרור בקן */
+      --dror-left:55%; --dror-top:15vh; --dror-size:73px;
+      /* דרש — תאנה */
+      --drash-left:29%; --drash-top:15vh; --drash-w:92px; --drash-h:122px;
+      /* רמז — אתרוג */
+      --remez-right:24%; --remez-top:3vh; --remez-w:68px; --remez-h:104px;
+      /* סוד — ענבים */
+      --sod-left:12%; --sod-top:31vh; --sod-w:80px; --sod-h:126px;
+      /* פשט — שעורה */
+      --pshat-right:7%; --pshat-top:23vh; --pshat-w:80px; --pshat-h:136px;
+      /* העלייה הראשית */
+      --main-left:61%; --main-top:46vh; --main-size:110px;
+      /* האריה — הערכים שאושרו בלפטופ נשמרו */
+      --lion-left:12%; --lion-bottom:14vh; --lion-size:255px;
+    }
+
+    /* 3. טאבלט אנכי */
+    body.regular-browser.device-tablet.orientation-portrait,
     body.device-tablet.orientation-portrait{
+      --view-search-left:50%; --view-search-bottom:9dvh; --view-search-width:min(78vw,620px);
+      --view-message-left:50%; --view-message-bottom:3dvh; --view-message-width:min(78vw,620px);
+      --view-heart-left:52.5%; --view-heart-top:65vh; --view-heart-size:105px;
+      --view-light-left:52.5%; --view-light-top:52vh; --view-light-size:78px;
       --dror-left:54%; --dror-top:13dvh; --dror-size:98px;
       --drash-left:23%; --drash-top:17dvh; --drash-w:80px; --drash-h:106px;
       --remez-right:20%; --remez-top:18dvh; --remez-w:64px; --remez-h:98px;
@@ -3647,8 +3521,13 @@
       --lion-left:4%; --lion-bottom:16dvh; --lion-size:128px;
     }
 
-    /* טאבלט לרוחב */
+    /* 4. טאבלט לרוחב */
+    body.regular-browser.device-tablet.orientation-landscape,
     body.device-tablet.orientation-landscape{
+      --view-search-left:50%; --view-search-bottom:8dvh; --view-search-width:min(70vw,680px);
+      --view-message-left:50%; --view-message-bottom:2dvh; --view-message-width:min(70vw,680px);
+      --view-heart-left:52%; --view-heart-top:65vh; --view-heart-size:96px;
+      --view-light-left:52%; --view-light-top:50vh; --view-light-size:72px;
       --dror-left:52%; --dror-top:10dvh; --dror-size:92px;
       --drash-left:26%; --drash-top:16dvh; --drash-w:78px; --drash-h:104px;
       --remez-right:22%; --remez-top:8dvh; --remez-w:62px; --remez-h:96px;
@@ -3658,8 +3537,13 @@
       --lion-left:5%; --lion-bottom:13dvh; --lion-size:120px;
     }
 
-    /* טלפון אנכי */
+    /* 5. נייד אנכי */
+    body.regular-browser.device-phone.orientation-portrait,
     body.device-phone.orientation-portrait{
+      --view-search-left:50%; --view-search-bottom:calc(env(safe-area-inset-bottom,0px) + 120px); --view-search-width:min(96vw,390px);
+      --view-message-left:53%; --view-message-bottom:calc(env(safe-area-inset-bottom,0px) + 85px); --view-message-width:min(94vw,390px);
+      --view-heart-left:53%; --view-heart-top:63dvh; --view-heart-size:90px;
+      --view-light-left:53%; --view-light-top:51svh; --view-light-size:70px;
       --dror-left:55%; --dror-top:15dvh; --dror-size:82px;
       --drash-left:23%; --drash-top:17dvh; --drash-w:66px; --drash-h:88px;
       --remez-right:19%; --remez-top:27dvh; --remez-w:58px; --remez-h:88px;
@@ -3669,8 +3553,13 @@
       --lion-left:2%; --lion-bottom:18dvh; --lion-size:104px;
     }
 
-    /* טלפון לרוחב */
+    /* 6. נייד לרוחב */
+    body.regular-browser.device-phone.orientation-landscape,
     body.device-phone.orientation-landscape{
+      --view-search-left:50%; --view-search-bottom:18dvh; --view-search-width:min(92vw,560px);
+      --view-message-left:50%; --view-message-bottom:0dvh; --view-message-width:min(92vw,560px);
+      --view-heart-left:52%; --view-heart-top:63svh; --view-heart-size:68px;
+      --view-light-left:52%; --view-light-top:31dvh; --view-light-size:58px;
       --dror-left:52%; --dror-top:10dvh; --dror-size:76px;
       --drash-left:17%; --drash-top:28dvh; --drash-w:64px; --drash-h:84px;
       --remez-right:15%; --remez-top:18dvh; --remez-w:54px; --remez-h:82px;
@@ -3680,7 +3569,81 @@
       --lion-left:3%; --lion-bottom:16dvh; --lion-size:96px;
     }
 
-    /* יישום המשתנים — שמות */
+    /* =========================================================
+       ב. דפדפנים פנימיים של אפליקציות
+       כאן משנים רק את ההבדלים לעומת המכשיר הרגיל.
+       כל שאר המידות יורשות מהבלוקים שלמעלה.
+       ========================================================= */
+
+    /* מחשב שולחני באפליקציה */
+    body.in-app-browser.device-desktop{
+      /* כרגע אין שינוי לעומת מחשב שולחני רגיל */
+    }
+
+    /* לפטופ באפליקציה */
+    body.in-app-browser.device-laptop{
+      /* כרגע אין שינוי לעומת לפטופ רגיל */
+    }
+
+    /* טאבלט אנכי באפליקציה */
+    body.in-app-browser.device-tablet.orientation-portrait{
+      --view-search-bottom:8dvh;
+      --view-message-bottom:2dvh;
+    }
+
+    /* טאבלט לרוחב באפליקציה */
+    body.in-app-browser.device-tablet.orientation-landscape{
+      --view-search-bottom:7dvh;
+      --view-message-bottom:1dvh;
+    }
+
+    /* נייד אנכי באפליקציה */
+    body.in-app-browser.device-phone.orientation-portrait{
+      --view-search-bottom:calc(env(safe-area-inset-bottom,0px) + 102px);
+      --view-message-bottom:calc(env(safe-area-inset-bottom,0px) + 67px);
+    }
+
+    /* נייד לרוחב באפליקציה */
+    body.in-app-browser.device-phone.orientation-landscape{
+      --view-search-bottom:10dvh;
+      --view-message-bottom:0dvh;
+    }
+
+    /* =========================================================
+       ג. תיקונים לפי מנוע דפדפן
+       ========================================================= */
+    body.browser-chrome{ --icon-env-y:0px; --browser-search-adjust:0px; --browser-message-adjust:0px; }
+    body.browser-edge{ --icon-env-y:0px; --browser-search-adjust:0px; --browser-message-adjust:0px; }
+    body.browser-firefox{ --icon-env-y:1px; --browser-search-adjust:0px; --browser-message-adjust:0px; }
+    body.browser-safari{ --icon-env-y:2px; --browser-search-adjust:0px; --browser-message-adjust:0px; }
+    body.browser-samsung{ --icon-env-y:2px; --browser-search-adjust:0px; --browser-message-adjust:0px; }
+    body.browser-opera{ --icon-env-y:1px; --browser-search-adjust:0px; --browser-message-adjust:0px; }
+    body.browser-other{ --icon-env-y:0px; --browser-search-adjust:0px; --browser-message-adjust:0px; }
+
+    /* תיקונים לפי אפליקציה */
+    body.in-app-browser{ --icon-env-y:6px; }
+    body.app-tiktok{ --icon-env-y:8px; --app-search-adjust:0px; --app-message-adjust:0px; }
+    body.app-instagram{ --icon-env-y:7px; --app-search-adjust:0px; --app-message-adjust:0px; }
+    body.app-facebook,
+    body.app-messenger{ --icon-env-y:7px; --app-search-adjust:0px; --app-message-adjust:0px; }
+    body.app-youtube,
+    body.app-whatsapp,
+    body.app-telegram{ --icon-env-y:6px; --app-search-adjust:0px; --app-message-adjust:0px; }
+    body.app-x,
+    body.app-linkedin,
+    body.app-snapchat,
+    body.app-pinterest,
+    body.app-other{ --app-search-adjust:0px; --app-message-adjust:0px; }
+
+    /* בדפדפן פנימי בנייד מפצים על הסרגל התחתון */
+    body.in-app-browser.device-phone{ --icon-env-y:-4px; }
+
+    /* =========================================================
+       יישום המשתנים על האלמנטים
+       אין לשנות כאן מידות; את המספרים משנים רק בבלוקים למעלה.
+       ========================================================= */
+
+    /* שמות — דרור בקן */
     .dror-names-live{
       left:calc(var(--dror-left) + var(--icon-env-x)) !important;
       top:calc(var(--dror-top) + var(--icon-env-y)) !important;
@@ -3688,7 +3651,7 @@
       height:var(--dror-size) !important;
     }
 
-    /* דרש */
+    /* דרש — תאנה */
     .tree-drash-live{
       left:calc(var(--drash-left) + var(--icon-env-x)) !important;
       top:calc(var(--drash-top) + var(--icon-env-y)) !important;
@@ -3696,7 +3659,7 @@
       height:var(--drash-h) !important;
     }
 
-    /* רמז */
+    /* רמז — אתרוג */
     .tree-remez-live{
       right:calc(var(--remez-right) - var(--icon-env-x)) !important;
       top:calc(var(--remez-top) + var(--icon-env-y)) !important;
@@ -3704,7 +3667,7 @@
       height:var(--remez-h) !important;
     }
 
-    /* סוד */
+    /* סוד — ענבים */
     .tree-sod-live{
       left:calc(var(--sod-left) + var(--icon-env-x)) !important;
       top:calc(var(--sod-top) + var(--icon-env-y)) !important;
@@ -3712,7 +3675,7 @@
       height:var(--sod-h) !important;
     }
 
-    /* פשט */
+    /* פשט — שעורה */
     .tree-pshat-live{
       right:calc(var(--pshat-right) - var(--icon-env-x)) !important;
       top:calc(var(--pshat-top) + var(--icon-env-y)) !important;
@@ -3728,7 +3691,7 @@
       height:var(--main-size) !important;
     }
 
-    /* האריה — יחידה אחת: סרטון וכיתוב זזים יחד */
+    /* האריה — הסרטון והכיתוב זזים יחד */
     .lion-guide-live{
       left:calc(var(--lion-left) + var(--icon-env-x)) !important;
       right:auto !important;
@@ -3742,32 +3705,23 @@
 
     .lion-guide-label{
       top:calc(100% + 3px) !important;
-      font-size:clamp(11px, 1.15vw, 14px) !important;
+      font-size:clamp(11px,1.15vw,14px) !important;
     }
 
-    /* כיתובים מאוזנים לפי גודל המסך */
+    /* כיתובי האייקונים */
     body.device-phone .dror-names-label,
     body.device-phone .tree-drash-label,
     body.device-phone .tree-remez-label,
     body.device-phone .tree-sod-label,
-    body.device-phone .tree-pshat-label{
-      font-size:11px !important;
-    }
+    body.device-phone .tree-pshat-label{ font-size:11px !important; }
 
     body.device-tablet .dror-names-label,
     body.device-tablet .tree-drash-label,
     body.device-tablet .tree-remez-label,
     body.device-tablet .tree-sod-label,
-    body.device-tablet .tree-pshat-label{
-      font-size:12px !important;
-    }
+    body.device-tablet .tree-pshat-label{ font-size:12px !important; }
 
-    /* בדפדפן פנימי בנייד מזיזים את האייקונים מעט למעלה כדי לפצות על סרגל תחתון */
-    body.in-app-browser.device-phone{
-      --icon-env-y:-4px;
-    }
-
-    /* בזמן פתיחת המקלדת: כל האייקונים שעלולים לחסום את שורת החיפוש נעלמים */
+    /* בזמן פתיחת המקלדת מסתירים אייקונים שעלולים לחסום את החיפוש */
     body.pardes-keyboard-open .lion-guide-live,
     body.pardes-keyboard-open .dror-names-live,
     body.pardes-keyboard-open .tree-pshat-live,
