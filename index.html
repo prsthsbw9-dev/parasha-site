@@ -3697,14 +3697,14 @@
       --lion-left:8%;
       --lion-bottom:7dvh;
       --lion-size:99px;
-    }
+    }   
 
     /* =========================================================
        ב. דפדפנים פנימיים של אפליקציות
        כאן משנים רק את ההבדלים לעומת המכשיר הרגיל.
        כל שאר המידות יורשות מהבלוקים שלמעלה.
        ========================================================= */
-
+    
     /* מחשב שולחני באפליקציה */
     body.in-app-browser.device-desktop{
       /* כרגע אין שינוי לעומת מחשב שולחני רגיל */
@@ -3732,6 +3732,79 @@
       --view-search-bottom:calc(env(safe-area-inset-bottom,0px) + 102px);
       --view-message-bottom:calc(env(safe-area-inset-bottom,0px) + 67px);
     }
+
+    /* =========================================================
+       TikTok בנייד אנכי בלבד — שליטה מלאה
+       ========================================================= */
+    body.in-app-browser.app-tiktok.device-phone.orientation-portrait{
+    
+      /* התאמה כללית לכל האייקונים לגובה הדפדפן של TikTok */
+      --icon-env-x:0px;
+      --icon-env-y:-4px;
+    
+      /* שורת החיפוש */
+      --view-search-left:50%;
+      --view-search-bottom:calc(env(safe-area-inset-bottom, 0px) + 65px);
+      --view-search-width:min(96vw, 390px);
+      
+      /* ההודעה שמתחת לשורת החיפוש */
+      --view-message-left:53%;
+      --view-message-bottom:calc(env(safe-area-inset-bottom, 0px) + 25px);
+      --view-message-width:min(94vw, 390px);
+    
+      /* תיקון נוסף לשורת החיפוש וההודעה ב־TikTok */
+      --app-search-adjust:0px;
+      --app-message-adjust:0px;
+    
+      /* מה שבלב */
+      --view-heart-left:53%;
+      --view-heart-top:63dvh;
+      --view-heart-size:90px;
+    
+      /* האור שבי */
+      --view-light-left:53%;
+      --view-light-top:51svh;
+      --view-light-size:70px;
+    
+      /* שמות — קן הציפור */
+      --dror-left:55%;
+      --dror-top:15dvh;
+      --dror-size:82px;
+    
+      /* דרש — התאנה */
+      --drash-left:23%;
+      --drash-top:17dvh;
+      --drash-w:66px;
+      --drash-h:88px;
+    
+      /* רמז — האתרוג */
+      --remez-right:19%;
+      --remez-top:27dvh;
+      --remez-w:58px;
+      --remez-h:88px;
+    
+      /* סוד — הענבים */
+      --sod-left:10%;
+      --sod-top:43dvh;
+      --sod-w:58px;
+      --sod-h:92px;
+    
+      /* פשט — השעורה */
+      --pshat-right:8%;
+      --pshat-top:43dvh;
+      --pshat-w:58px;
+      --pshat-h:96px;
+    
+      /* העלייה הראשית */
+      --main-left:52%;
+      --main-top:48dvh;
+      --main-size:86px;
+    
+      /* האריה */
+      --lion-left:2%;
+      --lion-bottom:18dvh;
+      --lion-size:104px;
+    }   
 
     /* נייד לרוחב באפליקציה */
     body.in-app-browser.device-phone.orientation-landscape{
