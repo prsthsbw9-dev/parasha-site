@@ -4500,10 +4500,157 @@
       opacity:1;
     }
 
+    /* =========================================================
+       מסך פתיחה שמסתיר את נגני האייקונים בזמן טעינת הדף
+       ========================================================= */
+    .page-loading-cover{
+      position:fixed;
+      inset:0;
+      width:100vw;
+      height:100dvh;
+      z-index:9999998;
+      background:#000;
+      opacity:1;
+      visibility:visible;
+      overflow:hidden;
+      pointer-events:auto;
+      transition:opacity 260ms ease, visibility 260ms ease;
+    }
+
+    .page-loading-cover.is-hidden{
+      opacity:0;
+      visibility:hidden;
+      pointer-events:none;
+    }
+
+    .page-loading-cover picture,
+    .page-loading-cover img{
+      display:block;
+      width:100%;
+      height:100%;
+    }
+
+    .page-loading-cover img{
+      object-fit:cover;
+      object-position:center;
+      background:#000;
+    }
+
   </style>
 </head>
   
 <body>
+
+<!-- מסך פתיחה בזמן טעינת האייקונים החיים -->
+<div id="pageLoadingCover" class="page-loading-cover" aria-hidden="true">
+  <picture>
+    <source
+      media="(max-width:700px) and (orientation:portrait)"
+      srcset="transition-poster-mobile.jpg"
+    >
+    <img
+      src="transition-poster-desktop.jpg"
+      alt=""
+      fetchpriority="high"
+      decoding="async"
+    >
+  </picture>
+</div>
+
+<script>
+(function(){
+  const minimumDisplayTime = 2000;
+  const maximumDisplayTime = 10000;
+  const loadingStartedAt = Date.now();
+
+  function setupPageLoadingCover(){
+    const cover = document.getElementById("pageLoadingCover");
+
+    if(!cover) return;
+
+    const iconVideos = Array.from(document.querySelectorAll([
+      ".main-aliyah-video",
+      ".dror-names-video",
+      ".lion-guide-video",
+      ".tree-remez-video",
+      ".tree-pshat-video",
+      ".tree-drash-video",
+      ".tree-sod-video",
+      ".haor-shebi-live video",
+      ".ma-shebalev-live video"
+    ].join(",")));
+
+    let minimumTimePassed = false;
+    let allIconsReady = iconVideos.length === 0;
+    let coverHidden = false;
+    let readyCount = 0;
+
+    function hideCover(){
+      if(coverHidden) return;
+      coverHidden = true;
+      cover.classList.add("is-hidden");
+
+      setTimeout(function(){
+        cover.style.display = "none";
+      }, 300);
+    }
+
+    function tryToHideCover(){
+      if(minimumTimePassed && allIconsReady){
+        hideCover();
+      }
+    }
+
+    function markVideoReady(video){
+      if(video.dataset.pageLoadingReady === "true") return;
+
+      video.dataset.pageLoadingReady = "true";
+      readyCount += 1;
+
+      if(readyCount >= iconVideos.length){
+        allIconsReady = true;
+        tryToHideCover();
+      }
+    }
+
+    iconVideos.forEach(function(video){
+      if(video.readyState >= 2){
+        markVideoReady(video);
+        return;
+      }
+
+      video.addEventListener("loadeddata", function(){
+        markVideoReady(video);
+      }, { once:true });
+
+      video.addEventListener("canplay", function(){
+        markVideoReady(video);
+      }, { once:true });
+
+      /* גם קובץ שנכשל לא ישאיר את מסך הפתיחה תקוע */
+      video.addEventListener("error", function(){
+        markVideoReady(video);
+      }, { once:true });
+    });
+
+    const elapsedTime = Date.now() - loadingStartedAt;
+
+    setTimeout(function(){
+      minimumTimePassed = true;
+      tryToHideCover();
+    }, Math.max(0, minimumDisplayTime - elapsedTime));
+
+    /* יציאה בטוחה גם בחיבור איטי או במקרה שקובץ אינו מגיב */
+    setTimeout(hideCover, maximumDisplayTime);
+  }
+
+  if(document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded", setupPageLoadingCover, { once:true });
+  }else{
+    setupPageLoadingCover();
+  }
+})();
+</script>
 
 <script>
 (function () {
