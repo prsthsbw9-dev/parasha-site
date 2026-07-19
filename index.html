@@ -4468,13 +4468,36 @@
       opacity:1;
     }
 
+    .icon-transition-poster,
     .icon-transition-video{
+      position:absolute;
+      inset:0;
       display:block;
       width:100%;
       height:100%;
       object-fit:cover;
       object-position:center;
       background:#000;
+    }
+
+    .icon-transition-poster{
+      z-index:2;
+      opacity:1;
+      transition:opacity 180ms ease;
+    }
+
+    .icon-transition-video{
+      z-index:1;
+      opacity:0;
+    }
+
+    .icon-transition-overlay.is-video-ready .icon-transition-poster{
+      opacity:0;
+      pointer-events:none;
+    }
+
+    .icon-transition-overlay.is-video-ready .icon-transition-video{
+      opacity:1;
     }
 
   </style>
@@ -7005,6 +7028,14 @@ if (sodGrapesVideo) {
   class="icon-transition-overlay"
   aria-hidden="true"
 >
+  <img
+    id="iconTransitionPoster"
+    class="icon-transition-poster"
+    src="transition-poster-desktop.jpg"
+    alt=""
+    aria-hidden="true"
+  >
+
   <video
     id="iconTransitionVideo"
     class="icon-transition-video"
@@ -7016,12 +7047,22 @@ if (sodGrapesVideo) {
 <script>
 (function(){
   const overlay = document.getElementById("iconTransitionOverlay");
+  const transitionPoster = document.getElementById("iconTransitionPoster");
   const transitionVideo = document.getElementById("iconTransitionVideo");
   const birdLink = document.getElementById("drorNamesLink");
   const lionLink = document.getElementById("lionGuideLink");
 
   let transitionBusy = false;
   let transitionFallbackTimer = null;
+
+  /* טעינה מוקדמת של שתי תמונות המעבר */
+  [
+    "transition-poster-mobile.jpg",
+    "transition-poster-desktop.jpg"
+  ].forEach(function(source){
+    const image = new Image();
+    image.src = source;
+  });
 
   function useMobileTransition(){
     const isPhone =
@@ -7036,7 +7077,7 @@ if (sodGrapesVideo) {
   }
 
   function playIconTransition(type, destination){
-    if(transitionBusy || !overlay || !transitionVideo){
+    if(transitionBusy || !overlay || !transitionPoster || !transitionVideo){
       return;
     }
 
@@ -7052,6 +7093,14 @@ if (sodGrapesVideo) {
           ? "lion-transition-mobile.mp4"
           : "lion-transition-desktop.mp4");
 
+    const posterSource = mobile
+      ? "transition-poster-mobile.jpg"
+      : "transition-poster-desktop.jpg";
+
+    let minimumPosterTimePassed = false;
+    let videoCanPlay = false;
+    let videoStarted = false;
+
     const goToDestination = function(){
       clearTimeout(transitionFallbackTimer);
       window.location.href = destination;
@@ -7064,6 +7113,8 @@ if (sodGrapesVideo) {
       introAudio.muted = true;
     }
 
+    overlay.classList.remove("is-video-ready");
+    transitionPoster.src = posterSource;
     overlay.classList.add("is-active");
     overlay.setAttribute("aria-hidden", "false");
 
@@ -7080,22 +7131,61 @@ if (sodGrapesVideo) {
     transitionVideo.onended = goToDestination;
     transitionVideo.onerror = goToDestination;
 
+    const revealAndPlayVideo = function(){
+      if(
+        videoStarted ||
+        !minimumPosterTimePassed ||
+        !videoCanPlay
+      ){
+        return;
+      }
+
+      videoStarted = true;
+      transitionVideo.currentTime = 0;
+
+      const showVideo = function(){
+        overlay.classList.add("is-video-ready");
+      };
+
+      const playPromise = transitionVideo.play();
+
+      if(playPromise && typeof playPromise.then === "function"){
+        playPromise
+          .then(showVideo)
+          .catch(function(){
+            /* אם הדפדפן חוסם קול, מפעילים את הסרטון מושתק */
+            transitionVideo.muted = true;
+
+            const mutedPlayPromise = transitionVideo.play();
+
+            if(mutedPlayPromise && typeof mutedPlayPromise.then === "function"){
+              mutedPlayPromise
+                .then(showVideo)
+                .catch(goToDestination);
+            }else{
+              showVideo();
+            }
+          });
+      }else{
+        showVideo();
+      }
+    };
+
+    transitionVideo.oncanplay = function(){
+      videoCanPlay = true;
+      revealAndPlayVideo();
+    };
+
+    setTimeout(function(){
+      minimumPosterTimePassed = true;
+      revealAndPlayVideo();
+    }, 2000);
+
     /* הגנה למקרה שאירוע סיום הסרטון לא מתקבל */
     transitionFallbackTimer = setTimeout(goToDestination, 20000);
 
-    const playPromise = transitionVideo.play();
-
-    if(playPromise && typeof playPromise.catch === "function"){
-      playPromise.catch(function(){
-        /* אם הדפדפן חוסם קול, מפעילים את הסרטון מושתק */
-        transitionVideo.muted = true;
-
-        const mutedPlayPromise = transitionVideo.play();
-
-        if(mutedPlayPromise && typeof mutedPlayPromise.catch === "function"){
-          mutedPlayPromise.catch(goToDestination);
-        }
-      });
+    if(transitionVideo.readyState >= 3){
+      videoCanPlay = true;
     }
   }
 
