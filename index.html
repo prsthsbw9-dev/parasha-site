@@ -4754,10 +4754,8 @@
       <form id="pardesSearchForm" class="pardes-search-row" aria-label="חיפוש פרשה ועלייה">
         <span class="pardes-search-icon" aria-hidden="true">🔎</span>
         <label for="parashaSearchInput">פרשה:</label>
-        <input id="parashaSearchInput" type="text" placeholder="תצוה" autocomplete="off" inputmode="text" enterkeyhint="next" />
-        <label for="aliyahSearchInput">עלייה:</label>
-        <input id="aliyahSearchInput" type="text" placeholder="ראשונה" autocomplete="off" inputmode="text" enterkeyhint="search" />
-        <button id="pardesSearchBtn" type="submit">חפש</button>
+        <input id="parashaSearchInput" type="text" autocomplete="off" inputmode="text" enterkeyhint="next" />
+        <input id="aliyahSearchInput" type="text" autocomplete="off" inputmode="text" enterkeyhint="search" />
       </form>
       <div id="pardesSearchMessage" class="pardes-search-message" aria-live="polite"></div>
 
@@ -6037,8 +6035,8 @@ function normalizeParashaName(value){
         const found = await loadSpecificAliyah(parasha, aliyah);
 
         if(found && parashaInput && aliyahInput){
-          parashaInput.value = currentParasha;
-          aliyahInput.value = currentAliyah;
+          parashaInput.value = "";
+          aliyahInput.value = "";
         }
 
       }catch(error){
