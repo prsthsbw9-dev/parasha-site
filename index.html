@@ -4546,7 +4546,7 @@
   <picture>
     <source
       media="(max-width:700px) and (orientation:portrait)"
-      srcset="transition-poster-mobile.jpg"
+      srcset="transition-poster-mobile.png"
     >
     <img
       src="transition-poster-desktop.jpg"
@@ -7204,7 +7204,7 @@ if (sodGrapesVideo) {
 
   /* טעינה מוקדמת של שתי תמונות המעבר */
   [
-    "transition-poster-mobile.jpg",
+    "transition-poster-mobile.png",
     "transition-poster-desktop.jpg"
   ].forEach(function(source){
     const image = new Image();
@@ -7241,7 +7241,7 @@ if (sodGrapesVideo) {
           : "lion-transition-desktop.mp4");
 
     const posterSource = mobile
-      ? "transition-poster-mobile.jpg"
+      ? "transition-poster-mobile.png"
       : "transition-poster-desktop.jpg";
 
     let minimumPosterTimePassed = false;
