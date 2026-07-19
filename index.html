@@ -4753,11 +4753,16 @@
       
       <form id="pardesSearchForm" class="pardes-search-row" aria-label="חיפוש פרשה ועלייה">
         <span class="pardes-search-icon" aria-hidden="true">🔎</span>
+      
         <label for="parashaSearchInput">פרשה:</label>
-        <input id="parashaSearchInput" type="text" autocomplete="off" inputmode="text" enterkeyhint="next" />
-          <label for="parashaSearchInput">עלית:</label>
-        <input id="aliyahSearchInput" type="text" autocomplete="off" inputmode="text" enterkeyhint="search" />
+        <input id="parashaSearchInput" type="text" placeholder="תצוה" autocomplete="off" inputmode="text" enterkeyhint="next" />
+      
+        <label for="aliyahSearchInput">עלית:</label>
+        <input id="aliyahSearchInput" type="text" placeholder="ראשונה" autocomplete="off" inputmode="text" enterkeyhint="search" />
+      
+        <button id="pardesSearchBtn" type="submit">חפש</button>
       </form>
+      
       <div id="pardesSearchMessage" class="pardes-search-message" aria-live="polite"></div>
 
     </div>
