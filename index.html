@@ -4447,6 +4447,36 @@
       pointer-events:none !important;
     }
 
+    /* =========================================================
+       סרטון מעבר לציפור ולאריה
+       ========================================================= */
+    .icon-transition-overlay{
+      position:fixed;
+      inset:0;
+      width:100vw;
+      height:100dvh;
+      background:#000;
+      z-index:9999999;
+      display:none;
+      overflow:hidden;
+      opacity:0;
+      transition:opacity 180ms ease;
+    }
+
+    .icon-transition-overlay.is-active{
+      display:block;
+      opacity:1;
+    }
+
+    .icon-transition-video{
+      display:block;
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      object-position:center;
+      background:#000;
+    }
+
   </style>
 </head>
   
@@ -6967,6 +6997,122 @@ if (sodGrapesVideo) {
   });
 }  
 
+</script>
+
+<!-- שכבת סרטון המעבר של הציפור והאריה -->
+<div
+  id="iconTransitionOverlay"
+  class="icon-transition-overlay"
+  aria-hidden="true"
+>
+  <video
+    id="iconTransitionVideo"
+    class="icon-transition-video"
+    playsinline
+    preload="auto"
+  ></video>
+</div>
+
+<script>
+(function(){
+  const overlay = document.getElementById("iconTransitionOverlay");
+  const transitionVideo = document.getElementById("iconTransitionVideo");
+  const birdLink = document.getElementById("drorNamesLink");
+  const lionLink = document.getElementById("lionGuideLink");
+
+  let transitionBusy = false;
+  let transitionFallbackTimer = null;
+
+  function useMobileTransition(){
+    const isPhone =
+      document.body.classList.contains("device-phone") ||
+      window.matchMedia("(max-width:700px)").matches;
+
+    const isPortrait =
+      document.body.classList.contains("orientation-portrait") ||
+      window.matchMedia("(orientation:portrait)").matches;
+
+    return isPhone && isPortrait;
+  }
+
+  function playIconTransition(type, destination){
+    if(transitionBusy || !overlay || !transitionVideo){
+      return;
+    }
+
+    transitionBusy = true;
+
+    const mobile = useMobileTransition();
+
+    const videoSource = type === "bird"
+      ? (mobile
+          ? "bird-transition-mobile.mp4"
+          : "bird-transition-desktop.mp4")
+      : (mobile
+          ? "lion-transition-mobile.mp4"
+          : "lion-transition-desktop.mp4");
+
+    const goToDestination = function(){
+      clearTimeout(transitionFallbackTimer);
+      window.location.href = destination;
+    };
+
+    const introAudio = document.getElementById("pardesHomeIntroAudio");
+
+    if(introAudio){
+      introAudio.pause();
+      introAudio.muted = true;
+    }
+
+    overlay.classList.add("is-active");
+    overlay.setAttribute("aria-hidden", "false");
+
+    transitionVideo.pause();
+    transitionVideo.removeAttribute("src");
+    transitionVideo.load();
+
+    transitionVideo.src = videoSource;
+    transitionVideo.currentTime = 0;
+    transitionVideo.loop = false;
+    transitionVideo.muted = false;
+    transitionVideo.volume = 1;
+
+    transitionVideo.onended = goToDestination;
+    transitionVideo.onerror = goToDestination;
+
+    /* הגנה למקרה שאירוע סיום הסרטון לא מתקבל */
+    transitionFallbackTimer = setTimeout(goToDestination, 20000);
+
+    const playPromise = transitionVideo.play();
+
+    if(playPromise && typeof playPromise.catch === "function"){
+      playPromise.catch(function(){
+        /* אם הדפדפן חוסם קול, מפעילים את הסרטון מושתק */
+        transitionVideo.muted = true;
+
+        const mutedPlayPromise = transitionVideo.play();
+
+        if(mutedPlayPromise && typeof mutedPlayPromise.catch === "function"){
+          mutedPlayPromise.catch(goToDestination);
+        }
+      });
+    }
+  }
+
+  if(birdLink){
+    birdLink.addEventListener("click", function(event){
+      event.preventDefault();
+      playIconTransition("bird", "names.html");
+    });
+  }
+
+  if(lionLink){
+    lionLink.addEventListener("click", function(event){
+      event.preventDefault();
+      playIconTransition("lion", "personal-strength.html");
+    });
+  }
+})();
 </script>
 
 </body>
