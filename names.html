@@ -1298,10 +1298,84 @@
       background:transparent !important;
       color:#fff !important;
     }
+
+    /* =========================================================
+       כפתור חזרה קבוע לפרדס
+       ========================================================= */
+    .pardes-return-btn{
+      position:fixed;
+      top:calc(env(safe-area-inset-top, 0px) + 12px);
+      right:12px;
+      z-index:9999;
+    
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:6px;
+    
+      min-height:42px;
+      padding:9px 15px;
+    
+      color:#fff;
+      background:rgba(8,14,17,.68);
+      border:1px solid rgba(255,255,255,.38);
+      border-radius:999px;
+      box-shadow:0 5px 18px rgba(0,0,0,.32);
+    
+      font-size:14px;
+      font-weight:700;
+      line-height:1;
+      text-decoration:none;
+      white-space:nowrap;
+    
+      backdrop-filter:blur(8px);
+      -webkit-backdrop-filter:blur(8px);
+    
+      transition:
+        transform .18s ease,
+        background .18s ease,
+        border-color .18s ease;
+    }
+    
+    .pardes-return-btn:hover{
+      background:rgba(16,24,28,.86);
+      border-color:rgba(255,255,255,.62);
+      transform:translateY(-1px);
+    }
+    
+    .pardes-return-btn:active{
+      transform:scale(.97);
+    }
+    
+    .pardes-return-btn:focus-visible{
+      outline:3px solid rgba(255,255,255,.85);
+      outline-offset:3px;
+    }
+    
+    /* התאמה למחשב ולמסכים רחבים */
+    @media (min-width:701px){
+      .pardes-return-btn{
+        top:18px;
+        right:18px;
+        min-height:46px;
+        padding:10px 18px;
+        font-size:15px;
+      }
+    }
+    
   </style>
 </head>
 
 <body>
+
+  <a
+    class="pardes-return-btn"
+    href="index.html"
+    aria-label="חזרה לעץ הפרדס"
+  >
+    חזרה לפרדס ←
+  </a>
+  
   <video class="sea-bg-video" autoplay muted loop playsinline poster="names-background-desktop-poster.jpg">
     <source src="names-background-desktop.mp4" type="video/mp4">
   </video>
