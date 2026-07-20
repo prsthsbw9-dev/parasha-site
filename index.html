@@ -4631,6 +4631,33 @@
 
   if(!introOverlay || !introVideo) return;
 
+  /*
+    מציגים את סרטון הפתיחה פעם אחת בלבד בכל לשונית.
+    בחזרה מדף פנימי עוברים ישירות לעץ.
+  */
+  const introStorageKey = "pardesIntroAlreadyPlayed";
+  let introAlreadyPlayed = false;
+
+  try{
+    introAlreadyPlayed =
+      sessionStorage.getItem(introStorageKey) === "true";
+  }catch(error){
+    introAlreadyPlayed = false;
+  }
+
+  if(introAlreadyPlayed){
+    introVideo.pause();
+    introOverlay.style.display = "none";
+    introOverlay.setAttribute("aria-hidden", "true");
+    return;
+  }
+
+  try{
+    sessionStorage.setItem(introStorageKey, "true");
+  }catch(error){
+    /* אם האחסון חסום, האתר ממשיך לפעול כרגיל */
+  }
+
   const useMobileIntro = window.matchMedia(
     "(max-width:700px) and (orientation:portrait)"
   ).matches;
