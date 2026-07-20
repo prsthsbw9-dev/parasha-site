@@ -4536,10 +4536,154 @@
       background:#000;
     }
 
+    /* =========================================================
+       סרטון כניסה לפרדס — נוסף מעל הגנות הטעינה הקיימות
+       ========================================================= */
+    .pardes-intro-overlay{
+      position:fixed;
+      inset:0;
+      width:100vw;
+      height:100dvh;
+      z-index:10000000;
+      background:#000;
+      opacity:1;
+      visibility:visible;
+      overflow:hidden;
+      pointer-events:auto;
+      transition:opacity 350ms ease, visibility 350ms ease;
+    }
+
+    .pardes-intro-overlay.is-hidden{
+      opacity:0;
+      visibility:hidden;
+      pointer-events:none;
+    }
+
+    .pardes-intro-poster,
+    .pardes-intro-video{
+      position:absolute;
+      inset:0;
+      display:block;
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      object-position:center;
+      background:#000;
+    }
+
+    .pardes-intro-poster{
+      z-index:2;
+      opacity:1;
+      transition:opacity 180ms ease;
+    }
+
+    .pardes-intro-video{
+      z-index:1;
+      opacity:0;
+    }
+
+    .pardes-intro-overlay.is-video-ready .pardes-intro-poster{
+      opacity:0;
+      pointer-events:none;
+    }
+
+    .pardes-intro-overlay.is-video-ready .pardes-intro-video{
+      opacity:1;
+    }
+
   </style>
 </head>
   
 <body>
+
+<!-- סרטון הכניסה לפרדס — לפני מסך ההגנה של טעינת האייקונים -->
+<div id="pardesIntroOverlay" class="pardes-intro-overlay" aria-hidden="true">
+  <picture>
+    <source
+      media="(max-width:700px) and (orientation:portrait)"
+      srcset="pardes-intro-mobile-poster.jpg"
+    >
+    <img
+      id="pardesIntroPoster"
+      class="pardes-intro-poster"
+      src="pardes-intro-desktop-poster.jpg"
+      alt=""
+      fetchpriority="high"
+      decoding="async"
+      aria-hidden="true"
+    >
+  </picture>
+
+  <video
+    id="pardesIntroVideo"
+    class="pardes-intro-video"
+    muted
+    playsinline
+    preload="auto"
+    aria-hidden="true"
+  ></video>
+</div>
+
+<script>
+(function(){
+  const introOverlay = document.getElementById("pardesIntroOverlay");
+  const introVideo = document.getElementById("pardesIntroVideo");
+
+  if(!introOverlay || !introVideo) return;
+
+  const useMobileIntro = window.matchMedia(
+    "(max-width:700px) and (orientation:portrait)"
+  ).matches;
+
+  const introSource = useMobileIntro
+    ? "pardes-intro-mobile.mp4"
+    : "pardes-intro-desktop.mp4";
+
+  let introFinished = false;
+  let introFallbackTimer = null;
+
+  function finishIntro(){
+    if(introFinished) return;
+    introFinished = true;
+
+    clearTimeout(introFallbackTimer);
+    introOverlay.classList.add("is-hidden");
+
+    setTimeout(function(){
+      introVideo.pause();
+      introVideo.removeAttribute("src");
+      introVideo.load();
+      introOverlay.style.display = "none";
+    }, 400);
+  }
+
+  introVideo.onplaying = function(){
+    introOverlay.classList.add("is-video-ready");
+  };
+
+  introVideo.onended = finishIntro;
+  introVideo.onerror = finishIntro;
+  introVideo.src = introSource;
+  introVideo.currentTime = 0;
+
+  const playPromise = introVideo.play();
+
+  if(playPromise && typeof playPromise.catch === "function"){
+    playPromise.catch(function(){
+      introVideo.muted = true;
+
+      const mutedPlayPromise = introVideo.play();
+
+      if(mutedPlayPromise && typeof mutedPlayPromise.catch === "function"){
+        mutedPlayPromise.catch(finishIntro);
+      }
+    });
+  }
+
+  /* הגנה: כשל טעינה לא ישאיר את האתר מכוסה */
+  introFallbackTimer = setTimeout(finishIntro, 20000);
+})();
+</script>
 
 <!-- מסך פתיחה בזמן טעינת האייקונים החיים -->
 <div id="pageLoadingCover" class="page-loading-cover" aria-hidden="true">
