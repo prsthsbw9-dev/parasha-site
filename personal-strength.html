@@ -1,1 +1,349 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, viewport-fit=cover"
+  >
 
+  <title>חיזוק אישי | הפרד״ס החי</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 100%;
+      min-height: 100%;
+      margin: 0;
+    }
+
+    body {
+      min-height: 100svh;
+      overflow-x: hidden;
+      font-family: Arial, "Noto Sans Hebrew", sans-serif;
+      color: #ffffff;
+      background:
+        radial-gradient(
+          circle at 50% 22%,
+          rgba(255, 210, 100, 0.26),
+          transparent 31%
+        ),
+        radial-gradient(
+          circle at 18% 85%,
+          rgba(43, 136, 78, 0.3),
+          transparent 36%
+        ),
+        linear-gradient(
+          155deg,
+          #07120c 0%,
+          #102318 48%,
+          #050907 100%
+        );
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(
+          circle,
+          rgba(255, 224, 145, 0.85) 0 1px,
+          transparent 2px
+        );
+      background-size: 75px 75px;
+      opacity: 0.13;
+    }
+
+    .page {
+      position: relative;
+      z-index: 1;
+      min-height: 100svh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding:
+        calc(env(safe-area-inset-top, 0px) + 76px)
+        18px
+        calc(env(safe-area-inset-bottom, 0px) + 34px);
+    }
+
+    .pardes-return-btn {
+      position: fixed;
+      top: calc(env(safe-area-inset-top, 0px) + 14px);
+      right: 14px;
+      z-index: 20;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 46px;
+      padding: 10px 17px;
+      color: #ffffff;
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 700;
+      border: 1px solid rgba(255, 255, 255, 0.34);
+      border-radius: 999px;
+      background: rgba(7, 18, 12, 0.7);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.26);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+
+    .pardes-return-btn:hover {
+      border-color: rgba(255, 215, 119, 0.8);
+      background: rgba(30, 57, 38, 0.88);
+    }
+
+    .card {
+      width: min(100%, 650px);
+      padding: clamp(28px, 6vw, 52px);
+      text-align: center;
+      border: 1px solid rgba(255, 223, 144, 0.34);
+      border-radius: 30px;
+      background:
+        linear-gradient(
+          145deg,
+          rgba(255, 255, 255, 0.12),
+          rgba(255, 255, 255, 0.035)
+        );
+      box-shadow:
+        0 28px 70px rgba(0, 0, 0, 0.46),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+    }
+
+    .symbol {
+      width: 104px;
+      height: 104px;
+      display: grid;
+      place-items: center;
+      margin: 0 auto 22px;
+      font-size: 52px;
+      border: 1px solid rgba(255, 221, 132, 0.5);
+      border-radius: 50%;
+      background:
+        radial-gradient(
+          circle,
+          rgba(255, 229, 158, 0.92) 0%,
+          rgba(224, 159, 48, 0.52) 30%,
+          rgba(38, 75, 49, 0.34) 66%,
+          transparent 72%
+        );
+      box-shadow:
+        0 0 28px rgba(255, 207, 93, 0.38),
+        0 0 70px rgba(255, 207, 93, 0.15);
+    }
+
+    h1 {
+      margin: 0 0 18px;
+      color: #fff7df;
+      font-size: clamp(30px, 7vw, 46px);
+      line-height: 1.2;
+      text-shadow: 0 3px 18px rgba(255, 213, 108, 0.22);
+    }
+
+    .message {
+      margin: 0 auto 28px;
+      max-width: 510px;
+      color: rgba(255, 255, 255, 0.9);
+      font-size: clamp(18px, 4vw, 22px);
+      line-height: 1.75;
+    }
+
+    .highlight {
+      color: #ffe6a3;
+      font-weight: 700;
+    }
+
+    .form-title {
+      margin: 0 0 14px;
+      color: #ffffff;
+      font-size: 18px;
+      line-height: 1.5;
+    }
+
+    .email-form {
+      width: min(100%, 500px);
+      margin: 0 auto;
+    }
+
+    .email-row {
+      display: flex;
+      gap: 10px;
+      padding: 7px;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: 18px;
+      background: rgba(0, 0, 0, 0.25);
+    }
+
+    .email-input {
+      min-width: 0;
+      flex: 1;
+      height: 52px;
+      padding: 0 17px;
+      direction: ltr;
+      text-align: left;
+      color: #ffffff;
+      font-size: 16px;
+      border: 0;
+      outline: none;
+      border-radius: 13px;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .email-input::placeholder {
+      color: rgba(255, 255, 255, 0.58);
+    }
+
+    .email-input:focus {
+      box-shadow: inset 0 0 0 1px rgba(255, 222, 137, 0.72);
+    }
+
+    .submit-btn {
+      min-height: 52px;
+      padding: 0 23px;
+      cursor: pointer;
+      color: #172113;
+      font-size: 16px;
+      font-weight: 800;
+      border: 0;
+      border-radius: 13px;
+      background: linear-gradient(135deg, #ffe7a6, #d9a542);
+      box-shadow: 0 8px 22px rgba(218, 165, 66, 0.25);
+    }
+
+    .submit-btn:hover {
+      filter: brightness(1.07);
+    }
+
+    .privacy-note {
+      margin: 13px 0 0;
+      color: rgba(255, 255, 255, 0.59);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 560px) {
+      .page {
+        align-items: flex-start;
+      }
+
+      .card {
+        padding: 30px 20px;
+        border-radius: 24px;
+      }
+
+      .symbol {
+        width: 88px;
+        height: 88px;
+        font-size: 44px;
+      }
+
+      .email-row {
+        flex-direction: column;
+      }
+
+      .submit-btn {
+        width: 100%;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <a
+    class="pardes-return-btn"
+    href="index.html"
+    aria-label="חזרה לעץ הפרדס"
+  >
+    <span>חזרה לפרדס</span>
+    <span aria-hidden="true">←</span>
+  </a>
+
+  <main class="page">
+    <section class="card" aria-labelledby="pageTitle">
+      <div class="symbol" aria-hidden="true">🦁</div>
+
+      <h1 id="pageTitle">כל הכבוד לך על הרצון להתחזק</h1>
+
+      <p class="message">
+        הדף הזה נמצא כרגע בבנייה,
+        וכשהוא יהיה מוכן —
+        <span class="highlight">יהיה שווה לחזור אליו.</span>
+      </p>
+
+      <p class="form-title">
+        רוצה שנעדכן אותך כשהדף יהיה מוכן?
+      </p>
+
+      <form
+        class="email-form"
+        action="https://formsubmit.co/prsthsbw9@gmail.com"
+        method="POST"
+      >
+        <input
+          type="hidden"
+          name="_subject"
+          value="בקשת עדכון חדשה – דף חיזוק אישי"
+        >
+
+        <input
+          type="hidden"
+          name="_template"
+          value="table"
+        >
+
+        <input
+          type="hidden"
+          name="_autoresponse"
+          value="תודה! קיבלנו את בקשתך ונעדכן אותך כאשר דף החיזוק האישי יהיה מוכן."
+        >
+
+        <input
+          type="text"
+          name="_honey"
+          tabindex="-1"
+          autocomplete="off"
+          style="display:none"
+        >
+
+        <div class="email-row">
+          <input
+            class="email-input"
+            type="email"
+            name="email"
+            placeholder="your@email.com"
+            aria-label="כתובת המייל שלך"
+            autocomplete="email"
+            inputmode="email"
+            required
+          >
+
+          <button class="submit-btn" type="submit">
+            עדכנו אותי
+          </button>
+        </div>
+
+        <p class="privacy-note">
+          כתובת המייל תשמש רק לשליחת עדכון כשהדף יהיה מוכן.
+        </p>
+      </form>
+    </section>
+  </main>
+</body>
+</html>
