@@ -1303,15 +1303,17 @@
        כפתור חזרה קבוע לפרדס
        ========================================================= */
     .pardes-return-btn{
-      position:fixed;
-      top:calc(env(safe-area-inset-top, 0px) + 12px);
-      right:12px;
+      position:fixed !important;
+      top:calc(env(safe-area-inset-top, 0px) + 12px) !important;
+      right:12px !important;
+      left:auto !important;
       z-index:9999;
     
       display:inline-flex;
+      flex-direction:row;
       align-items:center;
       justify-content:center;
-      gap:6px;
+      gap:7px;
     
       min-height:42px;
       padding:9px 15px;
@@ -1328,6 +1330,9 @@
       text-decoration:none;
       white-space:nowrap;
     
+      direction:rtl;
+      unicode-bidi:isolate;
+    
       backdrop-filter:blur(8px);
       -webkit-backdrop-filter:blur(8px);
     
@@ -1335,6 +1340,19 @@
         transform .18s ease,
         background .18s ease,
         border-color .18s ease;
+    }
+    
+    .pardes-return-text{
+      display:inline-block;
+      direction:rtl;
+      unicode-bidi:isolate;
+    }
+    
+    .pardes-return-arrow{
+      display:inline-block;
+      direction:ltr;
+      font-size:17px;
+      line-height:1;
     }
     
     .pardes-return-btn:hover{
@@ -1355,8 +1373,9 @@
     /* התאמה למחשב ולמסכים רחבים */
     @media (min-width:701px){
       .pardes-return-btn{
-        top:18px;
-        right:18px;
+        top:18px !important;
+        right:18px !important;
+        left:auto !important;
         min-height:46px;
         padding:10px 18px;
         font-size:15px;
