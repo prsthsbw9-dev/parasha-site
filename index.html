@@ -4665,7 +4665,20 @@
   const introSource = useMobileIntro
     ? "pardes-intro-mobile.mp4"
     : "pardes-intro-desktop.mp4";
-
+  
+  /*
+    בנייד בלבד סרטון הפתיחה מתנגן מהר יותר.
+    במחשב המהירות נשארת רגילה.
+  */
+  const introPlaybackRate = useMobileIntro ? 1.5 : 1;
+  
+  introVideo.defaultPlaybackRate = introPlaybackRate;
+  introVideo.playbackRate = introPlaybackRate;
+  
+  introVideo.addEventListener("loadedmetadata", function(){
+    introVideo.playbackRate = introPlaybackRate;
+  }, { once:true });
+  
   let introFinished = false;
   let introFallbackTimer = null;
 
