@@ -6009,15 +6009,30 @@ function normalizeParashaName(value){
     
     function withSelectedVariant(video, variant){
       if(!video) return null;
+    
       return {
         ...video,
         __variant: variant || video.__variant || ""
       };
     }
     
+    /*
+      מחזיר את קובץ המקור השמור בפיירבייס,
+      ושומר גם את קישור YouTube המתאים עבור הכפתור האדום.
+    */
+    function withSelectedOriginal(originalVideo, variant, youtubeVideo){
+      if(!originalVideo?.url) return null;
+    
+      return {
+        ...originalVideo,
+        __variant: variant || "",
+        __youtubeVideo: youtubeVideo?.url ? youtubeVideo : null
+      };
+    }
+    
     function chooseVideoForViewer(item){
       if(!item) return null;
-      
+    
       const mobile = item.mobile?.url ? item.mobile : (
         item.mobileUrl ? {
           url: item.mobileUrl,
@@ -6036,18 +6051,41 @@ function normalizeParashaName(value){
         } : null
       );
     
+      const originalMobile =
+        item.originalMobile?.url
+          ? item.originalMobile
+          : (item.mobileOriginal?.url ? item.mobileOriginal : null);
+    
+      const originalWide =
+        item.originalWide?.url
+          ? item.originalWide
+          : (item.wideOriginal?.url ? item.wideOriginal : null);
+    
+      /*
+        בנייד לרוחב מעדיפים את קובץ המקור הרחב מפיירבייס.
+      */
       if(isLandscapeMobile()){
-        return withSelectedVariant(wide, "wide")
+        return withSelectedOriginal(originalWide, "wide", wide)
+            || withSelectedOriginal(originalMobile, "mobile", mobile)
+            || withSelectedVariant(wide, "wide")
             || withSelectedVariant(mobile, "mobile")
             || withSelectedVariant(item.url ? item : null, "wide");
       }
     
+      /*
+        בנייד לאורך מעדיפים את קובץ המקור הנייד מפיירבייס.
+      */
       if(isMobileViewer()){
-        return withSelectedVariant(mobile, "mobile")
+        return withSelectedOriginal(originalMobile, "mobile", mobile)
+            || withSelectedOriginal(originalWide, "wide", wide)
+            || withSelectedVariant(mobile, "mobile")
             || withSelectedVariant(wide, "wide")
             || withSelectedVariant(item.url ? item : null, "mobile");
       }
     
+      /*
+        במחשב ממשיכים להציג את YouTube כרגיל.
+      */
       return withSelectedVariant(wide, "wide")
           || withSelectedVariant(mobile, "mobile")
           || withSelectedVariant(item.url ? item : null, "wide");
@@ -6255,8 +6293,21 @@ function normalizeParashaName(value){
           youtubePlayer.style.display = "none";
           youtubePlayer.classList.remove("is-horizontal", "is-square");
         }
-
-        hideYouTubeOpenButton();
+        
+        /*
+          כאשר בנייד מוצג קובץ המקור מפיירבייס,
+          משאירים את הכפתור האדום מקושר לסרטון ב־YouTube.
+        */
+        if(selectedVideo.__youtubeVideo?.url && youtubeOpenBtn){
+          youtubeOpenBtn.href = getYouTubeWatchUrl(
+            selectedVideo.__youtubeVideo
+          );
+        
+          youtubeOpenBtn.style.display = "block";
+        }else{
+          hideYouTubeOpenButton();
+        }
+        
         player.style.display = "block";
         player.classList.remove("is-horizontal", "is-square");
         player.style.visibility = "hidden";
