@@ -6338,8 +6338,16 @@ function normalizeParashaName(value){
         shouldShowInAppYouTubePrompt() &&
         inAppYouTubeVideo?.url
       ){
-        const youtubeId = getYouTubeVideoId(inAppYouTubeVideo);
-        const youtubeWatchUrl = getYouTubeWatchUrl(inAppYouTubeVideo);
+      const youtubeId = getYouTubeVideoId(inAppYouTubeVideo);
+      
+      /*
+        גרסת נייד אנכית נפתחת בתצוגת YouTube Shorts.
+        גרסת רוחב נפתחת בעמוד YouTube הרגיל.
+      */
+      const youtubeWatchUrl =
+        selectedVideo.__variant === "mobile" && youtubeId
+          ? `https://www.youtube.com/shorts/${youtubeId}`
+          : getYouTubeWatchUrl(inAppYouTubeVideo);
       
         player.style.display = "none";
         player.removeAttribute("src");
