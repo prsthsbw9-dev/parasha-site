@@ -2791,10 +2791,17 @@
     }
     
     .lion-guide-video{
-      width:100%;
-      height:100%;
+      position:absolute;
+      left:50%;
+      bottom:0;
+    
+      width:145%;
+      height:145%;
+    
       display:block;
       object-fit:contain;
+      transform:translateX(-50%);
+      transform-origin:center bottom;
     
       pointer-events:none;
     
@@ -7757,13 +7764,50 @@ if (sodGrapesVideo) {
     });
   }
 
-  if(lionLink){
+  const lionRoarVideo = document.getElementById("lionRoarVideo");
+  
+  if(lionRoarVideo){
+    lionRoarVideo.addEventListener("loadedmetadata", function(){
+      try{
+        lionRoarVideo.currentTime = 0.01;
+      }catch(error){}
+    }, { once:true });
+  }
+  
+  if(lionLink && lionRoarVideo){
     lionLink.addEventListener("click", function(event){
       event.preventDefault();
-      playIconTransition("lion", "personal-strength.html");
+  
+      if(transitionBusy) return;
+      transitionBusy = true;
+  
+      const introAudio = document.getElementById("pardesHomeIntroAudio");
+  
+      if(introAudio){
+        introAudio.pause();
+        introAudio.muted = true;
+      }
+  
+      lionRoarVideo.loop = false;
+      lionRoarVideo.currentTime = 0;
+  
+      lionRoarVideo.onended = function(){
+        window.location.href = "personal-strength.html";
+      };
+  
+      lionRoarVideo.onerror = function(){
+        window.location.href = "personal-strength.html";
+      };
+  
+      const playPromise = lionRoarVideo.play();
+  
+      if(playPromise && typeof playPromise.catch === "function"){
+        playPromise.catch(function(){
+          window.location.href = "personal-strength.html";
+        });
+      }
     });
   }
-})();
 </script>
 
 </body>
