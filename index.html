@@ -4737,7 +4737,24 @@
     בנייד בלבד סרטון הפתיחה מתנגן מהר יותר.
     במחשב המהירות נשארת רגילה.
   */
-  const introPlaybackRate = useMobileIntro ? 1.5 : 1;
+  /*
+    זיהוי כניסה דרך דפדפן פנימי של אפליקציה.
+  */
+  const introUserAgent =
+    navigator.userAgent || navigator.vendor || "";
+  
+  const useFastInAppIntro =
+    /TikTok|musical_ly|BytedanceWebview|Instagram|FBAN|FBAV|FB_IAB|Messenger|WhatsApp|Telegram|YouTube|Twitter|XApp|LinkedInApp|Snapchat|Pinterest/i
+      .test(introUserAgent);
+  
+  /*
+    דפדפן פנימי של אפליקציה: מהירות כפולה.
+    נייד בדפדפן רגיל: מהירות 1.5.
+    מחשב: מהירות רגילה.
+  */
+  const introPlaybackRate = useFastInAppIntro
+    ? 2
+    : (useMobileIntro ? 1.5 : 1);
   
   introVideo.defaultPlaybackRate = introPlaybackRate;
   introVideo.playbackRate = introPlaybackRate;
