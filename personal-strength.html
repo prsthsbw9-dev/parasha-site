@@ -255,31 +255,43 @@
       }
     }
 
-   .symbol.lion-symbol {
-    width: clamp(150px, 32vw, 190px);
-    height: clamp(150px, 32vw, 190px);
-    padding: 0;
-    font-size: 0;
-    border: 0;
-    border-radius: 0;
-    overflow: visible;
-    background: transparent;
-    box-shadow:
-      0 0 35px rgba(255, 207, 93, 0.25),
-      0 0 75px rgba(255, 207, 93, 0.12);
-  }
+    .symbol.lion-symbol {
+      width: clamp(150px, 32vw, 190px);
+      height: clamp(150px, 32vw, 190px);
+      padding: 0;
+      font-size: 0;
+    
+      border: 1px solid rgba(255, 221, 132, 0.42);
+      border-radius: 50%;
+      overflow: hidden;
+      clip-path: circle(50% at 50% 50%);
+    
+      background:
+        radial-gradient(
+          circle,
+          rgba(255, 221, 132, 0.15) 0%,
+          rgba(44, 75, 50, 0.12) 62%,
+          rgba(5, 15, 9, 0.3) 100%
+        );
+    
+      box-shadow:
+        0 0 35px rgba(255, 207, 93, 0.25),
+        0 0 75px rgba(255, 207, 93, 0.12);
+    }
   
-  .personal-strength-lion {
-    width: 100%;
-    height: 100%;
-    display: block;
-    object-fit: contain;
-    background: transparent;
-    pointer-events: none;
-    filter:
-      drop-shadow(0 12px 20px rgba(0, 0, 0, 0.5))
-      drop-shadow(0 0 14px rgba(255, 211, 113, 0.2));
-  }   
+    .personal-strength-lion {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: contain;
+      border-radius: 50%;
+      background: transparent;
+      pointer-events: none;
+    
+      filter:
+        drop-shadow(0 12px 20px rgba(0, 0, 0, 0.5))
+        drop-shadow(0 0 14px rgba(255, 211, 113, 0.2));
+    }
 
     @media (prefers-reduced-motion: reduce) {
       *,
