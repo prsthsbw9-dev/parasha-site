@@ -3446,6 +3446,15 @@
       z-index:99999 !important;
       pointer-events:none;
     }    
+
+    /* העלייה הראשית — הרחבה מותאמת למחשב וללפטופ */
+    @media (min-width:951px){
+      .main-aliyah-live.pardes-fruit-enter{
+        transform:
+          translate(-50%, -50%)
+          scale(64) !important;
+      }
+    }
     
     /* מסתירים את הכיתוב בזמן ההתרחבות */
     .pardes-fruit-enter .tree-pshat-label,
