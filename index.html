@@ -6339,6 +6339,24 @@ function normalizeParashaName(value){
         __youtubeVideo: youtubeVideo?.url ? youtubeVideo : null
       };
     }
+
+    /*
+      קובע אם גרסת YouTube נשמרה במפורש כ־Shorts.
+      בקישורים ישנים שאין בהם youtubeType, נשמרת גם תמיכה
+      בכתובת מקור שמכילה ‎/shorts/‎.
+    */
+    function isYouTubeShortVariant(video){
+      if(!isYouTubeVideo(video)) return false;
+
+      const savedType = String(video.youtubeType || "").trim().toLowerCase();
+
+      if(savedType){
+        return savedType === "shorts";
+      }
+
+      const originalUrl = String(video.originalUrl || video.url || "").trim();
+      return /youtube\.com\/shorts\//i.test(originalUrl);
+    }
     
     function chooseVideoForViewer(item){
       if(!item) return null;
@@ -6383,10 +6401,20 @@ function normalizeParashaName(value){
       }
     
       /*
-        בנייד לאורך מעדיפים את קובץ המקור הנייד מפיירבייס.
+        בנייד לאורך:
+        1. קישור YouTube Shorts שנשמר במפורש;
+        2. קובץ המקור הנייד מפיירבייס;
+        3. קובץ מקור רחב כגיבוי;
+        4. כל מקור זמין אחר.
       */
       if(isMobileViewer()){
-        return withSelectedOriginal(originalMobile, "mobile", mobile)
+        const mobileShort =
+          isYouTubeShortVariant(mobile)
+            ? withSelectedVariant(mobile, "mobile")
+            : null;
+
+        return mobileShort
+            || withSelectedOriginal(originalMobile, "mobile", mobile)
             || withSelectedOriginal(originalWide, "wide", wide)
             || withSelectedVariant(mobile, "mobile")
             || withSelectedVariant(wide, "wide")
@@ -6590,15 +6618,22 @@ const storedMobileYouTubeVideo =
     const preferMobileYouTube =
       isMobileViewer() &&
       !isLandscapeMobile();
-    
+
+    const storedMobileYouTubeIsShort =
+      isYouTubeShortVariant(storedMobileYouTubeVideo);
+
     const inAppYouTubeVideo =
       (
         preferMobileYouTube &&
-        isYouTubeVideo(storedMobileYouTubeVideo)
+        storedMobileYouTubeIsShort
           ? storedMobileYouTubeVideo
           : null
       ) ||
-      selectedVideo?.__youtubeVideo ||
+      (
+        !preferMobileYouTube
+          ? selectedVideo?.__youtubeVideo
+          : null
+      ) ||
       (isYouTubeVideo(selectedVideo) ? selectedVideo : null);
       
       if(
@@ -6611,37 +6646,13 @@ const storedMobileYouTubeVideo =
         גרסת נייד אנכית נפתחת בתצוגת YouTube Shorts.
         גרסת רוחב נפתחת בעמוד YouTube הרגיל.
       */
-      const savedYouTubeUrl =
-        String(inAppYouTubeVideo?.url || "").trim();
-      
       /*
-        בדיקה אם הכתובת המקורית נשמרה כ־Shorts
-      */
-      const savedAsYouTubeShort =
-        /youtube\.com\/shorts\//i.test(savedYouTubeUrl);
-      
-      /*
-        ארבעת רובדי הפרד״ס הם סרטוני Shorts בנייד:
-        פשט, רמז, דרש וסוד
-      */
-      const isPardesShortLayer =
-        ["pshat", "remez", "drash", "sod"].includes(layer);
-      
-      /*
-        פותחים בתצוגת Shorts כאשר:
-        1. הקישור עצמו נשמר כ־Shorts;
-        או
-        2. זה אחד מארבעת רובדי הפרד״ס בנייד אנכי.
+        פותחים בתצוגת Shorts רק כאשר הקישור נשמר כ־Shorts.
+        קישור YouTube רגיל אינו נהפך אוטומטית ל־Shorts.
       */
       const shouldOpenAsYouTubeShort =
         !!youtubeId &&
-        (
-          savedAsYouTubeShort ||
-          (
-            preferMobileYouTube &&
-            isPardesShortLayer
-          )
-        );
+        isYouTubeShortVariant(inAppYouTubeVideo);
       
       const youtubeWatchUrl =
         shouldOpenAsYouTubeShort
