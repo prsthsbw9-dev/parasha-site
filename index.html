@@ -6352,9 +6352,33 @@ function normalizeParashaName(value){
         לא מפעילים שם את הסרטון באופן אוטומטי.
         מציגים תמונה מקדימה ופותחים את YouTube בלחיצה.
       */
-      const inAppYouTubeVideo =
-        selectedVideo?.__youtubeVideo ||
-        (isYouTubeVideo(selectedVideo) ? selectedVideo : null);
+const storedMobileYouTubeVideo =
+  item?.mobile?.url
+    ? item.mobile
+    : (
+        item?.mobileUrl
+          ? {
+              url: item.mobileUrl,
+              youtubeId: item.mobileYoutubeId || "",
+              embedUrl: item.mobileEmbedUrl || "",
+              provider: item.mobileProvider || ""
+            }
+          : null
+      );
+
+    const preferMobileYouTube =
+      isMobileViewer() &&
+      !isLandscapeMobile();
+    
+    const inAppYouTubeVideo =
+      (
+        preferMobileYouTube &&
+        isYouTubeVideo(storedMobileYouTubeVideo)
+          ? storedMobileYouTubeVideo
+          : null
+      ) ||
+      selectedVideo?.__youtubeVideo ||
+      (isYouTubeVideo(selectedVideo) ? selectedVideo : null);
       
       if(
         shouldShowInAppYouTubePrompt() &&
@@ -6367,7 +6391,7 @@ function normalizeParashaName(value){
         גרסת רוחב נפתחת בעמוד YouTube הרגיל.
       */
       const youtubeWatchUrl =
-        selectedVideo.__variant === "mobile" && youtubeId
+        preferMobileYouTube && youtubeId
           ? `https://www.youtube.com/shorts/${youtubeId}`
           : getYouTubeWatchUrl(inAppYouTubeVideo);
       
