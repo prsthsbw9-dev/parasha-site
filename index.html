@@ -6614,11 +6614,37 @@ const storedMobileYouTubeVideo =
       const savedYouTubeUrl =
         String(inAppYouTubeVideo?.url || "").trim();
       
+      /*
+        בדיקה אם הכתובת המקורית נשמרה כ־Shorts
+      */
       const savedAsYouTubeShort =
         /youtube\.com\/shorts\//i.test(savedYouTubeUrl);
       
+      /*
+        ארבעת רובדי הפרד״ס הם סרטוני Shorts בנייד:
+        פשט, רמז, דרש וסוד
+      */
+      const isPardesShortLayer =
+        ["pshat", "remez", "drash", "sod"].includes(layer);
+      
+      /*
+        פותחים בתצוגת Shorts כאשר:
+        1. הקישור עצמו נשמר כ־Shorts;
+        או
+        2. זה אחד מארבעת רובדי הפרד״ס בנייד אנכי.
+      */
+      const shouldOpenAsYouTubeShort =
+        !!youtubeId &&
+        (
+          savedAsYouTubeShort ||
+          (
+            preferMobileYouTube &&
+            isPardesShortLayer
+          )
+        );
+      
       const youtubeWatchUrl =
-        savedAsYouTubeShort && youtubeId
+        shouldOpenAsYouTubeShort
           ? `https://www.youtube.com/shorts/${youtubeId}`
           : getYouTubeWatchUrl(inAppYouTubeVideo);
       
