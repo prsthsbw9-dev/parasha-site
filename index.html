@@ -4753,6 +4753,57 @@
     
     .bird-flight-desktop.is-playing{
       display:block !important;
+    
+      /*
+        מרכז הקן בתוך סרטון הרוחב.
+        כך ההגדלה מתבצעת סביב הקן ולא מזיזה אותו באלכסון.
+      */
+      transform-origin:55% 11.5%;
+    
+      animation:
+        birdDesktopAlignment 5s linear forwards;
+    }
+
+    @keyframes birdDesktopAlignment{
+      /*
+        התאמה מדויקת לאייקון הקודם:
+        קטן יותר, שמאלה ולמטה
+      */
+      0%{
+        transform:
+          translate(-3.1vw, 4.1vh)
+          scale(.65);
+      }
+    
+      /*
+        משאירים את המיקום והגודל קבועים
+        בזמן שהציפור מתחילה לקום מהקן
+      */
+      22%{
+        transform:
+          translate(-3.1vw, 4.1vh)
+          scale(.65);
+      }
+    
+      /*
+        הציפור כבר עפה קדימה ולכן מתחילים
+        להחזיר את שכבת הסרטון לגודל גדול יותר
+      */
+      55%{
+        transform:
+          translate(-3.1vw, 4.1vh)
+          scale(.82);
+      }
+    
+      /*
+        הציפור קרובה לצופה;
+        נשארת מעט שמאלה ולמטה אבל בגודל מלא
+      */
+      100%{
+        transform:
+          translate(-3.1vw, 4.1vh)
+          scale(1);
+      }
     }
     
     body.bird-transition-active .bird-flight-desktop{
