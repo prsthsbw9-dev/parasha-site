@@ -4703,7 +4703,14 @@
     body.bird-transition-active .ma-shebalev-live,
     body.bird-transition-active .lion-guide-live{
       z-index:1 !important;
-    }  
+    }
+
+    /* מסתירים את הציפור הקבועה בזמן שסרטון המעבר פועל */
+    body.bird-transition-active .dror-names-live{
+      opacity:0 !important;
+      visibility:hidden !important;
+      pointer-events:none !important;
+    }    
     
     @keyframes birdMobileSizeCorrection{
       0%{
@@ -4746,6 +4753,49 @@
     
     .bird-flight-desktop.is-playing{
       display:block !important;
+      transform-origin:0 0;
+    
+      animation:
+        birdDesktopPositionCorrection 5s linear forwards;
+    }
+
+    @keyframes birdDesktopPositionCorrection{
+      /*
+        תחילת הסרטון:
+        התאמה לגודל ולמיקום של האייקון הקבוע
+      */
+      0%{
+        transform:
+          translate(14.5vw, 13.5vh)
+          scale(.58);
+      }
+    
+      /*
+        הציפור מתחילה להתרומם
+      */
+      18%{
+        transform:
+          translate(11vw, 10vh)
+          scale(.68);
+      }
+    
+      /*
+        הציפור כבר עפה קדימה
+      */
+      48%{
+        transform:
+          translate(5vw, 4.5vh)
+          scale(.86);
+      }
+    
+      /*
+        לקראת הצופה הסרטון חוזר לגודל המלא
+      */
+      100%{
+        transform:
+          translate(0, 0)
+          scale(1);
+      }
     }
     
     body.bird-transition-active .bird-flight-desktop{
