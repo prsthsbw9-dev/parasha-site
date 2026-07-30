@@ -3447,12 +3447,21 @@
       pointer-events:none;
     }    
 
-    /* העלייה הראשית — הרחבה במחשב שולחני ובלפטופ */
-    body.device-desktop .main-aliyah-live.pardes-fruit-enter,
-    body.device-laptop .main-aliyah-live.pardes-fruit-enter{
-      transform:
-        translate(-50%, -50%)
-        scale(64) !important;
+    /*
+      בזמן אפקט ההתרחבות מאפשרים לאייקון לצאת
+      מגבולות המעטפת המרכזית ולכסות את כל המסך
+    */
+    body.entering-pardes-fruit #mainScreen{
+      width:100vw !important;
+      max-width:none !important;
+      margin:0 !important;
+      overflow:visible !important;
+    }
+    
+    body.entering-pardes-fruit #mainScreen .gate-card{
+      width:100vw !important;
+      max-width:none !important;
+      overflow:visible !important;
     }
     
     /* מסתירים את הכיתוב בזמן ההתרחבות */
