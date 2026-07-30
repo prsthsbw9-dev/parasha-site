@@ -4668,19 +4668,53 @@
 
     /* מעבר הציפור השקוף — נייד אנכי */
     .bird-flight-mobile{
-      position:fixed;
-      inset:0;
-      width:100vw;
-      height:100dvh;
+      position:fixed !important;
+      inset:0 !important;
+      width:100vw !important;
+      height:100dvh !important;
       display:none;
-      object-fit:cover;
-      z-index:100000;
-      pointer-events:none;
+      object-fit:cover !important;
+    
+      /* תמיד מעל כל האייקונים והלחצנים */
+      z-index:2147483647 !important;
+    
+      pointer-events:none !important;
       background:transparent !important;
+      transform-origin:55% 18%;
     }
     
     .bird-flight-mobile.is-playing{
-      display:block;
+      display:block !important;
+    
+      /*
+        מתחיל מעט קטן יותר כדי להתאים לגודל הקן הקבוע,
+        וחוזר בהדרגה לגודל המלא בזמן התעופה.
+      */
+      animation:
+        birdMobileSizeCorrection 5s linear forwards;
+    }
+
+    body.bird-transition-active .bird-flight-mobile{
+      z-index:2147483647 !important;
+      isolation:isolate;
+    }
+    
+    @keyframes birdMobileSizeCorrection{
+      0%{
+        transform:scale(.85);
+      }
+    
+      20%{
+        transform:scale(.88);
+      }
+    
+      55%{
+        transform:scale(.94);
+      }
+    
+      100%{
+        transform:scale(1);
+      }
     }
     
     /* הסרטון החדש מיועד כרגע רק לנייד אנכי */
@@ -7850,6 +7884,8 @@ if (sodGrapesVideo) {
       }
 
       birdFlightMobile.classList.add("is-playing");
+      document.body.classList.add("bird-transition-active");
+
 
       try{
         birdFlightMobile.currentTime = 0;
