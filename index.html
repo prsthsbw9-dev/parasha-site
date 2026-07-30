@@ -8056,6 +8056,83 @@ if (sodGrapesVideo) {
         if(selectedBirdFlight.parentElement !== document.body){
           document.body.appendChild(selectedBirdFlight);
         }
+
+        /*
+          מעבירים גם את הכיתוב "שמות" ישירות אל body,
+          תוך שמירת המיקום המדויק שלו על המסך
+        */
+        const birdNamesLabel =
+          birdLink.querySelector(".dror-names-label");
+        
+        if(
+          birdNamesLabel &&
+          birdNamesLabel.parentElement !== document.body
+        ){
+          const birdLabelRect =
+            birdNamesLabel.getBoundingClientRect();
+        
+          birdNamesLabel.style.setProperty(
+            "position",
+            "fixed",
+            "important"
+          );
+        
+          birdNamesLabel.style.setProperty(
+            "left",
+            `${birdLabelRect.left + birdLabelRect.width / 2}px`,
+            "important"
+          );
+        
+          birdNamesLabel.style.setProperty(
+            "top",
+            `${birdLabelRect.top}px`,
+            "important"
+          );
+        
+          birdNamesLabel.style.setProperty(
+            "right",
+            "auto",
+            "important"
+          );
+        
+          birdNamesLabel.style.setProperty(
+            "bottom",
+            "auto",
+            "important"
+          );
+        
+          birdNamesLabel.style.setProperty(
+            "transform",
+            "translateX(-50%)",
+            "important"
+          );
+        
+          birdNamesLabel.style.setProperty(
+            "opacity",
+            "1",
+            "important"
+          );
+        
+          birdNamesLabel.style.setProperty(
+            "visibility",
+            "visible",
+            "important"
+          );
+        
+          birdNamesLabel.style.setProperty(
+            "z-index",
+            "2147483647",
+            "important"
+          );
+        
+          birdNamesLabel.style.setProperty(
+            "pointer-events",
+            "none",
+            "important"
+          );
+        
+          document.body.appendChild(birdNamesLabel);
+        }        
     
         if(selectedBirdFlight.classList.contains("is-playing")){
           return;
