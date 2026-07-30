@@ -4730,6 +4730,35 @@
         display:none !important;
       }
     }
+
+    /* מעבר הציפור השקוף — מחשב ולפטופ */
+    .bird-flight-desktop{
+      position:fixed !important;
+      inset:0 !important;
+      width:100vw !important;
+      height:100vh !important;
+      display:none;
+      object-fit:cover !important;
+      z-index:2147483647 !important;
+      pointer-events:none !important;
+      background:transparent !important;
+    }
+    
+    .bird-flight-desktop.is-playing{
+      display:block !important;
+    }
+    
+    body.bird-transition-active .bird-flight-desktop{
+      z-index:2147483647 !important;
+      isolation:isolate;
+    }
+    
+    /* לא מציגים את גרסת המחשב בנייד */
+    @media (max-width:950px){
+      .bird-flight-desktop{
+        display:none !important;
+      }
+    }
     
   </style>
 </head>
@@ -5298,8 +5327,23 @@
         src="bird-flight-mobile-transparent.webm"
         type="video/webm"
       >
+    </video> 
+
+    <!-- מעבר הציפור השקוף — מחשב ולפטופ -->
+    <video
+      id="birdFlightDesktop"
+      class="bird-flight-desktop"
+      muted
+      playsinline
+      preload="auto"
+      aria-hidden="true"
+    >
+      <source
+        src="bird-flight-desktop-transparent.webm"
+        type="video/webm"
+      >
     </video>      
-      
+           
       <!-- קישור שקוף ללחצן הסודי בערוץ -->
       <a href="secret-admin.html"
          class="secret-admin-hit"
@@ -7868,19 +7912,94 @@ if (sodGrapesVideo) {
     }
   }
 
-  if(birdLink){
-    birdLink.addEventListener("click", function(event){
-      event.preventDefault();
-
-      const birdFlightMobile =
-        document.getElementById("birdFlightMobile");
-
-      if(
-        birdFlightMobile &&
-        birdFlightMobile.parentElement !== document.body
-      ){
-        document.body.appendChild(birdFlightMobile);
-      }      
+    if(birdLink){
+      birdLink.addEventListener("click", function(event){
+        event.preventDefault();
+    
+        const birdFlightMobile =
+          document.getElementById("birdFlightMobile");
+    
+        const birdFlightDesktop =
+          document.getElementById("birdFlightDesktop");
+    
+        const useNewMobileBird =
+          window.matchMedia(
+            "(max-width:640px) and (orientation:portrait)"
+          ).matches;
+    
+        /*
+          מחשב ולפטופ בלבד.
+          נייד לרוחב ממשיך להשתמש במעבר הישן.
+        */
+        const useNewDesktopBird =
+          !useMobileTransition();
+    
+        const selectedBirdFlight =
+          useNewMobileBird
+            ? birdFlightMobile
+            : (
+                useNewDesktopBird
+                  ? birdFlightDesktop
+                  : null
+              );
+    
+        /*
+          אם זו תצוגה שעדיין אין לה סרטון שקוף מתאים,
+          משאירים את המעבר הישן.
+        */
+        if(!selectedBirdFlight){
+          playIconTransition("bird", "names.html");
+          return;
+        }
+    
+        /*
+          מעבירים את הסרטון ישירות אל body כדי שלא יהיה
+          כלוא מאחורי שכבות האייקונים.
+        */
+        if(selectedBirdFlight.parentElement !== document.body){
+          document.body.appendChild(selectedBirdFlight);
+        }
+    
+        if(selectedBirdFlight.classList.contains("is-playing")){
+          return;
+        }
+    
+        selectedBirdFlight.classList.add("is-playing");
+        document.body.classList.add("bird-transition-active");
+    
+        try{
+          selectedBirdFlight.currentTime = 0;
+        }catch(error){}
+    
+        let birdNavigationFinished = false;
+        let birdFallbackTimer = null;
+    
+        function finishBirdTransition(){
+          if(birdNavigationFinished) return;
+    
+          birdNavigationFinished = true;
+          clearTimeout(birdFallbackTimer);
+    
+          window.location.href = "names.html";
+        }
+    
+        selectedBirdFlight.onended = finishBirdTransition;
+        selectedBirdFlight.onerror = finishBirdTransition;
+    
+        birdFallbackTimer = setTimeout(
+          finishBirdTransition,
+          6000
+        );
+    
+        const playPromise = selectedBirdFlight.play();
+    
+        if(playPromise && typeof playPromise.catch === "function"){
+          playPromise.catch(function(){
+            finishBirdTransition();
+          });
+        }
+      });
+    } 
 
       const useNewMobileBird =
         window.matchMedia(
