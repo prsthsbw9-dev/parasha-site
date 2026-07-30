@@ -4666,6 +4666,30 @@
       opacity:1;
     }
 
+    /* מעבר הציפור השקוף — נייד אנכי */
+    .bird-flight-mobile{
+      position:fixed;
+      inset:0;
+      width:100vw;
+      height:100dvh;
+      display:none;
+      object-fit:cover;
+      z-index:100000;
+      pointer-events:none;
+      background:transparent !important;
+    }
+    
+    .bird-flight-mobile.is-playing{
+      display:block;
+    }
+    
+    /* הסרטון החדש מיועד כרגע רק לנייד אנכי */
+    @media (min-width:641px), (orientation:landscape){
+      .bird-flight-mobile{
+        display:none !important;
+      }
+    }
+    
   </style>
 </head>
   
@@ -5220,6 +5244,21 @@
       <span class="dror-names-label">שמות</span>
     </a>
 
+    <!-- מעבר הציפור השקוף — נייד אנכי בלבד -->
+    <video
+      id="birdFlightMobile"
+      class="bird-flight-mobile"
+      muted
+      playsinline
+      preload="auto"
+      aria-hidden="true"
+    >
+      <source
+        src="bird-flight-mobile-transparent.webm"
+        type="video/webm"
+      >
+    </video>      
+      
       <!-- קישור שקוף ללחצן הסודי בערוץ -->
       <a href="secret-admin.html"
          class="secret-admin-hit"
@@ -7791,7 +7830,63 @@ if (sodGrapesVideo) {
   if(birdLink){
     birdLink.addEventListener("click", function(event){
       event.preventDefault();
-      playIconTransition("bird", "names.html");
+
+      const birdFlightMobile =
+        document.getElementById("birdFlightMobile");
+
+      const useNewMobileBird =
+        window.matchMedia(
+          "(max-width:640px) and (orientation:portrait)"
+        ).matches;
+
+      /* מחשב או נייד לרוחב — משאירים כרגע את המעבר הישן */
+      if(!useNewMobileBird || !birdFlightMobile){
+        playIconTransition("bird", "names.html");
+        return;
+      }
+
+      if(birdFlightMobile.classList.contains("is-playing")){
+        return;
+      }
+
+      birdFlightMobile.classList.add("is-playing");
+
+      try{
+        birdFlightMobile.currentTime = 0;
+      }catch(error){}
+
+      let birdNavigationFinished = false;
+
+      function finishBirdTransition(){
+        if(birdNavigationFinished) return;
+        birdNavigationFinished = true;
+        window.location.href = "names.html";
+      }
+
+      birdFlightMobile.onended = finishBirdTransition;
+      birdFlightMobile.onerror = finishBirdTransition;
+
+      const birdFallbackTimer = setTimeout(
+        finishBirdTransition,
+        6000
+      );
+
+      birdFlightMobile.addEventListener(
+        "ended",
+        function(){
+          clearTimeout(birdFallbackTimer);
+        },
+        { once:true }
+      );
+
+      const playPromise = birdFlightMobile.play();
+
+      if(playPromise && typeof playPromise.catch === "function"){
+        playPromise.catch(function(){
+          clearTimeout(birdFallbackTimer);
+          finishBirdTransition();
+        });
+      }
     });
   }
 
