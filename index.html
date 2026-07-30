@@ -6390,8 +6390,14 @@ const storedMobileYouTubeVideo =
         גרסת נייד אנכית נפתחת בתצוגת YouTube Shorts.
         גרסת רוחב נפתחת בעמוד YouTube הרגיל.
       */
+      const savedYouTubeUrl =
+        String(inAppYouTubeVideo?.url || "").trim();
+      
+      const savedAsYouTubeShort =
+        /youtube\.com\/shorts\//i.test(savedYouTubeUrl);
+      
       const youtubeWatchUrl =
-        preferMobileYouTube && youtubeId
+        savedAsYouTubeShort && youtubeId
           ? `https://www.youtube.com/shorts/${youtubeId}`
           : getYouTubeWatchUrl(inAppYouTubeVideo);
       
