@@ -4699,6 +4699,12 @@
       isolation:isolate;
     }
     
+    body.bird-transition-active .haor-shebi-live,
+    body.bird-transition-active .ma-shebalev-live,
+    body.bird-transition-active .lion-guide-live{
+      z-index:1 !important;
+    }  
+    
     @keyframes birdMobileSizeCorrection{
       0%{
         transform:scale(.85);
@@ -4716,6 +4722,7 @@
         transform:scale(1);
       }
     }
+
     
     /* הסרטון החדש מיועד כרגע רק לנייד אנכי */
     @media (min-width:641px), (orientation:landscape){
@@ -7867,6 +7874,13 @@ if (sodGrapesVideo) {
 
       const birdFlightMobile =
         document.getElementById("birdFlightMobile");
+
+      if(
+        birdFlightMobile &&
+        birdFlightMobile.parentElement !== document.body
+      ){
+        document.body.appendChild(birdFlightMobile);
+      }      
 
       const useNewMobileBird =
         window.matchMedia(
