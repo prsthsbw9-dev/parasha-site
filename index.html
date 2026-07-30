@@ -3447,13 +3447,12 @@
       pointer-events:none;
     }    
 
-    /* העלייה הראשית — הרחבה מותאמת למחשב וללפטופ */
-    @media (min-width:951px){
-      .main-aliyah-live.pardes-fruit-enter{
-        transform:
-          translate(-50%, -50%)
-          scale(64) !important;
-      }
+    /* העלייה הראשית — הרחבה במחשב שולחני ובלפטופ */
+    body.device-desktop .main-aliyah-live.pardes-fruit-enter,
+    body.device-laptop .main-aliyah-live.pardes-fruit-enter{
+      transform:
+        translate(-50%, -50%)
+        scale(64) !important;
     }
     
     /* מסתירים את הכיתוב בזמן ההתרחבות */
