@@ -4753,49 +4753,6 @@
     
     .bird-flight-desktop.is-playing{
       display:block !important;
-      transform-origin:0 0;
-    
-      animation:
-        birdDesktopPositionCorrection 5s linear forwards;
-    }
-
-    @keyframes birdDesktopPositionCorrection{
-      /*
-        תחילת הסרטון:
-        התאמה לגודל ולמיקום של האייקון הקבוע
-      */
-      0%{
-        transform:
-          translate(14.5vw, 13.5vh)
-          scale(.58);
-      }
-    
-      /*
-        הציפור מתחילה להתרומם
-      */
-      18%{
-        transform:
-          translate(11vw, 10vh)
-          scale(.68);
-      }
-    
-      /*
-        הציפור כבר עפה קדימה
-      */
-      48%{
-        transform:
-          translate(5vw, 4.5vh)
-          scale(.86);
-      }
-    
-      /*
-        לקראת הצופה הסרטון חוזר לגודל המלא
-      */
-      100%{
-        transform:
-          translate(0, 0)
-          scale(1);
-      }
     }
     
     body.bird-transition-active .bird-flight-desktop{
@@ -4803,6 +4760,13 @@
       isolation:isolate;
     }
     
+    /* מסתיר את האייקון הקבוע בזמן סרטון המעבר */
+    body.bird-transition-active .dror-names-live{
+      opacity:0 !important;
+      visibility:hidden !important;
+      pointer-events:none !important;
+    }
+
     /* לא מציגים את גרסת המחשב בנייד */
     @media (max-width:950px){
       .bird-flight-desktop{
