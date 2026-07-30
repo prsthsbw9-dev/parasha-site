@@ -4722,12 +4722,27 @@
       z-index:1 !important;
     }
 
-    /* מסתירים את הציפור הקבועה בזמן שסרטון המעבר פועל */
+    /*
+      בזמן מעבר הציפור משאירים את הכיתוב "שמות",
+      אבל מסתירים את סרטון הציפור הקבוע
+    */
     body.bird-transition-active .dror-names-live{
+      opacity:1 !important;
+      visibility:visible !important;
+      pointer-events:none !important;
+    }
+    
+    /* מסתירים רק את הקן והציפור הקבועים */
+    body.bird-transition-active .dror-names-video{
       opacity:0 !important;
       visibility:hidden !important;
-      pointer-events:none !important;
-    }    
+    }
+    
+    /* משאירים את הכיתוב "שמות" גלוי */
+    body.bird-transition-active .dror-names-label{
+      opacity:1 !important;
+      visibility:visible !important;
+    }  
     
     @keyframes birdMobileSizeCorrection{
       0%{
