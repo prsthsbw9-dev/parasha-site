@@ -8001,64 +8001,6 @@ if (sodGrapesVideo) {
       });
     } 
 
-      const useNewMobileBird =
-        window.matchMedia(
-          "(max-width:640px) and (orientation:portrait)"
-        ).matches;
-
-      /* מחשב או נייד לרוחב — משאירים כרגע את המעבר הישן */
-      if(!useNewMobileBird || !birdFlightMobile){
-        playIconTransition("bird", "names.html");
-        return;
-      }
-
-      if(birdFlightMobile.classList.contains("is-playing")){
-        return;
-      }
-
-      birdFlightMobile.classList.add("is-playing");
-      document.body.classList.add("bird-transition-active");
-
-
-      try{
-        birdFlightMobile.currentTime = 0;
-      }catch(error){}
-
-      let birdNavigationFinished = false;
-
-      function finishBirdTransition(){
-        if(birdNavigationFinished) return;
-        birdNavigationFinished = true;
-        window.location.href = "names.html";
-      }
-
-      birdFlightMobile.onended = finishBirdTransition;
-      birdFlightMobile.onerror = finishBirdTransition;
-
-      const birdFallbackTimer = setTimeout(
-        finishBirdTransition,
-        6000
-      );
-
-      birdFlightMobile.addEventListener(
-        "ended",
-        function(){
-          clearTimeout(birdFallbackTimer);
-        },
-        { once:true }
-      );
-
-      const playPromise = birdFlightMobile.play();
-
-      if(playPromise && typeof playPromise.catch === "function"){
-        playPromise.catch(function(){
-          clearTimeout(birdFallbackTimer);
-          finishBirdTransition();
-        });
-      }
-    });
-  }
-
   const lionRoarVideo = document.getElementById("lionRoarVideo");
   
   if(lionRoarVideo){
