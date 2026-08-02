@@ -6506,19 +6506,62 @@ function normalizeParashaName(value){
     function chooseYouTubeForViewer(item){
       const mobile = getStoredVideoVariant(item, "mobile");
       const wide = getStoredVideoVariant(item, "wide");
-      const mobileYouTube = isYouTubeVideo(mobile) ? mobile : null;
-      const wideYouTube = isYouTubeVideo(wide) ? wide : null;
-
-      if(isLandscapeMobile()){
-        return wideYouTube || mobileYouTube;
-      }
-
+    
+      const mobileYouTube =
+        isYouTubeVideo(mobile) ? mobile : null;
+    
+      const wideYouTube =
+        isYouTubeVideo(wide) ? wide : null;
+    
+      const mobileShort =
+        mobileYouTube && isYouTubeShortVariant(mobileYouTube)
+          ? mobileYouTube
+          : null;
+    
+      /*
+        בנייד:
+        1. Shorts נייד.
+        2. קישור YouTube רחב.
+        3. קישור נייד רגיל רק אם אין קישור רחב.
+      */
       if(isMobileViewer()){
-        return mobileYouTube || wideYouTube;
+        return mobileShort || wideYouTube || mobileYouTube;
       }
-
+    
+      /* במחשב מעדיפים תמיד את הקישור הרחב. */
       return wideYouTube || mobileYouTube;
     }
+
+    function getYouTubeLaunchUrl(youtubeId, isShort, webUrl){
+      if(!youtubeId) return webUrl;
+    
+      const isAndroid =
+        /Android/i.test(navigator.userAgent);
+    
+      /*
+        באנדרואיד מנסים קודם לפתוח את אפליקציית YouTube.
+        אם היא אינה מותקנת, חוזרים אוטומטית לקישור בדפדפן.
+      */
+      if(isAndroid){
+        const youtubePath = isShort
+          ? `shorts/${youtubeId}`
+          : `watch?v=${youtubeId}`;
+    
+        return (
+          `intent://www.youtube.com/${youtubePath}` +
+          `#Intent;scheme=https;` +
+          `package=com.google.android.youtube;` +
+          `S.browser_fallback_url=${encodeURIComponent(webUrl)};end`
+        );
+      }
+    
+      /*
+        באייפון משתמשים בקישור הרשמי.
+        iOS יפתח את האפליקציה כאשר הדבר מאושר במכשיר,
+        ובמקרה אחר יישאר בדפדפן.
+      */
+      return webUrl;
+    }    
     
     function getYouTubeEmbedUrl(video){
       if(video?.embedUrl) return video.embedUrl;
@@ -6710,26 +6753,12 @@ function normalizeParashaName(value){
           ? `https://www.youtube.com/shorts/${youtubeId}`
           : getYouTubeWatchUrl(directYouTubeVideo);
 
-      const showInsideVerticalPlayer =
-        isMobileViewer() &&
-        !isLandscapeMobile() &&
-        !document.body.classList.contains("in-app-browser");
-
-      if(showInsideVerticalPlayer){
-        const embedUrl = getYouTubeEmbedUrl(directYouTubeVideo);
-
-        player.style.display = "none";
-        player.removeAttribute("src");
-        player.src = "";
-        empty.style.display = "none";
-
-        if(embedUrl && youtubePlayer && youtubeViewport){
-          youtubeViewport.classList.remove("is-cropped-vertical", "is-horizontal");
-
-          if(!shouldOpenAsYouTubeShort){
-            youtubeViewport.classList.add("is-cropped-vertical");
-          }
-
+      const youtubeLaunchUrl = getYouTubeLaunchUrl(
+        youtubeId,
+        shouldOpenAsYouTubeShort,
+        youtubeWatchUrl
+      );
+        
           youtubePlayer.src = `${embedUrl}?rel=0&modestbranding=1&playsinline=1&autoplay=1`;
           youtubePlayer.style.visibility = "visible";
           youtubeViewport.style.display = "block";
@@ -6767,14 +6796,21 @@ function normalizeParashaName(value){
         }
       
         empty.classList.add("is-inapp-youtube");
-      
+        
+        /*
+          Shorts נשאר אנכי.
+          סרטון YouTube רגיל מוצג כרוחבי בלי חיתוך.
+        */
+        if(!shouldOpenAsYouTubeShort){
+          empty.classList.add("is-horizontal");
+        }
+        
         empty.style.display = "block";
       
         empty.innerHTML = `
           <a
             class="pardes-inapp-youtube-link"
-            href="${youtubeWatchUrl}"
-            target="_blank"
+            href="${youtubeLaunchUrl}"
             rel="noopener noreferrer"
             aria-label="פתיחת הסרטון ב-YouTube ללייק, תגובה ושיתוף"
           >
@@ -6794,7 +6830,8 @@ function normalizeParashaName(value){
         `;
       
         if(youtubeOpenBtn){
-          youtubeOpenBtn.href = youtubeWatchUrl;
+          youtubeOpenBtn.href = youtubeLaunchUrl;
+          youtubeOpenBtn.removeAttribute("target");
           youtubeOpenBtn.style.display = "block";
         }
       
