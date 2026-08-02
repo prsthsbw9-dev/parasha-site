@@ -6758,28 +6758,7 @@ function normalizeParashaName(value){
         shouldOpenAsYouTubeShort,
         youtubeWatchUrl
       );
-        
-          youtubePlayer.src = `${embedUrl}?rel=0&modestbranding=1&playsinline=1&autoplay=1`;
-          youtubePlayer.style.visibility = "visible";
-          youtubeViewport.style.display = "block";
-
-          if(youtubeOpenBtn){
-            youtubeOpenBtn.href = youtubeWatchUrl;
-            youtubeOpenBtn.style.display = "block";
-          }
-
-          panel.classList.add("is-open");
-          panel.setAttribute("aria-hidden", "false");
-
-          setTimeout(() => {
-            const closeButton = document.getElementById("pardesVideoClose");
-            closeButton?.focus();
-          }, 80);
-
-          return;
-        }
-      }
-      
+             
         player.style.display = "none";
         player.removeAttribute("src");
         player.src = "";
