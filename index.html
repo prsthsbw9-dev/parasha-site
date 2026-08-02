@@ -6789,15 +6789,7 @@ function normalizeParashaName(value){
         }
       
         empty.classList.add("is-inapp-youtube");
-        
-        /*
-          Shorts נשאר אנכי.
-          סרטון YouTube רגיל מוצג כרוחבי בלי חיתוך.
-        */
-        if(!shouldOpenAsYouTubeShort){
-          empty.classList.add("is-horizontal");
-        }
-        
+               
         empty.style.display = "block";
       
         empty.innerHTML = `
