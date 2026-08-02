@@ -5008,7 +5008,10 @@
     נייד בדפדפן רגיל: מהירות 1.5.
     מחשב: מהירות רגילה.
   */
-  const introPlaybackRate = 1;
+  const introPlaybackRate =
+  useFastInAppIntro ? 1.5 :
+  useMobileIntro ? 1.25 :
+  1;
   
   introVideo.defaultPlaybackRate = introPlaybackRate;
   introVideo.playbackRate = introPlaybackRate;
