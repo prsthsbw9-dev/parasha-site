@@ -6387,15 +6387,29 @@ function normalizeParashaName(value){
     */
     function isYouTubeShortVariant(video){
       if(!isYouTubeVideo(video)) return false;
-
-      const savedType = String(video.youtubeType || "").trim().toLowerCase();
-
-      if(savedType){
-        return savedType === "shorts";
+    
+      /*
+        קודם בודקים את הכתובות עצמן.
+        כך גם קישורים ישנים יזוהו נכון כ־Shorts.
+      */
+      const allUrls = [
+        video.originalUrl,
+        video.url,
+        video.embedUrl
+      ]
+        .filter(Boolean)
+        .join(" ");
+    
+      if(/youtube\.com\/shorts\//i.test(allUrls)){
+        return true;
       }
-
-      const originalUrl = String(video.originalUrl || video.url || "").trim();
-      return /youtube\.com\/shorts\//i.test(originalUrl);
+    
+      const savedType =
+        String(video.youtubeType || "")
+          .trim()
+          .toLowerCase();
+    
+      return savedType === "shorts";
     }
     
     function chooseVideoForViewer(item){
