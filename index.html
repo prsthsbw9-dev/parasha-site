@@ -591,8 +591,39 @@
     }
     
     .pardes-youtube-player{
+      width:100%;
+      height:100%;
       border:0;
       object-fit:initial;
+    }
+
+    .pardes-youtube-viewport{
+      position:relative;
+      width:min(100%, 430px);
+      max-height:min(76vh, 760px);
+      aspect-ratio:9 / 16;
+      margin:0 auto;
+      overflow:hidden;
+      border-radius:20px;
+      background:#000;
+    }
+
+    .pardes-youtube-viewport.is-cropped-vertical .pardes-youtube-player{
+      position:absolute;
+      top:0;
+      left:50%;
+      width:316.25%;
+      height:100%;
+      max-width:none;
+      max-height:none;
+      transform:translateX(-50%);
+      border-radius:0;
+    }
+
+    .pardes-youtube-viewport.is-horizontal{
+      width:100%;
+      max-height:62vh;
+      aspect-ratio:16 / 9;
     }
     
     .pardes-youtube-open-btn{
@@ -763,6 +794,12 @@
       }
     
       .pardes-video-player{
+        width:min(100%, 390px);
+        max-height:calc(100dvh - 190px);
+        border-radius:18px;
+      }
+
+      .pardes-youtube-viewport{
         width:min(100%, 390px);
         max-height:calc(100dvh - 190px);
         border-radius:18px;
@@ -5583,7 +5620,9 @@
       </div>
       <div class="pardes-video-body">
         <video id="pardesVideoPlayer" class="pardes-video-player" controls playsinline preload="metadata" aria-label="נגן וידאו של עומק העלייה"></video>
-        <iframe id="pardesYoutubePlayer" class="pardes-video-player pardes-youtube-player" title="נגן YouTube של עומק העלייה" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen referrerpolicy="strict-origin-when-cross-origin" style="display:none;"></iframe>
+        <div id="pardesYoutubeViewport" class="pardes-youtube-viewport" style="display:none;">
+          <iframe id="pardesYoutubePlayer" class="pardes-video-player pardes-youtube-player" title="נגן YouTube של עומק העלייה" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+        </div>
         <a id="pardesYoutubeOpenBtn" class="pardes-youtube-open-btn" href="#" target="_blank" rel="noopener noreferrer" aria-label="כל לייק, תגובה ושיתוף = חלק מזיכוי הרבים שלך!">כל לייק, תגובה ושיתוף = חלק<span class="mobile-break">מזיכוי הרבים שלך!</span><span class="desktop-only"> מזיכוי הרבים שלך!</span></a>
         <div id="pardesVideoEmpty" class="pardes-video-empty"></div>
       </div>
@@ -6529,14 +6568,19 @@ function normalizeParashaName(value){
 
       const player = document.getElementById("pardesVideoPlayer");
       const youtubePlayer = document.getElementById("pardesYoutubePlayer");
+      const youtubeViewport = document.getElementById("pardesYoutubeViewport");
 
       hideYouTubeOpenButton();
 
       if(youtubePlayer){
         youtubePlayer.removeAttribute("src");
         youtubePlayer.src = "";
-        youtubePlayer.style.display = "none";
         youtubePlayer.classList.remove("is-horizontal", "is-square");
+      }
+
+      if(youtubeViewport){
+        youtubeViewport.style.display = "none";
+        youtubeViewport.classList.remove("is-cropped-vertical", "is-horizontal");
       }
 
       if(!player) return;
@@ -6616,6 +6660,7 @@ function normalizeParashaName(value){
       const title = document.getElementById("pardesVideoTitle");
       const player = document.getElementById("pardesVideoPlayer");
       const youtubePlayer = document.getElementById("pardesYoutubePlayer");
+      const youtubeViewport = document.getElementById("pardesYoutubeViewport");
       const youtubeOpenBtn = document.getElementById("pardesYoutubeOpenBtn");
       const empty = document.getElementById("pardesVideoEmpty");
 
@@ -6664,6 +6709,47 @@ function normalizeParashaName(value){
         shouldOpenAsYouTubeShort
           ? `https://www.youtube.com/shorts/${youtubeId}`
           : getYouTubeWatchUrl(directYouTubeVideo);
+
+      const showInsideVerticalPlayer =
+        isMobileViewer() &&
+        !isLandscapeMobile() &&
+        !document.body.classList.contains("in-app-browser");
+
+      if(showInsideVerticalPlayer){
+        const embedUrl = getYouTubeEmbedUrl(directYouTubeVideo);
+
+        player.style.display = "none";
+        player.removeAttribute("src");
+        player.src = "";
+        empty.style.display = "none";
+
+        if(embedUrl && youtubePlayer && youtubeViewport){
+          youtubeViewport.classList.remove("is-cropped-vertical", "is-horizontal");
+
+          if(!shouldOpenAsYouTubeShort){
+            youtubeViewport.classList.add("is-cropped-vertical");
+          }
+
+          youtubePlayer.src = `${embedUrl}?rel=0&modestbranding=1&playsinline=1&autoplay=1`;
+          youtubePlayer.style.visibility = "visible";
+          youtubeViewport.style.display = "block";
+
+          if(youtubeOpenBtn){
+            youtubeOpenBtn.href = youtubeWatchUrl;
+            youtubeOpenBtn.style.display = "block";
+          }
+
+          panel.classList.add("is-open");
+          panel.setAttribute("aria-hidden", "false");
+
+          setTimeout(() => {
+            const closeButton = document.getElementById("pardesVideoClose");
+            closeButton?.focus();
+          }, 80);
+
+          return;
+        }
+      }
       
         player.style.display = "none";
         player.removeAttribute("src");
@@ -6672,8 +6758,12 @@ function normalizeParashaName(value){
         if(youtubePlayer){
           youtubePlayer.removeAttribute("src");
           youtubePlayer.src = "";
-          youtubePlayer.style.display = "none";
           youtubePlayer.classList.remove("is-horizontal", "is-square");
+        }
+
+        if(youtubeViewport){
+          youtubeViewport.style.display = "none";
+          youtubeViewport.classList.remove("is-cropped-vertical", "is-horizontal");
         }
       
         empty.classList.add("is-inapp-youtube");
@@ -6727,7 +6817,7 @@ function normalizeParashaName(value){
 
           if(!embedUrl){
             player.style.display = "none";
-            if(youtubePlayer) youtubePlayer.style.display = "none";
+            if(youtubeViewport) youtubeViewport.style.display = "none";
             empty.style.display = "block";
             empty.innerHTML = `קישור YouTube של <b>${layerName}</b> אינו תקין.`;
           }else{
@@ -6735,16 +6825,17 @@ function normalizeParashaName(value){
             player.removeAttribute("src");
             player.src = "";
 
-            if(youtubePlayer){
+            if(youtubePlayer && youtubeViewport){
               youtubePlayer.classList.remove("is-horizontal", "is-square");
+              youtubeViewport.classList.remove("is-cropped-vertical", "is-horizontal");
 
               if(selectedVideo.__variant === "wide"){
-                youtubePlayer.classList.add("is-horizontal");
+                youtubeViewport.classList.add("is-horizontal");
               }
 
               youtubePlayer.src = `${embedUrl}?rel=0&modestbranding=1&playsinline=1`;
               youtubePlayer.style.visibility = "visible";
-              youtubePlayer.style.display = "block";
+              youtubeViewport.style.display = "block";
             }
 
             if(youtubeOpenBtn){
@@ -6767,8 +6858,12 @@ function normalizeParashaName(value){
         if(youtubePlayer){
           youtubePlayer.removeAttribute("src");
           youtubePlayer.src = "";
-          youtubePlayer.style.display = "none";
           youtubePlayer.classList.remove("is-horizontal", "is-square");
+        }
+
+        if(youtubeViewport){
+          youtubeViewport.style.display = "none";
+          youtubeViewport.classList.remove("is-cropped-vertical", "is-horizontal");
         }
         
         /*
@@ -6847,7 +6942,7 @@ function normalizeParashaName(value){
         player.style.display = "none";
 
         if(youtubePlayer){
-          youtubePlayer.style.display = "none";
+          if(youtubeViewport) youtubeViewport.style.display = "none";
         }
 
         empty.style.display = "block";
