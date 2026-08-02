@@ -659,7 +659,7 @@
       text-align:center;
     }
 
-    /* צפייה דרך YouTube בדפדפנים פנימיים של רשתות חברתיות */
+    /* תצוגה אנכית מקדימה ופתיחה ישירה ב־YouTube */
     .pardes-video-empty.is-inapp-youtube{
       position:relative;
       display:block;
@@ -695,7 +695,8 @@
       width:100%;
       height:100%;
       display:block;
-      object-fit:cover;
+      object-fit:contain;
+      background:#000;
       opacity:.76;
     }
     
@@ -6440,6 +6441,45 @@ function normalizeParashaName(value){
         )
       );
     }
+
+    function getStoredVideoVariant(item, variant){
+      if(!item) return null;
+
+      if(item[variant]?.url){
+        return withSelectedVariant(item[variant], variant);
+      }
+
+      const prefix = variant === "mobile" ? "mobile" : "wide";
+      const url = item[`${prefix}Url`];
+
+      if(!url) return null;
+
+      return withSelectedVariant({
+        url,
+        youtubeId: item[`${prefix}YoutubeId`] || "",
+        embedUrl: item[`${prefix}EmbedUrl`] || "",
+        provider: item[`${prefix}Provider`] || "",
+        youtubeType: item[`${prefix}YoutubeType`] || "",
+        originalUrl: item[`${prefix}OriginalUrl`] || url
+      }, variant);
+    }
+
+    function chooseYouTubeForViewer(item){
+      const mobile = getStoredVideoVariant(item, "mobile");
+      const wide = getStoredVideoVariant(item, "wide");
+      const mobileYouTube = isYouTubeVideo(mobile) ? mobile : null;
+      const wideYouTube = isYouTubeVideo(wide) ? wide : null;
+
+      if(isLandscapeMobile()){
+        return wideYouTube || mobileYouTube;
+      }
+
+      if(isMobileViewer()){
+        return mobileYouTube || wideYouTube;
+      }
+
+      return wideYouTube || mobileYouTube;
+    }
     
     function getYouTubeEmbedUrl(video){
       if(video?.embedUrl) return video.embedUrl;
@@ -6470,10 +6510,6 @@ function normalizeParashaName(value){
         (rawUrl.match(
           /(?:v=|youtu\.be\/|embed\/|shorts\/|live\/)([a-zA-Z0-9_-]{8,20})/
         )?.[1] || "");
-    }
-    
-    function shouldShowInAppYouTubePrompt(){
-      return document.body.classList.contains("in-app-browser");
     }
     
     function hideYouTubeOpenButton(){
@@ -6597,50 +6633,20 @@ function normalizeParashaName(value){
       empty.innerHTML = "";
       
       /*
-        אם האתר פתוח בתוך רשת חברתית,
-        לא מפעילים שם את הסרטון באופן אוטומטי.
-        מציגים תמונה מקדימה ופותחים את YouTube בלחיצה.
+        קישור YouTube מקבל עדיפות בכל דפדפן.
+        קובץ המקור מפיירבייס נשאר רק כגיבוי כאשר אין קישור.
       */
-const storedMobileYouTubeVideo =
-  item?.mobile?.url
-    ? item.mobile
-    : (
-        item?.mobileUrl
-          ? {
-              url: item.mobileUrl,
-              youtubeId: item.mobileYoutubeId || "",
-              embedUrl: item.mobileEmbedUrl || "",
-              provider: item.mobileProvider || ""
-            }
-          : null
-      );
-
-    const preferMobileYouTube =
-      isMobileViewer() &&
-      !isLandscapeMobile();
-
-    const storedMobileYouTubeIsShort =
-      isYouTubeShortVariant(storedMobileYouTubeVideo);
-
-    const inAppYouTubeVideo =
-      (
-        preferMobileYouTube &&
-        storedMobileYouTubeIsShort
-          ? storedMobileYouTubeVideo
-          : null
-      ) ||
-      (
-        !preferMobileYouTube
-          ? selectedVideo?.__youtubeVideo
-          : null
-      ) ||
-      (isYouTubeVideo(selectedVideo) ? selectedVideo : null);
+      const directYouTubeVideo =
+        chooseYouTubeForViewer(item) ||
+        (
+          isYouTubeVideo(selectedVideo?.__youtubeVideo)
+            ? selectedVideo.__youtubeVideo
+            : null
+        ) ||
+        (isYouTubeVideo(selectedVideo) ? selectedVideo : null);
       
-      if(
-        shouldShowInAppYouTubePrompt() &&
-        inAppYouTubeVideo?.url
-      ){
-      const youtubeId = getYouTubeVideoId(inAppYouTubeVideo);
+      if(directYouTubeVideo?.url){
+      const youtubeId = getYouTubeVideoId(directYouTubeVideo);
       
       /*
         גרסת נייד אנכית נפתחת בתצוגת YouTube Shorts.
@@ -6652,12 +6658,12 @@ const storedMobileYouTubeVideo =
       */
       const shouldOpenAsYouTubeShort =
         !!youtubeId &&
-        isYouTubeShortVariant(inAppYouTubeVideo);
+        isYouTubeShortVariant(directYouTubeVideo);
       
       const youtubeWatchUrl =
         shouldOpenAsYouTubeShort
           ? `https://www.youtube.com/shorts/${youtubeId}`
-          : getYouTubeWatchUrl(inAppYouTubeVideo);
+          : getYouTubeWatchUrl(directYouTubeVideo);
       
         player.style.display = "none";
         player.removeAttribute("src");
@@ -6672,10 +6678,6 @@ const storedMobileYouTubeVideo =
       
         empty.classList.add("is-inapp-youtube");
       
-        if(selectedVideo.__variant === "wide"){
-          empty.classList.add("is-horizontal");
-        }
-      
         empty.style.display = "block";
       
         empty.innerHTML = `
@@ -6684,7 +6686,7 @@ const storedMobileYouTubeVideo =
             href="${youtubeWatchUrl}"
             target="_blank"
             rel="noopener noreferrer"
-            aria-label="פתיחת הסרטון לצפייה רציפה ב-YouTube"
+            aria-label="פתיחת הסרטון ב-YouTube ללייק, תגובה ושיתוף"
           >
             <img
               class="pardes-inapp-youtube-image"
@@ -6695,7 +6697,7 @@ const storedMobileYouTubeVideo =
       
             <span class="pardes-inapp-youtube-shade">
               <span class="pardes-inapp-youtube-button">
-                ▶ לצפייה רציפה ב־YouTube
+                ▶ לצפייה, לייק, תגובה ושיתוף ב־YouTube
               </span>
             </span>
           </a>
