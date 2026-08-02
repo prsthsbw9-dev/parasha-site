@@ -722,14 +722,15 @@
       background:#000;
     }
     
-    .pardes-inapp-youtube-image{
-      width:100%;
-      height:100%;
-      display:block;
-      object-fit:contain;
-      background:#000;
-      opacity:.76;
-    }
+.pardes-inapp-youtube-image{
+  width:100%;
+  height:100%;
+  display:block;
+  object-fit:cover;
+  object-position:center;
+  background:#000;
+  opacity:.76;
+}
     
     .pardes-inapp-youtube-shade{
       position:absolute;
@@ -804,7 +805,19 @@
         max-height:calc(100dvh - 190px);
         border-radius:18px;
       }
-    
+
+      .pardes-video-empty.is-inapp-youtube,
+      .pardes-video-empty.is-inapp-youtube.is-horizontal{
+        width:min(
+          calc(100vw - 40px),
+          calc((100dvh - 190px) * 9 / 16),
+          390px
+        );
+        max-height:none;
+        aspect-ratio:9 / 16;
+        border-radius:18px;
+      }
+      
       .pardes-video-player.is-horizontal{
         width:100%;
         max-height:42vh;
@@ -6387,15 +6400,29 @@ function normalizeParashaName(value){
     */
     function isYouTubeShortVariant(video){
       if(!isYouTubeVideo(video)) return false;
-
-      const savedType = String(video.youtubeType || "").trim().toLowerCase();
-
-      if(savedType){
-        return savedType === "shorts";
+    
+      /*
+        קודם בודקים את הכתובות עצמן.
+        כך גם קישורים ישנים יזוהו נכון כ־Shorts.
+      */
+      const allUrls = [
+        video.originalUrl,
+        video.url,
+        video.embedUrl
+      ]
+        .filter(Boolean)
+        .join(" ");
+    
+      if(/youtube\.com\/shorts\//i.test(allUrls)){
+        return true;
       }
-
-      const originalUrl = String(video.originalUrl || video.url || "").trim();
-      return /youtube\.com\/shorts\//i.test(originalUrl);
+    
+      const savedType =
+        String(video.youtubeType || "")
+          .trim()
+          .toLowerCase();
+    
+      return savedType === "shorts";
     }
     
     function chooseVideoForViewer(item){
@@ -6506,19 +6533,61 @@ function normalizeParashaName(value){
     function chooseYouTubeForViewer(item){
       const mobile = getStoredVideoVariant(item, "mobile");
       const wide = getStoredVideoVariant(item, "wide");
-      const mobileYouTube = isYouTubeVideo(mobile) ? mobile : null;
-      const wideYouTube = isYouTubeVideo(wide) ? wide : null;
-
-      if(isLandscapeMobile()){
-        return wideYouTube || mobileYouTube;
-      }
-
+    
+      const mobileYouTube =
+        isYouTubeVideo(mobile) ? mobile : null;
+    
+      const wideYouTube =
+        isYouTubeVideo(wide) ? wide : null;
+    
+      const mobileShort =
+        mobileYouTube && isYouTubeShortVariant(mobileYouTube)
+          ? mobileYouTube
+          : null;
+    
+      /*
+        בנייד מעדיפים תמיד את הקישור שהוזן לגרסת הנייד:
+        Shorts נפתח ב־YouTube Shorts, וקישור נייד רגיל
+        יוצג בתוך האתר כשהוא מוגדל ונחתך למסגרת אנכית.
+      */
       if(isMobileViewer()){
-        return mobileYouTube || wideYouTube;
+        return mobileShort || mobileYouTube || wideYouTube;
       }
-
+    
+      /* במחשב מעדיפים תמיד את הקישור הרחב. */
       return wideYouTube || mobileYouTube;
     }
+
+    function getYouTubeLaunchUrl(youtubeId, isShort, webUrl){
+      if(!youtubeId) return webUrl;
+    
+      const isAndroid =
+        /Android/i.test(navigator.userAgent);
+    
+      /*
+        באנדרואיד מנסים קודם לפתוח את אפליקציית YouTube.
+        אם היא אינה מותקנת, חוזרים אוטומטית לקישור בדפדפן.
+      */
+      if(isAndroid){
+        const youtubePath = isShort
+          ? `shorts/${youtubeId}`
+          : `watch?v=${youtubeId}`;
+    
+        return (
+          `intent://www.youtube.com/${youtubePath}` +
+          `#Intent;scheme=https;` +
+          `package=com.google.android.youtube;` +
+          `S.browser_fallback_url=${encodeURIComponent(webUrl)};end`
+        );
+      }
+    
+      /*
+        באייפון משתמשים בקישור הרשמי.
+        iOS יפתח את האפליקציה כאשר הדבר מאושר במכשיר,
+        ובמקרה אחר יישאר בדפדפן.
+      */
+      return webUrl;
+    }    
     
     function getYouTubeEmbedUrl(video){
       if(video?.embedUrl) return video.embedUrl;
@@ -6710,47 +6779,56 @@ function normalizeParashaName(value){
           ? `https://www.youtube.com/shorts/${youtubeId}`
           : getYouTubeWatchUrl(directYouTubeVideo);
 
-      const showInsideVerticalPlayer =
+      const youtubeLaunchUrl = getYouTubeLaunchUrl(
+        youtubeId,
+        shouldOpenAsYouTubeShort,
+        youtubeWatchUrl
+      );
+
+      /*
+        קישור רגיל שהוזן דווקא בגרסת הנייד מוצג בתוך האתר
+        במסגרת 9:16. הנגן הרחב מוגדל וממורכז, ולכן החללים
+        שבצדדים נחתכים. Shorts ממשיך להיפתח באפליקציית YouTube.
+      */
+      const shouldCropRegularMobileInsideSite =
         isMobileViewer() &&
-        !isLandscapeMobile() &&
-        !document.body.classList.contains("in-app-browser");
+        directYouTubeVideo.__variant === "mobile" &&
+        !shouldOpenAsYouTubeShort;
 
-      if(showInsideVerticalPlayer){
-        const embedUrl = getYouTubeEmbedUrl(directYouTubeVideo);
-
+      if(shouldCropRegularMobileInsideSite && youtubeId && youtubePlayer && youtubeViewport){
         player.style.display = "none";
         player.removeAttribute("src");
         player.src = "";
+
         empty.style.display = "none";
+        empty.innerHTML = "";
 
-        if(embedUrl && youtubePlayer && youtubeViewport){
-          youtubeViewport.classList.remove("is-cropped-vertical", "is-horizontal");
+        youtubePlayer.classList.remove("is-horizontal", "is-square");
+        youtubeViewport.classList.remove("is-horizontal");
+        youtubeViewport.classList.add("is-cropped-vertical");
 
-          if(!shouldOpenAsYouTubeShort){
-            youtubeViewport.classList.add("is-cropped-vertical");
-          }
+        youtubePlayer.src =
+          `${getYouTubeEmbedUrl(directYouTubeVideo)}?rel=0&modestbranding=1&playsinline=1`;
+        youtubePlayer.style.visibility = "visible";
+        youtubeViewport.style.display = "block";
 
-          youtubePlayer.src = `${embedUrl}?rel=0&modestbranding=1&playsinline=1&autoplay=1`;
-          youtubePlayer.style.visibility = "visible";
-          youtubeViewport.style.display = "block";
-
-          if(youtubeOpenBtn){
-            youtubeOpenBtn.href = youtubeWatchUrl;
-            youtubeOpenBtn.style.display = "block";
-          }
-
-          panel.classList.add("is-open");
-          panel.setAttribute("aria-hidden", "false");
-
-          setTimeout(() => {
-            const closeButton = document.getElementById("pardesVideoClose");
-            closeButton?.focus();
-          }, 80);
-
-          return;
+        if(youtubeOpenBtn){
+          youtubeOpenBtn.href = youtubeLaunchUrl;
+          youtubeOpenBtn.removeAttribute("target");
+          youtubeOpenBtn.style.display = "block";
         }
+
+        panel.classList.add("is-open");
+        panel.setAttribute("aria-hidden", "false");
+
+        setTimeout(() => {
+          const closeButton = document.getElementById("pardesVideoClose");
+          closeButton?.focus();
+        }, 80);
+
+        return;
       }
-      
+             
         player.style.display = "none";
         player.removeAttribute("src");
         player.src = "";
@@ -6767,14 +6845,13 @@ function normalizeParashaName(value){
         }
       
         empty.classList.add("is-inapp-youtube");
-      
+               
         empty.style.display = "block";
       
         empty.innerHTML = `
           <a
             class="pardes-inapp-youtube-link"
-            href="${youtubeWatchUrl}"
-            target="_blank"
+            href="${youtubeLaunchUrl}"
             rel="noopener noreferrer"
             aria-label="פתיחת הסרטון ב-YouTube ללייק, תגובה ושיתוף"
           >
@@ -6794,7 +6871,8 @@ function normalizeParashaName(value){
         `;
       
         if(youtubeOpenBtn){
-          youtubeOpenBtn.href = youtubeWatchUrl;
+          youtubeOpenBtn.href = youtubeLaunchUrl;
+          youtubeOpenBtn.removeAttribute("target");
           youtubeOpenBtn.style.display = "block";
         }
       
