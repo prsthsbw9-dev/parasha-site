@@ -731,6 +731,12 @@
   background:#000;
   opacity:.76;
 }
+
+    /* תמונת Shorts מוצגת בשלמותה כי הסרטון כבר מותאם לנייד. */
+    .pardes-video-empty.is-shorts-preview .pardes-inapp-youtube-image{
+      object-fit:contain;
+      opacity:1;
+    }
     
     .pardes-inapp-youtube-shade{
       position:absolute;
@@ -6361,7 +6367,19 @@ function normalizeParashaName(value){
     }
 
     function isMobileViewer(){
-      return window.matchMedia("(max-width: 700px), (pointer: coarse)").matches;
+      const ua = navigator.userAgent || navigator.vendor || "";
+      const mobileUserAgent =
+        /Android|iPhone|iPod|IEMobile|Opera Mini|Mobile/i.test(ua);
+      const mobileEnvironmentClass =
+        document.body.classList.contains("device-phone") ||
+        document.body.classList.contains("device-tablet") ||
+        document.body.classList.contains("in-app-browser");
+
+      return (
+        mobileEnvironmentClass ||
+        mobileUserAgent ||
+        window.matchMedia("(max-width: 900px), (pointer: coarse)").matches
+      );
     }
     
     function isLandscapeMobile(){
@@ -6743,7 +6761,7 @@ function normalizeParashaName(value){
 
       const selectedVideo = chooseVideoForViewer(item);
       
-      empty.classList.remove("is-inapp-youtube", "is-horizontal");
+      empty.classList.remove("is-inapp-youtube", "is-horizontal", "is-shorts-preview");
       empty.innerHTML = "";
       
       /*
@@ -6785,50 +6803,6 @@ function normalizeParashaName(value){
         youtubeWatchUrl
       );
 
-      /*
-        קישור רגיל שהוזן דווקא בגרסת הנייד מוצג בתוך האתר
-        במסגרת 9:16. הנגן הרחב מוגדל וממורכז, ולכן החללים
-        שבצדדים נחתכים. Shorts ממשיך להיפתח באפליקציית YouTube.
-      */
-      const shouldCropRegularMobileInsideSite =
-        isMobileViewer() &&
-        directYouTubeVideo.__variant === "mobile" &&
-        !shouldOpenAsYouTubeShort;
-
-      if(shouldCropRegularMobileInsideSite && youtubeId && youtubePlayer && youtubeViewport){
-        player.style.display = "none";
-        player.removeAttribute("src");
-        player.src = "";
-
-        empty.style.display = "none";
-        empty.innerHTML = "";
-
-        youtubePlayer.classList.remove("is-horizontal", "is-square");
-        youtubeViewport.classList.remove("is-horizontal");
-        youtubeViewport.classList.add("is-cropped-vertical");
-
-        youtubePlayer.src =
-          `${getYouTubeEmbedUrl(directYouTubeVideo)}?rel=0&modestbranding=1&playsinline=1`;
-        youtubePlayer.style.visibility = "visible";
-        youtubeViewport.style.display = "block";
-
-        if(youtubeOpenBtn){
-          youtubeOpenBtn.href = youtubeLaunchUrl;
-          youtubeOpenBtn.removeAttribute("target");
-          youtubeOpenBtn.style.display = "block";
-        }
-
-        panel.classList.add("is-open");
-        panel.setAttribute("aria-hidden", "false");
-
-        setTimeout(() => {
-          const closeButton = document.getElementById("pardesVideoClose");
-          closeButton?.focus();
-        }, 80);
-
-        return;
-      }
-             
         player.style.display = "none";
         player.removeAttribute("src");
         player.src = "";
@@ -6845,30 +6819,49 @@ function normalizeParashaName(value){
         }
       
         empty.classList.add("is-inapp-youtube");
+
+        if(isMobileViewer() && shouldOpenAsYouTubeShort){
+          empty.classList.add("is-shorts-preview");
+        }
                
         empty.style.display = "block";
-      
-        empty.innerHTML = `
-          <a
-            class="pardes-inapp-youtube-link"
-            href="${youtubeLaunchUrl}"
-            rel="noopener noreferrer"
-            aria-label="פתיחת הסרטון ב-YouTube ללייק, תגובה ושיתוף"
-          >
-            <img
-              class="pardes-inapp-youtube-image"
-              src="https://i.ytimg.com/vi/${youtubeId}/hqdefault.jpg"
-              alt=""
-              aria-hidden="true"
+
+        if(isMobileViewer()){
+          /* בנייד זו תמונה בלבד: אין נגן, אין Play והתמונה אינה לחיצה. */
+          empty.innerHTML = `
+            <div class="pardes-inapp-youtube-link" aria-hidden="true">
+              <img
+                class="pardes-inapp-youtube-image"
+                src="https://i.ytimg.com/vi/${youtubeId}/maxresdefault.jpg"
+                onerror="this.onerror=null;this.src='https://i.ytimg.com/vi/${youtubeId}/hqdefault.jpg';"
+                alt=""
+              >
+            </div>
+          `;
+        }else{
+          /* במחשב נשמרת ההתנהגות הקיימת ללא שינוי. */
+          empty.innerHTML = `
+            <a
+              class="pardes-inapp-youtube-link"
+              href="${youtubeLaunchUrl}"
+              rel="noopener noreferrer"
+              aria-label="פתיחת הסרטון ב-YouTube ללייק, תגובה ושיתוף"
             >
-      
-            <span class="pardes-inapp-youtube-shade">
-              <span class="pardes-inapp-youtube-button">
-                ▶ לצפייה, לייק, תגובה ושיתוף ב־YouTube
+              <img
+                class="pardes-inapp-youtube-image"
+                src="https://i.ytimg.com/vi/${youtubeId}/hqdefault.jpg"
+                alt=""
+                aria-hidden="true"
+              >
+
+              <span class="pardes-inapp-youtube-shade">
+                <span class="pardes-inapp-youtube-button">
+                  ▶ לצפייה, לייק, תגובה ושיתוף ב־YouTube
+                </span>
               </span>
-            </span>
-          </a>
-        `;
+            </a>
+          `;
+        }
       
         if(youtubeOpenBtn){
           youtubeOpenBtn.href = youtubeLaunchUrl;
