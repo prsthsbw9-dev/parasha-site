@@ -4821,7 +4821,7 @@
 
     
     /* הסרטון החדש מיועד כרגע רק לנייד אנכי */
-    @media (min-width:641px), (orientation:landscape){
+    @media (min-width:951px), (orientation:landscape){
       .bird-flight-mobile{
         display:none !important;
       }
@@ -4908,7 +4908,7 @@
     }
 
     /* לא מציגים את גרסת המחשב בנייד */
-    @media (max-width:950px){
+    @media (max-width:950px) and (orientation:portrait){
       .bird-flight-desktop{
         display:none !important;
       }
@@ -8240,7 +8240,7 @@ if (sodGrapesVideo) {
           !useMobileTransition();
     
         const selectedBirdFlight =
-          useNewMobileBird
+          useMobileTransition()
             ? birdFlightMobile
             : birdFlightDesktop;
     
