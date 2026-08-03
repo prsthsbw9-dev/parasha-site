@@ -6598,28 +6598,46 @@ function normalizeParashaName(value){
       const isInAppBrowser =
         document.body.classList.contains("in-app-browser");
     
-      const youtubeWebUrl = isShort
-        ? `https://www.youtube.com/shorts/${youtubeId}`
-        : `https://www.youtube.com/watch?v=${youtubeId}`;
-    
       /*
-        Android בתוך TikTok, Instagram, Facebook וכדומה:
-        לא משתמשים ב-intent://, מפני שהדפדפן הפנימי עלול לחסום אותו.
+        דפדפנים פנימיים באנדרואיד:
+        ניסיון לפתוח ישירות את אפליקציית YouTube.
       */
       if(isAndroid && isInAppBrowser){
-        return isShort
-          ? `https://www.youtube.com/shorts/${youtubeId}`
-          : `https://youtu.be/${youtubeId}`;
+        return `vnd.youtube:${youtubeId}`;
       }
     
       /*
-        iPhone או iPad בתוך דפדפן פנימי:
-        משתמשים בקישור הרשמי של YouTube ופותחים אותו בחלון חיצוני.
-        iOS ינסה להעביר אותו לאפליקציית YouTube בהתאם להגדרות המכשיר.
+        דפדפנים פנימיים באייפון ובאייפד:
+        ניסיון לפתוח ישירות את אפליקציית YouTube.
       */
       if(isIOS && isInAppBrowser){
-        return youtubeWebUrl;
+        return isShort
+          ? `youtube://www.youtube.com/shorts/${youtubeId}`
+          : `youtube://www.youtube.com/watch?v=${youtubeId}`;
       }
+    
+      /*
+        דפדפנים רגילים באנדרואיד, כולל Chrome:
+        משאירים את הקישור שכבר עובד.
+      */
+      if(isAndroid){
+        const youtubePath = isShort
+          ? `shorts/${youtubeId}`
+          : `watch?v=${youtubeId}`;
+    
+        return (
+          `intent://www.youtube.com/${youtubePath}` +
+          `#Intent;scheme=https;` +
+          `package=com.google.android.youtube;` +
+          `S.browser_fallback_url=${encodeURIComponent(webUrl)};end`
+        );
+      }
+    
+      /*
+        Safari ודפדפנים רגילים באייפון ובאייפד.
+      */
+      return webUrl;
+    }
     
       /*
         Android בכרום או בדפדפן רגיל:
