@@ -6834,6 +6834,57 @@ function normalizeParashaName(value){
         youtubeWatchUrl
       );
 
+      /*
+        TikTok חוסם מעבר ישיר לאפליקציית YouTube.
+        רק בדפדפן הפנימי של TikTok מציגים את נגן YouTube בתוך האתר.
+        Shorts נשאר אנכי; סרטון רוחב מוגדל וממורכז בתוך מסגרת אנכית.
+      */
+      const isTikTokInApp =
+        document.body.classList.contains("in-app-browser") &&
+        document.body.classList.contains("app-tiktok");
+
+      if(isTikTokInApp && youtubeId){
+        player.style.display = "none";
+        player.removeAttribute("src");
+        player.src = "";
+
+        empty.style.display = "none";
+        empty.innerHTML = "";
+
+        if(youtubePlayer && youtubeViewport){
+          youtubePlayer.removeAttribute("src");
+          youtubePlayer.src = "";
+          youtubePlayer.classList.remove("is-horizontal", "is-square");
+          youtubeViewport.classList.remove("is-horizontal", "is-cropped-vertical");
+
+          if(!shouldOpenAsYouTubeShort){
+            youtubeViewport.classList.add("is-cropped-vertical");
+          }
+
+          youtubePlayer.src =
+            `https://www.youtube.com/embed/${youtubeId}` +
+            `?rel=0&modestbranding=1&playsinline=1&autoplay=1`;
+          youtubePlayer.style.visibility = "visible";
+          youtubeViewport.style.display = "block";
+        }
+
+        if(youtubeOpenBtn){
+          youtubeOpenBtn.href = youtubeWatchUrl;
+          youtubeOpenBtn.removeAttribute("target");
+          youtubeOpenBtn.style.display = "block";
+        }
+
+        panel.classList.add("is-open");
+        panel.setAttribute("aria-hidden", "false");
+
+        setTimeout(() => {
+          const closeButton = document.getElementById("pardesVideoClose");
+          closeButton?.focus();
+        }, 80);
+
+        return;
+      }
+
         player.style.display = "none";
         player.removeAttribute("src");
         player.src = "";
