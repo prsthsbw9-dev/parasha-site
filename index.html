@@ -6929,10 +6929,10 @@ function normalizeParashaName(value){
         if(youtubeOpenBtn){
           youtubeOpenBtn.href = youtubeLaunchUrl;
         
-          if(document.body.classList.contains("in-app-browser")){
-            youtubeOpenBtn.setAttribute("target", "_blank");
-          }else{
+          if(youtubeOpenBtn){
+            youtubeOpenBtn.href = getYouTubeWatchUrl(selectedVideo);
             youtubeOpenBtn.removeAttribute("target");
+            youtubeOpenBtn.style.display = "block";
           }
         
           youtubeOpenBtn.style.display = "block";
