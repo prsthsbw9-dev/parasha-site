@@ -6615,42 +6615,27 @@ function normalizeParashaName(value){
           ? `youtube://www.youtube.com/shorts/${youtubeId}`
           : `youtube://www.youtube.com/watch?v=${youtubeId}`;
       }
-      
+
       /*
-        Safari ודפדפנים רגילים באייפון ובאייפד.
-      */
-      return webUrl;
-    }
-    
-      /*
-        Android בכרום או בדפדפן רגיל:
-        שומרים על הפתיחה הישירה באפליקציית YouTube.
+        דפדפנים רגילים באנדרואיד, כולל Chrome.
       */
       if(isAndroid){
         const youtubePath = isShort
           ? `shorts/${youtubeId}`
           : `watch?v=${youtubeId}`;
-    
+
         return (
           `intent://www.youtube.com/${youtubePath}` +
           `#Intent;scheme=https;` +
           `package=com.google.android.youtube;` +
-          `S.browser_fallback_url=${encodeURIComponent(youtubeWebUrl)};end`
+          `S.browser_fallback_url=${encodeURIComponent(webUrl)};end`
         );
       }
-    
+      
       /*
-        iPhone או iPad בספארי ובדפדפן רגיל:
-        Universal Link רשמי של YouTube.
+        Safari ודפדפנים רגילים באייפון ובאייפד.
       */
-      if(isIOS){
-        return youtubeWebUrl;
-      }
-    
-      /*
-        מחשב וכל מערכת אחרת.
-      */
-      return webUrl || youtubeWebUrl;
+      return webUrl;
     }
     
     function getYouTubeEmbedUrl(video){
@@ -6911,13 +6896,7 @@ function normalizeParashaName(value){
 
         if(youtubeOpenBtn){
           youtubeOpenBtn.href = youtubeLaunchUrl;
-        
-          if(youtubeOpenBtn){
-            youtubeOpenBtn.href = getYouTubeWatchUrl(selectedVideo);
-            youtubeOpenBtn.removeAttribute("target");
-            youtubeOpenBtn.style.display = "block";
-          }
-        
+          youtubeOpenBtn.removeAttribute("target");
           youtubeOpenBtn.style.display = "block";
         }
       
