@@ -6598,44 +6598,58 @@ function normalizeParashaName(value){
       const isInAppBrowser =
         document.body.classList.contains("in-app-browser");
     
+      const youtubeWebUrl = isShort
+        ? `https://www.youtube.com/shorts/${youtubeId}`
+        : `https://www.youtube.com/watch?v=${youtubeId}`;
+    
       /*
-        דפדפנים פנימיים באנדרואיד:
-        ניסיון לפתוח ישירות את אפליקציית YouTube.
+        Android בתוך TikTok, Instagram, Facebook וכדומה:
+        לא משתמשים ב-intent://, מפני שהדפדפן הפנימי עלול לחסום אותו.
       */
       if(isAndroid && isInAppBrowser){
-        return `vnd.youtube:${youtubeId}`;
+        return isShort
+          ? `https://www.youtube.com/shorts/${youtubeId}`
+          : `https://youtu.be/${youtubeId}`;
       }
     
       /*
-        דפדפנים פנימיים באייפון ובאייפד:
-        ניסיון לפתוח ישירות את אפליקציית YouTube.
+        iPhone או iPad בתוך דפדפן פנימי:
+        משתמשים בקישור הרשמי של YouTube ופותחים אותו בחלון חיצוני.
+        iOS ינסה להעביר אותו לאפליקציית YouTube בהתאם להגדרות המכשיר.
       */
       if(isIOS && isInAppBrowser){
-        return isShort
-          ? `youtube://www.youtube.com/shorts/${youtubeId}`
-          : `youtube://www.youtube.com/watch?v=${youtubeId}`;
+        return youtubeWebUrl;
       }
-
+    
       /*
-        דפדפנים רגילים באנדרואיד, כולל Chrome.
+        Android בכרום או בדפדפן רגיל:
+        שומרים על הפתיחה הישירה באפליקציית YouTube.
       */
       if(isAndroid){
         const youtubePath = isShort
           ? `shorts/${youtubeId}`
           : `watch?v=${youtubeId}`;
-
+    
         return (
           `intent://www.youtube.com/${youtubePath}` +
           `#Intent;scheme=https;` +
           `package=com.google.android.youtube;` +
-          `S.browser_fallback_url=${encodeURIComponent(webUrl)};end`
+          `S.browser_fallback_url=${encodeURIComponent(youtubeWebUrl)};end`
         );
       }
-      
+    
       /*
-        Safari ודפדפנים רגילים באייפון ובאייפד.
+        iPhone או iPad בספארי ובדפדפן רגיל:
+        Universal Link רשמי של YouTube.
       */
-      return webUrl;
+      if(isIOS){
+        return youtubeWebUrl;
+      }
+    
+      /*
+        מחשב וכל מערכת אחרת.
+      */
+      return webUrl || youtubeWebUrl;
     }
     
     function getYouTubeEmbedUrl(video){
@@ -6834,57 +6848,6 @@ function normalizeParashaName(value){
         youtubeWatchUrl
       );
 
-      /*
-        TikTok חוסם מעבר ישיר לאפליקציית YouTube.
-        רק בדפדפן הפנימי של TikTok מציגים את נגן YouTube בתוך האתר.
-        Shorts נשאר אנכי; סרטון רוחב מוגדל וממורכז בתוך מסגרת אנכית.
-      */
-      const isTikTokInApp =
-        document.body.classList.contains("in-app-browser") &&
-        document.body.classList.contains("app-tiktok");
-
-      if(isTikTokInApp && youtubeId){
-        player.style.display = "none";
-        player.removeAttribute("src");
-        player.src = "";
-
-        empty.style.display = "none";
-        empty.innerHTML = "";
-
-        if(youtubePlayer && youtubeViewport){
-          youtubePlayer.removeAttribute("src");
-          youtubePlayer.src = "";
-          youtubePlayer.classList.remove("is-horizontal", "is-square");
-          youtubeViewport.classList.remove("is-horizontal", "is-cropped-vertical");
-
-          if(!shouldOpenAsYouTubeShort){
-            youtubeViewport.classList.add("is-cropped-vertical");
-          }
-
-          youtubePlayer.src =
-            `https://www.youtube.com/embed/${youtubeId}` +
-            `?rel=0&modestbranding=1&playsinline=1&autoplay=1`;
-          youtubePlayer.style.visibility = "visible";
-          youtubeViewport.style.display = "block";
-        }
-
-        if(youtubeOpenBtn){
-          youtubeOpenBtn.href = youtubeWatchUrl;
-          youtubeOpenBtn.removeAttribute("target");
-          youtubeOpenBtn.style.display = "block";
-        }
-
-        panel.classList.add("is-open");
-        panel.setAttribute("aria-hidden", "false");
-
-        setTimeout(() => {
-          const closeButton = document.getElementById("pardesVideoClose");
-          closeButton?.focus();
-        }, 80);
-
-        return;
-      }
-
         player.style.display = "none";
         player.removeAttribute("src");
         player.src = "";
@@ -6947,7 +6910,13 @@ function normalizeParashaName(value){
 
         if(youtubeOpenBtn){
           youtubeOpenBtn.href = youtubeLaunchUrl;
-          youtubeOpenBtn.removeAttribute("target");
+        
+          if(document.body.classList.contains("in-app-browser")){
+            youtubeOpenBtn.setAttribute("target", "_blank");
+          }else{
+            youtubeOpenBtn.removeAttribute("target");
+          }
+        
           youtubeOpenBtn.style.display = "block";
         }
       
