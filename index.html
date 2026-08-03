@@ -6842,10 +6842,38 @@ function normalizeParashaName(value){
           ? `https://www.youtube.com/shorts/${youtubeId}`
           : getYouTubeWatchUrl(directYouTubeVideo);
 
+      /*
+        רק בתוך TikTok הכפתור האדום פותח את גרסת הרוחב של YouTube.
+        התמונה המקדימה ממשיכה להשתמש בגרסה שנבחרה לנייד ללא שינוי.
+      */
+      const isTikTokInApp =
+        document.body.classList.contains("in-app-browser") &&
+        document.body.classList.contains("app-tiktok");
+
+      const storedWideYouTube =
+        getStoredVideoVariant(item, "wide");
+
+      const youtubeVideoForLaunch =
+        isTikTokInApp && isYouTubeVideo(storedWideYouTube)
+          ? storedWideYouTube
+          : directYouTubeVideo;
+
+      const youtubeIdForLaunch =
+        getYouTubeVideoId(youtubeVideoForLaunch) || youtubeId;
+
+      const shouldLaunchAsShort =
+        !isTikTokInApp &&
+        isYouTubeShortVariant(youtubeVideoForLaunch);
+
+      const youtubeWatchUrlForLaunch =
+        shouldLaunchAsShort
+          ? `https://www.youtube.com/shorts/${youtubeIdForLaunch}`
+          : getYouTubeWatchUrl(youtubeVideoForLaunch);
+
       const youtubeLaunchUrl = getYouTubeLaunchUrl(
-        youtubeId,
-        shouldOpenAsYouTubeShort,
-        youtubeWatchUrl
+        youtubeIdForLaunch,
+        shouldLaunchAsShort,
+        youtubeWatchUrlForLaunch || youtubeWatchUrl
       );
 
         player.style.display = "none";
