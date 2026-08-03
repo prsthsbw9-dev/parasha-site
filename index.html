@@ -6580,35 +6580,13 @@ function normalizeParashaName(value){
     }
 
     function getYouTubeLaunchUrl(youtubeId, isShort, webUrl){
-      if(!youtubeId) return webUrl;
-    
-      const isAndroid =
-        /Android/i.test(navigator.userAgent);
-    
       /*
-        באנדרואיד מנסים קודם לפתוח את אפליקציית YouTube.
-        אם היא אינה מותקנת, חוזרים אוטומטית לקישור בדפדפן.
-      */
-      if(isAndroid){
-        const youtubePath = isShort
-          ? `shorts/${youtubeId}`
-          : `watch?v=${youtubeId}`;
-    
-        return (
-          `intent://www.youtube.com/${youtubePath}` +
-          `#Intent;scheme=https;` +
-          `package=com.google.android.youtube;` +
-          `S.browser_fallback_url=${encodeURIComponent(webUrl)};end`
-        );
-      }
-    
-      /*
-        באייפון משתמשים בקישור הרשמי.
-        iOS יפתח את האפליקציה כאשר הדבר מאושר במכשיר,
-        ובמקרה אחר יישאר בדפדפן.
+        משתמשים בקישור HTTPS רגיל.
+        באנדרואיד המכשיר יפתח את אפליקציית YouTube אם הדבר מותר,
+        ובכל מצב אחר הסרטון ייפתח בצורה תקינה בדפדפן.
       */
       return webUrl;
-    }    
+    }   
     
     function getYouTubeEmbedUrl(video){
       if(video?.embedUrl) return video.embedUrl;
