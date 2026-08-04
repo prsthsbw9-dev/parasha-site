@@ -6383,8 +6383,15 @@ function normalizeParashaName(value){
       setTreeHead(currentParasha, currentAliyah);
 
       if(options.saveLocal !== false){
-        localStorage.setItem("pardesSearchParasha", currentParasha);
-        localStorage.setItem("pardesSearchAliyah", currentAliyah);
+        sessionStorage.setItem(
+          "pardesSearchParasha",
+          currentParasha
+        );
+      
+        sessionStorage.setItem(
+          "pardesSearchAliyah",
+          currentAliyah
+        );
       }
 
       setSearchMessage(`מוצג עכשיו: פרשת ${currentParasha} — ${currentAliyah}`);
@@ -6392,6 +6399,47 @@ function normalizeParashaName(value){
       return true;
     }
 
+    /*
+      בכניסה הראשונה מציגים את העלייה הפעילה.
+      לאחר חיפוש, שומרים ומציגים את החיפוש האחרון
+      כל עוד הצופה נמצא באותה לשונית.
+    */
+    async function loadInitialAliyah(){
+      const savedParasha =
+        sessionStorage.getItem("pardesSearchParasha") || "";
+    
+      const savedAliyah =
+        sessionStorage.getItem("pardesSearchAliyah") || "";
+    
+      if(savedParasha && savedAliyah){
+        try{
+          const found = await loadSpecificAliyah(
+            savedParasha,
+            savedAliyah,
+            { saveLocal:false }
+          );
+    
+          if(found){
+            return;
+          }
+        }catch(error){
+          console.error(
+            "לא ניתן היה לשחזר את החיפוש האחרון:",
+            error
+          );
+        }
+    
+        /*
+          אם הסרטון שנשמר כבר אינו קיים,
+          מנקים את החיפוש וחוזרים לעלייה הפעילה.
+        */
+        sessionStorage.removeItem("pardesSearchParasha");
+        sessionStorage.removeItem("pardesSearchAliyah");
+      }
+    
+      await loadActiveAliyah();
+    }
+    
     function isMobileViewer(){
       const ua = navigator.userAgent || navigator.vendor || "";
       const mobileUserAgent =
@@ -8005,7 +8053,7 @@ function normalizeParashaName(value){
 
     setupMobileSearchKeyboardFix();
 
-    loadActiveAliyah();
+    loadInitialAliyah();
 
 </script>
 
