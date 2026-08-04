@@ -6883,17 +6883,10 @@ function normalizeParashaName(value){
           const youtubeIdForLaunch =
             getYouTubeVideoId(youtubeVideoForLaunch) || youtubeId;
           
-          const isMainAliyah =
-            layer === "main";
-          
           const shouldLaunchAsShort =
-            isMainAliyah
-              ? false
-              : (
-                  isInstagramFacebookOrTikTokInApp
-                    ? true
-                    : isYouTubeShortVariant(youtubeVideoForLaunch)
-                );
+            isInstagramFacebookOrTikTokInApp
+              ? true
+              : isYouTubeShortVariant(youtubeVideoForLaunch);
           
           const youtubeWatchUrlForLaunch =
             shouldLaunchAsShort
