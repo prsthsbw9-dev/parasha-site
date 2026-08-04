@@ -6893,11 +6893,17 @@ function normalizeParashaName(value){
               ? `https://www.youtube.com/shorts/${youtubeIdForLaunch}`
               : getYouTubeWatchUrl(youtubeVideoForLaunch);
           
-          const youtubeLaunchUrl = getYouTubeLaunchUrl(
-            youtubeIdForLaunch,
-            shouldLaunchAsShort,
-            youtubeWatchUrlForLaunch || youtubeWatchUrl
-          );
+          const isMainAliyah =
+            layer === "main";
+          
+          const youtubeLaunchUrl =
+            isInstagramFacebookOrTikTokInApp && isMainAliyah
+              ? `https://m.youtube.com/watch?v=${youtubeIdForLaunch}`
+              : getYouTubeLaunchUrl(
+                  youtubeIdForLaunch,
+                  shouldLaunchAsShort,
+                  youtubeWatchUrlForLaunch || youtubeWatchUrl
+                );
 
         player.style.display = "none";
         player.removeAttribute("src");
