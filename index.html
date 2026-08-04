@@ -6866,16 +6866,6 @@ function normalizeParashaName(value){
           const youtubeIdForLaunch =
             getYouTubeVideoId(youtubeVideoForLaunch) || youtubeId;
           
-          const shouldLaunchAsShort =
-            isInstagramFacebookOrTikTokInApp
-              ? true
-              : isYouTubeShortVariant(youtubeVideoForLaunch);
-          
-          const youtubeWatchUrlForLaunch =
-            shouldLaunchAsShort
-              ? `https://www.youtube.com/shorts/${youtubeIdForLaunch}`
-              : getYouTubeWatchUrl(youtubeVideoForLaunch);
-          
           const isMainAliyah =
             layer === "main";
           
@@ -6887,6 +6877,17 @@ function normalizeParashaName(value){
                     ? true
                     : isYouTubeShortVariant(youtubeVideoForLaunch)
                 );
+
+          const youtubeWatchUrlForLaunch =
+            shouldLaunchAsShort
+              ? `https://www.youtube.com/shorts/${youtubeIdForLaunch}`
+              : getYouTubeWatchUrl(youtubeVideoForLaunch);
+
+          const youtubeLaunchUrl = getYouTubeLaunchUrl(
+            youtubeIdForLaunch,
+            shouldLaunchAsShort,
+            youtubeWatchUrlForLaunch || youtubeWatchUrl
+          );
 
         player.style.display = "none";
         player.removeAttribute("src");
