@@ -748,6 +748,18 @@
       object-position:center center;
       opacity:1;
     }
+
+     /*
+      העלייה המרכזית בנייד:
+      חיתוך תמונת YouTube הרחבה למסגרת אנכית,
+      גם כאשר הסרטון אינו Shorts.
+    */
+    .pardes-video-empty.is-main-preview
+    .pardes-inapp-youtube-image{
+      object-fit:cover;
+      object-position:center center;
+      opacity:1;
+    }   
     
     .pardes-inapp-youtube-shade{
       position:absolute;
@@ -6821,7 +6833,8 @@ function normalizeParashaName(value){
         "is-inapp-youtube",
         "is-horizontal",
         "is-shorts-preview",
-        "is-sod-preview"
+        "is-sod-preview",
+        "is-main-preview"
       );
       empty.innerHTML = "";
       
@@ -6928,16 +6941,34 @@ function normalizeParashaName(value){
         }
 
         /*
+          בעלייה המרכזית בנייד חותכים את תמונת YouTube
+          למסגרת אנכית, גם כשהסרטון אינו Shorts.
+        */
+        if(
+          layer === "main" &&
+          isMobileViewer()
+        ){
+          empty.classList.add("is-main-preview");
+        }
+
+        /*
           בתמונת ה־Shorts של סוד YouTube מחזיר תמונה אופקית.
           חותכים את הצדדים כדי שהתמונה המרכזית תמלא את המסגרת האנכית.
         */
         if(
-          (layer === "sod" || layer === "main") &&
+          layer === "sod" &&
           isMobileViewer() &&
           shouldOpenAsYouTubeShort
         ){
           empty.classList.add("is-sod-preview");
-        }        
+        }
+        
+        if(
+          layer === "main" &&
+          isMobileViewer()
+        ){
+          empty.classList.add("is-sod-preview");
+        }
                
         empty.style.display = "block";
 
