@@ -737,6 +737,17 @@
       object-fit:contain;
       opacity:1;
     }
+
+    /*
+      תיקון תצוגה מקדימה לסוד בלבד:
+      הגדלת מרכז התמונה וחיתוך הצדדים של תמונת YouTube האופקית.
+    */
+    .pardes-video-empty.is-shorts-preview.is-sod-preview
+    .pardes-inapp-youtube-image{
+      object-fit:cover;
+      object-position:center center;
+      opacity:1;
+    }
     
     .pardes-inapp-youtube-shade{
       position:absolute;
@@ -6806,7 +6817,12 @@ function normalizeParashaName(value){
 
       const selectedVideo = chooseVideoForViewer(item);
       
-      empty.classList.remove("is-inapp-youtube", "is-horizontal", "is-shorts-preview");
+      empty.classList.remove(
+        "is-inapp-youtube",
+        "is-horizontal",
+        "is-shorts-preview",
+        "is-sod-preview"
+      );
       empty.innerHTML = "";
       
       /*
@@ -6896,6 +6912,18 @@ function normalizeParashaName(value){
         if(isMobileViewer() && shouldOpenAsYouTubeShort){
           empty.classList.add("is-shorts-preview");
         }
+
+        /*
+          בתמונת ה־Shorts של סוד YouTube מחזיר תמונה אופקית.
+          חותכים את הצדדים כדי שהתמונה המרכזית תמלא את המסגרת האנכית.
+        */
+        if(
+          layer === "sod" &&
+          isMobileViewer() &&
+          shouldOpenAsYouTubeShort
+        ){
+          empty.classList.add("is-sod-preview");
+        }        
                
         empty.style.display = "block";
 
