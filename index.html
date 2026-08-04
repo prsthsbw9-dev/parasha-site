@@ -6866,20 +6866,43 @@ function normalizeParashaName(value){
         document.body.classList.contains("in-app-browser") &&
         document.body.classList.contains("app-tiktok");
 
+      /*
+        ב־Instagram וב־Facebook כל הסרטונים נפתחים כמו סוד:
+        משתמשים בגרסת הנייד ובמסלול YouTube Shorts.
+      */
+      const isInstagramOrFacebookInApp =
+        document.body.classList.contains("in-app-browser") &&
+        (
+          document.body.classList.contains("app-instagram") ||
+          document.body.classList.contains("app-facebook")
+        );
+
       const storedWideYouTube =
         getStoredVideoVariant(item, "wide");
+
+      const storedMobileYouTube =
+        getStoredVideoVariant(item, "mobile");
 
       const youtubeVideoForLaunch =
         isTikTokInApp && isYouTubeVideo(storedWideYouTube)
           ? storedWideYouTube
-          : directYouTubeVideo;
+          : (
+              isInstagramOrFacebookInApp &&
+              isYouTubeVideo(storedMobileYouTube)
+                ? storedMobileYouTube
+                : directYouTubeVideo
+            );
 
       const youtubeIdForLaunch =
         getYouTubeVideoId(youtubeVideoForLaunch) || youtubeId;
 
       const shouldLaunchAsShort =
-        !isTikTokInApp &&
-        isYouTubeShortVariant(youtubeVideoForLaunch);
+        isInstagramOrFacebookInApp
+          ? true
+          : (
+              !isTikTokInApp &&
+              isYouTubeShortVariant(youtubeVideoForLaunch)
+            );
 
       const youtubeWatchUrlForLaunch =
         shouldLaunchAsShort
@@ -6967,7 +6990,13 @@ function normalizeParashaName(value){
         if(youtubeOpenBtn){
           youtubeOpenBtn.href = youtubeLaunchUrl;
         
-          if(document.body.classList.contains("in-app-browser")){
+          /*
+            ב־TikTok נשארים באותו חלון כדי לצמצם את מסך
+            הביניים האפור שנוצר בעת פתיחת חלון חדש.
+          */
+          if(document.body.classList.contains("app-tiktok")){
+            youtubeOpenBtn.removeAttribute("target");
+          }else if(document.body.classList.contains("in-app-browser")){
             youtubeOpenBtn.setAttribute("target", "_blank");
           }else{
             youtubeOpenBtn.removeAttribute("target");
