@@ -6858,40 +6858,46 @@ function normalizeParashaName(value){
           ? `https://www.youtube.com/shorts/${youtubeId}`
           : getYouTubeWatchUrl(directYouTubeVideo);
 
-      /*
-        בתוך TikTok משתמשים בגרסת הנייד
-        ופותחים את הסרטון במסלול YouTube Shorts.
-      */
-      const isTikTokInApp =
-        document.body.classList.contains("in-app-browser") &&
-        document.body.classList.contains("app-tiktok");
-      
-      const storedMobileYouTube =
-        getStoredVideoVariant(item, "mobile");
-      
-      const youtubeVideoForLaunch =
-        isTikTokInApp && isYouTubeVideo(storedMobileYouTube)
-          ? storedMobileYouTube
-          : directYouTubeVideo;
-      
-      const youtubeIdForLaunch =
-        getYouTubeVideoId(youtubeVideoForLaunch) || youtubeId;
-      
-      const shouldLaunchAsShort =
-        isTikTokInApp
-          ? true
-          : isYouTubeShortVariant(youtubeVideoForLaunch);
-      
-      const youtubeWatchUrlForLaunch =
-        shouldLaunchAsShort
-          ? `https://www.youtube.com/shorts/${youtubeIdForLaunch}`
-          : getYouTubeWatchUrl(youtubeVideoForLaunch);
-      
-      const youtubeLaunchUrl = getYouTubeLaunchUrl(
-        youtubeIdForLaunch,
-        shouldLaunchAsShort,
-        youtubeWatchUrlForLaunch || youtubeWatchUrl
-      );
+          /*
+            בתוך Instagram, Facebook ו־TikTok משתמשים
+            בדיוק באותן הגדרות:
+            גרסת הנייד ופתיחה במסלול YouTube Shorts.
+          */
+          const isInstagramFacebookOrTikTokInApp =
+            document.body.classList.contains("in-app-browser") &&
+            (
+              document.body.classList.contains("app-instagram") ||
+              document.body.classList.contains("app-facebook") ||
+              document.body.classList.contains("app-tiktok")
+            );
+          
+          const storedMobileYouTube =
+            getStoredVideoVariant(item, "mobile");
+          
+          const youtubeVideoForLaunch =
+            isInstagramFacebookOrTikTokInApp &&
+            isYouTubeVideo(storedMobileYouTube)
+              ? storedMobileYouTube
+              : directYouTubeVideo;
+          
+          const youtubeIdForLaunch =
+            getYouTubeVideoId(youtubeVideoForLaunch) || youtubeId;
+          
+          const shouldLaunchAsShort =
+            isInstagramFacebookOrTikTokInApp
+              ? true
+              : isYouTubeShortVariant(youtubeVideoForLaunch);
+          
+          const youtubeWatchUrlForLaunch =
+            shouldLaunchAsShort
+              ? `https://www.youtube.com/shorts/${youtubeIdForLaunch}`
+              : getYouTubeWatchUrl(youtubeVideoForLaunch);
+          
+          const youtubeLaunchUrl = getYouTubeLaunchUrl(
+            youtubeIdForLaunch,
+            shouldLaunchAsShort,
+            youtubeWatchUrlForLaunch || youtubeWatchUrl
+          );
 
         player.style.display = "none";
         player.removeAttribute("src");
