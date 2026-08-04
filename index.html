@@ -6591,7 +6591,9 @@ function normalizeParashaName(value){
     }
 
     function getYouTubeLaunchUrl(youtubeId, isShort, webUrl){
-      if(!youtubeId) return webUrl;
+      if(!youtubeId){
+        return webUrl || "";
+      }
     
       const userAgent =
         navigator.userAgent || navigator.vendor || "";
@@ -6606,35 +6608,14 @@ function normalizeParashaName(value){
           navigator.maxTouchPoints > 1
         );
     
-      const isInAppBrowser =
-        document.body.classList.contains("in-app-browser");
-    
       const youtubeWebUrl = isShort
         ? `https://www.youtube.com/shorts/${youtubeId}`
-        : `https://www.youtube.com/watch?v=${youtubeId}`;    
+        : `https://www.youtube.com/watch?v=${youtubeId}`;
     
       /*
-        Android בתוך TikTok, Instagram, Facebook וכדומה:
-        לא משתמשים ב-intent://, מפני שהדפדפן הפנימי עלול לחסום אותו.
-      */
-      if(isAndroid && isInAppBrowser){
-        return isShort
-          ? `https://www.youtube.com/shorts/${youtubeId}`
-          : `https://www.youtube.com/watch?v=${youtubeId}`;
-      }
-    
-      /*
-        iPhone או iPad בתוך דפדפן פנימי:
-        משתמשים בקישור הרשמי של YouTube ופותחים אותו בחלון חיצוני.
-        iOS ינסה להעביר אותו לאפליקציית YouTube בהתאם להגדרות המכשיר.
-      */
-      if(isIOS && isInAppBrowser){
-        return youtubeWebUrl;
-      }
-    
-      /*
-        Android בכרום או בדפדפן רגיל:
-        שומרים על הפתיחה הישירה באפליקציית YouTube.
+        כל מכשירי Android, ללא הבדל בין Chrome,
+        YouTube, TikTok, Instagram ו־Facebook:
+        ניסיון ישיר לפתוח את אפליקציית YouTube.
       */
       if(isAndroid){
         const youtubePath = isShort
@@ -6650,8 +6631,10 @@ function normalizeParashaName(value){
       }
     
       /*
-        iPhone או iPad בספארי ובדפדפן רגיל:
-        Universal Link רשמי של YouTube.
+        באייפון ובאייפד משתמשים ב־Universal Link.
+        iOS יכול להעביר אותו לאפליקציית YouTube,
+        ואם הדבר נחסם או שהאפליקציה אינה מותקנת,
+        הקישור יישאר זמין בדפדפן.
       */
       if(isIOS){
         return youtubeWebUrl;
@@ -6662,7 +6645,7 @@ function normalizeParashaName(value){
       */
       return webUrl || youtubeWebUrl;
     }
-    
+       
     function getYouTubeEmbedUrl(video){
       if(video?.embedUrl) return video.embedUrl;
 
@@ -6870,7 +6853,7 @@ function normalizeParashaName(value){
               document.body.classList.contains("app-facebook") ||
               document.body.classList.contains("app-tiktok")
             );
-          
+        
           const storedMobileYouTube =
             getStoredVideoVariant(item, "mobile");
           
@@ -6896,13 +6879,13 @@ function normalizeParashaName(value){
           const isMainAliyah =
             layer === "main";
           
-          const youtubeLaunchUrl =
-            isInstagramFacebookOrTikTokInApp && isMainAliyah
-              ? `https://m.youtube.com/watch?v=${youtubeIdForLaunch}`
-              : getYouTubeLaunchUrl(
-                  youtubeIdForLaunch,
-                  shouldLaunchAsShort,
-                  youtubeWatchUrlForLaunch || youtubeWatchUrl
+          const shouldLaunchAsShort =
+            isMainAliyah
+              ? false
+              : (
+                  isInstagramFacebookOrTikTokInApp
+                    ? true
+                    : isYouTubeShortVariant(youtubeVideoForLaunch)
                 );
 
         player.style.display = "none";
