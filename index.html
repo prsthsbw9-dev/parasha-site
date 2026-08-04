@@ -6612,6 +6612,18 @@ function normalizeParashaName(value){
       const youtubeWebUrl = isShort
         ? `https://www.youtube.com/shorts/${youtubeId}`
         : `https://www.youtube.com/watch?v=${youtubeId}`;
+
+      /*
+        ניסוי בטיקטוק בלבד:
+        פתיחת קישור YouTube מקוצר מהסוג שמועתק מהאפליקציה.
+      */
+      const isTikTokInApp =
+        document.body.classList.contains("in-app-browser") &&
+        document.body.classList.contains("app-tiktok");
+      
+      if(isTikTokInApp){
+        return `https://youtu.be/${youtubeId}`;
+      }      
     
       /*
         Android בתוך TikTok, Instagram, Facebook וכדומה:
