@@ -6893,13 +6893,9 @@ function normalizeParashaName(value){
       
         empty.classList.add("is-inapp-youtube");
 
-          if(
-            isMobileViewer() &&
-            (
-              shouldOpenAsYouTubeShort ||
-              directYouTubeVideo.__variant === "mobile"
-            )
-          ){
+        if(isMobileViewer() && shouldOpenAsYouTubeShort){
+          empty.classList.add("is-shorts-preview");
+        }
                
         empty.style.display = "block";
 
