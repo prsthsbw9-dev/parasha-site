@@ -6888,7 +6888,7 @@ function normalizeParashaName(value){
           
           const shouldLaunchAsShort =
             isMainAliyah
-              ? false
+              ? isYouTubeShortVariant(youtubeVideoForLaunch)
               : (
                   isInstagramFacebookOrTikTokInApp
                     ? true
@@ -6932,7 +6932,7 @@ function normalizeParashaName(value){
           חותכים את הצדדים כדי שהתמונה המרכזית תמלא את המסגרת האנכית.
         */
         if(
-          layer === "sod" &&
+          (layer === "sod" || layer === "main") &&
           isMobileViewer() &&
           shouldOpenAsYouTubeShort
         ){
