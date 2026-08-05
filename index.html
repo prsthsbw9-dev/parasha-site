@@ -7037,6 +7037,29 @@ function normalizeParashaName(value){
             youtubeWatchUrlForLaunch || youtubeWatchUrl
           );
 
+           /*
+            עמוד נגן פנימי מופעל רק כאשר:
+            1. מדובר בעלייה הראשית.
+            2. הצופה נמצא בטלפון.
+            3. האתר פתוח בתוך TikTok.
+            4. הסרטון אינו Shorts.
+          */
+          const useTikTokMainMobilePlayer =
+            isMainAliyah &&
+            document.body.classList.contains("device-phone") &&
+            document.body.classList.contains("in-app-browser") &&
+            document.body.classList.contains("app-tiktok") &&
+            !shouldLaunchAsShort &&
+            !!youtubeIdForLaunch;
+
+          const youtubeButtonDestination =
+            useTikTokMainMobilePlayer
+              ? (
+                  `main-video-mobile.html?v=` +
+                  encodeURIComponent(youtubeIdForLaunch)
+                )
+              : youtubeLaunchUrl;       
+
         player.style.display = "none";
         player.removeAttribute("src");
         player.src = "";
@@ -7128,15 +7151,21 @@ function normalizeParashaName(value){
         }
 
         if(youtubeOpenBtn){
-          youtubeOpenBtn.href = youtubeLaunchUrl;
+          youtubeOpenBtn.href = youtubeButtonDestination;
         
           /*
-            ב־TikTok נשארים באותו חלון כדי לצמצם את מסך
-            הביניים האפור שנוצר בעת פתיחת חלון חדש.
+            עמוד הנגן הפנימי חייב להיפתח בתוך אותו חלון של TikTok.
+            בשאר המקרים נשמרת ההתנהגות הקיימת.
           */
-          if(document.body.classList.contains("app-tiktok")){
+          if(useTikTokMainMobilePlayer){
             youtubeOpenBtn.removeAttribute("target");
-          }else if(document.body.classList.contains("in-app-browser")){
+          }else if(
+            document.body.classList.contains("app-tiktok")
+          ){
+            youtubeOpenBtn.removeAttribute("target");
+          }else if(
+            document.body.classList.contains("in-app-browser")
+          ){
             youtubeOpenBtn.setAttribute("target", "_blank");
           }else{
             youtubeOpenBtn.removeAttribute("target");
