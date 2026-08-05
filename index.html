@@ -4936,6 +4936,21 @@
         display:none !important;
       }
     }
+
+    /* TikTok בלבד — מסתיר את נגן הציפור עד שהפריים הראשון מוכן */
+    body.in-app-browser.app-tiktok .bird-flight-mobile.is-tiktok-preparing,
+    body.in-app-browser.app-tiktok .bird-flight-desktop.is-tiktok-preparing{
+      display:block !important;
+      opacity:0 !important;
+      visibility:visible !important;
+      pointer-events:none !important;
+    }
+    
+    /* חשיפת הסרטון רק לאחר תחילת הניגון */
+    body.in-app-browser.app-tiktok .bird-flight-mobile.is-playing,
+    body.in-app-browser.app-tiktok .bird-flight-desktop.is-playing{
+      opacity:1 !important;
+    }    
     
   </style>
 </head>
@@ -8607,35 +8622,89 @@ if (sodGrapesVideo) {
           return;
         }
     
-        selectedBirdFlight.classList.add("is-playing");
-        document.body.classList.add("bird-transition-active");
-    
+        const isTikTokInApp =
+          document.body.classList.contains("in-app-browser") &&
+          document.body.classList.contains("app-tiktok");
+
+        let birdWasRevealed = false;
+
+        function revealBirdTransition(){
+          if(birdWasRevealed) return;
+          birdWasRevealed = true;
+
+          selectedBirdFlight.classList.remove(
+            "is-tiktok-preparing"
+          );
+
+          selectedBirdFlight.classList.add("is-playing");
+          document.body.classList.add("bird-transition-active");
+        }
+
+        /*
+          מחוץ ל-TikTok שומרים בדיוק על ההתנהגות הקיימת.
+          ב-TikTok הסרטון נטען תחילה כשהוא שקוף.
+        */
+        if(isTikTokInApp){
+          selectedBirdFlight.classList.add(
+            "is-tiktok-preparing"
+          );
+        }else{
+          revealBirdTransition();
+        }
+
         try{
           selectedBirdFlight.currentTime = 0;
         }catch(error){}
-    
+
         let birdNavigationFinished = false;
         let birdFallbackTimer = null;
-    
+
         function finishBirdTransition(){
           if(birdNavigationFinished) return;
-    
+
           birdNavigationFinished = true;
           clearTimeout(birdFallbackTimer);
-    
+
           window.location.href = "names.html";
         }
-    
+
         selectedBirdFlight.onended = finishBirdTransition;
         selectedBirdFlight.onerror = finishBirdTransition;
-    
+
+        /*
+          ב-TikTok חושפים את הסרטון רק לאחר שהנגן באמת התחיל
+          והדפדפן הכין פריים להצגה.
+        */
+        if(isTikTokInApp){
+          selectedBirdFlight.addEventListener(
+            "playing",
+            function(){
+              if(
+                typeof selectedBirdFlight.requestVideoFrameCallback
+                === "function"
+              ){
+                selectedBirdFlight.requestVideoFrameCallback(
+                  revealBirdTransition
+                );
+              }else{
+                window.requestAnimationFrame(function(){
+                  window.requestAnimationFrame(
+                    revealBirdTransition
+                  );
+                });
+              }
+            },
+            { once:true }
+          );
+        }
+
         birdFallbackTimer = setTimeout(
           finishBirdTransition,
           6000
         );
-    
+
         const playPromise = selectedBirdFlight.play();
-    
+
         if(playPromise && typeof playPromise.catch === "function"){
           playPromise.catch(function(){
             finishBirdTransition();
