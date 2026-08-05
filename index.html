@@ -5278,6 +5278,47 @@
     const app = detectInApp();
     const orientation = window.innerWidth > window.innerHeight ? "landscape" : "portrait";
 
+    /*
+      מדידת שטח התצוגה האמיתי.
+      visualViewport מביא בחשבון גם סרגלים של דפדפנים פנימיים.
+    */
+    const visualViewport = window.visualViewport;
+
+    const actualViewportWidth = visualViewport
+      ? visualViewport.width
+      : window.innerWidth;
+
+    const actualViewportHeight = visualViewport
+      ? visualViewport.height
+      : window.innerHeight;
+
+    const actualViewportRatio =
+      actualViewportWidth / actualViewportHeight;
+
+    document.documentElement.style.setProperty(
+      "--actual-viewport-width",
+      actualViewportWidth + "px"
+    );
+
+    document.documentElement.style.setProperty(
+      "--actual-viewport-height",
+      actualViewportHeight + "px"
+    );
+
+    document.documentElement.style.setProperty(
+      "--actual-viewport-ratio",
+      actualViewportRatio
+    );
+
+    body.dataset.viewportWidth =
+      Math.round(actualViewportWidth);
+
+    body.dataset.viewportHeight =
+      Math.round(actualViewportHeight);
+
+    body.dataset.viewportRatio =
+      actualViewportRatio.toFixed(3);    
+
     addClass("device-" + device);
     addClass("orientation-" + orientation);
     addClass("browser-" + browser);
@@ -5304,11 +5345,25 @@
     resizeTimer = window.setTimeout(applyEnvironmentClasses, 120);
   }, { passive:true });
 
-  window.addEventListener("orientationchange", function () {
-    window.setTimeout(applyEnvironmentClasses, 180);
-  }, { passive:true });
-})();
-</script>
+    window.addEventListener("orientationchange", function () {
+      window.setTimeout(applyEnvironmentClasses, 180);
+    }, { passive:true });
+  
+    if (window.visualViewport) {
+      let visualViewportTimer = null;
+  
+      window.visualViewport.addEventListener("resize", function () {
+        window.clearTimeout(visualViewportTimer);
+  
+        visualViewportTimer = window.setTimeout(function () {
+          if (!document.body.classList.contains("pardes-keyboard-open")) {
+            applyEnvironmentClasses();
+          }
+        }, 120);
+      }, { passive:true });
+    }
+  })();
+  </script>
   
 <audio id="pardesHomeIntroAudio" preload="auto">
   <source src="pardes-home-intro.mp3" type="audio/mpeg">
