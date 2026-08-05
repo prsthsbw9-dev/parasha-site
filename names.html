@@ -2,33 +2,20 @@
 <html lang="he" dir="rtl">
 <head>
   <meta charset="UTF-8">
-
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1, viewport-fit=cover"
-  >
-
-  <meta
-    name="theme-color"
-    content="#071014"
-  >
-
-  <title>כל שם הוא עלה של אור</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#071014">
+  <title>לכל נשמה יש שם</title>
 
   <style>
     :root {
       --page-height: 100dvh;
       --content-width: min(92vw, 560px);
-      --glass-background: rgba(5, 18, 22, 0.68);
-      --glass-border: rgba(255, 255, 255, 0.25);
-      --text-color: #ffffff;
-      --soft-text: rgba(255, 255, 255, 0.88);
-      --gold: #ffe49a;
+      --text: #fff;
+      --soft-text: rgba(255,255,255,.91);
+      --gold: #ffe39a;
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     html,
     body {
@@ -40,7 +27,7 @@
 
     body {
       min-height: var(--page-height);
-      color: var(--text-color);
+      color: var(--text);
       font-family: Arial, "Noto Sans Hebrew", sans-serif;
       overflow-x: hidden;
     }
@@ -48,438 +35,348 @@
     button,
     input,
     textarea,
-    a {
-      font: inherit;
-    }
+    a { font: inherit; }
 
-    .names-background-video {
+    .background-video {
       position: fixed;
       inset: 0;
       z-index: 0;
-
       width: 100%;
       height: 100%;
-
       object-fit: cover;
       object-position: center;
       background: #071014;
-
       pointer-events: none;
     }
 
-    /*
-      שכבת הכהות שומרת על קריאות הטקסט,
-      בלי להסתיר לחלוטין את סרטון הרקע.
-    */
-    .names-background-overlay {
+    /* שכבה קלה בלבד: סרטון הרקע נשאר גלוי וברור. */
+    .background-overlay {
       position: fixed;
       inset: 0;
       z-index: 1;
-
-      background:
-        linear-gradient(
-          to bottom,
-          rgba(2, 8, 10, 0.28) 0%,
-          rgba(2, 8, 10, 0.54) 34%,
-          rgba(2, 8, 10, 0.76) 100%
-        );
-
+      background: linear-gradient(
+        to bottom,
+        rgba(0,0,0,.06) 0%,
+        rgba(0,0,0,.10) 48%,
+        rgba(0,0,0,.22) 100%
+      );
       pointer-events: none;
     }
 
-    .pardes-return-button {
-      position: fixed;
-      top: max(12px, env(safe-area-inset-top));
-      right: 12px;
-      z-index: 20;
+    .page {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      min-height: var(--page-height);
+      padding:
+        max(14px, env(safe-area-inset-top))
+        10px
+        max(24px, env(safe-area-inset-bottom));
+      display: flex;
+      justify-content: center;
+    }
 
-      min-height: 45px;
+    .content {
+      width: var(--content-width);
+    }
+
+    /* הכפתור חלק מהעמוד ואינו מסתיר תוכן בזמן גלילה. */
+    .return-row {
+      display: flex;
+      justify-content: flex-start;
+      margin-bottom: clamp(12px, 3dvh, 24px);
+    }
+
+    .return-button {
+      min-height: 44px;
       padding: 9px 15px;
-
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
-
-      border: 1px solid rgba(255, 255, 255, 0.32);
+      border: 1px solid rgba(255,255,255,.34);
       border-radius: 999px;
-
-      background: rgba(5, 15, 18, 0.72);
+      background: rgba(5,15,18,.78);
       color: #fff;
-
       text-decoration: none;
       font-size: 15px;
-      font-weight: 700;
-
-      box-shadow: 0 6px 22px rgba(0, 0, 0, 0.28);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
+      font-weight: 800;
+      box-shadow: 0 7px 22px rgba(0,0,0,.30);
+      backdrop-filter: blur(9px);
+      -webkit-backdrop-filter: blur(9px);
       -webkit-tap-highlight-color: transparent;
     }
 
-    .pardes-return-button:active {
-      transform: scale(0.98);
-    }
+    .return-button:active,
+    .action-button:active,
+    .payment-button:active { transform: scale(.985); }
 
-    .names-page {
-      position: relative;
-      z-index: 2;
-
-      width: 100%;
-      min-height: var(--page-height);
-
-      padding:
-        max(72px, calc(env(safe-area-inset-top) + 62px))
-        10px
-        max(24px, env(safe-area-inset-bottom));
-
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-    }
-
-    .names-content {
-      width: var(--content-width);
-    }
-
-    .names-intro {
-      margin: 0 auto 18px;
+    .intro {
+      margin: 0 auto clamp(16px, 3dvh, 24px);
       text-align: center;
-      text-shadow: 0 3px 18px rgba(0, 0, 0, 0.85);
+      text-shadow:
+        0 3px 5px rgba(0,0,0,.95),
+        0 7px 22px rgba(0,0,0,.9);
     }
 
-    .leaf-symbol {
+    .bird-leaf {
       margin-bottom: 4px;
-      font-size: clamp(32px, 9vw, 52px);
+      font-size: clamp(31px, 8vw, 47px);
       line-height: 1;
-      filter: drop-shadow(0 0 12px rgba(218, 255, 188, 0.42));
+      filter: drop-shadow(0 3px 8px rgba(0,0,0,.8));
     }
 
-    .names-title {
+    h1 {
       margin: 0;
       color: #fff;
-      font-size: clamp(29px, 8vw, 45px);
+      font-size: clamp(31px, 8.5vw, 47px);
       font-weight: 900;
-      line-height: 1.16;
+      line-height: 1.14;
     }
 
-    .names-subtitle {
-      max-width: 520px;
-      margin: 12px auto 0;
-
+    .intro-text {
+      max-width: 540px;
+      margin: 11px auto 0;
       color: var(--soft-text);
-      font-size: clamp(17px, 4.6vw, 22px);
+      font-size: clamp(16px, 4.35vw, 20px);
       line-height: 1.55;
+      font-weight: 600;
     }
 
-    .form-card {
+    /* המעטפת שקופה לחלוטין; רק השדות והכפתורים אטומים. */
+    .request-form,
+    .support-section {
       width: 100%;
-      padding: clamp(18px, 5vw, 28px);
-
-      border: 1px solid var(--glass-border);
-      border-radius: clamp(22px, 6vw, 32px);
-
-      background: var(--glass-background);
-
-      box-shadow:
-        0 14px 42px rgba(0, 0, 0, 0.38),
-        inset 0 1px 0 rgba(255, 255, 255, 0.08);
-
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
+      margin: 0;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      box-shadow: none;
     }
 
-    .field {
-      margin-bottom: 16px;
-    }
+    .field { margin-bottom: 13px; }
 
     .field label {
       display: block;
-      margin: 0 2px 7px;
-
+      margin: 0 4px 6px;
       color: #fff;
-      font-size: clamp(16px, 4.3vw, 19px);
-      font-weight: 700;
+      font-size: clamp(15px, 4.2vw, 18px);
+      font-weight: 800;
+      text-shadow: 0 2px 6px rgba(0,0,0,.95);
     }
 
-    .optional-label {
-      color: rgba(255, 255, 255, 0.68);
-      font-size: 0.82em;
-      font-weight: 400;
+    .optional {
+      color: rgba(255,255,255,.79);
+      font-size: .82em;
+      font-weight: 500;
     }
 
     .field input,
     .field textarea {
       width: 100%;
       margin: 0;
-      padding: 13px 14px;
-
-      border: 1px solid rgba(255, 255, 255, 0.28);
+      padding: 12px 14px;
+      border: 1px solid rgba(255,255,255,.52);
       border-radius: 16px;
       outline: none;
-
-      background: rgba(255, 255, 255, 0.11);
+      background: rgba(10,25,29,.88);
       color: #fff;
-
       font-size: 16px;
       line-height: 1.45;
-
-      box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.16);
+      box-shadow:
+        0 7px 22px rgba(0,0,0,.30),
+        inset 0 1px 0 rgba(255,255,255,.07);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
     }
 
     .field textarea {
-      min-height: 125px;
+      min-height: 96px;
       resize: vertical;
     }
 
     .field input::placeholder,
-    .field textarea::placeholder {
-      color: rgba(255, 255, 255, 0.58);
-    }
+    .field textarea::placeholder { color: rgba(255,255,255,.62); }
 
     .field input:focus,
     .field textarea:focus {
-      border-color: rgba(255, 228, 154, 0.8);
-      background: rgba(255, 255, 255, 0.15);
-
+      border-color: var(--gold);
       box-shadow:
-        0 0 0 3px rgba(255, 228, 154, 0.13),
-        inset 0 2px 8px rgba(0, 0, 0, 0.12);
+        0 0 0 3px rgba(255,227,154,.16),
+        0 7px 22px rgba(0,0,0,.30);
     }
 
-    .field-error {
+    .error {
       display: none;
-      margin: 7px 4px 0;
-      color: #ffd3d3;
-      font-size: 14px;
-      line-height: 1.4;
+      margin: 6px 4px 0;
+      color: #ffe0e0;
+      font-size: 13px;
+      font-weight: 700;
+      text-shadow: 0 2px 5px rgba(0,0,0,.95);
     }
 
-    .field.has-error .field-error {
-      display: block;
-    }
-
+    .field.has-error .error { display: block; }
     .field.has-error input,
-    .field.has-error textarea {
-      border-color: #ff8b8b;
-    }
+    .field.has-error textarea { border-color: #ff8b8b; }
 
-    .send-request-button {
+    .action-button {
       width: 100%;
-      min-height: 58px;
-      padding: 12px 16px;
-
-      border: 1px solid rgba(255, 255, 255, 0.38);
-      border-radius: 18px;
-
-      background:
-        linear-gradient(
-          135deg,
-          #e00000,
-          #ad0000
-        );
-
+      min-height: 56px;
+      padding: 11px 15px;
+      border: 1px solid rgba(255,255,255,.48);
+      border-radius: 17px;
+      background: linear-gradient(135deg, #ed0909, #b40000);
       color: #fff;
-
-      font-size: clamp(18px, 4.8vw, 22px);
-      font-weight: 800;
+      font-size: clamp(18px, 4.8vw, 21px);
+      font-weight: 900;
       line-height: 1.25;
-
       cursor: pointer;
-
       box-shadow:
-        0 8px 24px rgba(215, 0, 0, 0.32),
-        inset 0 1px 0 rgba(255, 255, 255, 0.2);
-
+        0 8px 25px rgba(210,0,0,.40),
+        inset 0 1px 0 rgba(255,255,255,.22);
       -webkit-tap-highlight-color: transparent;
     }
 
-    .send-request-button:active {
-      transform: scale(0.985);
-    }
-
-    .email-explanation {
-      margin: 10px 4px 0;
-      color: rgba(255, 255, 255, 0.72);
+    .mail-note {
+      margin: 8px 4px 0;
+      color: rgba(255,255,255,.88);
       text-align: center;
       font-size: 13px;
-      line-height: 1.55;
+      line-height: 1.45;
+      font-weight: 600;
+      text-shadow: 0 2px 5px rgba(0,0,0,.95);
     }
 
     .direct-email {
       color: #fff;
-      font-weight: 700;
+      font-weight: 800;
       overflow-wrap: anywhere;
     }
 
     .form-message {
       display: none;
-      margin: 12px 0 0;
-      padding: 10px 12px;
-
-      border: 1px solid rgba(255, 255, 255, 0.18);
-      border-radius: 13px;
-
-      background: rgba(255, 255, 255, 0.08);
+      margin: 9px 0 0;
+      padding: 9px 11px;
+      border: 1px solid rgba(255,255,255,.34);
+      border-radius: 12px;
+      background: rgba(7,19,23,.88);
       color: #fff;
-
       text-align: center;
-      font-size: 14px;
-      line-height: 1.5;
+      font-size: 13px;
+      line-height: 1.45;
     }
 
-    .form-message.is-visible {
-      display: block;
+    .form-message.visible { display: block; }
+
+    .divider {
+      width: min(72%, 340px);
+      height: 1px;
+      margin: clamp(20px, 4dvh, 32px) auto;
+      background: linear-gradient(
+        to left,
+        transparent,
+        rgba(255,255,255,.72),
+        transparent
+      );
+      box-shadow: 0 1px 5px rgba(0,0,0,.8);
     }
 
     .support-section {
-      width: 100%;
-      margin-top: 18px;
-      padding: clamp(17px, 4.5vw, 24px);
-
-      border: 1px solid rgba(255, 255, 255, 0.18);
-      border-radius: clamp(20px, 5vw, 28px);
-
-      background: rgba(5, 16, 20, 0.64);
-
+      padding-bottom: 8px;
       text-align: center;
-
-      box-shadow: 0 12px 34px rgba(0, 0, 0, 0.3);
-
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
+      text-shadow: 0 3px 8px rgba(0,0,0,.95);
     }
 
-    .support-title {
+    .support-section h2 {
       margin: 0;
       color: var(--gold);
-      font-size: clamp(21px, 5.6vw, 28px);
+      font-size: clamp(22px, 6vw, 30px);
       line-height: 1.3;
     }
 
     .support-text {
-      max-width: 480px;
-      margin: 8px auto 15px;
-
-      color: rgba(255, 255, 255, 0.86);
-      font-size: clamp(14px, 3.9vw, 17px);
+      max-width: 530px;
+      margin: 8px auto 14px;
+      color: rgba(255,255,255,.94);
+      font-size: clamp(14px, 4vw, 17px);
       line-height: 1.55;
+      font-weight: 600;
+    }
+
+    .thank-you-text {
+      max-width: 530px;
+      margin: 0 auto 14px;
+      padding: 10px 12px;
+      border-right: 3px solid var(--gold);
+      border-radius: 8px;
+      background: rgba(5,17,21,.80);
+      color: #fff;
+      font-size: clamp(13px, 3.7vw, 16px);
+      line-height: 1.55;
+      text-align: right;
+      text-shadow: none;
+      box-shadow: 0 6px 20px rgba(0,0,0,.26);
     }
 
     .payment-buttons {
       display: grid;
-      grid-template-columns: 1fr;
-      gap: 10px;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
     }
 
     .payment-button {
-      width: 100%;
-      min-height: 52px;
-      padding: 11px 14px;
-
+      min-width: 0;
+      min-height: 48px;
+      padding: 9px 5px;
       display: flex;
       align-items: center;
       justify-content: center;
-
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      border-radius: 16px;
-
+      border: 1px solid rgba(255,255,255,.45);
+      border-radius: 14px;
       color: #fff;
       text-decoration: none;
-      font-size: 17px;
-      font-weight: 800;
-
-      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.24);
+      font-size: clamp(13px, 3.6vw, 16px);
+      font-weight: 900;
+      line-height: 1.15;
+      text-shadow: none;
+      box-shadow: 0 7px 20px rgba(0,0,0,.30);
       -webkit-tap-highlight-color: transparent;
     }
 
-    .payment-button:active {
-      transform: scale(0.985);
-    }
-
-    .payment-button.bit {
-      background: linear-gradient(135deg, #168ccb, #0870ad);
-    }
-
-    .payment-button.paybox {
-      background: linear-gradient(135deg, #7244c7, #4e268e);
-    }
-
-    .payment-button.paypal {
-      background: linear-gradient(135deg, #075ca8, #003c73);
-    }
+    .bit { background: linear-gradient(135deg, #1ca4e4, #0874b0); }
+    .paybox { background: linear-gradient(135deg, #7b48cf, #4f258e); }
+    .paypal { background: linear-gradient(135deg, #0967b6, #003e76); }
 
     .voluntary-note {
-      margin: 13px 0 0;
-      color: rgba(255, 255, 255, 0.64);
+      margin: 10px 0 0;
+      color: rgba(255,255,255,.84);
       font-size: 12px;
-      line-height: 1.5;
+      line-height: 1.45;
+      font-weight: 600;
     }
 
-    @media (min-width: 540px) {
-      .payment-buttons {
-        grid-template-columns: repeat(3, 1fr);
-      }
+    @media (orientation: landscape) and (max-height: 650px) {
+      :root { --content-width: min(88vw, 760px); }
 
-      .payment-button {
-        font-size: 15px;
+      .page { padding-top: max(8px, env(safe-area-inset-top)); }
+      .return-row { margin-bottom: 8px; }
+      .bird-leaf { display: none; }
+      h1 { font-size: clamp(27px, 7vh, 38px); }
+      .intro { margin-bottom: 12px; }
+      .intro-text {
+        margin-top: 5px;
+        font-size: clamp(14px, 3.6vh, 18px);
       }
-    }
-
-    @media (orientation: landscape) and (max-height: 620px) {
-      :root {
-        --content-width: min(88vw, 760px);
-      }
-
-      .names-page {
-        padding-top: max(62px, calc(env(safe-area-inset-top) + 54px));
-      }
-
-      .names-intro {
-        margin-bottom: 12px;
-      }
-
-      .leaf-symbol {
-        display: none;
-      }
-
-      .names-title {
-        font-size: clamp(25px, 6vh, 34px);
-      }
-
-      .names-subtitle {
-        margin-top: 6px;
-        font-size: clamp(14px, 3.8vh, 18px);
-      }
-
-      .form-card {
-        padding: 16px;
-      }
-
-      .field textarea {
-        min-height: 88px;
-      }
-
-      .support-section {
-        margin-top: 12px;
-      }
-
-      .payment-buttons {
-        grid-template-columns: repeat(3, 1fr);
-      }
+      .field { margin-bottom: 9px; }
+      .field textarea { min-height: 76px; }
+      .divider { margin: 16px auto; }
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .names-background-video {
-        display: none;
-      }
-
-      *,
-      *::before,
-      *::after {
-        scroll-behavior: auto !important;
-        transition: none !important;
+      .background-video { display: none; }
+      *, *::before, *::after {
         animation: none !important;
+        transition: none !important;
       }
     }
   </style>
@@ -487,8 +384,8 @@
 
 <body>
   <video
-    id="namesBackgroundVideo"
-    class="names-background-video"
+    id="backgroundVideo"
+    class="background-video"
     autoplay
     muted
     loop
@@ -497,60 +394,40 @@
     poster="names-background-desktop-poster.jpg"
     aria-hidden="true"
   >
-    <source
-      src="names-background-desktop.mp4"
-      type="video/mp4"
-    >
+    <source src="names-background-desktop.mp4" type="video/mp4">
   </video>
 
-  <div
-    class="names-background-overlay"
-    aria-hidden="true"
-  ></div>
+  <div class="background-overlay" aria-hidden="true"></div>
 
-  <a
-    class="pardes-return-button"
-    href="index.html"
-    aria-label="חזרה לעץ הפרד״ס"
-  >
-    <span aria-hidden="true">←</span>
-    <span>חזרה לפרד״ס</span>
-  </a>
-
-  <main class="names-page">
-    <div class="names-content">
-      <header class="names-intro">
-        <div
-          class="leaf-symbol"
-          aria-hidden="true"
+  <main class="page">
+    <div class="content">
+      <div class="return-row">
+        <a
+          class="return-button"
+          href="index.html"
+          aria-label="חזרה לעץ הפרד״ס"
         >
-          🕊️🌿
-        </div>
+          <span aria-hidden="true">←</span>
+          <span>חזרה לפרד״ס</span>
+        </a>
+      </div>
 
-        <h1 class="names-title">
-          כל שם הוא עלה של אור
-        </h1>
+      <header class="intro">
+        <div class="bird-leaf" aria-hidden="true">🕊️🌿</div>
 
-        <p class="names-subtitle">
-          כמו שהציפור מוסרת את עלי הזית אל הנשמה,
-          כתבו לנו את השם ואת אשר על ליבכם —
-          ונצרף אותו לתפילת הרבים.
+        <h1>לכל נשמה יש שם</h1>
+
+        <p class="intro-text">
+          העלים שהציפור מוסרת נושאים את השמות והבקשות שלכם —
+          לעילוי נשמה, לזיווג, לרפואה, להצלחה ולכל אשר על הלב.
+          בעלייה הבאה הם יוצגו בפני אלפי צופים,
+          לצד ברכה קולית שתישמע למענם.
         </p>
       </header>
 
-      <form
-        id="nameRequestForm"
-        class="form-card"
-        novalidate
-      >
-        <div
-          id="nameField"
-          class="field"
-        >
-          <label for="blessingName">
-            השם לברכה
-          </label>
-
+      <form id="requestForm" class="request-form" novalidate>
+        <div id="nameField" class="field">
+          <label for="blessingName">השם לברכה או להקדשה</label>
           <input
             id="blessingName"
             name="blessingName"
@@ -560,41 +437,25 @@
             placeholder="לדוגמה: דוד בן שרה"
             required
           >
-
-          <div class="field-error">
-            יש להזין את השם לברכה.
-          </div>
+          <div class="error">יש להזין שם לברכה או להקדשה.</div>
         </div>
 
-        <div
-          id="requestField"
-          class="field"
-        >
-          <label for="requestText">
-            מה תרצו לבקש או לספר?
-          </label>
-
+        <div id="requestField" class="field">
+          <label for="requestText">מה תרצו לבקש או לספר?</label>
           <textarea
             id="requestText"
             name="requestText"
             maxlength="1500"
-            placeholder="כתבו כאן בחופשיות את הבקשה, ההקדשה או ההודעה..."
+            placeholder="כתבו כאן את הבקשה, ההקדשה או ההודעה..."
             required
           ></textarea>
-
-          <div class="field-error">
-            יש לכתוב בקצרה את הבקשה או ההודעה.
-          </div>
+          <div class="error">יש לכתוב את הבקשה, ההקדשה או ההודעה.</div>
         </div>
 
         <div class="field">
           <label for="contactDetails">
-            פרטי קשר
-            <span class="optional-label">
-              — לא חובה
-            </span>
+            פרטי קשר <span class="optional">— לא חובה</span>
           </label>
-
           <input
             id="contactDetails"
             name="contactDetails"
@@ -605,22 +466,14 @@
           >
         </div>
 
-        <button
-          class="send-request-button"
-          type="submit"
-        >
+        <button class="action-button" type="submit">
           שליחת השם והבקשה במייל
         </button>
 
-        <p class="email-explanation">
-          לאחר הלחיצה תיפתח אפליקציית המייל.
-          יש ללחוץ בה על „שליחה”.
-          <br>
+        <p class="mail-note">
+          לאחר הלחיצה יש לאשר „שליחה” באפליקציית המייל.
           אפשר גם לפנות ישירות:
-          <a
-            class="direct-email"
-            href="mailto:prsthsbw9@gmail.com"
-          >
+          <a class="direct-email" href="mailto:prsthsbw9@gmail.com">
             prsthsbw9@gmail.com
           </a>
         </p>
@@ -633,20 +486,19 @@
         ></div>
       </form>
 
-      <section
-        class="support-section"
-        aria-labelledby="supportTitle"
-      >
-        <h2
-          id="supportTitle"
-          class="support-title"
-        >
-          רוצים להיות שותפים בהפצת האור?
-        </h2>
+      <div class="divider" aria-hidden="true"></div>
+
+      <section class="support-section" aria-labelledby="supportTitle">
+        <h2 id="supportTitle">רוצים להיות שותפים בהפצת האור?</h2>
 
         <p class="support-text">
-          שליחת שם ובקשה אינה כרוכה בתשלום.
-          מי שרוצה יכול לתמוך בזיכוי הרבים בכל סכום.
+          כל תמיכה מסייעת להמשך הפצת התורה וזיכוי הרבים.
+        </p>
+
+        <p class="thank-you-text">
+          למי שמעוניין, ניתן ליצור דף תודה אישי באתר —
+          עם שם התורם, שם העסק או הקדשה לבחירתו.
+          לאחר התמיכה שלחו לנו את הפרטים שתרצו שיופיעו.
         </p>
 
         <div class="payment-buttons">
@@ -655,31 +507,25 @@
             href="https://www.bitpay.co.il/app/me/4A7D7360-AF51-7846-5E67-60FACACD37C54857?v=2"
             target="_blank"
             rel="noopener noreferrer"
-          >
-            תמיכה ב־Bit
-          </a>
+          >Bit</a>
 
           <a
             class="payment-button paybox"
             href="https://3ydbh.app.link/c9hSuB5Xq1b?_p=c11331dc9a006ceee61490fceeb4"
             target="_blank"
             rel="noopener noreferrer"
-          >
-            תמיכה ב־PayBox
-          </a>
+          >PayBox</a>
 
           <a
             class="payment-button paypal"
             href="https://paypal.me/RonenTorah"
             target="_blank"
             rel="noopener noreferrer"
-          >
-            תמיכה ב־PayPal
-          </a>
+          >PayPal</a>
         </div>
 
         <p class="voluntary-note">
-          התמיכה היא מרצון בלבד ואינה תנאי לשליחת שם או בקשה.
+          התמיכה היא מרצון ואינה תנאי לשליחת שם או בקשה.
         </p>
       </section>
     </div>
@@ -687,72 +533,44 @@
 
   <script>
     (function () {
-      const OWNER_EMAIL =
-        "prsthsbw9@gmail.com";
+      const OWNER_EMAIL = "prsthsbw9@gmail.com";
 
-      const form =
-        document.getElementById("nameRequestForm");
+      const form = document.getElementById("requestForm");
+      const blessingName = document.getElementById("blessingName");
+      const requestText = document.getElementById("requestText");
+      const contactDetails = document.getElementById("contactDetails");
+      const nameField = document.getElementById("nameField");
+      const requestField = document.getElementById("requestField");
+      const formMessage = document.getElementById("formMessage");
+      const backgroundVideo = document.getElementById("backgroundVideo");
 
-      const blessingName =
-        document.getElementById("blessingName");
-
-      const requestText =
-        document.getElementById("requestText");
-
-      const contactDetails =
-        document.getElementById("contactDetails");
-
-      const nameField =
-        document.getElementById("nameField");
-
-      const requestField =
-        document.getElementById("requestField");
-
-      const formMessage =
-        document.getElementById("formMessage");
-
-      const backgroundVideo =
-        document.getElementById("namesBackgroundVideo");
-
-      function cleanValue(value) {
-        return String(value || "")
-          .replace(/\r\n/g, "\n")
-          .trim();
+      function clean(value) {
+        return String(value || "").replace(/\r\n/g, "\n").trim();
       }
 
       function showMessage(message) {
         formMessage.textContent = message;
-        formMessage.classList.add("is-visible");
+        formMessage.classList.add("visible");
       }
 
       function hideMessage() {
         formMessage.textContent = "";
-        formMessage.classList.remove("is-visible");
+        formMessage.classList.remove("visible");
       }
 
-      function validateForm() {
-        const nameValue =
-          cleanValue(blessingName.value);
+      function validate() {
+        const hasName = !!clean(blessingName.value);
+        const hasRequest = !!clean(requestText.value);
 
-        const requestValue =
-          cleanValue(requestText.value);
+        nameField.classList.toggle("has-error", !hasName);
+        requestField.classList.toggle("has-error", !hasRequest);
 
-        nameField.classList.toggle(
-          "has-error",
-          !nameValue
-        );
-
-        requestField.classList.toggle(
-          "has-error",
-          !requestValue
-        );
-
-        if(!nameValue) {
+        if(!hasName) {
           blessingName.focus();
           return false;
         }
 
-        if(!requestValue) {
+        if(!hasRequest) {
           requestText.focus();
           return false;
         }
@@ -760,97 +578,70 @@
         return true;
       }
 
-      blessingName.addEventListener(
-        "input",
-        function () {
-          if(cleanValue(blessingName.value)) {
-            nameField.classList.remove("has-error");
-          }
-
-          hideMessage();
+      blessingName.addEventListener("input", function () {
+        if(clean(blessingName.value)) {
+          nameField.classList.remove("has-error");
         }
-      );
+        hideMessage();
+      });
 
-      requestText.addEventListener(
-        "input",
-        function () {
-          if(cleanValue(requestText.value)) {
-            requestField.classList.remove("has-error");
-          }
-
-          hideMessage();
+      requestText.addEventListener("input", function () {
+        if(clean(requestText.value)) {
+          requestField.classList.remove("has-error");
         }
-      );
+        hideMessage();
+      });
 
-      form.addEventListener(
-        "submit",
-        function (event) {
-          event.preventDefault();
-          hideMessage();
+      form.addEventListener("submit", function (event) {
+        event.preventDefault();
+        hideMessage();
 
-          if(!validateForm()) {
-            showMessage(
-              "יש להשלים את השם ואת הבקשה לפני השליחה."
-            );
-
-            return;
-          }
-
-          const nameValue =
-            cleanValue(blessingName.value);
-
-          const requestValue =
-            cleanValue(requestText.value);
-
-          const contactValue =
-            cleanValue(contactDetails.value);
-
-          const subject =
-            `בקשה חדשה מעץ הפרד״ס החי — ${nameValue}`;
-
-          const messageLines = [
-            "שלום,",
-            "",
-            "נשלחה בקשה חדשה מדף השמות באתר.",
-            "",
-            `השם לברכה: ${nameValue}`,
-            "",
-            "הבקשה או ההודעה:",
-            requestValue,
-            "",
-            "פרטי קשר:",
-            contactValue || "לא נמסרו",
-            "",
-            "נשלח מתוך עץ הפרד״ס החי."
-          ];
-
-          const mailtoUrl =
-            `mailto:${OWNER_EMAIL}` +
-            `?subject=${encodeURIComponent(subject)}` +
-            `&body=${encodeURIComponent(messageLines.join("\n"))}`;
-
-          showMessage(
-            "אפליקציית המייל נפתחת כעת. יש ללחוץ בה על „שליחה”."
-          );
-
-          window.location.href = mailtoUrl;
+        if(!validate()) {
+          showMessage("יש להשלים את השם ואת הבקשה לפני השליחה.");
+          return;
         }
-      );
 
-      /*
-        מדידת השטח הגלוי בפועל חשובה במיוחד
-        בדפדפנים הפנימיים של הרשתות החברתיות.
-      */
+        const nameValue = clean(blessingName.value);
+        const requestValue = clean(requestText.value);
+        const contactValue = clean(contactDetails.value);
+
+        const subject = `בקשה חדשה מעץ הפרד״ס החי — ${nameValue}`;
+        const body = [
+          "שלום,",
+          "",
+          "נשלחה בקשה חדשה מדף השמות באתר.",
+          "",
+          `השם לברכה או להקדשה: ${nameValue}`,
+          "",
+          "הבקשה או ההודעה:",
+          requestValue,
+          "",
+          "פרטי קשר:",
+          contactValue || "לא נמסרו",
+          "",
+          "נשלח מתוך עץ הפרד״ס החי."
+        ].join("\n");
+
+        const mailtoUrl =
+          `mailto:${OWNER_EMAIL}` +
+          `?subject=${encodeURIComponent(subject)}` +
+          `&body=${encodeURIComponent(body)}`;
+
+        showMessage(
+          "אפליקציית המייל נפתחת כעת. יש ללחוץ בה על „שליחה”."
+        );
+
+        window.location.href = mailtoUrl;
+      });
+
       function updateVisibleHeight() {
-        const viewportHeight =
-          Math.round(
-            window.visualViewport?.height ||
-            window.innerHeight
-          );
+        const height = Math.round(
+          window.visualViewport?.height || window.innerHeight
+        );
 
         document.documentElement.style.setProperty(
           "--page-height",
-          `${viewportHeight}px`
+          `${height}px`
         );
       }
 
@@ -858,32 +649,18 @@
 
       function scheduleViewportUpdate() {
         window.clearTimeout(viewportTimer);
-
-        viewportTimer =
-          window.setTimeout(
-            updateVisibleHeight,
-            100
-          );
+        viewportTimer = window.setTimeout(updateVisibleHeight, 100);
       }
 
       updateVisibleHeight();
 
-      window.addEventListener(
-        "resize",
-        scheduleViewportUpdate,
-        { passive: true }
-      );
+      window.addEventListener("resize", scheduleViewportUpdate, {
+        passive: true
+      });
 
-      window.addEventListener(
-        "orientationchange",
-        function () {
-          window.setTimeout(
-            updateVisibleHeight,
-            180
-          );
-        },
-        { passive: true }
-      );
+      window.addEventListener("orientationchange", function () {
+        window.setTimeout(updateVisibleHeight, 180);
+      }, { passive: true });
 
       if(window.visualViewport) {
         window.visualViewport.addEventListener(
@@ -893,47 +670,22 @@
         );
       }
 
-      /*
-        ניסיון הפעלה חוזר עבור דפדפנים פנימיים
-        שעוצרים זמנית סרטון רקע אוטומטי.
-      */
       if(backgroundVideo) {
         backgroundVideo.muted = true;
+        const playPromise = backgroundVideo.play();
 
-        const playPromise =
-          backgroundVideo.play();
-
-        if(
-          playPromise &&
-          typeof playPromise.catch === "function"
-        ) {
-          playPromise.catch(function () {
-            /*
-              אם הדפדפן חוסם הפעלה אוטומטית,
-              תמונת ה-poster נשארת כרקע.
-            */
-          });
+        if(playPromise && typeof playPromise.catch === "function") {
+          playPromise.catch(function () {});
         }
 
-        document.addEventListener(
-          "visibilitychange",
-          function () {
-            if(
-              !document.hidden &&
-              backgroundVideo.paused
-            ) {
-              const resumePromise =
-                backgroundVideo.play();
-
-              if(
-                resumePromise &&
-                typeof resumePromise.catch === "function"
-              ) {
-                resumePromise.catch(function () {});
-              }
+        document.addEventListener("visibilitychange", function () {
+          if(!document.hidden && backgroundVideo.paused) {
+            const resumePromise = backgroundVideo.play();
+            if(resumePromise && typeof resumePromise.catch === "function") {
+              resumePromise.catch(function () {});
             }
           }
-        );
+        });
       }
     })();
   </script>
