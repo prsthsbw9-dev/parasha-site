@@ -30,18 +30,29 @@
     }
 
     .mobile-video-page{
+      /*
+        רוחב משותף למסגרת הסרטון ולכפתור האדום.
+        הגובה הפנוי מגביל את הרוחב כדי ששניהם ייכנסו במסך.
+      */
+      --mobile-player-width:min(
+        calc(100vw - 24px),
+        calc((100dvh - 175px) * 9 / 16),
+        430px
+      );
+    
       width:100%;
       min-height:100dvh;
+    
       padding:
-        max(16px, env(safe-area-inset-top))
+        max(12px, env(safe-area-inset-top))
         12px
-        max(20px, env(safe-area-inset-bottom));
-
+        max(16px, env(safe-area-inset-bottom));
+    
       display:flex;
       flex-direction:column;
       align-items:center;
-      justify-content:center;
-      gap:16px;
+      justify-content:flex-start;
+      gap:12px;
     }
 
     .mobile-video-title{
@@ -53,42 +64,64 @@
     }
 
     .mobile-video-frame{
-      width:min(100%, 760px);
-      aspect-ratio:16 / 9;
+      position:relative;
+    
+      width:var(--mobile-player-width);
+      aspect-ratio:9 / 16;
+    
       overflow:hidden;
+      flex:none;
+    
       border-radius:18px;
       background:#000;
       border:1px solid rgba(255,255,255,.25);
+    
       box-shadow:
         0 16px 38px rgba(0,0,0,.55),
         0 0 24px rgba(255,255,255,.08);
     }
 
     .mobile-video-frame iframe{
-      width:100%;
+      /*
+        הסרטון המקורי הוא 16:9, אך המסגרת היא 9:16.
+        לכן מגדילים את הנגן פי 3.16 וחותכים את הצדדים.
+      */
+      position:absolute;
+      top:0;
+      left:50%;
+    
+      width:316.05%;
       height:100%;
+    
+      max-width:none;
+      max-height:none;
+    
       display:block;
       border:0;
       background:#000;
+    
+      transform:translateX(-50%);
+      transform-origin:center center;
     }
 
     .youtube-original-button{
       display:block;
-      width:min(100%, 760px);
-      min-height:52px;
-      padding:14px 18px;
-
+      width:var(--mobile-player-width);
+      min-height:clamp(46px, 7dvh, 54px);
+    
+      padding:clamp(10px, 1.8dvh, 14px) 12px;
+    
       border:1px solid rgba(255,255,255,.35);
       border-radius:4px;
       background:#b80000;
       color:#fff;
-
-      font-size:16px;
+    
+      font-size:clamp(14px, 4vw, 16px);
       font-weight:900;
       line-height:1.35;
       text-align:center;
       text-decoration:none;
-
+    
       box-shadow:
         0 10px 24px rgba(0,0,0,.42),
         0 0 20px rgba(255,30,30,.18);
