@@ -252,11 +252,22 @@
           : "";
       }
 
+      /*
+        תמיכה גם בקישור החדש וגם בקישור הישן:
+        ?mobile=...&wide=...
+        או:
+        ?v=...
+      */
+      const legacyVideoId =
+        cleanYoutubeId(parameters.get("v"));
+      
       const mobileVideoId =
-        cleanYoutubeId(parameters.get("mobile"));
-
+        cleanYoutubeId(parameters.get("mobile")) ||
+        legacyVideoId;
+      
       const wideVideoId =
-        cleanYoutubeId(parameters.get("wide"));
+        cleanYoutubeId(parameters.get("wide")) ||
+        legacyVideoId;
 
       const mobileVideoType =
         parameters.get("mobileType") === "short"
