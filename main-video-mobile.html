@@ -5,222 +5,518 @@
 
   <meta
     name="viewport"
-    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    content="width=device-width, initial-scale=1, viewport-fit=cover"
   >
 
-  <title>צפייה בעלייה הראשית</title>
+  <title>צפייה בעלייה</title>
 
   <style>
-    *{
-      box-sizing:border-box;
+    :root {
+      --actual-page-height: 100dvh;
+      --mobile-player-width: min(94vw, 430px);
+      --mobile-player-ratio: 4 / 5;
+    }
+
+    * {
+      box-sizing: border-box;
     }
 
     html,
-    body{
-      width:100%;
-      min-height:100%;
-      margin:0;
+    body {
+      width: 100%;
+      min-height: 100%;
+      margin: 0;
+      background: #05080c;
     }
 
-    body{
-      font-family:Arial, sans-serif;
-      background:#05090d;
-      color:#fff;
-      overflow-x:hidden;
+    body {
+      min-height: var(--actual-page-height);
+      color: #fff;
+      font-family: Arial, "Noto Sans Hebrew", sans-serif;
+      overflow-x: hidden;
     }
 
-    .mobile-video-page{
-      /*
-        רוחב משותף למסגרת הסרטון ולכפתור האדום.
-        הגובה הפנוי מגביל את הרוחב כדי ששניהם ייכנסו במסך.
-      */
-      --mobile-player-width:min(
-        calc(100vw - 24px),
-        390px
-      );
-    
-      width:100%;
-      min-height:100dvh;
-    
+    .mobile-video-page {
+      width: 100%;
+      min-height: var(--actual-page-height);
+
       padding:
         max(12px, env(safe-area-inset-top))
-        12px
-        max(16px, env(safe-area-inset-bottom));
-    
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      justify-content:flex-start;
-      gap:12px;
+        10px
+        max(14px, env(safe-area-inset-bottom));
+
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+
+      gap: clamp(9px, 1.7dvh, 15px);
     }
 
-    .mobile-video-title{
-      margin:0;
-      font-size:clamp(19px, 5vw, 25px);
-      font-weight:900;
-      text-align:center;
-      text-shadow:0 3px 12px rgba(0,0,0,.75);
+    .mobile-video-title {
+      width: var(--mobile-player-width);
+      margin: 0;
+      color: #fff;
+      text-align: center;
+      font-size: clamp(22px, 6vw, 34px);
+      line-height: 1.15;
     }
 
-    .mobile-video-frame{
-      position:relative;
-      width:var(--mobile-player-width);
-      aspect-ratio:9 / 16;
-      overflow:hidden;
-      flex:none;
-      border-radius:18px;
-      background:#000;
-      border:1px solid rgba(255,255,255,.25);
-      box-shadow:
-        0 16px 38px rgba(0,0,0,.55),
-        0 0 24px rgba(255,255,255,.08);
+    .mobile-video-frame {
+      position: relative;
+      width: var(--mobile-player-width);
+      aspect-ratio: var(--mobile-player-ratio);
+      overflow: hidden;
+      flex: 0 0 auto;
+      border-radius: clamp(16px, 4vw, 26px);
+      background: #000;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.38);
     }
 
-    .mobile-video-frame iframe{
-      position:absolute;
-      top:0;
-      left:50%;
-    
-      width:316.05%;
-      height:100%;
-    
-      max-width:none;
-      max-height:none;
-    
-      display:block;
-      border:0;
-      background:#000;
-
-      transform:translateX(-50%);
-      transform-origin:center center;
-    }
-    
-      transform:translateX(-50%);
-      transform-origin:center center;
+    .mobile-video-frame iframe {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      height: 100%;
+      border: 0;
+      transform: translateX(-50%);
+      background: #000;
     }
 
-    .youtube-original-button{
-      display:block;
-      width:var(--mobile-player-width);
-      min-height:clamp(46px, 7dvh, 54px);
-    
-      padding:clamp(10px, 1.8dvh, 14px) 12px;
-    
-      border:1px solid rgba(255,255,255,.35);
-      border-radius:4px;
-      background:#b80000;
-      color:#fff;
-    
-      font-size:clamp(14px, 4vw, 16px);
-      font-weight:900;
-      line-height:1.35;
-      text-align:center;
-      text-decoration:none;
-    
-      box-shadow:
-        0 10px 24px rgba(0,0,0,.42),
-        0 0 20px rgba(255,30,30,.18);
+    /*
+      סרטון רגיל במצב אנכי:
+      יחס 4:5 וחיתוך מתון יותר מהמסגרת הקודמת.
+    */
+    .mobile-video-page.is-portrait.is-regular {
+      --mobile-player-ratio: 4 / 5;
     }
 
-    .youtube-original-button:visited,
-    .youtube-original-button:hover,
-    .youtube-original-button:active{
-      color:#fff;
-      text-decoration:none;
+    .mobile-video-page.is-portrait.is-regular
+    .mobile-video-frame iframe {
+      width: 222.23%;
     }
 
-    .mobile-video-error{
-      display:none;
-      width:min(100%, 760px);
-      padding:18px;
-      border:1px solid rgba(255,255,255,.25);
-      border-radius:16px;
-      background:rgba(255,255,255,.08);
-      text-align:center;
-      line-height:1.6;
+    /*
+      Shorts במצב אנכי:
+      יחס 9:16 ללא הגדלה וללא חיתוך.
+    */
+    .mobile-video-page.is-portrait.is-short {
+      --mobile-player-ratio: 9 / 16;
+    }
+
+    .mobile-video-page.is-portrait.is-short
+    .mobile-video-frame iframe {
+      width: 100%;
+    }
+
+    /*
+      כאשר מסובבים את הנייד:
+      כל הסרטונים מוצגים ביחס רוחב 16:9 וללא חיתוך.
+    */
+    .mobile-video-page.is-landscape {
+      --mobile-player-ratio: 16 / 9;
+    }
+
+    .mobile-video-page.is-landscape
+    .mobile-video-frame iframe {
+      width: 100%;
+    }
+
+    .mobile-youtube-button {
+      width: var(--mobile-player-width);
+      min-height: clamp(54px, 8dvh, 70px);
+      padding: 11px 14px;
+      border: 1px solid rgba(255, 255, 255, 0.45);
+      border-radius: clamp(12px, 3vw, 18px);
+      background: #d60000;
+      color: #fff;
+      text-decoration: none;
+      text-align: center;
+      font-size: clamp(17px, 4.6vw, 23px);
+      font-weight: 700;
+      line-height: 1.25;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      box-shadow: 0 5px 18px rgba(214, 0, 0, 0.34);
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .mobile-youtube-button:active {
+      transform: scale(0.985);
+      background: #b90000;
+    }
+
+    .mobile-video-error {
+      display: none;
+      width: min(92vw, 430px);
+      margin: auto;
+      padding: 20px;
+      color: #fff;
+      text-align: center;
+      font-size: 18px;
+    }
+
+    @media (max-height: 700px) and (orientation: portrait) {
+      .mobile-video-page {
+        gap: 7px;
+        padding-top: max(7px, env(safe-area-inset-top));
+      }
+
+      .mobile-video-title {
+        font-size: clamp(19px, 5vw, 25px);
+      }
+
+      .mobile-youtube-button {
+        min-height: 50px;
+        padding: 8px 12px;
+        font-size: clamp(15px, 4.2vw, 19px);
+      }
+    }
+
+    @media (orientation: landscape) {
+      .mobile-video-page {
+        gap: 6px;
+
+        padding:
+          max(5px, env(safe-area-inset-top))
+          max(10px, env(safe-area-inset-right))
+          max(6px, env(safe-area-inset-bottom))
+          max(10px, env(safe-area-inset-left));
+      }
+
+      .mobile-video-title {
+        font-size: clamp(17px, 4dvh, 25px);
+      }
+
+      .mobile-youtube-button {
+        min-height: 44px;
+        padding: 7px 12px;
+        font-size: clamp(14px, 3.5dvh, 19px);
+      }
     }
   </style>
 </head>
 
 <body>
-
-  <main class="mobile-video-page">
-
-    <h1 class="mobile-video-title">
-      העלייה הראשית
+  <main
+    id="mobileVideoPage"
+    class="mobile-video-page"
+  >
+    <h1
+      id="mobileVideoTitle"
+      class="mobile-video-title"
+    >
+      העלייה
     </h1>
 
-    <div
-      id="mobileVideoFrame"
-      class="mobile-video-frame"
-    >
+    <div class="mobile-video-frame">
       <iframe
-        id="mobileYouTubePlayer"
-        title="סרטון העלייה הראשית"
-        src=""
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        id="mobileYoutubePlayer"
+        title="נגן YouTube"
+        allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
         allowfullscreen
+        referrerpolicy="strict-origin-when-cross-origin"
       ></iframe>
     </div>
 
-    <div
-      id="mobileVideoError"
-      class="mobile-video-error"
-    >
-      לא ניתן לטעון את הסרטון כרגע.
-    </div>
-
     <a
-      id="youtubeOriginalButton"
-      class="youtube-original-button"
+      id="mobileYoutubeButton"
+      class="mobile-youtube-button"
       href="#"
       rel="noopener noreferrer"
     >
-      לצפייה, לייק, תגובה ושיתוף ב־YouTube
+      כל שיתוף, תגובה ולייק = מצווה גדולה
     </a>
-
   </main>
 
-  <script>
-    (function(){
-      "use strict";
+  <div
+    id="mobileVideoError"
+    class="mobile-video-error"
+  >
+    לא נמצא סרטון להצגה.
+  </div>
 
+  <script>
+    (function () {
       const parameters =
         new URLSearchParams(window.location.search);
 
-      const videoId =
-        (parameters.get("v") || "").trim();
+      function cleanYoutubeId(value){
+        const candidate = String(value || "").trim();
 
-      const validVideoId =
-        /^[A-Za-z0-9_-]{11}$/.test(videoId);
+        return /^[a-zA-Z0-9_-]{8,20}$/.test(candidate)
+          ? candidate
+          : "";
+      }
+
+      const mobileVideoId =
+        cleanYoutubeId(parameters.get("mobile"));
+
+      const wideVideoId =
+        cleanYoutubeId(parameters.get("wide"));
+
+      const mobileVideoType =
+        parameters.get("mobileType") === "short"
+          ? "short"
+          : "regular";
+
+      const wideVideoType =
+        parameters.get("wideType") === "short"
+          ? "short"
+          : "regular";
+
+      const layerTitle =
+        (parameters.get("title") || "העלייה").trim();
+
+      const page =
+        document.getElementById("mobileVideoPage");
+
+      const title =
+        document.getElementById("mobileVideoTitle");
 
       const player =
-        document.getElementById("mobileYouTubePlayer");
+        document.getElementById("mobileYoutubePlayer");
 
-      const frame =
-        document.getElementById("mobileVideoFrame");
+      const youtubeButton =
+        document.getElementById("mobileYoutubeButton");
 
-      const errorBox =
+      const errorMessage =
         document.getElementById("mobileVideoError");
 
-      const originalButton =
-        document.getElementById("youtubeOriginalButton");
+      /*
+        אם חסרה אחת הגרסאות, משתמשים בגרסה הקיימת
+        גם לאורך וגם לרוחב.
+      */
+      const portraitVideoId =
+        mobileVideoId || wideVideoId;
 
-      if(!validVideoId){
-        frame.style.display = "none";
-        originalButton.style.display = "none";
-        errorBox.style.display = "block";
+      const landscapeVideoId =
+        wideVideoId || mobileVideoId;
+
+      if(!portraitVideoId && !landscapeVideoId){
+        page.style.display = "none";
+        errorMessage.style.display = "block";
         return;
       }
 
-      player.src =
-        `https://www.youtube.com/embed/${videoId}` +
-        `?playsinline=1&rel=0`;
+      title.textContent = layerTitle;
 
-      originalButton.href =
-        `https://www.youtube.com/watch?v=${videoId}`;
+      let currentMode = "";
+      let currentVideoId = "";
+
+      function getViewportSize(){
+        const viewport = window.visualViewport;
+
+        return {
+          width: Math.round(
+            viewport?.width || window.innerWidth
+          ),
+
+          height: Math.round(
+            viewport?.height || window.innerHeight
+          )
+        };
+      }
+
+      function getCurrentSettings(){
+        const viewportSize = getViewportSize();
+
+        const isLandscape =
+          viewportSize.width > viewportSize.height;
+
+        if(isLandscape){
+          return {
+            mode: "landscape",
+            videoId: landscapeVideoId,
+            videoType: wideVideoId
+              ? wideVideoType
+              : mobileVideoType,
+            viewportWidth: viewportSize.width,
+            viewportHeight: viewportSize.height
+          };
+        }
+
+        return {
+          mode: "portrait",
+          videoId: portraitVideoId,
+          videoType: mobileVideoId
+            ? mobileVideoType
+            : wideVideoType,
+          viewportWidth: viewportSize.width,
+          viewportHeight: viewportSize.height
+        };
+      }
+
+      function updatePlayerSource(settings){
+        if(
+          currentMode === settings.mode &&
+          currentVideoId === settings.videoId
+        ){
+          return;
+        }
+
+        currentMode = settings.mode;
+        currentVideoId = settings.videoId;
+
+        page.classList.remove(
+          "is-portrait",
+          "is-landscape",
+          "is-short",
+          "is-regular"
+        );
+
+        page.classList.add(
+          settings.mode === "landscape"
+            ? "is-landscape"
+            : "is-portrait"
+        );
+
+        page.classList.add(
+          settings.videoType === "short"
+            ? "is-short"
+            : "is-regular"
+        );
+
+        /*
+          מחליפים מקור רק כשכיוון המסך או הסרטון השתנו.
+          אם לקישורי הנייד והרוחב יש אותו מזהה,
+          הנגן לא ייטען מחדש ללא צורך.
+        */
+        if(
+          player.dataset.videoId !== settings.videoId
+        ){
+          player.src =
+            `https://www.youtube.com/embed/${settings.videoId}` +
+            `?playsinline=1&rel=0&modestbranding=1`;
+
+          player.dataset.videoId =
+            settings.videoId;
+        }
+
+        youtubeButton.href =
+          settings.videoType === "short"
+            ? `https://www.youtube.com/shorts/${settings.videoId}`
+            : `https://www.youtube.com/watch?v=${settings.videoId}`;
+      }
+
+      function updatePlayerSize(settings){
+        const viewportWidth =
+          settings.viewportWidth;
+
+        const viewportHeight =
+          settings.viewportHeight;
+
+        document.documentElement.style.setProperty(
+          "--actual-page-height",
+          `${viewportHeight}px`
+        );
+
+        if(settings.mode === "landscape"){
+          const reservedLandscapeHeight = 92;
+
+          const availableLandscapeHeight =
+            Math.max(
+              180,
+              viewportHeight - reservedLandscapeHeight
+            );
+
+          const calculatedLandscapeWidth =
+            Math.min(
+              viewportWidth - 24,
+              availableLandscapeHeight * (16 / 9),
+              760
+            );
+
+          document.documentElement.style.setProperty(
+            "--mobile-player-width",
+            `${Math.max(280, calculatedLandscapeWidth)}px`
+          );
+
+          return;
+        }
+
+        const isShort =
+          settings.videoType === "short";
+
+        const reservedPortraitHeight =
+          isShort
+            ? 132
+            : 145;
+
+        const portraitRatio =
+          isShort
+            ? (9 / 16)
+            : (4 / 5);
+
+        const availablePortraitHeight =
+          Math.max(
+            220,
+            viewportHeight - reservedPortraitHeight
+          );
+
+        const calculatedPortraitWidth =
+          Math.min(
+            viewportWidth - 20,
+            availablePortraitHeight * portraitRatio,
+            430
+          );
+
+        document.documentElement.style.setProperty(
+          "--mobile-player-width",
+          `${Math.max(250, calculatedPortraitWidth)}px`
+        );
+      }
+
+      function updateMobilePlayer(){
+        const settings =
+          getCurrentSettings();
+
+        updatePlayerSource(settings);
+        updatePlayerSize(settings);
+      }
+
+      let updateTimer = null;
+
+      function schedulePlayerUpdate(){
+        window.clearTimeout(updateTimer);
+
+        updateTimer =
+          window.setTimeout(
+            updateMobilePlayer,
+            120
+          );
+      }
+
+      updateMobilePlayer();
+
+      window.addEventListener(
+        "resize",
+        schedulePlayerUpdate,
+        { passive: true }
+      );
+
+      window.addEventListener(
+        "orientationchange",
+        function () {
+          window.setTimeout(
+            updateMobilePlayer,
+            220
+          );
+        },
+        { passive: true }
+      );
+
+      if(window.visualViewport){
+        window.visualViewport.addEventListener(
+          "resize",
+          schedulePlayerUpdate,
+          { passive: true }
+        );
+      }
     })();
   </script>
-
 </body>
 </html>
