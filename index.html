@@ -7056,7 +7056,8 @@ function normalizeParashaName(value){
             useTikTokMainMobilePlayer
               ? (
                   `main-video-mobile.html?v=` +
-                  encodeURIComponent(youtubeIdForLaunch)
+                  encodeURIComponent(youtubeIdForLaunch) +
+                  `&layout=vertical2`
                 )
               : youtubeLaunchUrl;       
 
