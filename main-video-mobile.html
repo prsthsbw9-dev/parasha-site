@@ -1,1 +1,198 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
 
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+  >
+
+  <title>צפייה בעלייה הראשית</title>
+
+  <style>
+    *{
+      box-sizing:border-box;
+    }
+
+    html,
+    body{
+      width:100%;
+      min-height:100%;
+      margin:0;
+    }
+
+    body{
+      font-family:Arial, sans-serif;
+      background:#05090d;
+      color:#fff;
+      overflow-x:hidden;
+    }
+
+    .mobile-video-page{
+      width:100%;
+      min-height:100dvh;
+      padding:
+        max(16px, env(safe-area-inset-top))
+        12px
+        max(20px, env(safe-area-inset-bottom));
+
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      gap:16px;
+    }
+
+    .mobile-video-title{
+      margin:0;
+      font-size:clamp(19px, 5vw, 25px);
+      font-weight:900;
+      text-align:center;
+      text-shadow:0 3px 12px rgba(0,0,0,.75);
+    }
+
+    .mobile-video-frame{
+      width:min(100%, 760px);
+      aspect-ratio:16 / 9;
+      overflow:hidden;
+      border-radius:18px;
+      background:#000;
+      border:1px solid rgba(255,255,255,.25);
+      box-shadow:
+        0 16px 38px rgba(0,0,0,.55),
+        0 0 24px rgba(255,255,255,.08);
+    }
+
+    .mobile-video-frame iframe{
+      width:100%;
+      height:100%;
+      display:block;
+      border:0;
+      background:#000;
+    }
+
+    .youtube-original-button{
+      display:block;
+      width:min(100%, 760px);
+      min-height:52px;
+      padding:14px 18px;
+
+      border:1px solid rgba(255,255,255,.35);
+      border-radius:4px;
+      background:#b80000;
+      color:#fff;
+
+      font-size:16px;
+      font-weight:900;
+      line-height:1.35;
+      text-align:center;
+      text-decoration:none;
+
+      box-shadow:
+        0 10px 24px rgba(0,0,0,.42),
+        0 0 20px rgba(255,30,30,.18);
+    }
+
+    .youtube-original-button:visited,
+    .youtube-original-button:hover,
+    .youtube-original-button:active{
+      color:#fff;
+      text-decoration:none;
+    }
+
+    .mobile-video-error{
+      display:none;
+      width:min(100%, 760px);
+      padding:18px;
+      border:1px solid rgba(255,255,255,.25);
+      border-radius:16px;
+      background:rgba(255,255,255,.08);
+      text-align:center;
+      line-height:1.6;
+    }
+  </style>
+</head>
+
+<body>
+
+  <main class="mobile-video-page">
+
+    <h1 class="mobile-video-title">
+      העלייה הראשית
+    </h1>
+
+    <div
+      id="mobileVideoFrame"
+      class="mobile-video-frame"
+    >
+      <iframe
+        id="mobileYouTubePlayer"
+        title="סרטון העלייה הראשית"
+        src=""
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowfullscreen
+      ></iframe>
+    </div>
+
+    <div
+      id="mobileVideoError"
+      class="mobile-video-error"
+    >
+      לא ניתן לטעון את הסרטון כרגע.
+    </div>
+
+    <a
+      id="youtubeOriginalButton"
+      class="youtube-original-button"
+      href="#"
+      rel="noopener noreferrer"
+    >
+      לצפייה, לייק, תגובה ושיתוף ב־YouTube
+    </a>
+
+  </main>
+
+  <script>
+    (function(){
+      "use strict";
+
+      const parameters =
+        new URLSearchParams(window.location.search);
+
+      const videoId =
+        (parameters.get("v") || "").trim();
+
+      const validVideoId =
+        /^[A-Za-z0-9_-]{11}$/.test(videoId);
+
+      const player =
+        document.getElementById("mobileYouTubePlayer");
+
+      const frame =
+        document.getElementById("mobileVideoFrame");
+
+      const errorBox =
+        document.getElementById("mobileVideoError");
+
+      const originalButton =
+        document.getElementById("youtubeOriginalButton");
+
+      if(!validVideoId){
+        frame.style.display = "none";
+        originalButton.style.display = "none";
+        errorBox.style.display = "block";
+        return;
+      }
+
+      player.src =
+        `https://www.youtube.com/embed/${videoId}` +
+        `?playsinline=1&rel=0`;
+
+      originalButton.href =
+        `https://www.youtube.com/watch?v=${videoId}`;
+    })();
+  </script>
+
+</body>
+</html>
