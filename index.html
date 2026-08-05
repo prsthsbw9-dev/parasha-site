@@ -7053,33 +7053,17 @@ function normalizeParashaName(value){
               ""
             );
 
+          /*
+            ניסוי Deep Link ישיר לאפליקציית YouTube:
+            רק בעלייה הראשית, בתוך TikTok ובמכשיר Android.
+          */
           if(
             isTikTokMainAliyah &&
             isAndroidDevice &&
             youtubeIdForLaunch
           ){
-            /*
-              כתובת הסרטון הרגילה ב-YouTube.
-            */
-            const youtubeWebUrl =
-              shouldLaunchAsShort
-                ? `https://www.youtube.com/shorts/${youtubeIdForLaunch}`
-                : `https://www.youtube.com/watch?v=${youtubeIdForLaunch}`;
-
-            /*
-              בקשה מפורשת לפתוח את כתובת הסרטון ב-Chrome,
-              ולא בתוך הדפדפן הפנימי של TikTok.
-            */
-            const chromeIntentPath =
-              shouldLaunchAsShort
-                ? `shorts/${youtubeIdForLaunch}`
-                : `watch?v=${youtubeIdForLaunch}`;
-
             youtubeLaunchUrl =
-              `intent://www.youtube.com/${chromeIntentPath}` +
-              `#Intent;scheme=https;` +
-              `package=com.android.chrome;` +
-              `S.browser_fallback_url=${encodeURIComponent(youtubeWebUrl)};end`;
+              `vnd.youtube:${youtubeIdForLaunch}`;
           }
 
           /*
