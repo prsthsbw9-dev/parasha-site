@@ -7053,17 +7053,26 @@ function normalizeParashaName(value){
               ""
             );
 
-          /*
-            ניסוי Deep Link ישיר לאפליקציית YouTube:
-            רק בעלייה הראשית, בתוך TikTok ובמכשיר Android.
-          */
           if(
             isTikTokMainAliyah &&
             isAndroidDevice &&
             youtubeIdForLaunch
           ){
+            const youtubeWebFallback =
+              shouldLaunchAsShort
+                ? `https://www.youtube.com/shorts/${youtubeIdForLaunch}`
+                : `https://www.youtube.com/watch?v=${youtubeIdForLaunch}`;
+
+            const youtubeIntentPath =
+              shouldLaunchAsShort
+                ? `shorts/${youtubeIdForLaunch}`
+                : `watch?v=${youtubeIdForLaunch}`;
+
             youtubeLaunchUrl =
-              `vnd.youtube:${youtubeIdForLaunch}`;
+              `intent://www.youtube.com/${youtubeIntentPath}` +
+              `#Intent;scheme=https;` +
+              `package=com.google.android.youtube;` +
+              `S.browser_fallback_url=${encodeURIComponent(youtubeWebFallback)};end`;
           }
 
           /*
@@ -7169,14 +7178,17 @@ function normalizeParashaName(value){
           youtubeOpenBtn.href = youtubeLaunchUrl;
         
           /*
-            TikTok בעלייה הראשית:
-            מפעילים את קישור Chrome מאותה פעולת לחיצה.
-            target="_blank" עלול לגרום לדפדפן הפנימי לחסום אותו.
+            ב־TikTok נשארים באותו חלון כדי לצמצם את מסך
+            הביניים האפור שנוצר בעת פתיחת חלון חדש.
           */
-          if(isTikTokMainAliyah){
-            youtubeOpenBtn.removeAttribute("target");
-          }else if(
-            document.body.classList.contains("app-tiktok")
+          /*
+            בעלייה הראשית מאפשרים גם ל-TikTok לנסות
+            להעביר את הקישור לאפליקציית YouTube.
+            בשאר הסרטונים נשמרת ההתנהגות הקיימת.
+          */
+          if(
+            document.body.classList.contains("app-tiktok") &&
+            layer !== "main"
           ){
             youtubeOpenBtn.removeAttribute("target");
           }else if(
