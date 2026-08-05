@@ -7058,21 +7058,28 @@ function normalizeParashaName(value){
             isAndroidDevice &&
             youtubeIdForLaunch
           ){
-            const youtubeWebFallback =
+            /*
+              כתובת הסרטון הרגילה ב-YouTube.
+            */
+            const youtubeWebUrl =
               shouldLaunchAsShort
                 ? `https://www.youtube.com/shorts/${youtubeIdForLaunch}`
                 : `https://www.youtube.com/watch?v=${youtubeIdForLaunch}`;
 
-            const youtubeIntentPath =
+            /*
+              בקשה מפורשת לפתוח את כתובת הסרטון ב-Chrome,
+              ולא בתוך הדפדפן הפנימי של TikTok.
+            */
+            const chromeIntentPath =
               shouldLaunchAsShort
                 ? `shorts/${youtubeIdForLaunch}`
                 : `watch?v=${youtubeIdForLaunch}`;
 
             youtubeLaunchUrl =
-              `intent://www.youtube.com/${youtubeIntentPath}` +
+              `intent://www.youtube.com/${chromeIntentPath}` +
               `#Intent;scheme=https;` +
-              `package=com.google.android.youtube;` +
-              `S.browser_fallback_url=${encodeURIComponent(youtubeWebFallback)};end`;
+              `package=com.android.chrome;` +
+              `S.browser_fallback_url=${encodeURIComponent(youtubeWebUrl)};end`;
           }
 
           /*
@@ -7178,17 +7185,14 @@ function normalizeParashaName(value){
           youtubeOpenBtn.href = youtubeLaunchUrl;
         
           /*
-            ב־TikTok נשארים באותו חלון כדי לצמצם את מסך
-            הביניים האפור שנוצר בעת פתיחת חלון חדש.
+            TikTok בעלייה הראשית:
+            מפעילים את קישור Chrome מאותה פעולת לחיצה.
+            target="_blank" עלול לגרום לדפדפן הפנימי לחסום אותו.
           */
-          /*
-            בעלייה הראשית מאפשרים גם ל-TikTok לנסות
-            להעביר את הקישור לאפליקציית YouTube.
-            בשאר הסרטונים נשמרת ההתנהגות הקיימת.
-          */
-          if(
-            document.body.classList.contains("app-tiktok") &&
-            layer !== "main"
+          if(isTikTokMainAliyah){
+            youtubeOpenBtn.removeAttribute("target");
+          }else if(
+            document.body.classList.contains("app-tiktok")
           ){
             youtubeOpenBtn.removeAttribute("target");
           }else if(
