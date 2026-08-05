@@ -36,8 +36,7 @@
       */
       --mobile-player-width:min(
         calc(100vw - 24px),
-        calc((100dvh - 175px) * 9 / 16),
-        430px
+        390px
       );
     
       width:100%;
@@ -65,27 +64,19 @@
 
     .mobile-video-frame{
       position:relative;
-    
       width:var(--mobile-player-width);
       aspect-ratio:9 / 16;
-    
       overflow:hidden;
       flex:none;
-    
       border-radius:18px;
       background:#000;
       border:1px solid rgba(255,255,255,.25);
-    
       box-shadow:
         0 16px 38px rgba(0,0,0,.55),
         0 0 24px rgba(255,255,255,.08);
     }
 
     .mobile-video-frame iframe{
-      /*
-        הסרטון המקורי הוא 16:9, אך המסגרת היא 9:16.
-        לכן מגדילים את הנגן פי 3.16 וחותכים את הצדדים.
-      */
       position:absolute;
       top:0;
       left:50%;
@@ -99,6 +90,10 @@
       display:block;
       border:0;
       background:#000;
+
+      transform:translateX(-50%);
+      transform-origin:center center;
+    }
     
       transform:translateX(-50%);
       transform-origin:center center;
