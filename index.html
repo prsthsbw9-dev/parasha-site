@@ -6983,6 +6983,57 @@ function normalizeParashaName(value){
       const shouldOpenAsYouTubeShort =
         !!youtubeId &&
         isYouTubeShortVariant(directYouTubeVideo);
+
+       /*
+        בנייד כל העליות נפתחות ישירות בעמוד הנגן החדש.
+        לאורך משתמשים בגרסת הנייד, ולרוחב בגרסת הרוחב.
+      */
+      if(isMobileViewer() && youtubeId){
+        const storedMobileVideo =
+          getStoredVideoVariant(item, "mobile");
+      
+        const storedWideVideo =
+          getStoredVideoVariant(item, "wide");
+      
+        const mobileYouTubeVideo =
+          isYouTubeVideo(storedMobileVideo)
+            ? storedMobileVideo
+            : directYouTubeVideo;
+      
+        const wideYouTubeVideo =
+          isYouTubeVideo(storedWideVideo)
+            ? storedWideVideo
+            : directYouTubeVideo;
+      
+        const mobileYoutubeId =
+          getYouTubeVideoId(mobileYouTubeVideo) ||
+          youtubeId;
+      
+        const wideYoutubeId =
+          getYouTubeVideoId(wideYouTubeVideo) ||
+          youtubeId;
+      
+        const mobileVideoType =
+          isYouTubeShortVariant(mobileYouTubeVideo)
+            ? "short"
+            : "regular";
+      
+        const wideVideoType =
+          isYouTubeShortVariant(wideYouTubeVideo)
+            ? "short"
+            : "regular";
+      
+        window.location.href =
+          `main-video-mobile.html` +
+          `?mobile=${encodeURIComponent(mobileYoutubeId)}` +
+          `&wide=${encodeURIComponent(wideYoutubeId)}` +
+          `&mobileType=${encodeURIComponent(mobileVideoType)}` +
+          `&wideType=${encodeURIComponent(wideVideoType)}` +
+          `&title=${encodeURIComponent(layerName)}` +
+          `&layout=responsive-mobile-v2`;
+      
+        return;
+      }       
       
       const youtubeWatchUrl =
         shouldOpenAsYouTubeShort
@@ -7052,14 +7103,8 @@ function normalizeParashaName(value){
             !shouldLaunchAsShort &&
             !!youtubeIdForLaunch;
 
-          const youtubeButtonDestination =
-            useTikTokMainMobilePlayer
-              ? (
-                  `main-video-mobile.html?v=` +
-                  encodeURIComponent(youtubeIdForLaunch) +
-                  `&layout=vertical2`
-                )
-              : youtubeLaunchUrl;       
+            const youtubeButtonDestination =
+              youtubeLaunchUrl;      
 
         player.style.display = "none";
         player.removeAttribute("src");
