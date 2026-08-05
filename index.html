@@ -7031,58 +7031,11 @@ function normalizeParashaName(value){
               ? `https://www.youtube.com/shorts/${youtubeIdForLaunch}`
               : getYouTubeWatchUrl(youtubeVideoForLaunch);
           
-          let youtubeLaunchUrl = getYouTubeLaunchUrl(
+          const youtubeLaunchUrl = getYouTubeLaunchUrl(
             youtubeIdForLaunch,
             shouldLaunchAsShort,
             youtubeWatchUrlForLaunch || youtubeWatchUrl
           );
-
-          /*
-            בעלייה הראשית בלבד, בתוך TikTok באנדרואיד,
-            מנסים לפתוח ישירות את אפליקציית YouTube.
-          */
-          const isTikTokMainAliyah =
-            isMainAliyah &&
-            document.body.classList.contains("in-app-browser") &&
-            document.body.classList.contains("app-tiktok");
-
-          const isAndroidDevice =
-            /Android/i.test(
-              navigator.userAgent ||
-              navigator.vendor ||
-              ""
-            );
-
-          if(
-            isTikTokMainAliyah &&
-            isAndroidDevice &&
-            youtubeIdForLaunch
-          ){
-            const youtubeWebFallback =
-              shouldLaunchAsShort
-                ? `https://www.youtube.com/shorts/${youtubeIdForLaunch}`
-                : `https://www.youtube.com/watch?v=${youtubeIdForLaunch}`;
-
-            const youtubeIntentPath =
-              shouldLaunchAsShort
-                ? `shorts/${youtubeIdForLaunch}`
-                : `watch?v=${youtubeIdForLaunch}`;
-
-            youtubeLaunchUrl =
-              `intent://www.youtube.com/${youtubeIntentPath}` +
-              `#Intent;scheme=https;` +
-              `package=com.google.android.youtube;` +
-              `S.browser_fallback_url=${encodeURIComponent(youtubeWebFallback)};end`;
-          }
-
-          /*
-            בעלייה הראשית התמונה המקדימה נלקחת מאותו סרטון
-            שנבחר לפתיחה — כלומר מגרסת הנייד, כאשר היא קיימת.
-          */
-          const previewYoutubeId =
-            isMainAliyah
-              ? youtubeIdForLaunch
-              : youtubeId;
 
         player.style.display = "none";
         player.removeAttribute("src");
@@ -7143,8 +7096,8 @@ function normalizeParashaName(value){
             <div class="pardes-inapp-youtube-link" aria-hidden="true">
               <img
                 class="pardes-inapp-youtube-image"
-                src="https://i.ytimg.com/vi/${previewYoutubeId}/maxresdefault.jpg"
-                onerror="this.onerror=null;this.src='https://i.ytimg.com/vi/${previewYoutubeId}/hqdefault.jpg';"
+                src="https://i.ytimg.com/vi/${youtubeId}/maxresdefault.jpg"
+                onerror="this.onerror=null;this.src='https://i.ytimg.com/vi/${youtubeId}/hqdefault.jpg';"
                 alt=""
               >
             </div>
@@ -7181,19 +7134,9 @@ function normalizeParashaName(value){
             ב־TikTok נשארים באותו חלון כדי לצמצם את מסך
             הביניים האפור שנוצר בעת פתיחת חלון חדש.
           */
-          /*
-            בעלייה הראשית מאפשרים גם ל-TikTok לנסות
-            להעביר את הקישור לאפליקציית YouTube.
-            בשאר הסרטונים נשמרת ההתנהגות הקיימת.
-          */
-          if(
-            document.body.classList.contains("app-tiktok") &&
-            layer !== "main"
-          ){
+          if(document.body.classList.contains("app-tiktok")){
             youtubeOpenBtn.removeAttribute("target");
-          }else if(
-            document.body.classList.contains("in-app-browser")
-          ){
+          }else if(document.body.classList.contains("in-app-browser")){
             youtubeOpenBtn.setAttribute("target", "_blank");
           }else{
             youtubeOpenBtn.removeAttribute("target");
