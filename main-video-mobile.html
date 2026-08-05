@@ -75,40 +75,30 @@
 
     .mobile-video-frame iframe {
       position: absolute;
-      top: 0;
-      left: 50%;
+      inset: 0;
+      width: 100%;
       height: 100%;
       border: 0;
-      transform: translateX(-50%);
+      transform: none;
       background: #000;
     }
 
     /*
-      סרטון רגיל במצב אנכי:
-      יחס 4:5 וחיתוך מתון יותר מהמסגרת הקודמת.
+      בכל מצב אנכי משתמשים במסגרת 9:16.
+      גרסת הנייד כבר מותאמת למסך אנכי, ולכן אין
+      להגדיל את נגן YouTube ואין לחתוך את הממשק שלו.
     */
-    .mobile-video-page.is-portrait.is-regular {
-      --mobile-player-ratio: 4 / 5;
-    }
-
-    .mobile-video-page.is-portrait.is-regular
-    .mobile-video-frame iframe {
-      width: 222.23%;
-    }
-
-    /*
-      Shorts במצב אנכי:
-      יחס 9:16 ללא הגדלה וללא חיתוך.
-    */
+    .mobile-video-page.is-portrait.is-regular,
     .mobile-video-page.is-portrait.is-short {
       --mobile-player-ratio: 9 / 16;
     }
-
+    
+    .mobile-video-page.is-portrait.is-regular
+    .mobile-video-frame iframe,
     .mobile-video-page.is-portrait.is-short
     .mobile-video-frame iframe {
       width: 100%;
     }
-
     /*
       כאשר מסובבים את הנייד:
       כל הסרטונים מוצגים ביחס רוחב 16:9 וללא חיתוך.
@@ -449,24 +439,20 @@
           return;
         }
 
-        const isShort =
-          settings.videoType === "short";
-
-        const reservedPortraitHeight =
-          isShort
-            ? 132
-            : 145;
-
-        const portraitRatio =
-          isShort
-            ? (9 / 16)
-            : (4 / 5);
-
-        const availablePortraitHeight =
-          Math.max(
-            220,
-            viewportHeight - reservedPortraitHeight
-          );
+/*
+        כל גרסאות הנייד מוצגות ב־9:16.
+        החישוב שומר מקום לכותרת וללחצן האדום,
+        כדי שהלחצן יהיה גלוי כבר בפתיחת העמוד.
+      */
+      const reservedPortraitHeight = 142;
+      
+      const portraitRatio = 9 / 16;
+      
+      const availablePortraitHeight =
+        Math.max(
+          220,
+          viewportHeight - reservedPortraitHeight
+        );
 
         const calculatedPortraitWidth =
           Math.min(
