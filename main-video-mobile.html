@@ -139,6 +139,75 @@
       background: #b90000;
     }
 
+    .mobile-action-area {
+      width: var(--mobile-player-width);
+      display: grid;
+      gap: clamp(8px, 1.3dvh, 12px);
+    }
+
+    .mobile-youtube-button {
+      width: 100%;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .mobile-youtube-button-main {
+      display: block;
+    }
+
+    .mobile-youtube-button-note {
+      display: block;
+      font-size: 0.65em;
+      font-weight: 600;
+      line-height: 1.25;
+    }
+
+    .mobile-return-buttons {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: clamp(8px, 2vw, 12px);
+      direction: rtl;
+    }
+
+    .mobile-return-button {
+      min-height: clamp(45px, 6.5dvh, 56px);
+      padding: 9px 10px;
+      border: 1px solid rgba(255, 255, 255, 0.42);
+      border-radius: clamp(11px, 2.8vw, 16px);
+      color: #fff;
+      text-decoration: none;
+      font-size: clamp(15px, 4vw, 19px);
+      font-weight: 700;
+      line-height: 1.15;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      transition: transform 120ms ease, filter 120ms ease;
+    }
+
+    .mobile-return-button:active {
+      transform: scale(0.975);
+      filter: brightness(0.88);
+    }
+
+    .mobile-return-button.is-pardes {
+      background: linear-gradient(135deg, #08aeea, #087bd8);
+      box-shadow: 0 5px 16px rgba(0, 151, 221, 0.3);
+    }
+
+    .mobile-return-button.is-channel {
+      background: linear-gradient(135deg, #20aa5a, #087d3f);
+      box-shadow: 0 5px 16px rgba(15, 145, 75, 0.3);
+    }
+
+    .mobile-return-arrow {
+      font-size: 1.1em;
+      line-height: 1;
+    }
+
     .mobile-video-error {
       display: none;
       width: min(92vw, 430px);
@@ -212,14 +281,29 @@
       ></iframe>
     </div>
 
-    <a
-      id="mobileYoutubeButton"
-      class="mobile-youtube-button"
-      href="#"
-      rel="noopener noreferrer"
-    >
-      כל שיתוף, תגובה ולייק = מצווה גדולה
-    </a>
+    <div class="mobile-action-area">
+      <a
+        id="mobileYoutubeButton"
+        class="mobile-youtube-button"
+        href="#"
+        rel="noopener noreferrer"
+      >
+        <span class="mobile-youtube-button-main">להשארת לייק, תגובה ושיתוף</span>
+        <span class="mobile-youtube-button-note">(מצווה גדולה שלך בחינם שתירשם בשמיים לזיכוי הרבים)</span>
+      </a>
+
+      <div class="mobile-return-buttons">
+        <a id="backToPardesButton" class="mobile-return-button is-pardes" href="./">
+          <span class="mobile-return-arrow" aria-hidden="true">➜</span>
+          <span>חזרה לפרד״ס</span>
+        </a>
+
+        <a id="backToChannelButton" class="mobile-return-button is-channel" href="#">
+          <span class="mobile-return-arrow" aria-hidden="true">➜</span>
+          <span>חזרה לערוץ</span>
+        </a>
+      </div>
+    </div>
   </main>
 
   <div
@@ -284,8 +368,67 @@
       const youtubeButton =
         document.getElementById("mobileYoutubeButton");
 
+      const backToPardesButton =
+        document.getElementById("backToPardesButton");
+
+      const backToChannelButton =
+        document.getElementById("backToChannelButton");
+
       const errorMessage =
         document.getElementById("mobileVideoError");
+
+      const channelLinks = {
+        tiktok: "https://tinyurl.com/Parashat-Hashavua-TikTok",
+        instagram: "https://tinyurl.com/Weeks-Parsha-Instagram",
+        facebook: "https://tinyurl.com/Weeks-Parsha-Facebook",
+        whatsapp: "https://tinyurl.com/Weeks-Parsha-WhatsApp"
+      };
+
+      const sourceChannel =
+        String(parameters.get("source") || "")
+          .trim()
+          .toLowerCase();
+
+      backToPardesButton.addEventListener("click", function(event){
+        event.preventDefault();
+
+        try{
+          sessionStorage.setItem("pardesIntroAlreadyPlayed", "true");
+        }catch(error){
+          /* החזרה ממשיכה לעבוד גם אם האחסון חסום */
+        }
+
+        if(document.referrer){
+          try{
+            const previousUrl = new URL(document.referrer);
+
+            if(previousUrl.origin === window.location.origin){
+              window.history.back();
+              return;
+            }
+          }catch(error){
+            /* במקרה של כתובת מקור לא תקינה עוברים לדף הראשי */
+          }
+        }
+
+        window.location.href = "./";
+      });
+
+      backToChannelButton.addEventListener("click", function(event){
+        event.preventDefault();
+
+        if(channelLinks[sourceChannel]){
+          window.location.href = channelLinks[sourceChannel];
+          return;
+        }
+
+        if(window.history.length > 2){
+          window.history.go(-2);
+          return;
+        }
+
+        window.history.back();
+      });
 
       /*
         אם חסרה אחת הגרסאות, משתמשים בגרסה הקיימת
@@ -444,7 +587,7 @@
         החישוב שומר מקום לכותרת וללחצן האדום,
         כדי שהלחצן יהיה גלוי כבר בפתיחת העמוד.
       */
-      const reservedPortraitHeight = 142;
+      const reservedPortraitHeight = 238;
       
       const portraitRatio = 9 / 16;
       
