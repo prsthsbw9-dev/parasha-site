@@ -14,6 +14,7 @@
     :root {
       --actual-page-height: 100dvh;
       --mobile-player-width: min(94vw, 430px);
+      --mobile-actions-width: min(94vw, 520px);
       --mobile-player-ratio: 4 / 5;
     }
 
@@ -140,7 +141,8 @@
     }
 
     .mobile-action-area {
-      width: var(--mobile-player-width);
+      width: var(--mobile-actions-width);
+      max-width: calc(100vw - 20px);
       display: grid;
       gap: clamp(8px, 1.3dvh, 12px);
     }
@@ -579,6 +581,11 @@
             `${Math.max(280, calculatedLandscapeWidth)}px`
           );
 
+          document.documentElement.style.setProperty(
+            "--mobile-actions-width",
+            `${Math.max(280, calculatedLandscapeWidth)}px`
+          );
+
           return;
         }
 
@@ -607,6 +614,22 @@
         document.documentElement.style.setProperty(
           "--mobile-player-width",
           `${Math.max(250, calculatedPortraitWidth)}px`
+        );
+
+        /*
+          אזור הלחצנים מחושב בנפרד מהסרטון:
+          הוא מתרחב כמעט עד קצות המסך, בלי להגדיל
+          את גובה הסרטון ובלי לדחוף את הלחצנים למטה.
+        */
+        const calculatedActionsWidth =
+          Math.min(
+            viewportWidth - 20,
+            520
+          );
+
+        document.documentElement.style.setProperty(
+          "--mobile-actions-width",
+          `${Math.max(280, calculatedActionsWidth)}px`
         );
       }
 
