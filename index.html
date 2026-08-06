@@ -7022,6 +7022,28 @@ function normalizeParashaName(value){
           isYouTubeShortVariant(wideYouTubeVideo)
             ? "short"
             : "regular";
+
+        function getSourceChannel(){
+          const body = document.body;
+
+          if(body.classList.contains("app-tiktok")) return "tiktok";
+          if(body.classList.contains("app-instagram")) return "instagram";
+          if(body.classList.contains("app-facebook")) return "facebook";
+          if(body.classList.contains("app-whatsapp")) return "whatsapp";
+          if(body.classList.contains("app-youtube")) return "youtube";
+
+          const sourceText = `${document.referrer || ""} ${navigator.userAgent || ""}`;
+
+          if(/tiktok|musical_ly|bytedance/i.test(sourceText)) return "tiktok";
+          if(/instagram/i.test(sourceText)) return "instagram";
+          if(/facebook|fbav|fban|fb_iab|messenger/i.test(sourceText)) return "facebook";
+          if(/whatsapp/i.test(sourceText)) return "whatsapp";
+          if(/youtube|youtu\.be/i.test(sourceText)) return "youtube";
+
+          return "";
+        }
+
+        const sourceChannel = getSourceChannel();
       
         window.location.href =
           `main-video-mobile.html` +
@@ -7030,6 +7052,7 @@ function normalizeParashaName(value){
           `&mobileType=${encodeURIComponent(mobileVideoType)}` +
           `&wideType=${encodeURIComponent(wideVideoType)}` +
           `&title=${encodeURIComponent(layerName)}` +
+          `&source=${encodeURIComponent(sourceChannel)}` +
           `&layout=responsive-mobile-v5`;
       
         return;
