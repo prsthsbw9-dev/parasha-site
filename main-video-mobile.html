@@ -141,10 +141,30 @@
     }
 
     .mobile-action-area {
+      position: relative;
+      z-index: 10;
+    
       width: var(--mobile-actions-width);
       max-width: calc(100vw - 20px);
+    
       display: grid;
       gap: clamp(8px, 1.3dvh, 12px);
+    }
+    
+    /*
+      בנייד אנכי הלחצנים עולים אל החלק התחתון
+      של הסרטון ונשארים מותאמים לגובה המסך.
+    */
+    .mobile-video-page.is-portrait .mobile-action-area {
+      margin-top: clamp(-180px, -19dvh, -150px);
+    }
+    
+    /*
+      כשהמכשיר מסובב לרוחב,
+      הלחצנים חוזרים מתחת לסרטון.
+    */
+    .mobile-video-page.is-landscape .mobile-action-area {
+      margin-top: 0;
     }
 
     .mobile-youtube-button {
