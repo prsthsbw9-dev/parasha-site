@@ -604,12 +604,11 @@
           viewportHeight - reservedPortraitHeight
         );
 
-        const calculatedPortraitWidth =
-          Math.min(
-            viewportWidth - 20,
-            availablePortraitHeight * portraitRatio,
-            430
-          );
+      const calculatedPortraitWidth =
+        Math.min(
+          viewportWidth - 20,
+          520
+        );
 
         document.documentElement.style.setProperty(
           "--mobile-player-width",
