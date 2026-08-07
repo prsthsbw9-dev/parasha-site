@@ -322,15 +322,23 @@
       </a>
 
       <div class="mobile-return-buttons">
-        <a id="backToPardesButton" class="mobile-return-button is-pardes" href="./">
+        <a
+          id="backToPardesButton"
+          class="mobile-return-button is-pardes"
+          href="index.html"
+        >
           <span class="mobile-return-arrow" aria-hidden="true">➜</span>
           <span>חזרה לפרד״ס</span>
         </a>
 
-        <a id="backToChannelButton" class="mobile-return-button is-channel" href="#">
-          <span class="mobile-return-arrow" aria-hidden="true">➜</span>
-          <span>חזרה לערוץ</span>
-        </a>
+          <a
+            id="backToChannelButton"
+            class="mobile-return-button is-channel"
+            href="#"
+            aria-disabled="true"
+          >
+            <span>לתמיכה בערוץ</span>
+          </a>
       </div>
     </div>
   </main>
@@ -406,57 +414,28 @@
       const errorMessage =
         document.getElementById("mobileVideoError");
 
-      const channelLinks = {
-        tiktok: "https://tinyurl.com/Parashat-Hashavua-TikTok",
-        instagram: "https://tinyurl.com/Weeks-Parsha-Instagram",
-        facebook: "https://tinyurl.com/Weeks-Parsha-Facebook",
-        whatsapp: "https://tinyurl.com/Weeks-Parsha-WhatsApp"
-      };
-
-      const sourceChannel =
-        String(parameters.get("source") || "")
-          .trim()
-          .toLowerCase();
-
       backToPardesButton.addEventListener("click", function(event){
         event.preventDefault();
-
+      
         try{
-          sessionStorage.setItem("pardesIntroAlreadyPlayed", "true");
+          sessionStorage.setItem(
+            "pardesIntroAlreadyPlayed",
+            "true"
+          );
         }catch(error){
-          /* החזרה ממשיכה לעבוד גם אם האחסון חסום */
+          /* החזרה לעץ תמשיך לעבוד גם אם האחסון חסום */
         }
-
-        if(document.referrer){
-          try{
-            const previousUrl = new URL(document.referrer);
-
-            if(previousUrl.origin === window.location.origin){
-              window.history.back();
-              return;
-            }
-          }catch(error){
-            /* במקרה של כתובת מקור לא תקינה עוברים לדף הראשי */
-          }
-        }
-
-        window.location.href = "./";
+      
+        window.location.href = "index.html";
       });
 
       backToChannelButton.addEventListener("click", function(event){
         event.preventDefault();
-
-        if(channelLinks[sourceChannel]){
-          window.location.href = channelLinks[sourceChannel];
-          return;
-        }
-
-        if(window.history.length > 2){
-          window.history.go(-2);
-          return;
-        }
-
-        window.history.back();
+      
+        /*
+          כאן נטמיע בהמשך את הקישור החדש
+          של כפתור התמיכה בערוץ.
+        */
       });
 
       /*
