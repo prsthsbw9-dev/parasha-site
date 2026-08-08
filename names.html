@@ -152,8 +152,7 @@
     }   
 
     /* המעטפת שקופה לחלוטין; רק השדות והכפתורים אטומים. */
-    .request-form,
-    .support-section {
+    .request-form {
       width: 100%;
       margin: 0;
       padding: 0;
@@ -276,93 +275,6 @@
 
     .form-message.visible { display: block; }
 
-    .divider {
-      width: min(72%, 340px);
-      height: 1px;
-      margin: clamp(20px, 4dvh, 32px) auto;
-      background: linear-gradient(
-        to left,
-        transparent,
-        rgba(255,255,255,.72),
-        transparent
-      );
-      box-shadow: 0 1px 5px rgba(0,0,0,.8);
-    }
-
-    .support-section {
-      padding-bottom: 8px;
-      text-align: center;
-      text-shadow: 0 3px 8px rgba(0,0,0,.95);
-    }
-
-    .support-section h2 {
-      margin: 0;
-      color: var(--gold);
-      font-size: clamp(22px, 6vw, 30px);
-      line-height: 1.3;
-    }
-
-    .support-text {
-      max-width: 530px;
-      margin: 8px auto 14px;
-      color: rgba(255,255,255,.94);
-      font-size: clamp(14px, 4vw, 17px);
-      line-height: 1.55;
-      font-weight: 600;
-    }
-
-    .thank-you-text {
-      max-width: 530px;
-      margin: 0 auto 14px;
-      padding: 10px 12px;
-      border-right: 3px solid var(--gold);
-      border-radius: 8px;
-      background: rgba(5,17,21,.80);
-      color: #fff;
-      font-size: clamp(13px, 3.7vw, 16px);
-      line-height: 1.55;
-      text-align: right;
-      text-shadow: none;
-      box-shadow: 0 6px 20px rgba(0,0,0,.26);
-    }
-
-    .payment-buttons {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 8px;
-    }
-
-    .payment-button {
-      min-width: 0;
-      min-height: 48px;
-      padding: 9px 5px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border: 1px solid rgba(255,255,255,.45);
-      border-radius: 14px;
-      color: #fff;
-      text-decoration: none;
-      font-size: clamp(13px, 3.6vw, 16px);
-      font-weight: 900;
-      line-height: 1.15;
-      text-shadow: none;
-      box-shadow: 0 7px 20px rgba(0,0,0,.30);
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    .bit { background: linear-gradient(135deg, #1ca4e4, #0874b0); }
-    .paybox { background: linear-gradient(135deg, #7b48cf, #4f258e); }
-    .paypal { background: linear-gradient(135deg, #0967b6, #003e76); }
-
-    .voluntary-note {
-      margin: 10px 0 0;
-      color: rgba(255,255,255,.84);
-      font-size: 12px;
-      line-height: 1.45;
-      font-weight: 600;
-    }
-
     @media (orientation: landscape) and (max-height: 650px) {
       :root { --content-width: min(88vw, 760px); }
 
@@ -377,7 +289,6 @@
       }
       .field { margin-bottom: 9px; }
       .field textarea { min-height: 76px; }
-      .divider { margin: 16px auto; }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -497,48 +408,6 @@
           aria-live="polite"
         ></div>
       </form>
-
-      <div class="divider" aria-hidden="true"></div>
-
-      <section class="support-section" aria-labelledby="supportTitle">
-        <h2 id="supportTitle">רוצים להיות שותפים בהפצת האור?</h2>
-
-        <p class="support-text">
-          כל תמיכה מסייעת להמשך הפצת התורה וזיכוי הרבים.
-        </p>
-
-        <p class="thank-you-text">
-          למי שמעוניין, ניתן ליצור דף תודה אישי באתר —
-          עם שם התורם, שם העסק או הקדשה לבחירתו.
-          לאחר התמיכה שלחו לנו את הפרטים שתרצו שיופיעו.
-        </p>
-
-        <div class="payment-buttons">
-          <a
-            class="payment-button bit"
-            href="https://www.bitpay.co.il/app/me/4A7D7360-AF51-7846-5E67-60FACACD37C54857?v=2"
-            target="_blank"
-            rel="noopener noreferrer"
-          >Bit</a>
-
-          <a
-            class="payment-button paybox"
-            href="https://links.payboxapp.com/c9hSuB5Xq1b"
-            rel="noopener noreferrer"
-          >PayBox</a>
-          
-          <a
-            class="payment-button paypal"
-            href="https://paypal.me/RonenTorah"
-            target="_blank"
-            rel="noopener noreferrer"
-          >PayPal</a>
-        </div>
-
-        <p class="voluntary-note">
-          התמיכה היא מרצון ואינה תנאי לשליחת שם או בקשה.
-        </p>
-      </section>
     </div>
   </main>
 
