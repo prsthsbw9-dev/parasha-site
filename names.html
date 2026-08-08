@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- DIRECT HTTPS SUBMIT — VERSION 4 — 2026-08-09 -->
+<!-- DIRECT HTTPS SUBMIT — VERSION 5 — 2026-08-09 -->
 <html lang="he" dir="rtl">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#071014">
-  <title>לכל נשמה יש שם | שליחה ישירה v4</title>
+  <title>לכל נשמה יש שם | שליחה ישירה v5</title>
 
   <style>
     :root {
@@ -229,61 +229,29 @@
         0 7px 22px rgba(0,0,0,.30);
     }
 
-    .image-picker {
-      position: relative;
+    .photo-interest {
+      margin: 3px 0 13px;
+      padding: 11px 12px;
       display: flex;
       align-items: center;
       gap: 10px;
-    }
-
-    .image-input {
-      position: absolute;
-      width: 1px !important;
-      height: 1px !important;
-      padding: 0 !important;
-      margin: -1px !important;
-      opacity: 0;
-      overflow: hidden;
-    }
-
-    .image-picker-button {
-      min-height: 48px;
-      padding: 10px 16px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 7px;
-      border: 1px solid rgba(255,255,255,.52);
+      border: 1px solid rgba(255,255,255,.42);
       border-radius: 14px;
-      background: linear-gradient(135deg, #1496cc, #0872a8);
+      background: rgba(7,19,23,.84);
       color: #fff;
-      font-size: 16px;
-      font-weight: 900;
-      cursor: pointer;
-      box-shadow: 0 7px 20px rgba(0,0,0,.28);
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    .image-input:focus-visible + .image-picker-button {
-      outline: 3px solid rgba(255,227,154,.55);
-      outline-offset: 2px;
-    }
-
-    .image-file-name {
-      min-width: 0;
-      color: rgba(255,255,255,.84);
-      font-size: 13px;
-      font-weight: 700;
-      overflow-wrap: anywhere;
-    }
-
-    .file-hint {
-      margin: 6px 4px 0;
-      color: rgba(255,255,255,.78);
-      font-size: 12px;
+      font-size: clamp(14px, 3.9vw, 16px);
+      font-weight: 800;
       line-height: 1.45;
-      font-weight: 600;
-      text-shadow: 0 2px 5px rgba(0,0,0,.95);
+      box-shadow: 0 6px 20px rgba(0,0,0,.26);
+    }
+
+    .photo-interest-checkbox {
+      width: 21px;
+      height: 21px;
+      margin: 0;
+      flex: 0 0 21px;
+      accent-color: #1496cc;
+      cursor: pointer;
     }
 
     .honeypot {
@@ -477,7 +445,7 @@
           לצד ברכה קולית שתישמע למענם.
           <br>
           <span class="photo-option">
-            (כולל אפשרות להוספת תמונה — והכול בחינם)
+            (ניתן לצרף תמונה בהמשך דרך המייל — והכול בחינם)
           </span>
         </p>
       </header>
@@ -485,7 +453,6 @@
       <form
         id="requestForm"
         class="request-form"
-        enctype="multipart/form-data"
         novalidate
       >
         <div class="honeypot" aria-hidden="true">
@@ -539,33 +506,15 @@
           <div class="error">יש להזין כתובת אימייל תקינה.</div>
         </div>
 
-        <div id="photoField" class="field">
-          <label for="requestPhoto">
-            הוספת תמונה <span class="optional">— לא חובה</span>
+        <div class="photo-interest">
+          <input
+            id="photoInterestCheckbox"
+            class="photo-interest-checkbox"
+            type="checkbox"
+          >
+          <label for="photoInterestCheckbox">
+            אני רוצה לצרף תמונה בהמשך דרך המייל
           </label>
-          <div class="image-picker">
-            <input
-              id="requestPhoto"
-              class="image-input"
-              name="תמונה מצורפת"
-              type="file"
-              accept="image/*"
-            >
-
-            <label class="image-picker-button" for="requestPhoto">
-              <span aria-hidden="true">📷</span>
-              <span>בחירת תמונה</span>
-            </label>
-
-            <span id="imageFileName" class="image-file-name">
-              לא נבחרה תמונה
-            </span>
-          </div>
-          <p class="file-hint">
-            ניתן לצרף תמונה אחת עד 10MB. אם הגלריה אינה נפתחת
-            מתוך TikTok, יש לפתוח את הדף בדפדפן המכשיר.
-          </p>
-          <div class="error">יש לבחור קובץ תמונה בגודל של עד 10MB.</div>
         </div>
 
         <div id="termsConsent" class="terms-consent">
@@ -620,12 +569,10 @@
       const blessingName = document.getElementById("blessingName");
       const requestText = document.getElementById("requestText");
       const contactEmail = document.getElementById("contactEmail");
-      const requestPhoto = document.getElementById("requestPhoto");
-      const imageFileName = document.getElementById("imageFileName");
+      const photoInterestCheckbox = document.getElementById("photoInterestCheckbox");
       const nameField = document.getElementById("nameField");
       const requestField = document.getElementById("requestField");
       const emailField = document.getElementById("emailField");
-      const photoField = document.getElementById("photoField");
       const termsConsent = document.getElementById("termsConsent");
       const termsCheckbox = document.getElementById("termsCheckbox");
       const submitButton = document.getElementById("submitButton");
@@ -651,17 +598,11 @@
         const hasRequest = !!clean(requestText.value);
         const emailValue = clean(contactEmail.value);
         const hasValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailValue);
-        const photo = requestPhoto.files[0] || null;
-        const hasValidPhoto = !photo || (
-          photo.type.startsWith("image/") &&
-          photo.size <= 10 * 1024 * 1024
-        );
         const hasTermsConsent = termsCheckbox.checked;
 
         nameField.classList.toggle("has-error", !hasName);
         requestField.classList.toggle("has-error", !hasRequest);
         emailField.classList.toggle("has-error", !hasValidEmail);
-        photoField.classList.toggle("has-error", !hasValidPhoto);
         termsConsent.classList.toggle("has-error", !hasTermsConsent);
 
         if(!hasName) {
@@ -676,11 +617,6 @@
 
         if(!hasValidEmail) {
           contactEmail.focus();
-          return false;
-        }
-
-        if(!hasValidPhoto) {
-          requestPhoto.focus();
           return false;
         }
 
@@ -721,14 +657,6 @@
         hideMessage();
       });
 
-      requestPhoto.addEventListener("change", function () {
-        photoField.classList.remove("has-error");
-        imageFileName.textContent = requestPhoto.files[0]
-          ? requestPhoto.files[0].name
-          : "לא נבחרה תמונה";
-        hideMessage();
-      });
-
       form.addEventListener("submit", async function (event) {
         event.preventDefault();
         hideMessage();
@@ -742,6 +670,7 @@
         submitButton.disabled = true;
         submitButton.textContent = "הבקשה נשלחת...";
 
+        const wantsPhoto = photoInterestCheckbox.checked;
         const formData = new FormData(form);
         formData.append(
           "_subject",
@@ -750,7 +679,11 @@
         formData.append("_template", "table");
         formData.append("_captcha", "false");
         formData.append("אישור תקנון", "אושר וסומן על ידי השולח/ת");
-        formData.append("גרסת התקנון", "גרסה 3 — 09.08.2026");
+        formData.append("גרסת התקנון", "גרסה 4 — 09.08.2026");
+        formData.append(
+          "מעוניין/ת לצרף תמונה בהמשך",
+          wantsPhoto ? "כן — יש לבקש תמונה במייל חוזר" : "לא"
+        );
         formData.append("מקור הבקשה", window.location.href);
 
         try {
@@ -772,16 +705,16 @@
           }
 
           form.reset();
-          imageFileName.textContent = "לא נבחרה תמונה";
           submitButton.disabled = true;
           termsConsent.classList.remove("has-error");
           nameField.classList.remove("has-error");
           requestField.classList.remove("has-error");
           emailField.classList.remove("has-error");
-          photoField.classList.remove("has-error");
 
           showMessage(
-            "הבקשה נשלחה בהצלחה. לאחר בדיקתה ניצור איתכם קשר באימייל."
+            wantsPhoto
+              ? "הבקשה נשלחה בהצלחה. לאחר בדיקתה ניצור איתכם קשר באימייל כדי שתוכלו להשיב ולצרף תמונה."
+              : "הבקשה נשלחה בהצלחה. לאחר בדיקתה ניצור איתכם קשר באימייל."
           );
         } catch(error) {
           submitButton.disabled = !termsCheckbox.checked;
