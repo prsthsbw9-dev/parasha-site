@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#071014">
-  <title>לכל נשמה יש שם</title>
+  <title>לכל נשמה יש שם | עץ הפרד״ס החי</title>
 
   <style>
     :root {
@@ -108,8 +108,7 @@
     }
 
     .return-button:active,
-    .action-button:active,
-    .payment-button:active { transform: scale(.985); }
+    .action-button:active { transform: scale(.985); }
 
     .intro {
       margin: 0 auto clamp(16px, 3dvh, 24px);
@@ -143,13 +142,29 @@
       font-weight: 600;
     }
 
-     .photo-option {
+    .photo-option {
       display: inline-block;
       margin-top: 7px;
       font-size: 0.82em;
-      font-weight: 700;
-      color: rgba(255, 255, 255, 0.88);
-    }   
+      font-weight: 900;
+      color: #fff3ad;
+      animation: photoOptionGlow 1.6s ease-in-out infinite;
+    }
+
+    @keyframes photoOptionGlow {
+      0%, 100% {
+        opacity: .72;
+        text-shadow: 0 2px 6px rgba(0,0,0,.95);
+      }
+      50% {
+        opacity: 1;
+        color: #fff;
+        text-shadow:
+          0 0 7px rgba(255,227,154,.95),
+          0 0 16px rgba(255,227,154,.72),
+          0 2px 6px rgba(0,0,0,.95);
+      }
+    }
 
     /* המעטפת שקופה לחלוטין; רק השדות והכפתורים אטומים. */
     .request-form {
@@ -226,6 +241,54 @@
     .field.has-error input,
     .field.has-error textarea { border-color: #ff8b8b; }
 
+    .terms-consent {
+      margin: 4px 0 13px;
+      padding: 11px 12px;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      border: 1px solid rgba(255,255,255,.42);
+      border-radius: 14px;
+      background: rgba(7,19,23,.86);
+      color: #fff;
+      font-size: clamp(13px, 3.7vw, 16px);
+      font-weight: 700;
+      line-height: 1.45;
+      box-shadow: 0 6px 20px rgba(0,0,0,.28);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+
+    .terms-consent.has-error {
+      border-color: #ff8b8b;
+      box-shadow: 0 0 0 3px rgba(255,139,139,.14);
+    }
+
+    .terms-checkbox {
+      width: 21px;
+      height: 21px;
+      margin: 1px 0 0;
+      flex: 0 0 21px;
+      accent-color: #18a957;
+      cursor: pointer;
+    }
+
+    .terms-link {
+      color: #ffe39a;
+      font-weight: 900;
+      text-underline-offset: 3px;
+    }
+
+    .terms-error {
+      display: none;
+      margin-top: 5px;
+      color: #ffe0e0;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .terms-consent.has-error .terms-error { display: block; }
+
     .action-button {
       width: 100%;
       min-height: 56px;
@@ -242,6 +305,13 @@
         0 8px 25px rgba(210,0,0,.40),
         inset 0 1px 0 rgba(255,255,255,.22);
       -webkit-tap-highlight-color: transparent;
+    }
+
+    .action-button:disabled {
+      cursor: not-allowed;
+      opacity: .52;
+      filter: grayscale(.35);
+      box-shadow: 0 5px 16px rgba(0,0,0,.28);
     }
 
     .mail-note {
@@ -343,7 +413,7 @@
           לצד ברכה קולית שתישמע למענם.
           <br>
           <span class="photo-option">
-            (כולל אפשרות להוספת תמונה)
+            (!!! כולל אפשרות להוספת תמונה — והכול בחינם !!!)
           </span>
         </p>
       </header>
@@ -389,7 +459,33 @@
           >
         </div>
 
-        <button class="action-button" type="submit">
+        <div id="termsConsent" class="terms-consent">
+          <input
+            id="termsCheckbox"
+            class="terms-checkbox"
+            type="checkbox"
+            required
+            aria-describedby="termsError"
+          >
+
+          <label for="termsCheckbox">
+            קראתי ואני מאשר/ת את
+            <a
+              class="terms-link"
+              href="names-terms.html"
+              target="_blank"
+              rel="noopener noreferrer"
+            >תקנון שליחת השמות והבקשות</a>.
+            אני מצהיר/ה שאני מוסמך/ת למסור את הפרטים והתמונה,
+            ככל שתצורף.
+
+            <span id="termsError" class="terms-error">
+              יש לקרוא ולאשר את התקנון לפני השליחה.
+            </span>
+          </label>
+        </div>
+
+        <button id="submitButton" class="action-button" type="submit" disabled>
           שליחת השם והבקשה במייל
         </button>
 
@@ -421,6 +517,9 @@
       const contactDetails = document.getElementById("contactDetails");
       const nameField = document.getElementById("nameField");
       const requestField = document.getElementById("requestField");
+      const termsConsent = document.getElementById("termsConsent");
+      const termsCheckbox = document.getElementById("termsCheckbox");
+      const submitButton = document.getElementById("submitButton");
       const formMessage = document.getElementById("formMessage");
       const backgroundVideo = document.getElementById("backgroundVideo");
 
@@ -441,9 +540,11 @@
       function validate() {
         const hasName = !!clean(blessingName.value);
         const hasRequest = !!clean(requestText.value);
+        const hasTermsConsent = termsCheckbox.checked;
 
         nameField.classList.toggle("has-error", !hasName);
         requestField.classList.toggle("has-error", !hasRequest);
+        termsConsent.classList.toggle("has-error", !hasTermsConsent);
 
         if(!hasName) {
           blessingName.focus();
@@ -455,8 +556,23 @@
           return false;
         }
 
+        if(!hasTermsConsent) {
+          termsCheckbox.focus();
+          return false;
+        }
+
         return true;
       }
+
+      termsCheckbox.addEventListener("change", function () {
+        submitButton.disabled = !termsCheckbox.checked;
+
+        if(termsCheckbox.checked) {
+          termsConsent.classList.remove("has-error");
+        }
+
+        hideMessage();
+      });
 
       blessingName.addEventListener("input", function () {
         if(clean(blessingName.value)) {
@@ -477,7 +593,7 @@
         hideMessage();
 
         if(!validate()) {
-          showMessage("יש להשלים את השם ואת הבקשה לפני השליחה.");
+          showMessage("יש להשלים את הפרטים ולאשר את התקנון לפני השליחה.");
           return;
         }
 
@@ -498,6 +614,10 @@
           "",
           "פרטי קשר:",
           contactValue || "לא נמסרו",
+          "",
+          "אישור תקנון:",
+          "השולח/ת סימן/ה כי קרא/ה ואישר/ה את תקנון שליחת השמות והבקשות.",
+          "גרסת התקנון: 08.08.2026",
           "",
           "נשלח מתוך עץ הפרד״ס החי."
         ].join("\n");
