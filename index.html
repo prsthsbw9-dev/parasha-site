@@ -7052,6 +7052,7 @@ function normalizeParashaName(value){
           `&mobileType=${encodeURIComponent(mobileVideoType)}` +
           `&wideType=${encodeURIComponent(wideVideoType)}` +
           `&title=${encodeURIComponent(layerName)}` +
+          `&layer=${encodeURIComponent(layer)}` +
           `&source=${encodeURIComponent(sourceChannel)}` +
           `&layout=responsive-mobile-v5`;
       
@@ -8221,7 +8222,39 @@ function normalizeParashaName(value){
 
     setupMobileSearchKeyboardFix();
 
-    loadInitialAliyah();
+    loadInitialAliyah()
+      .then(() => {
+        const requestedLayer =
+          new URLSearchParams(window.location.search)
+            .get("openLayer");
+
+        const allowedLayers = [
+          "main",
+          "pshat",
+          "remez",
+          "drash",
+          "sod"
+        ];
+
+        if(!allowedLayers.includes(requestedLayer)){
+          return;
+        }
+
+        const cleanUrl = new URL(window.location.href);
+        cleanUrl.searchParams.delete("openLayer");
+        window.history.replaceState(
+          {},
+          "",
+          cleanUrl.pathname + cleanUrl.search + cleanUrl.hash
+        );
+
+        window.setTimeout(() => {
+          openLayer(requestedLayer);
+        }, 250);
+      })
+      .catch((error) => {
+        console.error("לא ניתן היה לפתוח את החלק המבוקש:", error);
+      });
 
 </script>
 
