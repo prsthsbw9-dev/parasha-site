@@ -187,6 +187,53 @@
         transition:none;
       }
     }
+
+     .intro-sound-button{
+      position:absolute;
+      left:max(14px, env(safe-area-inset-left));
+      bottom:max(18px, env(safe-area-inset-bottom));
+      z-index:6;
+    
+      width:52px;
+      height:52px;
+      padding:0;
+      border:1.5px solid rgba(255,255,255,.88);
+      border-radius:50%;
+    
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    
+      background:rgba(5,14,20,.72);
+      color:#fff;
+    
+      box-shadow:
+        0 0 15px rgba(255,210,120,.35),
+        0 5px 15px rgba(0,0,0,.38);
+    
+      font-size:25px;
+      line-height:1;
+      cursor:pointer;
+      -webkit-tap-highlight-color:transparent;
+    
+      transition:
+        transform .18s ease,
+        background .18s ease,
+        box-shadow .18s ease;
+    }
+    
+    .intro-sound-button.is-playing{
+      background:rgba(166,106,18,.88);
+    
+      box-shadow:
+        0 0 20px rgba(255,205,102,.56),
+        0 5px 15px rgba(0,0,0,.38);
+    }
+    
+    .intro-sound-button:active{
+      transform:scale(.94);
+    }   
+    
   </style>
 </head>
 
@@ -207,7 +254,10 @@
       poster="names-intro-mobile-poster.jpg"
       aria-hidden="true"
     >
-      <source src="names-intro-mobile.mp4" type="video/mp4">
+      <source
+        src="names-intro-mobile.mp4"
+        type="video/mp4"
+      >
     </video>
 
     <img
@@ -228,6 +278,33 @@
         להוספת שמות
       </button>
     </div>
+
+    <audio
+      id="namesIntroMusic"
+      preload="auto"
+      loop
+    >
+      <source
+        src="names-intro-music.mp3"
+        type="audio/mpeg"
+      >
+    </audio>
+    
+    <button
+      id="introSoundButton"
+      class="intro-sound-button"
+      type="button"
+      aria-label="הפעלת מוזיקת רקע"
+      aria-pressed="false"
+    >
+      <span
+        id="introSoundIcon"
+        aria-hidden="true"
+      >
+        🔇
+      </span>
+    </button>    
+    
   </main>
 
   <script>
@@ -250,6 +327,62 @@
       const video = document.getElementById("namesIntroVideo");
       const poster = document.getElementById("namesIntroPoster");
       const cta = document.getElementById("namesCta");
+
+      const introMusic =
+        document.getElementById("namesIntroMusic");
+      
+      const soundButton =
+        document.getElementById("introSoundButton");
+      
+      const soundIcon =
+        document.getElementById("introSoundIcon");
+      
+      let musicIsPlaying = false;
+      
+      introMusic.volume = 0.35;
+      
+      function updateSoundButton(){
+        soundIcon.textContent =
+          musicIsPlaying ? "🔊" : "🔇";
+      
+        soundButton.classList.toggle(
+          "is-playing",
+          musicIsPlaying
+        );
+      
+        soundButton.setAttribute(
+          "aria-pressed",
+          musicIsPlaying ? "true" : "false"
+        );
+      
+        soundButton.setAttribute(
+          "aria-label",
+          musicIsPlaying
+            ? "השתקת מוזיקת הרקע"
+            : "הפעלת מוזיקת רקע"
+        );
+      }
+      
+      soundButton.addEventListener(
+        "click",
+        async function(){
+          if(musicIsPlaying){
+            introMusic.pause();
+            musicIsPlaying = false;
+            updateSoundButton();
+            return;
+          }
+      
+          try{
+            await introMusic.play();
+            musicIsPlaying = true;
+            updateSoundButton();
+          }catch(error){
+            musicIsPlaying = false;
+            updateSoundButton();
+          }
+        }
+      );
 
       function updateNamesButtonPosition(){
         const viewport = window.visualViewport;
@@ -344,6 +477,9 @@
         if(finished) return;
         finished = true;
         clearTimeout(safetyTimer);
+        introMusic.pause();
+        musicIsPlaying = false;
+        updateSoundButton();       
 
         if(video){
           video.pause();
