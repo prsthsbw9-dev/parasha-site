@@ -166,9 +166,7 @@
     */
     .mobile-video-page.is-instagram.is-portrait
     .mobile-action-area {
-      transform: translateY(
-        var(--instagram-actions-shift, -8px)
-      );
+      transform: translateY(-28px);
     }
     
     /*
@@ -591,40 +589,6 @@
 
         const viewportHeight =
           settings.viewportHeight;
-
-        if(
-          isInstagramBrowser &&
-          settings.mode === "portrait"
-        ){
-          let instagramShift = -8;
-        
-          /*
-            במסכים נמוכים מעלים מעט יותר כדי שכל
-            הלחצנים יישארו בתוך האזור הגלוי.
-            במסכים גבוהים משאירים אותם נמוכים יותר,
-            מתחת לאזור הכתוביות.
-          */
-          if(viewportHeight <= 600){
-            instagramShift = -18;
-          }else if(viewportHeight <= 680){
-            instagramShift = -14;
-          }else if(viewportHeight <= 760){
-            instagramShift = -10;
-          }else if(viewportHeight <= 850){
-            instagramShift = -8;
-          }else{
-            instagramShift = -4;
-          }
-        
-          page.style.setProperty(
-            "--instagram-actions-shift",
-            `${instagramShift}px`
-          );
-        }else{
-          page.style.removeProperty(
-            "--instagram-actions-shift"
-          );
-        }        
 
         document.documentElement.style.setProperty(
           "--actual-page-height",
