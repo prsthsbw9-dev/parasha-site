@@ -64,6 +64,44 @@
       pointer-events: none;
     }
 
+    .background-sound-button {
+      position: fixed;
+      top: max(14px, env(safe-area-inset-top));
+      left: max(14px, env(safe-area-inset-left));
+      z-index: 4;
+      width: 48px;
+      height: 48px;
+      padding: 0;
+      border: 1.5px solid rgba(255,255,255,.72);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(5,15,18,.68);
+      color: #fff;
+      font-size: 23px;
+      line-height: 1;
+      cursor: pointer;
+      box-shadow:
+        0 5px 18px rgba(0,0,0,.38),
+        inset 0 1px 0 rgba(255,255,255,.16);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      -webkit-tap-highlight-color: transparent;
+      transition: transform .18s ease, background .18s ease, box-shadow .18s ease;
+    }
+
+    .background-sound-button:active {
+      transform: scale(.94);
+    }
+
+    .background-sound-button.is-playing {
+      background: rgba(177,119,23,.78);
+      box-shadow:
+        0 0 20px rgba(255,198,88,.48),
+        0 5px 18px rgba(0,0,0,.38);
+    }
+
     .page {
       position: relative;
       z-index: 2;
@@ -412,13 +450,23 @@
     loop
     playsinline
     preload="metadata"
-    poster="names-background-desktop-poster.jpg"
+    poster="names-page-background-mobile-poster.jpg"
     aria-hidden="true"
   >
-    <source src="names-background-desktop.mp4" type="video/mp4">
+    <source src="names-page-background-mobile.mp4" type="video/mp4">
   </video>
 
   <div class="background-overlay" aria-hidden="true"></div>
+
+  <button
+    id="backgroundSoundButton"
+    class="background-sound-button"
+    type="button"
+    aria-label="הפעלת מוזיקת רקע"
+    aria-pressed="false"
+  >
+    <span id="backgroundSoundIcon" aria-hidden="true">🔇</span>
+  </button>
 
   <main class="page">
     <div class="content">
@@ -580,6 +628,8 @@
       const submitButton = document.getElementById("submitButton");
       const formMessage = document.getElementById("formMessage");
       const backgroundVideo = document.getElementById("backgroundVideo");
+      const backgroundSoundButton = document.getElementById("backgroundSoundButton");
+      const backgroundSoundIcon = document.getElementById("backgroundSoundIcon");
       const DRAFT_STORAGE_KEY = "pardesNamesFormDraftV1";
 
       function clean(value) {
@@ -831,6 +881,39 @@
 
       if(backgroundVideo) {
         backgroundVideo.muted = true;
+        backgroundVideo.volume = 0.75;
+
+        backgroundSoundButton.addEventListener("click", function () {
+          const shouldPlaySound = backgroundVideo.muted;
+
+          backgroundVideo.muted = !shouldPlaySound;
+          backgroundSoundButton.setAttribute(
+            "aria-pressed",
+            String(shouldPlaySound)
+          );
+          backgroundSoundButton.setAttribute(
+            "aria-label",
+            shouldPlaySound
+              ? "השתקת מוזיקת הרקע"
+              : "הפעלת מוזיקת הרקע"
+          );
+          backgroundSoundButton.classList.toggle(
+            "is-playing",
+            shouldPlaySound
+          );
+          backgroundSoundIcon.textContent = shouldPlaySound ? "🔊" : "🔇";
+
+          if(shouldPlaySound && backgroundVideo.paused) {
+            const soundPlayPromise = backgroundVideo.play();
+            if(
+              soundPlayPromise &&
+              typeof soundPlayPromise.catch === "function"
+            ) {
+              soundPlayPromise.catch(function () {});
+            }
+          }
+        });
+
         const playPromise = backgroundVideo.play();
 
         if(playPromise && typeof playPromise.catch === "function") {
