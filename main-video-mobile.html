@@ -417,6 +417,17 @@
       const layerTitle =
         (parameters.get("title") || "העלייה").trim();
 
+      const currentLayer =
+        (parameters.get("layer") || "").trim();
+
+      const requestedResumeTime = Math.max(
+        0,
+        Number(parameters.get("resume")) || 0
+      );
+
+      const VIDEO_RETURN_STORAGE_KEY =
+        "pardesSupportVideoReturnV1";
+
       const page =
         document.getElementById("mobileVideoPage");
 
@@ -446,6 +457,46 @@
       const errorMessage =
         document.getElementById("mobileVideoError");
 
+      let youtubePlayerController = null;
+      let youtubeApiReady = false;
+      let resumeApplied = false;
+
+      function connectYoutubeController(){
+        if(
+          !youtubeApiReady ||
+          youtubePlayerController ||
+          !player.dataset.videoId ||
+          !window.YT?.Player
+        ){
+          return;
+        }
+
+        try{
+          youtubePlayerController = new YT.Player(player, {
+            events:{
+              onReady(event){
+                if(requestedResumeTime > 0 && !resumeApplied){
+                  resumeApplied = true;
+                  event.target.seekTo(requestedResumeTime, true);
+                }
+              }
+            }
+          });
+        }catch(error){
+          youtubePlayerController = null;
+        }
+      }
+
+      window.onYouTubeIframeAPIReady = function(){
+        youtubeApiReady = true;
+        connectYoutubeController();
+      };
+
+      const youtubeApiScript = document.createElement("script");
+      youtubeApiScript.src = "https://www.youtube.com/iframe_api";
+      youtubeApiScript.async = true;
+      document.head.appendChild(youtubeApiScript);
+
       backToPardesButton.addEventListener("click", function(event){
         event.preventDefault();
       
@@ -463,6 +514,34 @@
 
       backToChannelButton.addEventListener("click", function(event){
         event.preventDefault();
+
+        let stoppedAt = requestedResumeTime;
+
+        try{
+          const measuredTime =
+            youtubePlayerController?.getCurrentTime?.();
+
+          if(Number.isFinite(measuredTime)){
+            stoppedAt = Math.max(0, measuredTime);
+          }
+        }catch(error){}
+
+        const returnUrl = new URL(window.location.href);
+        returnUrl.searchParams.delete("resume");
+
+        try{
+          sessionStorage.setItem(
+            VIDEO_RETURN_STORAGE_KEY,
+            JSON.stringify({
+              returnUrl:returnUrl.href,
+              stoppedAt:Math.floor(stoppedAt),
+              layer:currentLayer,
+              title:layerTitle,
+              savedAt:Date.now()
+            })
+          );
+        }catch(error){}
+
         window.location.href = "support.html";
       });
 
@@ -570,10 +649,15 @@
         ){
           player.src =
             `https://www.youtube.com/embed/${settings.videoId}` +
-            `?playsinline=1&rel=0&modestbranding=1`;
+            `?playsinline=1&rel=0&modestbranding=1&enablejsapi=1`;
 
           player.dataset.videoId =
             settings.videoId;
+
+          window.setTimeout(
+            connectYoutubeController,
+            0
+          );
         }
 
         youtubeButton.href =
