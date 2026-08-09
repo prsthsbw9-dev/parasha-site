@@ -160,6 +160,18 @@
       margin-top: clamp(-135px, -15dvh, -110px);
     }
 
+     /*
+      רק בדפדפן Instagram:
+      מורידים את הלחצנים מתחת לאזור הכתוביות.
+      clamp מתאים את ההזזה לגבהים שונים של מסכי נייד.
+    */
+    .mobile-video-page.is-instagram.is-portrait
+    .mobile-action-area {
+      transform: translateY(
+        clamp(26px, 4.5dvh, 42px)
+      );
+    }   
+
     /*
       דפדפן Instagram הפנימי משאיר מעט פחות גובה גלוי
       בתחתית המסך. מעלים רק את אזור הלחצנים, בלי להזיז
@@ -417,6 +429,14 @@
 
       const page =
         document.getElementById("mobileVideoPage");
+
+      const isInstagramBrowser =
+        /Instagram/i.test(navigator.userAgent);
+      
+      page.classList.toggle(
+        "is-instagram",
+        isInstagramBrowser
+      );      
 
       const title =
         document.getElementById("mobileVideoTitle");
