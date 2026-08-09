@@ -28,18 +28,27 @@
       margin:0;
       font-family:Arial,"Noto Sans Hebrew",sans-serif;
       color:var(--text);
-      background:
-        radial-gradient(circle at 50% 0,rgba(229,184,76,.2),transparent 30%),
-        linear-gradient(180deg,#17120c 0%,#0a0e13 37%,#030608 100%);
-      background-attachment:fixed;
+      background:#05070a;
     }
 
     body::before{
       content:"";
       position:fixed;
       inset:0;
+      z-index:2;
       pointer-events:none;
-      background:repeating-linear-gradient(90deg,rgba(255,255,255,.012) 0 1px,transparent 1px 5px);
+      background:
+        linear-gradient(
+          115deg,
+          transparent 0 43%,
+          rgba(255,225,157,.07) 50%,
+          transparent 57%
+        ),
+        repeating-linear-gradient(
+          90deg,
+          rgba(255,255,255,.012) 0 1px,
+          transparent 1px 5px
+        );
     }
 
     a{color:var(--gold-light);text-underline-offset:3px}
@@ -255,10 +264,85 @@
       .intro,.version,.legal-note{color:#333}
       a{color:#111}
     }
+
+    .support-background-video{
+      position:fixed;
+      inset:0;
+      z-index:0;
+    
+      width:100%;
+      height:100%;
+      width:100vw;
+      height:100dvh;
+    
+      object-fit:cover;
+      object-position:center center;
+    
+      display:block;
+      background:#05070a;
+    
+      pointer-events:none;
+    }
+    
+    /* שכבה כהה ששומרת על קריאות הטקסט */
+    .support-background-overlay{
+      position:fixed;
+      inset:0;
+      z-index:1;
+    
+      width:100%;
+      height:100%;
+      width:100vw;
+      height:100dvh;
+    
+      background:
+        radial-gradient(
+          circle at 50% 20%,
+          rgba(229,183,79,.08),
+          transparent 40%
+        ),
+        linear-gradient(
+          180deg,
+          rgba(2,5,8,.56),
+          rgba(2,5,8,.68)
+        );
+    
+      pointer-events:none;
+    }
+    
+    /* תוכן הדף תמיד מעל הרקע */
+    .page{
+      position:relative;
+      z-index:3;
+    }
+    
   </style>
 </head>
 
 <body>
+
+  <video
+    class="support-background-video"
+    autoplay
+    muted
+    loop
+    playsinline
+    webkit-playsinline
+    preload="metadata"
+    poster="support-background-poster.jpg"
+    aria-hidden="true"
+  >
+    <source
+      src="support-background.mp4"
+      type="video/mp4"
+    >
+  </video>
+  
+  <div
+    class="support-background-overlay"
+    aria-hidden="true"
+  ></div>
+  
   <main class="page">
     <nav class="topbar" aria-label="פעולות בדף התקנון">
       <a class="back-button" href="support.html">← חזרה לבקשת התמיכה</a>
