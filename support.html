@@ -68,6 +68,17 @@
       margin-bottom:18px;
     }
 
+    .return-navigation{
+      width:100%;
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:10px;
+    }
+
+    .return-navigation.is-single{
+      grid-template-columns:1fr;
+    }
+
     .back-link{
       display:inline-flex;
       align-items:center;
@@ -81,7 +92,19 @@
       text-decoration:none;
       font-weight:700;
       box-shadow:0 8px 24px rgba(0,0,0,.25);
+      justify-content:center;
+      text-align:center;
     }
+
+    .back-link.is-video-return{
+      background:linear-gradient(135deg,#168fca,#0867ad);
+    }
+
+    .back-link.is-next-layer{
+      background:linear-gradient(135deg,#20aa5a,#087d3f);
+    }
+
+    .back-link[hidden]{display:none}
 
     .hero{
       text-align:center;
@@ -297,6 +320,7 @@
       .meaning-card .icon{grid-row:1/3;margin:0}
       .meaning-card strong,.meaning-card span{margin-right:4px}
       .form-card{border-radius:23px}
+      .return-navigation{grid-template-columns:1fr}
     }
 
     @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
@@ -306,7 +330,33 @@
 <body>
   <main class="page">
     <nav class="topbar" aria-label="ניווט">
-      <a class="back-link" href="index.html">← חזרה לפרד״ס</a>
+      <div id="returnNavigation" class="return-navigation is-single">
+        <a
+          id="returnToVideoButton"
+          class="back-link is-video-return"
+          href="#"
+          hidden
+        >
+          ▶ חזרה לסרטון
+        </a>
+
+        <a
+          id="nextLayerButton"
+          class="back-link is-next-layer"
+          href="#"
+          hidden
+        >
+          מעבר לחלק הבא ←
+        </a>
+
+        <a
+          id="regularPardesButton"
+          class="back-link"
+          href="index.html"
+        >
+          ← חזרה לפרד״ס
+        </a>
+      </div>
     </nav>
 
     <header class="hero">
@@ -434,6 +484,8 @@
       const OWNER_EMAIL = "prsthsbw9@gmail.com";
       const TERMS_VERSION = "טיוטה — טרם אושרה";
       const STORAGE_KEY = "pardesSupportFormDraftV1";
+      const VIDEO_RETURN_STORAGE_KEY =
+        "pardesSupportVideoReturnV1";
 
       const form = document.getElementById("supportForm");
       const submitButton = document.getElementById("submitButton");
@@ -441,6 +493,77 @@
       const publicNameWrap = document.getElementById("publicNameWrap");
       const publicNameInput = document.getElementById("publicName");
       const termsLink = document.getElementById("termsLink");
+      const returnNavigation =
+        document.getElementById("returnNavigation");
+      const returnToVideoButton =
+        document.getElementById("returnToVideoButton");
+      const nextLayerButton =
+        document.getElementById("nextLayerButton");
+      const regularPardesButton =
+        document.getElementById("regularPardesButton");
+
+      const nextLayerMap = {
+        main:{layer:"pshat",label:"מעבר לפשט ←"},
+        pshat:{layer:"remez",label:"מעבר לרמז ←"},
+        remez:{layer:"drash",label:"מעבר לדרש ←"},
+        drash:{layer:"sod",label:"מעבר לסוד ←"},
+        sod:{layer:"main",label:"מעבר לעלייה הראשית ←"}
+      };
+
+      function setupReturnNavigation(){
+        let videoState = null;
+
+        try{
+          videoState = JSON.parse(
+            sessionStorage.getItem(
+              VIDEO_RETURN_STORAGE_KEY
+            ) || "null"
+          );
+        }catch(error){
+          videoState = null;
+        }
+
+        if(!videoState?.returnUrl){
+          return;
+        }
+
+        try{
+          const videoReturnUrl =
+            new URL(videoState.returnUrl);
+
+          if(Number(videoState.stoppedAt) > 0){
+            videoReturnUrl.searchParams.set(
+              "resume",
+              String(Math.floor(videoState.stoppedAt))
+            );
+          }
+
+          returnToVideoButton.href =
+            videoReturnUrl.href;
+
+          returnToVideoButton.hidden = false;
+          regularPardesButton.hidden = true;
+
+          const nextLayer =
+            nextLayerMap[videoState.layer];
+
+          if(nextLayer){
+            nextLayerButton.href =
+              `index.html?openLayer=${encodeURIComponent(nextLayer.layer)}`;
+
+            nextLayerButton.textContent =
+              nextLayer.label;
+
+            nextLayerButton.hidden = false;
+            returnNavigation.classList.remove("is-single");
+          }
+        }catch(error){
+          returnToVideoButton.hidden = true;
+          nextLayerButton.hidden = true;
+          regularPardesButton.hidden = false;
+          returnNavigation.classList.add("is-single");
+        }
+      }
 
       const draftFields = [
         "fullName",
@@ -610,6 +733,7 @@
         }
       });
 
+      setupReturnNavigation();
       restoreDraft();
     })();
   </script>
