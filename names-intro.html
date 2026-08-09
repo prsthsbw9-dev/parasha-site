@@ -282,17 +282,7 @@
     (function(){
       "use strict";
 
-      const INTRO_SEEN_KEY = "pardesNamesIntroSeenV1";
       const NAMES_PAGE = "names.html";
-      const replayRequested =
-        new URLSearchParams(window.location.search).get("replay") === "1";
-
-      try{
-        if(!replayRequested && sessionStorage.getItem(INTRO_SEEN_KEY) === "1"){
-          window.location.replace(NAMES_PAGE);
-          return;
-        }
-      }catch(error){}
 
       const stage = document.getElementById("introStage");
       const video = document.getElementById("namesIntroVideo");
@@ -323,12 +313,6 @@
         });
       }
 
-      function rememberIntro(){
-        try{
-          sessionStorage.setItem(INTRO_SEEN_KEY,"1");
-        }catch(error){}
-      }
-
       function showNamesButton(){
         if(finished) return;
         finished = true;
@@ -344,7 +328,6 @@
           }
         }
 
-        rememberIntro();
         stage.classList.add("is-finished");
 
         window.setTimeout(function(){
@@ -353,7 +336,6 @@
       }
 
       cta.addEventListener("click",function(){
-        rememberIntro();
         window.location.href = NAMES_PAGE;
       });
 
