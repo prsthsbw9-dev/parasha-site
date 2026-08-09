@@ -161,16 +161,15 @@
 
     @media (max-width:700px){
       .names-cta-wrap{
-        top:64%;
+        top:var(--mobile-names-button-top, 73%);
       }
     }
-
+    
     @media (max-width:700px) and (max-height:680px){
       .names-cta-wrap{
-        top:64%;
         width:min(78%, 350px);
       }
-
+    
       .names-cta{
         min-height:52px;
         padding:11px 20px;
@@ -248,6 +247,67 @@
       const video = document.getElementById("namesIntroVideo");
       const poster = document.getElementById("namesIntroPoster");
       const cta = document.getElementById("namesCta");
+
+      function updateNamesButtonPosition(){
+        const viewport = window.visualViewport;
+      
+        const screenHeight = viewport
+          ? viewport.height
+          : window.innerHeight;
+      
+        const screenWidth = viewport
+          ? viewport.width
+          : window.innerWidth;
+      
+        if(screenWidth > 700){
+          stage.style.removeProperty(
+            "--mobile-names-button-top"
+          );
+          return;
+        }
+      
+        let buttonTop = 73;
+      
+        /*
+          במסכים נמוכים או בדפדפנים פנימיים שמשאירים
+          פחות מקום פנוי — מורידים את הלחצן יותר.
+        */
+        if(screenHeight <= 620){
+          buttonTop = 76;
+        }else if(screenHeight <= 720){
+          buttonTop = 75;
+        }else if(screenHeight <= 820){
+          buttonTop = 74;
+        }else if(screenHeight >= 950){
+          buttonTop = 72;
+        }
+      
+        stage.style.setProperty(
+          "--mobile-names-button-top",
+          `${buttonTop}%`
+        );
+      }
+      
+      updateNamesButtonPosition();
+      
+      window.addEventListener(
+        "resize",
+        updateNamesButtonPosition
+      );
+      
+      window.addEventListener(
+        "orientationchange",
+        updateNamesButtonPosition
+      );
+      
+      if(window.visualViewport){
+        window.visualViewport.addEventListener(
+          "resize",
+          updateNamesButtonPosition
+        );
+      }      
+
+      
       let finished = false;
       let safetyTimer = null;
       let posterHidden = false;
