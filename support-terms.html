@@ -1,0 +1,491 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#080b0f">
+  <title>תקנון בקשות תמיכה | עץ הפרד״ס החי</title>
+
+  <style>
+    :root{
+      color-scheme:dark;
+      --gold:#e4b94f;
+      --gold-light:#ffe5a0;
+      --text:#f4f1e8;
+      --muted:#c8c4ba;
+      --panel:rgba(8,14,18,.9);
+      --border:rgba(255,224,151,.35);
+      --green:#159954;
+    }
+
+    *{box-sizing:border-box}
+
+    html{min-height:100%;background:#05070a;scroll-behavior:smooth}
+
+    body{
+      min-height:100vh;
+      min-height:100svh;
+      margin:0;
+      font-family:Arial,"Noto Sans Hebrew",sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(circle at 50% 0,rgba(229,184,76,.2),transparent 30%),
+        linear-gradient(180deg,#17120c 0%,#0a0e13 37%,#030608 100%);
+      background-attachment:fixed;
+    }
+
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      background:repeating-linear-gradient(90deg,rgba(255,255,255,.012) 0 1px,transparent 1px 5px);
+    }
+
+    a{color:var(--gold-light);text-underline-offset:3px}
+
+    .page{
+      position:relative;
+      width:min(850px,100%);
+      margin:0 auto;
+      padding:max(16px,env(safe-area-inset-top)) 15px max(35px,env(safe-area-inset-bottom));
+    }
+
+    .topbar{
+      position:sticky;
+      top:10px;
+      z-index:10;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      margin-bottom:20px;
+    }
+
+    .back-button,.print-button{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-height:44px;
+      padding:10px 15px;
+      border:1px solid rgba(255,255,255,.22);
+      border-radius:999px;
+      color:#fff;
+      background:rgba(4,11,15,.9);
+      text-decoration:none;
+      font-weight:800;
+      box-shadow:0 8px 22px rgba(0,0,0,.34);
+      backdrop-filter:blur(9px);
+      cursor:pointer;
+    }
+
+    .print-button{font-family:inherit}
+
+    .header{
+      padding:11px 8px 24px;
+      text-align:center;
+    }
+
+    .header .symbol{font-size:2.1rem;margin-bottom:4px}
+
+    h1{
+      margin:0;
+      font-size:clamp(2rem,7vw,3.15rem);
+      line-height:1.15;
+      text-shadow:0 3px 17px rgba(0,0,0,.65);
+    }
+
+    .subtitle{
+      margin:10px auto 0;
+      color:var(--gold-light);
+      font-size:clamp(1rem,3.7vw,1.16rem);
+      font-weight:800;
+    }
+
+    .version{
+      margin:8px 0 0;
+      color:var(--muted);
+      font-size:.9rem;
+    }
+
+    .important{
+      margin:0 0 20px;
+      padding:17px 18px;
+      border:1px solid rgba(229,185,79,.72);
+      border-radius:18px;
+      background:rgba(87,64,12,.31);
+      line-height:1.65;
+      box-shadow:0 12px 30px rgba(0,0,0,.26);
+    }
+
+    .important strong{display:block;color:var(--gold-light);font-size:1.08rem;margin-bottom:3px}
+
+    .terms-card{
+      padding:clamp(18px,4.5vw,34px);
+      border:1px solid var(--border);
+      border-radius:27px;
+      background:var(--panel);
+      box-shadow:0 22px 55px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.05);
+      backdrop-filter:blur(7px);
+    }
+
+    .intro{
+      margin:0 0 22px;
+      color:#e7e2d8;
+      line-height:1.75;
+      font-weight:600;
+    }
+
+    .term-section{
+      padding:20px 0;
+      border-top:1px solid rgba(229,185,79,.22);
+    }
+
+    .term-section:first-of-type{border-top:0;padding-top:0}
+
+    h2{
+      display:flex;
+      align-items:flex-start;
+      gap:10px;
+      margin:0 0 10px;
+      color:var(--gold-light);
+      font-size:clamp(1.14rem,4.5vw,1.38rem);
+      line-height:1.4;
+    }
+
+    .number{
+      display:inline-grid;
+      place-items:center;
+      flex:0 0 30px;
+      width:30px;
+      height:30px;
+      border:1px solid rgba(229,185,79,.6);
+      border-radius:50%;
+      color:#fff;
+      background:rgba(229,185,79,.14);
+      font-size:.88rem;
+    }
+
+    p,li{font-size:1rem;line-height:1.72}
+    .term-section p{margin:0 0 9px}
+    .term-section p:last-child{margin-bottom:0}
+
+    ul{
+      margin:9px 0 0;
+      padding-right:22px;
+    }
+
+    li{margin-bottom:7px}
+    li::marker{color:var(--gold)}
+
+    .warning{
+      margin-top:13px;
+      padding:13px 15px;
+      border-right:4px solid var(--gold);
+      border-radius:10px;
+      background:rgba(255,255,255,.045);
+    }
+
+    .contact-box{
+      margin-top:22px;
+      padding:18px;
+      border:1px solid rgba(65,211,126,.4);
+      border-radius:18px;
+      background:rgba(12,105,55,.18);
+      text-align:center;
+      line-height:1.65;
+    }
+
+    .contact-box strong{display:block;margin-bottom:4px;color:#d9ffe7}
+
+    .actions{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:11px;
+      margin-top:20px;
+    }
+
+    .action{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      min-height:55px;
+      padding:12px 15px;
+      border:1px solid rgba(255,255,255,.35);
+      border-radius:16px;
+      color:#fff;
+      background:linear-gradient(180deg,#19a75c,#08793a);
+      text-decoration:none;
+      text-align:center;
+      font-weight:900;
+      box-shadow:0 9px 25px rgba(0,125,59,.22);
+    }
+
+    .action.secondary{background:rgba(4,14,18,.82);box-shadow:none}
+
+    .legal-note{
+      margin:18px auto 0;
+      max-width:720px;
+      color:#aaa69d;
+      text-align:center;
+      font-size:.82rem;
+      line-height:1.55;
+    }
+
+    @media(max-width:560px){
+      .page{padding-inline:12px}
+      .topbar{top:7px;margin-bottom:12px}
+      .back-button,.print-button{min-height:40px;padding:8px 12px;font-size:.88rem}
+      .header{padding-top:6px}
+      .header .symbol{font-size:1.8rem}
+      .terms-card{border-radius:22px;padding:18px 15px}
+      .term-section{padding:17px 0}
+      p,li{font-size:.96rem;line-height:1.68}
+      .actions{grid-template-columns:1fr}
+    }
+
+    @media print{
+      :root{color-scheme:light}
+      body{color:#111;background:#fff}
+      body::before,.topbar,.actions{display:none}
+      .page{width:100%;padding:0}
+      .header{padding-top:0}
+      .subtitle,h2,.important strong{color:#5f4300}
+      .terms-card,.important,.contact-box{color:#111;background:#fff;box-shadow:none;border-color:#999}
+      .intro,.version,.legal-note{color:#333}
+      a{color:#111}
+    }
+  </style>
+</head>
+
+<body>
+  <main class="page">
+    <nav class="topbar" aria-label="פעולות בדף התקנון">
+      <a class="back-button" href="support.html">← חזרה לבקשת התמיכה</a>
+      <button class="print-button" type="button" onclick="window.print()">הדפסה</button>
+    </nav>
+
+    <header class="header">
+      <div class="symbol" aria-hidden="true">📜</div>
+      <h1>תקנון בקשות התמיכה</h1>
+      <p class="subtitle">עץ הפרד״ס החי</p>
+      <p class="version">גרסה 1.0 — 09.08.2026</p>
+    </header>
+
+    <aside class="important">
+      <strong>חשוב לדעת לפני האישור</strong>
+      הטופס באתר מיועד לשליחת בקשת תמיכה ראשונית בלבד. לא מתבצע באמצעותו תשלום,
+      לא נמסרים בו פרטי כרטיס אשראי והוא אינו מחייב את הפונה או את המיזם לבצע עסקה.
+    </aside>
+
+    <article class="terms-card">
+      <p class="intro">
+        תקנון זה מסדיר את השימוש בטופס בקשת התמיכה במיזם „עץ הפרד״ס החי”
+        ואת המשך הקשר הנובע ממנו. מילוי הטופס ושליחתו מעידים כי הפונה קרא את התקנון,
+        הבין אותו והסכים לו. התקנון מנוסח בלשון זכר ונקבה כאחד, גם כאשר נעשה שימוש בלשון יחיד.
+      </p>
+
+      <section class="term-section">
+        <h2><span class="number">1</span>מטרת הפנייה</h2>
+        <p>
+          מטרת הטופס היא לאפשר למי שמעוניין לסייע למיזם למסור פרטים ראשוניים,
+          לתאר את אופן התמיכה המבוקש ולאשר יצירת קשר באימייל לצורך בירור והמשך טיפול.
+        </p>
+        <p>
+          שליחת הבקשה אינה מבטיחה שהיא תאושר או תתקבל, אינה יוצרת התחייבות לקבל כסף
+          ואינה מחייבת את המיזם להציע לפונה דרך מסוימת לתמיכה.
+        </p>
+      </section>
+
+      <section class="term-section">
+        <h2><span class="number">2</span>כשירות, גיל והרשאה</h2>
+        <ul>
+          <li>הפנייה מיועדת לבני 18 ומעלה.</li>
+          <li>קטין רשאי לפנות רק באמצעות הורה או אפוטרופוס ובהסכמתו המפורשת.</li>
+          <li>הפונה מצהיר שהוא פועל בשמו, או שהוא מוסמך כדין לפעול בשם האדם או הגוף שצוינו.</li>
+          <li>אין למסור פרטים של אדם אחר, להשתמש באימייל שלו או להציע שימוש באמצעי תשלום שאינו מורשה לכך.</li>
+        </ul>
+      </section>
+
+      <section class="term-section">
+        <h2><span class="number">3</span>אופי התמיכה</h2>
+        <p>
+          כל תמיכה, אם וכאשר תוסכם ותבוצע בהמשך, תהיה מרצונו החופשי של התומך
+          ונועדה לסייע בפעילות המיזם, לרבות יצירה, עריכה, אחסון, הנגשה והפצת תכנים.
+        </p>
+        <p>
+          התמיכה אינה רכישה של מוצר או שירות, אינה מעניקה בעלות במיזם ואינה מקנה זכות
+          להתערב בתוכן, בהחלטות העריכה, במועד הפרסום או באופן השימוש בתקציב, אלא אם הוסכם אחרת מראש ובכתב.
+        </p>
+      </section>
+
+      <section class="term-section">
+        <h2><span class="number">4</span>אין הבטחה לתוצאה או לגמול</h2>
+        <p>
+          התמיכה אינה מבטיחה פרסום, חשיפה, אזכור, קידום עסקי, ברכה מסוימת, תוצאה אישית,
+          רפואית, כלכלית או רוחנית. דברי התורה וההסברים באתר נועדו להציג את ערך זיכוי הרבים
+          ואינם הבטחה לכך שמתן כסף יקנה לאדם שכר רוחני מסוים או תוצאה משמים.
+        </p>
+      </section>
+
+      <section class="term-section">
+        <h2><span class="number">5</span>המשך הקשר ואמצעי התשלום</h2>
+        <p>
+          לאחר בדיקת הבקשה, המיזם רשאי ליצור קשר באימייל שמסר הפונה. אם תוצע דרך תמיכה,
+          פרטי ההעברה והתנאים הרלוונטיים יימסרו בנפרד לפני ביצועה.
+        </p>
+        <div class="warning">
+          המיזם לא יבקש סיסמה, קוד חד־פעמי, קוד כניסה לחשבון, צילום מלא של כרטיס אשראי
+          או התקנת תוכנת שליטה מרחוק. הודעה המבקשת פרטים כאלה עלולה להיות ניסיון התחזות ואין לפעול לפיה.
+        </div>
+        <p>
+          האחריות לוודא שהפנייה והוראות התשלום הגיעו מהכתובת הרשמית של המיזם חלה גם על הפונה.
+          במקרה של ספק יש לעצור ולברר באמצעות כתובת הקשר המופיעה בתקנון זה.
+        </p>
+      </section>
+
+      <section class="term-section">
+        <h2><span class="number">6</span>טעויות, ביטול והחזר</h2>
+        <p>
+          מאחר שבטופס עצמו לא מבוצע תשלום, אין פעולת חיוב שניתן לבטל באמצעות הדף.
+          אם בעתיד תבוצע תמיכה ונפלה טעות בסכום, נטען לשימוש ללא הרשאה או התעוררה בקשה לביטול,
+          יש לפנות בהקדם ולצרף פרטים המאפשרים לזהות את הפעולה.
+        </p>
+        <p>
+          כל בקשה תיבחן לפי נסיבותיה, אופי הפעולה, תנאי ספק התשלום והוראות הדין החלות.
+          אין בתקנון זה כדי לשלול זכות לביטול או להחזר המוקנית על פי דין, ככל שהיא חלה.
+        </p>
+      </section>
+
+      <section class="term-section">
+        <h2><span class="number">7</span>מניעת התחזות, הונאה ושימוש לרעה</h2>
+        <p>חל איסור להשתמש בטופס או בהמשך הקשר לצורך:</p>
+        <ul>
+          <li>התחזות לאדם, לעסק או לארגון אחר;</li>
+          <li>מסירת מידע כוזב או מטעה;</li>
+          <li>שימוש בכסף, בחשבון או באמצעי תשלום ללא הסכמת בעליהם;</li>
+          <li>העברת כספים שמקורם בעבירה, ניסיון עוקץ, הלבנת הון או מימון פעילות אסורה;</li>
+          <li>שיבוש פעילות האתר, החדרת קוד מזיק, איסוף מידע או ניסיון לקבל גישה שאינה מורשית;</li>
+          <li>הטרדה, איום, סחיטה או הגשת פניות המוניות וכוזבות.</li>
+        </ul>
+        <p>
+          המיזם רשאי לדחות או להקפיא פנייה חשודה, לבקש אימות סביר, לשמור תיעוד הדרוש לבירור
+          ולפנות לספק השירות או לרשות מוסמכת כאשר הדבר נדרש או מותר על פי דין.
+        </p>
+      </section>
+
+      <section class="term-section">
+        <h2><span class="number">8</span>דף התודה ופרסום שם</h2>
+        <p>
+          הפונה בוחר בטופס אם הוא מעוניין שיופיע בדף תודה או מעדיף להישאר בעילום שם.
+          בחירה בפרסום מהווה הסכמה לפרסם רק את השם או ההקדשה שאישר הפונה — ולא את כתובת האימייל,
+          סכום התמיכה או פרטים אישיים אחרים, אלא אם נתן לכך הסכמה נפרדת ומפורשת.
+        </p>
+        <p>
+          המיזם רשאי לערוך תיקוני כתיב סבירים, לדחות נוסח פוגעני או מטעה ולהסיר פרסום.
+          ניתן לבקש להפסיק פרסום עתידי או להסיר שם שכבר פורסם; הבקשה תטופל בתוך זמן סביר,
+          אך ייתכן שלא ניתן יהיה להסיר עותקים שכבר נשמרו או פורסמו מחדש בידי צדדים שלישיים.
+        </p>
+        <p>
+          בחירה בעילום שם מתייחסת לחשיפה לציבור. זהות הפונה עדיין עשויה להיות ידועה למיזם,
+          לספק התשלום או לגורמים שחובה או צורך חוקי להעביר להם מידע.
+        </p>
+      </section>
+
+      <section class="term-section">
+        <h2><span class="number">9</span>פרטיות ושימוש במידע</h2>
+        <p>
+          המידע המבוקש בטופס נאסף כדי לקבל את הפנייה, לבדוק אותה, ליצור קשר,
+          למנוע שימוש לרעה ולתעד את ההסכמות שניתנו. אין חובה חוקית כללית למסור את המידע,
+          אך ללא שדות החובה לא יהיה ניתן לטפל בבקשה.
+        </p>
+        <p>
+          המידע עשוי להישמר במערכות האתר, בשירות שליחת הטופס ובתיבת האימייל,
+          ולהימסר לספקים המסייעים בהפעלת השירות או לגורם מוסמך כאשר הדבר נחוץ או נדרש בדין.
+          המיזם ינקוט אמצעים סבירים להגנת המידע, אך אין מערכת מקוונת החסינה לחלוטין.
+        </p>
+        <p>
+          האישור ליצור קשר מתייחס לטיפול בבקשת התמיכה. הוא אינו מהווה כשלעצמו הרשמה לפרסומות
+          או לדיוור שיווקי שאינו קשור לבקשה.
+        </p>
+      </section>
+
+      <section class="term-section">
+        <h2><span class="number">10</span>הודעות ותוכן שמוסר הפונה</h2>
+        <p>
+          אין לשלוח בטופס מידע רפואי מפורט, מספרי זהות, פרטי חשבון, סיסמאות,
+          פרטי קטינים שאינם נחוצים או כל מידע רגיש שאינו דרוש לבקשת התמיכה.
+        </p>
+        <p>
+          הפונה אחראי לכך שהודעתו חוקית ואינה מפרה פרטיות, זכויות יוצרים, סימן מסחר,
+          איסור לשון הרע או זכות אחרת של צד שלישי.
+        </p>
+      </section>
+
+      <section class="term-section">
+        <h2><span class="number">11</span>קבלות והטבות מס</h2>
+        <p>
+          אין לראות במיזם מוסד בעל אישור לפי סעיף 46 לפקודת מס הכנסה אלא אם יפורסם באתר
+          אישור רשמי, תקף ומפורש. לפיכך אין להניח שתמיכה מזכה בזיכוי מס.
+          מסמך או אישור על קבלת כסף, ככל שיונפק, אינו בהכרח קבלה המזכה בהטבת מס.
+        </p>
+      </section>
+
+      <section class="term-section">
+        <h2><span class="number">12</span>זמינות, שינויים והפסקת טיפול</h2>
+        <p>
+          המיזם אינו מתחייב שהאתר, הטופס או שירות האימייל יהיו זמינים ללא הפסקה או תקלה.
+          הוא רשאי לשנות את אופן הטיפול, להפסיק לקבל פניות, לדחות בקשה או להגביל פניות חוזרות
+          מטעמים ענייניים, לרבות עומס, אבטחה, חשד לשימוש לרעה או חוסר התאמה למטרות המיזם.
+        </p>
+      </section>
+
+      <section class="term-section">
+        <h2><span class="number">13</span>אחריות</h2>
+        <p>
+          המיזם יפעל בתום לב ובאופן סביר, אולם אינו אחראי לעיכובים או לנזקים שנגרמו עקב
+          מסירת פרטים שגויים, תקלה אצל ספק חיצוני, פעולה ללא הרשאה, התחזות שלא ניתן היה לזהותה
+          באמצעים סבירים או נסיבות שאינן בשליטתו.
+        </p>
+        <p>
+          אין בסעיף זה כדי לפטור את המיזם מאחריות שלא ניתן להגביל או לשלול על פי דין,
+          ואין בתקנון ויתור גורף של הפונה על זכות או טענה המוקנית לו בדין.
+        </p>
+      </section>
+
+      <section class="term-section">
+        <h2><span class="number">14</span>הדין החל ועדכון התקנון</h2>
+        <p>
+          על התקנון ועל השימוש בטופס יחולו דיני מדינת ישראל. במקרה של מחלוקת ינסו הצדדים
+          תחילה לפתור אותה בתום לב ובדרך ישירה, מבלי לגרוע מזכות לפנות לערכאה מוסמכת.
+        </p>
+        <p>
+          המיזם רשאי לעדכן את התקנון. הגרסה והתאריך המופיעים בראש הדף הם הגרסה החלה על
+          בקשה שנשלחה לאחר פרסומה. שינוי מהותי לא יחול למפרע באופן הפוגע בזכויות שכבר נוצרו.
+        </p>
+      </section>
+
+      <section class="term-section">
+        <h2><span class="number">15</span>יצירת קשר</h2>
+        <p>
+          לשאלות לגבי בקשת תמיכה, פרטיות, פרסום בדף התודה, טעות או חשד להתחזות ניתן לפנות אל:
+        </p>
+        <div class="contact-box">
+          <strong>עץ הפרד״ס החי</strong>
+          <a href="mailto:prsthsbw9@gmail.com">prsthsbw9@gmail.com</a>
+        </div>
+      </section>
+
+      <div class="actions">
+        <a class="action" href="support.html">קראתי — חזרה לטופס התמיכה</a>
+        <a class="action secondary" href="index.html">חזרה לפרד״ס</a>
+      </div>
+    </article>
+
+    <p class="legal-note">
+      התקנון נועד לקבוע כללים ברורים ולהפחית מחלוקות וסיכונים. אין בו כדי להבטיח
+      חסינות מוחלטת מפני תביעה, הונאה או שימוש לרעה, ואינו תחליף לייעוץ משפטי פרטני.
+    </p>
+  </main>
+</body>
+</html>
