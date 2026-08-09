@@ -173,16 +173,6 @@
     }   
 
     /*
-      דפדפן Instagram הפנימי משאיר מעט פחות גובה גלוי
-      בתחתית המסך. מעלים רק את אזור הלחצנים, בלי להזיז
-      את הכותרת או את הסרטון ובלי להשפיע על דפדפנים אחרים.
-    */
-    .mobile-video-page.is-instagram.is-portrait
-    .mobile-action-area {
-      transform: translateY(-28px);
-    }
-    
-    /*
       כשהמכשיר מסובב לרוחב,
       הלחצנים חוזרים מתחת לסרטון.
     */
@@ -455,14 +445,6 @@
 
       const errorMessage =
         document.getElementById("mobileVideoError");
-
-      const isInstagramBrowser =
-        /Instagram/i.test(navigator.userAgent);
-
-      page.classList.toggle(
-        "is-instagram",
-        isInstagramBrowser
-      );
 
       backToPardesButton.addEventListener("click", function(event){
         event.preventDefault();
