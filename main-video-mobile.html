@@ -384,10 +384,26 @@
 
   <script>
     (function () {
-      const parameters =
-        new URLSearchParams(window.location.search);
-
-      function cleanYoutubeId(value){
+        const parameters =
+          new URLSearchParams(window.location.search);
+        
+        let storedVideoData = {};
+        
+        try{
+          storedVideoData = JSON.parse(
+            sessionStorage.getItem("pardesMobileVideoData") || "{}"
+          );
+        }catch(error){
+          storedVideoData = {};
+        }
+        
+        function getVideoParameter(name){
+          return parameters.get(name) ||
+            storedVideoData[name] ||
+            "";
+        }
+        
+        function cleanYoutubeId(value){
         const candidate = String(value || "").trim();
 
         return /^[a-zA-Z0-9_-]{8,20}$/.test(candidate)
@@ -402,31 +418,31 @@
         ?v=...
       */
       const legacyVideoId =
-        cleanYoutubeId(parameters.get("v"));
+        cleanYoutubeId(getVideoParameter("v"));
       
       const mobileVideoId =
-        cleanYoutubeId(parameters.get("mobile")) ||
+        cleanYoutubeId(getVideoParameter("mobile")) ||
         legacyVideoId;
       
       const wideVideoId =
-        cleanYoutubeId(parameters.get("wide")) ||
+        cleanYoutubeId(getVideoParameter("wide")) ||
         legacyVideoId;
 
       const mobileVideoType =
-        parameters.get("mobileType") === "short"
+        getVideoParameter("mobileType") === "short"
           ? "short"
           : "regular";
-
+      
       const wideVideoType =
-        parameters.get("wideType") === "short"
+        getVideoParameter("wideType") === "short"
           ? "short"
           : "regular";
 
       const layerTitle =
-        (parameters.get("title") || "העלייה").trim();
-
+        (getVideoParameter("title") || "העלייה").trim();
+      
       const currentLayer =
-        (parameters.get("layer") || "").trim();
+        (getVideoParameter("layer") || "").trim();
 
       const requestedResumeTime = Math.max(
         0,
