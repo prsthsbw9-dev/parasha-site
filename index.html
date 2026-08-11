@@ -7065,54 +7065,36 @@ function normalizeParashaName(value){
             );
           }
           
-          const mobilePlayerUrl = new URL(
-            "main-video-mobile.html",
-            window.location.href
-          );
-          
-          mobilePlayerUrl.searchParams.set(
-            "mobile",
-            mobileYoutubeId
-          );
-          
-          mobilePlayerUrl.searchParams.set(
-            "wide",
-            wideYoutubeId
-          );
-          
-          mobilePlayerUrl.searchParams.set(
-            "mobileType",
-            mobileVideoType
-          );
-          
-          mobilePlayerUrl.searchParams.set(
-            "wideType",
-            wideVideoType
-          );
-          
-          mobilePlayerUrl.searchParams.set(
-            "title",
-            layerName
-          );
-          
-          mobilePlayerUrl.searchParams.set(
-            "layer",
-            layer
-          );
-          
-          if(sourceChannel){
-            mobilePlayerUrl.searchParams.set(
-              "source",
-              sourceChannel
+          /*
+            שומרים את פרטי הסרטון בתוך אותו דפדפן,
+            כדי שהמעבר לדף הנגן יהיה בכתובת קצרה ונקייה.
+          */
+          try{
+            sessionStorage.setItem(
+              "pardesMobileVideoData",
+              JSON.stringify({
+                mobile: mobileYoutubeId,
+                wide: wideYoutubeId,
+                mobileType: mobileVideoType,
+                wideType: wideVideoType,
+                title: layerName,
+                layer: layer,
+                source: sourceChannel
+              })
+            );
+          }catch(error){
+            console.error(
+              "לא ניתן היה לשמור את פרטי הסרטון:",
+              error
             );
           }
-          
+    
           window.location.assign(
-            mobilePlayerUrl.href
+            "main-video-mobile.html"
           );
-          
+    
           return;
-      }       
+      }
       
       const youtubeWatchUrl =
         shouldOpenAsYouTubeShort
