@@ -7065,7 +7065,51 @@ function normalizeParashaName(value){
             );
           }
           
-          window.location.assign("main-video-mobile.html");
+          const mobilePlayerUrl = new URL(
+            "main-video-mobile.html",
+            window.location.href
+          );
+          
+          mobilePlayerUrl.searchParams.set(
+            "mobile",
+            mobileYoutubeId
+          );
+          
+          mobilePlayerUrl.searchParams.set(
+            "wide",
+            wideYoutubeId
+          );
+          
+          mobilePlayerUrl.searchParams.set(
+            "mobileType",
+            mobileVideoType
+          );
+          
+          mobilePlayerUrl.searchParams.set(
+            "wideType",
+            wideVideoType
+          );
+          
+          mobilePlayerUrl.searchParams.set(
+            "title",
+            layerName
+          );
+          
+          mobilePlayerUrl.searchParams.set(
+            "layer",
+            layer
+          );
+          
+          if(sourceChannel){
+            mobilePlayerUrl.searchParams.set(
+              "source",
+              sourceChannel
+            );
+          }
+          
+          window.location.assign(
+            mobilePlayerUrl.href
+          );
           
           return;
       }       
