@@ -617,7 +617,8 @@
       <div id="tiktokCopyHelp" class="tiktok-copy-help" hidden>
         <p>
           מתוך TikTok: לחיצה על Bit או PayBox תעתיק את מספר התמיכה.
-          לאחר מכן פתחו את האפליקציה והדביקו את המספר בחיפוש.
+          לאחר מכן פתחו את האפליקציה, בחרו העברה לפי מספר והדביקו אותו
+          באמצעות לחיצה ארוכה על השדה של הקלדת המספר.
         </p>
         <p id="copyPhoneStatus" class="copy-phone-status" role="status" aria-live="polite"></p>
       </div>
@@ -654,7 +655,6 @@
 
       <p class="legal-hint">
         התשלום מתבצע מחוץ לאתר ובהתאם לתנאי ספק התשלום שנבחר.
-        אם קישור לא נפתח מתוך TikTok, יש לפתוח את הדף בדפדפן החיצוני.
       </p>
 
       <div class="optional-contact">
@@ -814,7 +814,7 @@
           }
 
           copyPhoneStatus.textContent =
-            "המספר הועתק ✓ כעת פתחו את Bit או PayBox והדביקו בחיפוש.";
+            "המספר הועתק ✓ פתחו את האפליקציה, בחרו העברה לפי מספר והדביקו אותו באמצעות לחיצה ארוכה על השדה של הקלדת המספר.";
           const originalText = clickedLink.textContent;
           clickedLink.textContent = "המספר הועתק ✓";
 
