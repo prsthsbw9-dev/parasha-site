@@ -191,6 +191,7 @@
       text-align:center;
       padding:8px;
       cursor:pointer;
+      text-decoration:none;
       transition:transform .22s ease, box-shadow .22s ease, filter .22s ease;
       backdrop-filter:blur(8px);
       -webkit-backdrop-filter:blur(8px);
@@ -3395,6 +3396,7 @@
       padding:0;
       background:transparent;
       cursor:pointer;
+      text-decoration:none;
     
       border-radius:50%;
       overflow:visible;
@@ -5444,9 +5446,9 @@
 
         <div class="tree-head-info" aria-label="העלייה הראשית של הפרשה">
           <div id="activeParashaTitle" class="active-parasha-title">פרשת השבוע</div>
-          <button id="mainAliyahOrb" class="main-aliyah-orb" type="button" aria-label="פתיחת הסרטון הראשי של העלייה">
+          <a id="mainAliyahOrb" class="main-aliyah-orb" href="#" aria-label="פתיחת הסרטון הראשי של העלייה">
             <span id="mainAliyahOrbText">עלייה<br>פעילה</span>
-          </button>
+          </a>
         </div>
 
         <svg class="pardes-tree-svg" viewBox="0 0 430 390" aria-hidden="true" focusable="false">
@@ -5518,10 +5520,10 @@
       </div>
 
        <!-- אייקון העלייה הראשית החי -->
-      <button
+      <a
         id="mainAliyahLive"
         class="main-aliyah-live"
-        type="button"
+        href="#"
         aria-label="פתיחת הסרטון הראשי של העלייה"
       >
         <video
@@ -5545,7 +5547,7 @@
             ראשון
           </span>
         </span>
-      </button>
+      </a>
 
       <!-- שמות — דרור חי בקן על העץ -->
     <a
@@ -6374,6 +6376,7 @@ function normalizeParashaName(value){
         if(!currentParasha || !currentAliyah){
           setSearchMessage("");
           activeVideos = {};
+          refreshDirectMobileVideoLinks();
           return;
         }
 
@@ -6381,6 +6384,7 @@ function normalizeParashaName(value){
         const videosSnap = await getDoc(videosRef);
 
         activeVideos = videosSnap.exists() ? videosSnap.data() : {};
+        refreshDirectMobileVideoLinks();
 
         if(!hasAnyLayerVideo(activeVideos)){
           setSearchMessage("עדיין לא הועלו סרטונים לעלייה הזו.");
@@ -6455,6 +6459,7 @@ function normalizeParashaName(value){
       currentParashaKey = foundParashaKey;
       currentAliyahKey = foundAliyahKey;
       activeVideos = foundVideos;
+      refreshDirectMobileVideoLinks();
 
       setTreeHead(currentParasha, currentAliyah);
 
@@ -6896,6 +6901,122 @@ function normalizeParashaName(value){
     let lastFocusedElementBeforeVideo = null;
 
     let pardesFruitTransitionRunning = false;
+
+    function usesDirectMobileVideoLinks(){
+      return (
+        document.body.classList.contains("in-app-browser") &&
+        document.body.classList.contains("device-phone")
+      );
+    }
+
+    function getVideoSourceChannel(){
+      const body = document.body;
+
+      if(body.classList.contains("app-tiktok")) return "tiktok";
+      if(body.classList.contains("app-instagram")) return "instagram";
+      if(body.classList.contains("app-facebook")) return "facebook";
+      if(body.classList.contains("app-whatsapp")) return "whatsapp";
+      if(body.classList.contains("app-youtube")) return "youtube";
+
+      const sourceText =
+        `${document.referrer || ""} ${navigator.userAgent || ""}`;
+
+      if(/tiktok|musical_ly|bytedance/i.test(sourceText)) return "tiktok";
+      if(/instagram/i.test(sourceText)) return "instagram";
+      if(/facebook|fbav|fban|fb_iab|messenger/i.test(sourceText)) return "facebook";
+      if(/whatsapp/i.test(sourceText)) return "whatsapp";
+      if(/youtube|youtu\.be/i.test(sourceText)) return "youtube";
+
+      return "";
+    }
+
+    function buildDirectMobilePlayerUrl(layer){
+      const item = activeVideos?.[layer];
+      const selectedVideo = chooseVideoForViewer(item);
+
+      const directYouTubeVideo =
+        chooseYouTubeForViewer(item) ||
+        (
+          isYouTubeVideo(selectedVideo?.__youtubeVideo)
+            ? selectedVideo.__youtubeVideo
+            : null
+        ) ||
+        (isYouTubeVideo(selectedVideo) ? selectedVideo : null);
+
+      const youtubeId =
+        getYouTubeVideoId(directYouTubeVideo);
+
+      if(!youtubeId){
+        return "";
+      }
+
+      const storedMobileVideo =
+        getStoredVideoVariant(item, "mobile");
+
+      const storedWideVideo =
+        getStoredVideoVariant(item, "wide");
+
+      const mobileYouTubeVideo =
+        isYouTubeVideo(storedMobileVideo)
+          ? storedMobileVideo
+          : directYouTubeVideo;
+
+      const wideYouTubeVideo =
+        isYouTubeVideo(storedWideVideo)
+          ? storedWideVideo
+          : directYouTubeVideo;
+
+      const mobileYoutubeId =
+        getYouTubeVideoId(mobileYouTubeVideo) || youtubeId;
+
+      const wideYoutubeId =
+        getYouTubeVideoId(wideYouTubeVideo) || youtubeId;
+
+      const mobileVideoType =
+        isYouTubeShortVariant(mobileYouTubeVideo)
+          ? "short"
+          : "regular";
+
+      const wideVideoType =
+        isYouTubeShortVariant(wideYouTubeVideo)
+          ? "short"
+          : "regular";
+
+      const parameters = new URLSearchParams({
+        mobile: mobileYoutubeId,
+        wide: wideYoutubeId,
+        mobileType: mobileVideoType,
+        wideType: wideVideoType,
+        title: layerNames[layer] || "פרד״ס",
+        layer: layer,
+        source: getVideoSourceChannel()
+      });
+
+      return `main-video-mobile.html?${parameters.toString()}`;
+    }
+
+    function refreshDirectMobileVideoLinks(){
+      const linkMap = {
+        main: ["mainAliyahOrb", "mainAliyahLive"],
+        pshat: ["pshatLink"],
+        remez: ["remezLink"],
+        drash: ["drashLink"],
+        sod: ["sodLink"]
+      };
+
+      Object.entries(linkMap).forEach(([layer, elementIds]) => {
+        const destination =
+          buildDirectMobilePlayerUrl(layer);
+
+        elementIds.forEach((elementId) => {
+          const element = document.getElementById(elementId);
+          if(!element) return;
+
+          element.setAttribute("href", destination || "#");
+          element.toggleAttribute("aria-disabled", !destination);
+        });
+      });
+    }
     
     function openLayerWithFruitEffect(element, layer){
       if(!element || pardesFruitTransitionRunning) return;
@@ -7505,11 +7626,25 @@ function normalizeParashaName(value){
 
 
     document.getElementById("mainAliyahOrb")?.addEventListener("click", (event) => {
+      if(
+        usesDirectMobileVideoLinks() &&
+        event.currentTarget.getAttribute("href") !== "#"
+      ){
+        return;
+      }
+
       event.preventDefault();
       openLayer("main");
     });
 
     document.getElementById("mainAliyahLive")?.addEventListener("click", (event) => {
+      if(
+        usesDirectMobileVideoLinks() &&
+        event.currentTarget.getAttribute("href") !== "#"
+      ){
+        return;
+      }
+
       event.preventDefault();
     
       openLayerWithFruitEffect(
@@ -7519,6 +7654,13 @@ function normalizeParashaName(value){
     });
 
     document.getElementById("pshatLink")?.addEventListener("click", (event) => {
+      if(
+        usesDirectMobileVideoLinks() &&
+        event.currentTarget.getAttribute("href") !== "#"
+      ){
+        return;
+      }
+
       event.preventDefault();
     
       openLayerWithFruitEffect(
@@ -7528,6 +7670,13 @@ function normalizeParashaName(value){
     });
     
     document.getElementById("remezLink")?.addEventListener("click", (event) => {
+      if(
+        usesDirectMobileVideoLinks() &&
+        event.currentTarget.getAttribute("href") !== "#"
+      ){
+        return;
+      }
+
       event.preventDefault();
     
       openLayerWithFruitEffect(
@@ -7537,6 +7686,13 @@ function normalizeParashaName(value){
     });
 
     document.getElementById("drashLink")?.addEventListener("click", (event) => {
+      if(
+        usesDirectMobileVideoLinks() &&
+        event.currentTarget.getAttribute("href") !== "#"
+      ){
+        return;
+      }
+
       event.preventDefault();
     
       openLayerWithFruitEffect(
@@ -7546,6 +7702,13 @@ function normalizeParashaName(value){
     });
 
     document.getElementById("sodLink")?.addEventListener("click", (event) => {
+      if(
+        usesDirectMobileVideoLinks() &&
+        event.currentTarget.getAttribute("href") !== "#"
+      ){
+        return;
+      }
+
       event.preventDefault();
     
       openLayerWithFruitEffect(
