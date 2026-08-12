@@ -346,6 +346,50 @@
       line-height:1.55;
     }
 
+    .tiktok-copy-help{
+      margin:16px 0 0;
+      padding:16px;
+      border:1px solid rgba(229,183,79,.38);
+      border-radius:16px;
+      background:rgba(82,62,17,.2);
+      text-align:center;
+    }
+
+    .tiktok-copy-help[hidden]{display:none}
+
+    .tiktok-copy-help p{
+      margin:0 0 12px;
+      color:#f4efe3;
+      line-height:1.55;
+      font-weight:650;
+    }
+
+    .copy-phone-button{
+      width:100%;
+      min-height:52px;
+      padding:11px 16px;
+      border:1px solid rgba(255,255,255,.45);
+      border-radius:15px;
+      color:#fff;
+      background:linear-gradient(135deg,#c18a23,#80550c);
+      font-weight:900;
+      cursor:pointer;
+      box-shadow:0 8px 22px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.2);
+    }
+
+    .copy-phone-button:disabled{
+      opacity:.48;
+      filter:grayscale(.3);
+      cursor:not-allowed;
+    }
+
+    .copy-phone-status{
+      min-height:1.45em;
+      margin:10px 0 0!important;
+      color:var(--gold-light)!important;
+      font-size:.9rem;
+    }
+
     .optional-contact{
       margin-top:23px;
       padding-top:20px;
@@ -605,6 +649,17 @@
         אם קישור לא נפתח מתוך TikTok, יש לפתוח את הדף בדפדפן החיצוני.
       </p>
 
+      <div id="tiktokCopyHelp" class="tiktok-copy-help" hidden>
+        <p>
+          Bit או PayBox לא נפתחים מתוך TikTok? העתיקו את מספר התמיכה,
+          פתחו את האפליקציה והדביקו אותו בחיפוש.
+        </p>
+        <button id="copyPhoneButton" class="copy-phone-button" type="button" disabled>
+          העתקת מספר ל־Bit / PayBox
+        </button>
+        <p id="copyPhoneStatus" class="copy-phone-status" role="status" aria-live="polite"></p>
+      </div>
+
       <div class="optional-contact">
         <p>יש לך שאלה או בקשה מיוחדת? אפשר לפנות אלינו גם ללא ביצוע תשלום.</p>
         <a class="contact-link" href="mailto:prsthsbw9@gmail.com?subject=%D7%A9%D7%90%D7%9C%D7%94%20%D7%91%D7%A0%D7%95%D7%92%D7%A2%20%D7%9C%D7%AA%D7%9E%D7%99%D7%9B%D7%94%20%D7%91%D7%A2%D7%A5%20%D7%94%D7%A4%D7%A8%D7%93%D7%B4%D7%A1%20%D7%94%D7%97%D7%99">שליחת שאלה באימייל</a>
@@ -628,6 +683,10 @@
       const termsConsent = document.getElementById("termsConsent");
       const paymentHelp = document.getElementById("paymentHelp");
       const paymentLinks = [...document.querySelectorAll(".payment-link")];
+      const tiktokCopyHelp = document.getElementById("tiktokCopyHelp");
+      const copyPhoneButton = document.getElementById("copyPhoneButton");
+      const copyPhoneStatus = document.getElementById("copyPhoneStatus");
+      const SUPPORT_PHONE_INTERNATIONAL = "+972508618789";
       const isTikTokBrowser =
         /TikTok|BytedanceWebview|musical_ly|musically/i.test(
           navigator.userAgent || ""
@@ -715,29 +774,61 @@
         paymentHelp.textContent = enabled
           ? "אפשר לבחור כעת את אמצעי התמיכה הנוח לך."
           : "יש לאשר את שני הסעיפים כדי לפתוח את אמצעי התמיכה.";
+
+        copyPhoneButton.disabled = !enabled;
       }
 
       function setupTikTokPaymentTargets(){
         if(!isTikTokBrowser) return;
-      
-        paymentLinks.forEach((link) => {
-          const provider = link.dataset.paymentProvider;
-      
-          /* רק בטיקטוק משתמשים בקישור החדש והמאומת של PayBox */
-          if(provider === "paybox"){
-            link.href = "https://links.payboxapp.com/c9hSuB5Xq1b";
+
+        tiktokCopyHelp.hidden = false;
+      }
+
+      async function copySupportPhone(){
+        if(!(ageConfirm.checked && termsConsent.checked)){
+          copyPhoneStatus.textContent = "לפני ההעתקה יש לאשר גיל ותקנון.";
+          return;
+        }
+
+        try{
+          if(navigator.clipboard && window.isSecureContext){
+            await navigator.clipboard.writeText(SUPPORT_PHONE_INTERNATIONAL);
+          }else{
+            const copyField = document.createElement("textarea");
+            copyField.value = SUPPORT_PHONE_INTERNATIONAL;
+            copyField.setAttribute("readonly","");
+            copyField.style.position = "fixed";
+            copyField.style.opacity = "0";
+            document.body.appendChild(copyField);
+            copyField.select();
+
+            const copied = document.execCommand("copy");
+            copyField.remove();
+
+            if(!copied) throw new Error("copy_failed");
           }
-      
-          /* מבטלים את ניסוי פתיחת החלון החדש */
-          if(provider === "bit" || provider === "paybox"){
-            link.removeAttribute("target");
-          }
-        });
+
+          copyPhoneStatus.textContent =
+            "המספר הועתק ✓ כעת פתחו את Bit או PayBox והדביקו בחיפוש.";
+          copyPhoneButton.textContent = "המספר הועתק ✓";
+
+          window.setTimeout(() => {
+            copyPhoneButton.textContent = "העתקת מספר ל־Bit / PayBox";
+          },3000);
+
+          window.dataLayer = window.dataLayer || [];
+          window.dataLayer.push({event:"support_phone_copy"});
+        }catch(error){
+          copyPhoneStatus.textContent =
+            "ההעתקה לא הצליחה. יש לפתוח את הדף בדפדפן החיצוני ולנסות שוב.";
+        }
       }
 
       [ageConfirm,termsConsent].forEach((checkbox) => {
         checkbox.addEventListener("change",updatePaymentLinks);
       });
+
+      copyPhoneButton.addEventListener("click",copySupportPhone);
 
       paymentLinks.forEach((link) => {
         link.addEventListener("click",(event) => {
