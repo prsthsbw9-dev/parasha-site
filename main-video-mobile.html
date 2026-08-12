@@ -442,6 +442,11 @@
 
       const page =
         document.getElementById("mobileVideoPage");
+
+      const isTikTokBrowser =
+        /TikTok|musical_ly|BytedanceWebview/i.test(
+          navigator.userAgent
+        );      
     
       const title =
         document.getElementById("mobileVideoTitle");
@@ -652,8 +657,12 @@
           player.dataset.videoId !== settings.videoId
         ){
           player.src =
+          const tiktokQualityParameter =
+            isTikTokBrowser ? "&vq=hd1080" : "";
+          
+          player.src =
             `https://www.youtube.com/embed/${settings.videoId}` +
-            `?playsinline=1&rel=0&modestbranding=1&enablejsapi=1`;
+            `?playsinline=1&rel=0&modestbranding=1&enablejsapi=1&vq=hd1080`;        
 
           player.dataset.videoId =
             settings.videoId;
