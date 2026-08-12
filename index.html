@@ -8414,6 +8414,21 @@ const maShebalevLive = document.getElementById('maShebalevLive');
 
 if(haorShebiLive){
   haorShebiLive.addEventListener('click', function(event){
+    const isMobileInAppBrowser =
+      document.body.classList.contains('in-app-browser') &&
+      document.body.classList.contains('device-phone');
+
+    /*
+      בדפדפן פנימי בנייד מאפשרים לקישור ה־HTML הרגיל לעבוד.
+      אין preventDefault ואין הפניה מאוחרת באמצעות JavaScript.
+    */
+    if(isMobileInAppBrowser){
+      return;
+    }
+
+    /*
+      בדפדפן רגיל נשארת אנימציית הכניסה הקיימת.
+    */
     event.preventDefault();
 
     document.body.classList.add('entering-haor');
@@ -8427,6 +8442,14 @@ if(haorShebiLive){
 
 if(maShebalevLive){
   maShebalevLive.addEventListener('click', function(event){
+    const isMobileInAppBrowser =
+      document.body.classList.contains('in-app-browser') &&
+      document.body.classList.contains('device-phone');
+
+    if(isMobileInAppBrowser){
+      return;
+    }
+
     event.preventDefault();
 
     document.body.classList.add('entering-heart');
