@@ -6894,12 +6894,39 @@ function normalizeParashaName(value){
     function openLayerWithFruitEffect(element, layer){
       if(!element || pardesFruitTransitionRunning) return;
     
+      const isMobileInAppBrowser =
+        document.body.classList.contains("in-app-browser") &&
+        document.body.classList.contains("device-phone");
+    
+      /*
+        בכל דפדפן פנימי בנייד מבצעים את המעבר מיד מתוך הלחיצה.
+        כך נמנעת פתיחה בדפדפן חיצוני במכשירים שמגבילים
+        הפניות JavaScript שמתרחשות לאחר השהיה.
+      */
+      if(isMobileInAppBrowser){
+        const homeIntroAudio =
+          document.getElementById("pardesHomeIntroAudio");
+    
+        if(homeIntroAudio){
+          homeIntroAudio.pause();
+          homeIntroAudio.muted = true;
+        }
+    
+        openLayer(layer);
+        return;
+      }
+    
+      /*
+        בדפדפנים רגילים ובמחשב משאירים
+        את אנימציית הפרי ואת ההתנהגות הקיימת.
+      */
       pardesFruitTransitionRunning = true;
     
       document.body.classList.add("entering-pardes-fruit");
       element.classList.add("pardes-fruit-enter");
     
-      const homeIntroAudio = document.getElementById("pardesHomeIntroAudio");
+      const homeIntroAudio =
+        document.getElementById("pardesHomeIntroAudio");
     
       if(homeIntroAudio){
         homeIntroAudio.pause();
