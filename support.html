@@ -289,6 +289,86 @@
 
     .submit-button:disabled{opacity:.58;cursor:not-allowed;filter:grayscale(.25)}
 
+    .support-intro{
+      margin:0 auto 20px;
+      max-width:620px;
+      text-align:center;
+      color:#f4efe3;
+      line-height:1.65;
+      font-weight:650;
+    }
+
+    .support-disclosure{
+      margin:0 0 20px;
+      padding:14px 15px;
+      border:1px solid rgba(229,183,79,.38);
+      border-radius:16px;
+      color:var(--gold-light);
+      background:rgba(82,62,17,.22);
+      text-align:center;
+      line-height:1.55;
+      font-weight:750;
+    }
+
+    .payment-methods{
+      display:grid;
+      gap:12px;
+      margin-top:20px;
+    }
+
+    .payment-link{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      min-height:62px;
+      padding:13px 18px;
+      border:1px solid rgba(255,255,255,.5);
+      border-radius:18px;
+      color:#fff;
+      text-decoration:none;
+      font-size:clamp(1.08rem,4.5vw,1.35rem);
+      font-weight:900;
+      box-shadow:0 10px 25px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.22);
+      transition:transform .16s,filter .16s,opacity .16s;
+    }
+
+    .payment-link.bit{background:linear-gradient(135deg,#4258ff,#2533bd)}
+    .payment-link.paybox{background:linear-gradient(135deg,#6a3df0,#3e20aa)}
+    .payment-link.paypal{background:linear-gradient(135deg,#0877d1,#034b91)}
+    .payment-link:hover{filter:brightness(1.08);transform:translateY(-1px)}
+    .payment-link.is-disabled{opacity:.45;filter:grayscale(.35);cursor:not-allowed;transform:none}
+
+    .payment-help{
+      margin:15px 2px 0;
+      color:var(--muted);
+      text-align:center;
+      font-size:.9rem;
+      line-height:1.55;
+    }
+
+    .optional-contact{
+      margin-top:23px;
+      padding-top:20px;
+      border-top:1px solid rgba(255,255,255,.17);
+      text-align:center;
+    }
+
+    .optional-contact p{margin:0 0 12px;color:var(--muted);line-height:1.55}
+
+    .contact-link{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-height:46px;
+      padding:10px 18px;
+      border:1px solid rgba(255,255,255,.28);
+      border-radius:999px;
+      color:#fff;
+      background:rgba(4,12,16,.72);
+      text-decoration:none;
+      font-weight:800;
+    }
+
     .legal-hint{
       margin:13px 3px 0;
       color:var(--muted);
@@ -465,97 +545,74 @@
 
     <section class="form-card" aria-labelledby="supportFormTitle">
       <h2 id="supportFormTitle">אני רוצה לעזור לאור להמשיך</h2>
-      <p class="form-note">
-        זהו טופס פנייה בלבד — לא מתבצע כאן תשלום.
-        לאחר קבלת הבקשה ניצור איתך קשר באימייל.
+
+      <p class="support-intro">
+        ניתן לבחור את אמצעי התמיכה הנוח לך ולעבור ישירות לתשלום מאובטח
+        באתר או באפליקציה של ספק התשלום.
       </p>
 
-      <form id="supportForm" novalidate>
-        <div class="field">
-          <label for="fullName">שם מלא</label>
-          <input id="fullName" name="fullName" type="text" autocomplete="name" maxlength="80" required>
-        </div>
+      <p class="support-disclosure">
+        התמיכה ניתנת מרצון, אינה רכישה של מוצר או שירות ואינה מקנה זיכוי ממס.
+      </p>
 
-        <div class="field">
-          <label for="email">כתובת אימייל</label>
-          <input id="email" name="email" type="email" inputmode="email" autocomplete="email" maxlength="120" required>
-        </div>
+      <div class="checks">
+        <label class="check-row">
+          <input id="ageConfirm" type="checkbox">
+          <span>אני בן/בת 18 ומעלה ופועל/ת בשמי, או שקיבלתי הרשאה מתאימה.</span>
+        </label>
 
-        <div class="field">
-          <label for="supportType">באיזה אופן חשבת לסייע?</label>
-          <select id="supportType" name="supportType" required>
-            <option value="">יש לבחור אפשרות</option>
-            <option value="תמיכה חד-פעמית">תמיכה חד־פעמית</option>
-            <option value="תמיכה חודשית">תמיכה חודשית</option>
-            <option value="עדיין לא החלטתי/ה">עדיין לא החלטתי/ה</option>
-          </select>
-        </div>
+        <label class="check-row">
+          <input id="termsConsent" type="checkbox">
+          <span>
+            קראתי ואישרתי את
+            <a id="termsLink" class="terms-link" href="support-terms.html">תקנון התמיכה</a>.
+          </span>
+        </label>
+      </div>
 
-        <div class="field">
-          <label for="amount">סכום משוער שחשבת עליו <span class="optional">(לא חובה)</span></label>
-          <input id="amount" name="amount" type="number" inputmode="decimal" min="1" max="1000000" step="1" placeholder="לדוגמה: 50">
-        </div>
+      <div class="payment-methods" aria-label="בחירת אמצעי תמיכה">
+        <a
+          class="payment-link bit is-disabled"
+          data-payment-provider="bit"
+          href="https://www.bitpay.co.il/app/me/4A7D7360-AF51-7846-5E67-60FACACD37C54857?v=2"
+          rel="noopener noreferrer"
+          aria-disabled="true"
+        >תמיכה באמצעות Bit</a>
 
-        <fieldset class="field" style="border:0;padding:0;margin-inline:0">
-          <legend class="field-title">כיצד להודות לך?</legend>
-          <div class="choices">
-            <label class="choice">
-              <input type="radio" name="thanksPreference" value="אשמח להופיע בדף התודה" required>
-              <span>אשמח ששמי יופיע בדף תודה מיוחד לתומכי המיזם</span>
-            </label>
+        <a
+          class="payment-link paybox is-disabled"
+          data-payment-provider="paybox"
+          href="https://3ydbh.app.link/c9hSuB5Xq1b?_p=c11331dc9a006ceee61490fceeb4"
+          rel="noopener noreferrer"
+          aria-disabled="true"
+        >תמיכה באמצעות PayBox</a>
 
-            <label class="choice">
-              <input type="radio" name="thanksPreference" value="מבקש/ת להישאר בעילום שם" required>
-              <span>אני מעדיף/ה להישאר בעילום שם</span>
-            </label>
-          </div>
-        </fieldset>
+        <a
+          class="payment-link paypal is-disabled"
+          data-payment-provider="paypal"
+          href="https://paypal.me/RonenTorah"
+          rel="noopener noreferrer"
+          aria-disabled="true"
+        >תמיכה באמצעות PayPal</a>
+      </div>
 
-        <div id="publicNameWrap" class="field public-name-wrap" hidden>
-          <label for="publicName">השם שיופיע בדף התודה</label>
-          <input id="publicName" name="publicName" type="text" maxlength="80" placeholder="אפשר לכתוב שם מלא, שם פרטי או הקדשה קצרה">
-        </div>
+      <p id="paymentHelp" class="payment-help" role="status" aria-live="polite">
+        יש לאשר את שני הסעיפים כדי לפתוח את אמצעי התמיכה.
+      </p>
 
-        <div class="field">
-          <label for="supportMessage">משהו נוסף שחשוב לך לומר? <span class="optional">(לא חובה)</span></label>
-          <textarea id="supportMessage" name="supportMessage" maxlength="1000" placeholder="אפשר לכתוב כאן הודעה אישית או שאלה..."></textarea>
-        </div>
+      <p class="legal-hint">
+        התשלום מתבצע מחוץ לאתר ובהתאם לתנאי ספק התשלום שנבחר.
+        אם קישור לא נפתח מתוך TikTok, יש לפתוח את הדף בדפדפן החיצוני.
+      </p>
 
-        <div class="checks">
-          <label class="check-row">
-            <input id="contactConsent" name="contactConsent" type="checkbox" required>
-            <span>אני מאשר/ת ליצור איתי קשר באימייל בנוגע לבקשת התמיכה הזאת.</span>
-          </label>
-
-          <label class="check-row">
-            <input id="ageConfirm" name="ageConfirm" type="checkbox" required>
-            <span>אני בן/בת 18 ומעלה ופועל/ת בשמי, או שקיבלתי הרשאה מתאימה.</span>
-          </label>
-
-          <label class="check-row">
-            <input id="termsConsent" name="termsConsent" type="checkbox" required>
-            <span>
-              קראתי ואישרתי את
-              <a id="termsLink" class="terms-link" href="support-terms.html">תקנון בקשות התמיכה</a>,
-              ואני מאשר/ת שהפרטים שמסרתי נכונים.
-            </span>
-          </label>
-        </div>
-
-        <button id="submitButton" class="submit-button" type="submit">
-          שליחת בקשת התמיכה
-        </button>
-
-        <p class="legal-hint">
-          השליחה אינה מחייבת אותך להעביר כסף ואינה מהווה עסקה או אישור לתשלום.
-        </p>
-
-        <div id="formMessage" class="message" role="status" aria-live="polite"></div>
-      </form>
+      <div class="optional-contact">
+        <p>יש לך שאלה או בקשה מיוחדת? אפשר לפנות אלינו גם ללא ביצוע תשלום.</p>
+        <a class="contact-link" href="mailto:prsthsbw9@gmail.com?subject=%D7%A9%D7%90%D7%9C%D7%94%20%D7%91%D7%A0%D7%95%D7%92%D7%A2%20%D7%9C%D7%AA%D7%9E%D7%99%D7%9B%D7%94%20%D7%91%D7%A2%D7%A5%20%D7%94%D7%A4%D7%A8%D7%93%D7%B4%D7%A1%20%D7%94%D7%97%D7%99">שליחת שאלה באימייל</a>
+      </div>
     </section>
 
     <p class="footer-note">
-      תודה על הרצון לקחת חלק. כל בקשה נבדקת באופן אישי לפני יצירת קשר.
+      תודה על הרצון לקחת חלק בהמשך היצירה, ההנגשה והפצת התורה.
     </p>
   </main>
 
@@ -563,18 +620,14 @@
     (() => {
       "use strict";
 
-      const OWNER_EMAIL = "prsthsbw9@gmail.com";
-      const TERMS_VERSION = "טיוטה — טרם אושרה";
-      const STORAGE_KEY = "pardesSupportFormDraftV1";
       const VIDEO_RETURN_STORAGE_KEY =
         "pardesSupportVideoReturnV1";
 
-      const form = document.getElementById("supportForm");
-      const submitButton = document.getElementById("submitButton");
-      const messageBox = document.getElementById("formMessage");
-      const publicNameWrap = document.getElementById("publicNameWrap");
-      const publicNameInput = document.getElementById("publicName");
       const termsLink = document.getElementById("termsLink");
+      const ageConfirm = document.getElementById("ageConfirm");
+      const termsConsent = document.getElementById("termsConsent");
+      const paymentHelp = document.getElementById("paymentHelp");
+      const paymentLinks = [...document.querySelectorAll(".payment-link")];
       const returnNavigation =
         document.getElementById("returnNavigation");
       const returnToVideoButton =
@@ -647,176 +700,44 @@
         }
       }
 
-      const draftFields = [
-        "fullName",
-        "email",
-        "supportType",
-        "amount",
-        "thanksPreference",
-        "publicName",
-        "supportMessage",
-        "contactConsent",
-        "ageConfirm",
-        "termsConsent"
-      ];
+      function updatePaymentLinks(){
+        const enabled = ageConfirm.checked && termsConsent.checked;
 
-      function showMessage(text, type){
-        messageBox.textContent = text;
-        messageBox.className = `message show ${type}`;
-      }
-
-      function selectedThanksPreference(){
-        return form.querySelector('input[name="thanksPreference"]:checked')?.value || "";
-      }
-
-      function updatePublicNameVisibility(){
-        const wantsPublicThanks = selectedThanksPreference() === "אשמח להופיע בדף התודה";
-        publicNameWrap.hidden = !wantsPublicThanks;
-        publicNameInput.required = wantsPublicThanks;
-        if(!wantsPublicThanks){ publicNameInput.setCustomValidity(""); }
-      }
-
-      function collectDraft(){
-        const draft = {};
-        draftFields.forEach((name) => {
-          const elements = form.querySelectorAll(`[name="${name}"]`);
-          if(!elements.length) return;
-          if(elements[0].type === "radio"){
-            draft[name] = form.querySelector(`[name="${name}"]:checked`)?.value || "";
-          }else if(elements[0].type === "checkbox"){
-            draft[name] = elements[0].checked;
-          }else{
-            draft[name] = elements[0].value;
-          }
+        paymentLinks.forEach((link) => {
+          link.classList.toggle("is-disabled",!enabled);
+          link.setAttribute("aria-disabled",String(!enabled));
         });
-        return draft;
+
+        paymentHelp.textContent = enabled
+          ? "אפשר לבחור כעת את אמצעי התמיכה הנוח לך."
+          : "יש לאשר את שני הסעיפים כדי לפתוח את אמצעי התמיכה.";
       }
 
-      function saveDraft(){
-        try{ sessionStorage.setItem(STORAGE_KEY,JSON.stringify(collectDraft())); }catch(error){}
-      }
-
-      function restoreDraft(){
-        try{
-          const draft = JSON.parse(sessionStorage.getItem(STORAGE_KEY) || "null");
-          if(!draft) return;
-          draftFields.forEach((name) => {
-            const elements = form.querySelectorAll(`[name="${name}"]`);
-            if(!elements.length || !(name in draft)) return;
-            if(elements[0].type === "radio"){
-              elements.forEach((element) => { element.checked = element.value === draft[name]; });
-            }else if(elements[0].type === "checkbox"){
-              elements[0].checked = Boolean(draft[name]);
-            }else{
-              elements[0].value = draft[name];
-            }
-          });
-        }catch(error){}
-        updatePublicNameVisibility();
-      }
-
-      form.addEventListener("input",saveDraft);
-      form.addEventListener("change",() => {
-        updatePublicNameVisibility();
-        saveDraft();
+      [ageConfirm,termsConsent].forEach((checkbox) => {
+        checkbox.addEventListener("change",updatePaymentLinks);
       });
 
-      termsLink.addEventListener("click",saveDraft);
+      paymentLinks.forEach((link) => {
+        link.addEventListener("click",(event) => {
+          if(!(ageConfirm.checked && termsConsent.checked)){
+            event.preventDefault();
+            paymentHelp.textContent = "לפני המעבר לתשלום יש לאשר גיל ותקנון.";
+            paymentHelp.scrollIntoView({behavior:"smooth",block:"center"});
+            return;
+          }
 
-      form.addEventListener("submit",async(event) => {
-        event.preventDefault();
-        updatePublicNameVisibility();
+          const provider = link.dataset.paymentProvider || "unknown";
 
-        if(!form.checkValidity()){
-          form.reportValidity();
-          showMessage("יש להשלים את שדות החובה ולאשר את הסעיפים לפני השליחה.","error");
-          return;
-        }
-
-        const fullName = document.getElementById("fullName").value.trim();
-        const email = document.getElementById("email").value.trim();
-        const supportType = document.getElementById("supportType").value;
-        const amount = document.getElementById("amount").value.trim() || "לא צוין";
-        const thanksPreference = selectedThanksPreference();
-        const publicName = publicNameInput.value.trim() || "לא רלוונטי / לא צוין";
-        const supportMessage = document.getElementById("supportMessage").value.trim() || "לא נכתבה הודעה";
-
-        const now = new Intl.DateTimeFormat("he-IL",{
-          dateStyle:"full",
-          timeStyle:"medium",
-          timeZone:"Asia/Jerusalem"
-        }).format(new Date());
-
-        const emailBody = [
-          "התקבלה בקשה חדשה לתמיכה בעץ הפרד״ס החי.",
-          "",
-          `שם מלא: ${fullName}`,
-          `אימייל לחזרה: ${email}`,
-          `אופן התמיכה המבוקש: ${supportType}`,
-          `סכום משוער: ${amount} ₪`,
-          `העדפה לדף התודה: ${thanksPreference}`,
-          `השם המבוקש לפרסום: ${publicName}`,
-          "",
-          "הודעה אישית:",
-          supportMessage,
-          "",
-          "אישורים:",
-          "אישור יצירת קשר באימייל: כן",
-          "אישור גיל/הרשאה: כן",
-          "אישור תקנון בקשות התמיכה: כן",
-          `גרסת התקנון: ${TERMS_VERSION}`,
-          `מועד השליחה: ${now}`,
-          "",
-          "הערה: זהו טופס פנייה בלבד. לא בוצע תשלום באמצעות הדף."
-        ].join("\n");
-
-        const payload = new FormData();
-        payload.append("_subject",`בקשה חדשה לתמיכה — ${fullName}`);
-        payload.append("_template","table");
-        payload.append("_captcha","false");
-        payload.append("_replyto",email);
-        payload.append("שם",fullName);
-        payload.append("אימייל",email);
-        payload.append("סוג התמיכה",supportType);
-        payload.append("סכום משוער",`${amount} ₪`);
-        payload.append("הופעה בדף התודה",thanksPreference);
-        payload.append("שם לפרסום",publicName);
-        payload.append("הודעה",supportMessage);
-        payload.append("אישור יצירת קשר","כן");
-        payload.append("אישור גיל או הרשאה","כן");
-        payload.append("אישור תקנון","כן");
-        payload.append("גרסת התקנון",TERMS_VERSION);
-        payload.append("מועד השליחה",now);
-        payload.append("תוכן מלא",emailBody);
-
-        submitButton.disabled = true;
-        submitButton.textContent = "שולח את הבקשה...";
-        showMessage("הבקשה נשלחת כעת, נא להמתין...","success");
-
-        try{
-          const response = await fetch(`https://formsubmit.co/ajax/${OWNER_EMAIL}`,{
-            method:"POST",
-            headers:{"Accept":"application/json"},
-            body:payload
+          window.dataLayer = window.dataLayer || [];
+          window.dataLayer.push({
+            event:"support_payment_click",
+            payment_provider:provider
           });
-
-          if(!response.ok) throw new Error("request_failed");
-
-          sessionStorage.removeItem(STORAGE_KEY);
-          form.reset();
-          updatePublicNameVisibility();
-          showMessage("הבקשה נשלחה בהצלחה. לאחר שנבדוק אותה ניצור איתך קשר באימייל.","success");
-        }catch(error){
-          saveDraft();
-          showMessage("לא הצלחנו לשלוח את הבקשה כרגע. הפרטים נשמרו במכשיר ואפשר לנסות שוב בעוד רגע.","error");
-        }finally{
-          submitButton.disabled = false;
-          submitButton.textContent = "שליחת בקשת התמיכה";
-        }
+        });
       });
 
       setupReturnNavigation();
-      restoreDraft();
+      updatePaymentLinks();
     })();
   </script>
 </body>
