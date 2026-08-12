@@ -628,6 +628,10 @@
       const termsConsent = document.getElementById("termsConsent");
       const paymentHelp = document.getElementById("paymentHelp");
       const paymentLinks = [...document.querySelectorAll(".payment-link")];
+      const isTikTokBrowser =
+        /TikTok|BytedanceWebview|musical_ly|musically/i.test(
+          navigator.userAgent || ""
+        );
       const returnNavigation =
         document.getElementById("returnNavigation");
       const returnToVideoButton =
@@ -713,6 +717,18 @@
           : "יש לאשר את שני הסעיפים כדי לפתוח את אמצעי התמיכה.";
       }
 
+      function setupTikTokPaymentTargets(){
+        if(!isTikTokBrowser) return;
+
+        paymentLinks.forEach((link) => {
+          const provider = link.dataset.paymentProvider;
+
+          if(provider === "bit" || provider === "paybox"){
+            link.setAttribute("target","_blank");
+          }
+        });
+      }
+
       [ageConfirm,termsConsent].forEach((checkbox) => {
         checkbox.addEventListener("change",updatePaymentLinks);
       });
@@ -737,6 +753,7 @@
       });
 
       setupReturnNavigation();
+      setupTikTokPaymentTargets();
       updatePaymentLinks();
     })();
   </script>
