@@ -7078,56 +7078,53 @@ function normalizeParashaName(value){
 
         const sourceChannel = getSourceChannel();
       
-          try{
-            sessionStorage.setItem(
-              "pardesMobileVideoData",
-              JSON.stringify({
-                mobile: mobileYoutubeId,
-                wide: wideYoutubeId,
-                mobileType: mobileVideoType,
-                wideType: wideVideoType,
-                title: layerName,
-                layer: layer,
-                source: sourceChannel
-              })
-            );
-          }catch(error){
-            console.error(
-              "לא ניתן היה לשמור את נתוני הסרטון:",
-              error
-            );
-          }
-          
-          /*
-            שומרים את פרטי הסרטון בתוך אותו דפדפן,
-            כדי שהמעבר לדף הנגן יהיה בכתובת קצרה ונקייה.
-          */
-          try{
-            sessionStorage.setItem(
-              "pardesMobileVideoData",
-              JSON.stringify({
-                mobile: mobileYoutubeId,
-                wide: wideYoutubeId,
-                mobileType: mobileVideoType,
-                wideType: wideVideoType,
-                title: layerName,
-                layer: layer,
-                source: sourceChannel
-              })
-            );
-          }catch(error){
-            console.error(
-              "לא ניתן היה לשמור את פרטי הסרטון:",
-              error
-            );
-          }
-    
-          window.location.assign(
-            "main-video-mobile.html"
+        /*
+          שומרים את הנתונים גם ב-sessionStorage,
+          אך לא מסתמכים עליו בלבד.
+        */
+        const mobilePlayerData = {
+          mobile: mobileYoutubeId,
+          wide: wideYoutubeId,
+          mobileType: mobileVideoType,
+          wideType: wideVideoType,
+          title: layerName,
+          layer: layer,
+          source: sourceChannel
+        };
+        
+        try{
+          sessionStorage.setItem(
+            "pardesMobileVideoData",
+            JSON.stringify(mobilePlayerData)
           );
-    
-          return;
-      }
+        }catch(error){
+          console.error(
+            "לא ניתן היה לשמור את פרטי הסרטון:",
+            error
+          );
+        }
+        
+        /*
+          מעבירים את הנתונים גם בתוך הכתובת.
+          זהו הגיבוי הנדרש לדפדפנים פנימיים של TikTok,
+          ובמיוחד במכשירי Xiaomi.
+        */
+        const mobilePlayerParameters =
+          new URLSearchParams({
+            mobile: mobileYoutubeId,
+            wide: wideYoutubeId,
+            mobileType: mobileVideoType,
+            wideType: wideVideoType,
+            title: layerName,
+            layer: layer,
+            source: sourceChannel
+          });
+        
+        window.location.assign(
+          `main-video-mobile.html?${mobilePlayerParameters.toString()}`
+        );
+        
+        return;
       
       const youtubeWatchUrl =
         shouldOpenAsYouTubeShort
