@@ -719,12 +719,18 @@
 
       function setupTikTokPaymentTargets(){
         if(!isTikTokBrowser) return;
-
+      
         paymentLinks.forEach((link) => {
           const provider = link.dataset.paymentProvider;
-
+      
+          /* רק בטיקטוק משתמשים בקישור החדש והמאומת של PayBox */
+          if(provider === "paybox"){
+            link.href = "https://links.payboxapp.com/c9hSuB5Xq1b";
+          }
+      
+          /* מבטלים את ניסוי פתיחת החלון החדש */
           if(provider === "bit" || provider === "paybox"){
-            link.setAttribute("target","_blank");
+            link.removeAttribute("target");
           }
         });
       }
