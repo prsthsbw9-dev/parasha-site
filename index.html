@@ -5042,6 +5042,73 @@
       }
     }   
     
+    /* לחצני התחתית של חלון הסרטון המלא */
+    .pardes-fullscreen-actions{
+      display:none;
+    }
+
+    @media (max-width:900px){
+      body.pardes-video-open{
+        overflow:hidden !important;
+      }
+
+      body.pardes-video-open .pardes-fullscreen-actions{
+        position:fixed;
+        left:50%;
+        bottom:max(8px, env(safe-area-inset-bottom));
+        z-index:100005;
+        display:flex;
+        align-items:stretch;
+        justify-content:center;
+        gap:8px;
+        width:calc(100% - 20px);
+        max-width:520px;
+        padding:8px;
+        transform:translateX(-50%);
+        border-radius:16px;
+        background:rgba(3,8,12,.88);
+        box-shadow:0 -8px 25px rgba(0,0,0,.38);
+        backdrop-filter:blur(10px);
+        -webkit-backdrop-filter:blur(10px);
+      }
+
+      .pardes-fullscreen-button{
+        min-height:48px;
+        border:1px solid rgba(255,255,255,.40);
+        border-radius:12px;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        gap:7px;
+        color:#fff;
+        text-decoration:none;
+        font-family:inherit;
+        font-size:14px;
+        font-weight:900;
+        line-height:1.2;
+        cursor:pointer;
+        -webkit-tap-highlight-color:transparent;
+        box-shadow:0 6px 18px rgba(0,0,0,.30);
+      }
+
+      .pardes-fullscreen-button.is-back{
+        width:54px;
+        min-width:54px;
+        padding:0;
+        background:linear-gradient(135deg,#2563a9,#123f78);
+        font-size:25px;
+      }
+
+      .pardes-fullscreen-button.is-support{
+        flex:1;
+        padding:8px 12px;
+        background:linear-gradient(135deg,#34843c,#176027);
+      }
+
+      body.pardes-video-open .pardes-video-body{
+        padding-bottom:calc(78px + env(safe-area-inset-bottom)) !important;
+      }
+    }
   </style>
 </head>
   
@@ -5829,6 +5896,25 @@
           <iframe id="pardesYoutubePlayer" class="pardes-video-player pardes-youtube-player" title="נגן YouTube של עומק העלייה" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
         </div>
         <a id="pardesYoutubeOpenBtn" class="pardes-youtube-open-btn" href="#" target="_blank" rel="noopener noreferrer" aria-label="כל לייק, תגובה ושיתוף = חלק מזיכוי הרבים שלך!">כל לייק, תגובה ושיתוף = חלק<span class="mobile-break">מזיכוי הרבים שלך!</span><span class="desktop-only"> מזיכוי הרבים שלך!</span></a>
+        <div class="pardes-fullscreen-actions">
+          <button
+            id="pardesFullscreenBack"
+            class="pardes-fullscreen-button is-back"
+            type="button"
+            aria-label="חזרה לעץ הפרד״ס"
+            title="חזרה לעץ הפרד״ס"
+          >
+            <span aria-hidden="true">➜</span>
+          </button>
+
+          <a
+            class="pardes-fullscreen-button is-support"
+            href="support.html"
+          >
+            <span aria-hidden="true">✨</span>
+            <span>גם אני רוצה להיות חלק מזה</span>
+          </a>
+        </div>
         <div id="pardesVideoEmpty" class="pardes-video-empty"></div>
       </div>
     </div>
@@ -7207,7 +7293,7 @@ function normalizeParashaName(value){
       const shouldOpenAsYouTubeShort =
         !!youtubeId &&
         isYouTubeShortVariant(directYouTubeVideo);
-      
+
       const youtubeWatchUrl =
         shouldOpenAsYouTubeShort
           ? `https://www.youtube.com/shorts/${youtubeId}`
@@ -7685,6 +7771,10 @@ function normalizeParashaName(value){
 
     document
       .getElementById("pardesVideoClose")
+      ?.addEventListener("click", closePanel);
+
+    document
+      .getElementById("pardesFullscreenBack")
       ?.addEventListener("click", closePanel);
 
 
