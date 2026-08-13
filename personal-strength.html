@@ -141,6 +141,40 @@
         0 0 70px rgba(255, 207, 93, 0.15);
     }
 
+    .symbol.lion-symbol {
+      width: clamp(150px, 32vw, 190px);
+      height: clamp(150px, 32vw, 190px);
+      padding: 0;
+      font-size: 0;
+      border: 1px solid rgba(255, 221, 132, 0.42);
+      border-radius: 50%;
+      overflow: hidden;
+      clip-path: circle(50% at 50% 50%);
+      background:
+        radial-gradient(
+          circle,
+          rgba(255, 221, 132, 0.15) 0%,
+          rgba(44, 75, 50, 0.12) 62%,
+          rgba(5, 15, 9, 0.3) 100%
+        );
+      box-shadow:
+        0 0 35px rgba(255, 207, 93, 0.25),
+        0 0 75px rgba(255, 207, 93, 0.12);
+    }
+
+    .personal-strength-lion {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: contain;
+      border-radius: 50%;
+      background: transparent;
+      pointer-events: none;
+      filter:
+        drop-shadow(0 12px 20px rgba(0, 0, 0, 0.5))
+        drop-shadow(0 0 14px rgba(255, 211, 113, 0.2));
+    }
+
     h1 {
       margin: 0 0 18px;
       color: #fff7df;
@@ -230,6 +264,88 @@
       line-height: 1.5;
     }
 
+    /* פתיח חיזוק אישי */
+    .strength-intro {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      background: #000;
+      opacity: 1;
+      visibility: visible;
+      transition:
+        opacity 0.7s ease,
+        visibility 0.7s ease;
+    }
+
+    .strength-intro.is-closing {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .strength-intro-video {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+      background: #000;
+    }
+
+    .intro-sound-btn {
+      position: absolute;
+      top: calc(env(safe-area-inset-top, 0px) + 16px);
+      left: 16px;
+      z-index: 2;
+      width: 52px;
+      height: 52px;
+      display: grid;
+      place-items: center;
+      padding: 0;
+      cursor: pointer;
+      color: #ffffff;
+      font-size: 25px;
+      line-height: 1;
+      border: 1px solid rgba(255, 255, 255, 0.48);
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.58);
+      box-shadow:
+        0 8px 24px rgba(0, 0, 0, 0.38),
+        0 0 18px rgba(255, 215, 120, 0.16);
+      backdrop-filter: blur(9px);
+      -webkit-backdrop-filter: blur(9px);
+    }
+
+    .intro-sound-btn:hover {
+      background: rgba(34, 60, 41, 0.88);
+      border-color: rgba(255, 222, 140, 0.88);
+    }
+
+    .intro-sound-btn:focus-visible {
+      outline: 3px solid rgba(255, 225, 148, 0.92);
+      outline-offset: 3px;
+    }
+
+    body.intro-active {
+      overflow: hidden;
+    }
+
+    body.intro-active .page,
+    body.intro-active .pardes-return-btn {
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    .page,
+    .pardes-return-btn {
+      transition:
+        opacity 0.65s ease,
+        visibility 0.65s ease;
+    }
+
     @media (max-width: 560px) {
       .page {
         align-items: flex-start;
@@ -246,6 +362,11 @@
         font-size: 44px;
       }
 
+      .symbol.lion-symbol {
+        width: clamp(150px, 32vw, 190px);
+        height: clamp(150px, 32vw, 190px);
+      }
+
       .email-row {
         flex-direction: column;
       }
@@ -255,42 +376,10 @@
       }
     }
 
-    .symbol.lion-symbol {
-      width: clamp(150px, 32vw, 190px);
-      height: clamp(150px, 32vw, 190px);
-      padding: 0;
-      font-size: 0;
-    
-      border: 1px solid rgba(255, 221, 132, 0.42);
-      border-radius: 50%;
-      overflow: hidden;
-      clip-path: circle(50% at 50% 50%);
-    
-      background:
-        radial-gradient(
-          circle,
-          rgba(255, 221, 132, 0.15) 0%,
-          rgba(44, 75, 50, 0.12) 62%,
-          rgba(5, 15, 9, 0.3) 100%
-        );
-    
-      box-shadow:
-        0 0 35px rgba(255, 207, 93, 0.25),
-        0 0 75px rgba(255, 207, 93, 0.12);
-    }
-  
-    .personal-strength-lion {
-      width: 100%;
-      height: 100%;
-      display: block;
-      object-fit: contain;
-      border-radius: 50%;
-      background: transparent;
-      pointer-events: none;
-    
-      filter:
-        drop-shadow(0 12px 20px rgba(0, 0, 0, 0.5))
-        drop-shadow(0 0 14px rgba(255, 211, 113, 0.2));
+    @media (min-width: 800px) and (orientation: landscape) {
+      .strength-intro-video {
+        object-fit: contain;
+      }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -303,7 +392,40 @@
   </style>
 </head>
 
-<body>
+<body class="intro-active">
+  <div
+    class="strength-intro"
+    id="strengthIntro"
+    role="dialog"
+    aria-label="סרטון פתיחה לחיזוק אישי"
+  >
+    <video
+      class="strength-intro-video"
+      id="strengthIntroVideo"
+      autoplay
+      muted
+      playsinline
+      webkit-playsinline
+      preload="auto"
+      poster="personal-strength-promo-poster.jpg"
+    >
+      <source
+        src="personal-strength-promo-web.mp4"
+        type="video/mp4"
+      >
+    </video>
+
+    <button
+      class="intro-sound-btn"
+      id="introSoundButton"
+      type="button"
+      aria-label="הפעלת הקול"
+      aria-pressed="false"
+    >
+      <span id="introSoundIcon" aria-hidden="true">🔇</span>
+    </button>
+  </div>
+
   <a
     class="pardes-return-btn"
     href="index.html"
@@ -315,14 +437,14 @@
 
   <main class="page">
     <section class="card" aria-labelledby="pageTitle">
-       <div class="symbol lion-symbol" aria-hidden="true">
+      <div class="symbol lion-symbol" aria-hidden="true">
         <video
           class="personal-strength-lion"
           autoplay
           muted
           loop
           playsinline
-          preload="auto"
+          preload="metadata"
         >
           <source src="lion-roar-loop-transparent.webm" type="video/webm">
         </video>
@@ -368,7 +490,7 @@
           name="_honey"
           tabindex="-1"
           autocomplete="off"
-          style="display:none"
+          style="display: none"
         >
 
         <div class="email-row">
@@ -394,5 +516,82 @@
       </form>
     </section>
   </main>
+
+  <script>
+    (() => {
+      const body = document.body;
+      const intro = document.getElementById("strengthIntro");
+      const video = document.getElementById("strengthIntroVideo");
+      const soundButton = document.getElementById("introSoundButton");
+      const soundIcon = document.getElementById("introSoundIcon");
+
+      if (!intro || !video || !soundButton || !soundIcon) {
+        body.classList.remove("intro-active");
+        return;
+      }
+
+      let introFinished = false;
+
+      function updateSoundButton() {
+        const soundIsOff = video.muted || video.volume === 0;
+
+        soundIcon.textContent = soundIsOff ? "🔇" : "🔊";
+        soundButton.setAttribute(
+          "aria-label",
+          soundIsOff ? "הפעלת הקול" : "השתקת הקול"
+        );
+        soundButton.setAttribute(
+          "aria-pressed",
+          soundIsOff ? "false" : "true"
+        );
+      }
+
+      async function toggleSound() {
+        try {
+          video.muted = !video.muted;
+          video.volume = 1;
+
+          if (video.paused) {
+            await video.play();
+          }
+
+          updateSoundButton();
+        } catch (error) {
+          video.muted = true;
+          updateSoundButton();
+        }
+      }
+
+      function finishIntro() {
+        if (introFinished) return;
+        introFinished = true;
+
+        intro.classList.add("is-closing");
+        body.classList.remove("intro-active");
+
+        window.setTimeout(() => {
+          video.pause();
+          intro.remove();
+        }, 750);
+      }
+
+      soundButton.addEventListener("click", toggleSound);
+      video.addEventListener("volumechange", updateSoundButton);
+      video.addEventListener("ended", finishIntro);
+      video.addEventListener("error", finishIntro);
+
+      video.muted = true;
+      updateSoundButton();
+
+      const playPromise = video.play();
+
+      if (playPromise && typeof playPromise.catch === "function") {
+        playPromise.catch(() => {
+          video.muted = true;
+          video.play().catch(finishIntro);
+        });
+      }
+    })();
+  </script>
 </body>
 </html>
