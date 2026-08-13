@@ -5192,7 +5192,7 @@
         padding-bottom:calc(132px + env(safe-area-inset-bottom)) !important;
       }
     }
-    /* חלון פנימי לדפי האתר — בדיקה ראשונה: מה שבלב */
+    /* חלון פנימי לדפי האתר */
     .internal-page-overlay{
       position:fixed;
       inset:0;
@@ -5215,7 +5215,7 @@
 
     .internal-page-close{
       position:absolute;
-      top:max(12px, env(safe-area-inset-top));
+      top:calc(env(safe-area-inset-top, 0px) + 24px);
       right:max(12px, env(safe-area-inset-right));
       z-index:3;
       width:48px;
@@ -6023,12 +6023,12 @@
     aria-hidden="true"
     role="dialog"
     aria-modal="true"
-    aria-label="מה שבלב"
+    aria-label="דף פנימי באתר"
   >
     <iframe
       id="internalPageFrame"
       class="internal-page-frame"
-      title="מה שבלב"
+      title="דף פנימי באתר"
       allow="microphone; autoplay; clipboard-write"
     ></iframe>
 
@@ -9369,7 +9369,37 @@ if (sodGrapesVideo) {
   const overlay = document.getElementById("internalPageOverlay");
   const frame = document.getElementById("internalPageFrame");
   const closeButton = document.getElementById("internalPageClose");
-  const heartPage = "heart.html";
+
+  const internalPages = {
+    heartLink: {
+      src:"heart.html",
+      title:"מה שבלב"
+    },
+    maShebalevLive: {
+      src:"heart.html",
+      title:"מה שבלב"
+    },
+    tikunLink: {
+      src:"personal-message.html",
+      title:"האור שבי"
+    },
+    haorShebiLive: {
+      src:"personal-message.html",
+      title:"האור שבי"
+    },
+    namesLink: {
+      src:"names-intro.html",
+      title:"שמות"
+    },
+    drorNamesLink: {
+      src:"names-intro.html",
+      title:"שמות"
+    },
+    lionGuideLink: {
+      src:"personal-strength.html",
+      title:"חיזוק אישי"
+    }
+  };
 
   if(!overlay || !frame || !closeButton) return;
 
@@ -9392,13 +9422,19 @@ if (sodGrapesVideo) {
     document.body.classList.remove("internal-page-open");
   }
 
-  function openHeartPage(event){
+  function openInternalPage(event){
     event.preventDefault();
     event.stopPropagation();
     event.stopImmediatePropagation();
 
+    const page = internalPages[event.currentTarget.id];
+
+    if(!page) return;
+
     stopHomeMedia();
-    frame.src = heartPage;
+    frame.title = page.title;
+    overlay.setAttribute("aria-label", page.title);
+    frame.src = page.src;
     overlay.classList.add("is-open");
     overlay.setAttribute("aria-hidden", "false");
     document.body.classList.add("internal-page-open");
@@ -9410,12 +9446,12 @@ if (sodGrapesVideo) {
     }
   }
 
-  ["heartLink", "maShebalevLive"].forEach(function(id){
+  Object.keys(internalPages).forEach(function(id){
     const link = document.getElementById(id);
 
     if(link){
       /* שלב הלכידה מבטל גם את מנגנון המעבר הישן של האייקון. */
-      link.addEventListener("click", openHeartPage, true);
+      link.addEventListener("click", openInternalPage, true);
     }
   });
 
