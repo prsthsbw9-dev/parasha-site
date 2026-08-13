@@ -8965,6 +8965,45 @@ if (sodGrapesVideo) {
   let transitionBusy = false;
   let transitionFallbackTimer = null;
 
+  window.resetPardesIconTransition = function(){
+    clearTimeout(transitionFallbackTimer);
+    transitionBusy = false;
+
+    if(transitionVideo){
+      transitionVideo.pause();
+      transitionVideo.onended = null;
+      transitionVideo.onerror = null;
+    }
+
+    if(overlay){
+      overlay.classList.remove("is-active", "is-video-ready");
+      overlay.setAttribute("aria-hidden", "true");
+    }
+
+    ["birdFlightMobile", "birdFlightDesktop"].forEach(function(id){
+      const birdVideo = document.getElementById(id);
+
+      if(birdVideo){
+        birdVideo.pause();
+        birdVideo.classList.remove("is-playing", "is-tiktok-preparing");
+      }
+    });
+
+    if(birdLink){
+      const birdNamesLabel = document.querySelector(".dror-names-label");
+
+      if(birdNamesLabel){
+        birdNamesLabel.removeAttribute("style");
+
+        if(birdNamesLabel.parentElement !== birdLink){
+          birdLink.appendChild(birdNamesLabel);
+        }
+      }
+    }
+
+    document.body.classList.remove("bird-transition-active");
+  };
+
   /* טעינה מוקדמת של שתי תמונות המעבר */
   [
     "transition-poster-mobile.jpg",
@@ -9013,6 +9052,23 @@ if (sodGrapesVideo) {
 
     const goToDestination = function(){
       clearTimeout(transitionFallbackTimer);
+
+      if(
+        destination === "names-intro.html" &&
+        typeof window.openPardesInternalPageById === "function"
+      ){
+        window.openPardesInternalPageById("drorNamesLink");
+        return;
+      }
+
+      if(
+        destination === "personal-strength.html" &&
+        typeof window.openPardesInternalPageById === "function"
+      ){
+        window.openPardesInternalPageById("lionGuideLink");
+        return;
+      }
+
       window.location.href = destination;
     };
 
@@ -9267,7 +9323,11 @@ if (sodGrapesVideo) {
           birdNavigationFinished = true;
           clearTimeout(birdFallbackTimer);
 
-          window.location.href = "names-intro.html";
+          if(typeof window.openPardesInternalPageById === "function"){
+            window.openPardesInternalPageById("drorNamesLink");
+          }else{
+            window.location.href = "names-intro.html";
+          }
         }
 
         selectedBirdFlight.onended = finishBirdTransition;
@@ -9343,18 +9403,30 @@ if (sodGrapesVideo) {
       lionRoarVideo.currentTime = 0;
   
       lionRoarVideo.onended = function(){
-        window.location.href = "personal-strength.html";
+        if(typeof window.openPardesInternalPageById === "function"){
+          window.openPardesInternalPageById("lionGuideLink");
+        }else{
+          window.location.href = "personal-strength.html";
+        }
       };
   
       lionRoarVideo.onerror = function(){
-        window.location.href = "personal-strength.html";
+        if(typeof window.openPardesInternalPageById === "function"){
+          window.openPardesInternalPageById("lionGuideLink");
+        }else{
+          window.location.href = "personal-strength.html";
+        }
       };
   
       const playPromise = lionRoarVideo.play();
   
       if(playPromise && typeof playPromise.catch === "function"){
         playPromise.catch(function(){
-          window.location.href = "personal-strength.html";
+          if(typeof window.openPardesInternalPageById === "function"){
+            window.openPardesInternalPageById("lionGuideLink");
+          }else{
+            window.location.href = "personal-strength.html";
+          }
         });
       }
     });
@@ -9422,14 +9494,14 @@ if (sodGrapesVideo) {
     document.body.classList.remove("internal-page-open");
   }
 
-  function openInternalPage(event){
-    event.preventDefault();
-    event.stopPropagation();
-    event.stopImmediatePropagation();
-
-    const page = internalPages[event.currentTarget.id];
+  function showInternalPageById(id){
+    const page = internalPages[id];
 
     if(!page) return;
+
+    if(typeof window.resetPardesIconTransition === "function"){
+      window.resetPardesIconTransition();
+    }
 
     stopHomeMedia();
     frame.title = page.title;
@@ -9446,7 +9518,20 @@ if (sodGrapesVideo) {
     }
   }
 
+  function openInternalPage(event){
+    event.preventDefault();
+    event.stopPropagation();
+    event.stopImmediatePropagation();
+
+    showInternalPageById(event.currentTarget.id);
+  }
+
+  window.openPardesInternalPageById = showInternalPageById;
+
   Object.keys(internalPages).forEach(function(id){
+    /* בציפור ובאריה נותנים קודם לסרטון המעבר להסתיים. */
+    if(id === "drorNamesLink" || id === "lionGuideLink") return;
+
     const link = document.getElementById(id);
 
     if(link){
