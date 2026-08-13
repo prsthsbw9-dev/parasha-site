@@ -878,45 +878,110 @@
         );
       }
 
-      if(backgroundVideo) {
+      if(backgroundVideo && backgroundSoundButton && backgroundSoundIcon) {
         backgroundVideo.muted = true;
         backgroundVideo.volume = 0.75;
-
-        backgroundSoundButton.addEventListener("click", function () {
-          const shouldPlaySound = backgroundVideo.muted;
-        
-          /* בהפעלת הקול הסרטון מתחיל מחדש */
-          if(shouldPlaySound) {
-            backgroundVideo.currentTime = 0;
-          }
-        
-          backgroundVideo.muted = !shouldPlaySound;
-          backgroundSoundButton.setAttribute(
-            "aria-pressed",
-            String(shouldPlaySound)
-          );
+      
+        function updateBackgroundSoundButton() {
+          const soundIsOff =
+            backgroundVideo.muted ||
+            backgroundVideo.volume === 0;
+      
+          backgroundSoundIcon.textContent =
+            soundIsOff ? "🔇" : "🔊";
+      
           backgroundSoundButton.setAttribute(
             "aria-label",
-            shouldPlaySound
-              ? "השתקת מוזיקת הרקע"
-              : "הפעלת מוזיקת הרקע"
+            soundIsOff
+              ? "הפעלת הקול"
+              : "השתקת הקול"
           );
+      
+          backgroundSoundButton.setAttribute(
+            "aria-pressed",
+            soundIsOff ? "false" : "true"
+          );
+      
           backgroundSoundButton.classList.toggle(
             "is-playing",
-            shouldPlaySound
+            !soundIsOff
           );
-          backgroundSoundIcon.textContent = shouldPlaySound ? "🔊" : "🔇";
-
-          if(shouldPlaySound && backgroundVideo.paused) {
-            const soundPlayPromise = backgroundVideo.play();
+        }
+      
+        async function toggleBackgroundSound() {
+          try {
             if(
-              soundPlayPromise &&
-              typeof soundPlayPromise.catch === "function"
+              backgroundVideo.muted ||
+              backgroundVideo.volume === 0
             ) {
-              soundPlayPromise.catch(function () {});
+              /*
+                כאשר מפעילים את הקול,
+                סרטון הציפור מתחיל מחדש
+              */
+              backgroundVideo.pause();
+              backgroundVideo.currentTime = 0;
+              backgroundVideo.muted = false;
+              backgroundVideo.volume = 0.75;
+      
+              await backgroundVideo.play();
+            } else {
+              /*
+                לחיצה נוספת רק משתיקה,
+                בלי להתחיל מחדש
+              */
+              backgroundVideo.muted = true;
+            }
+      
+            updateBackgroundSoundButton();
+          } catch(error) {
+            backgroundVideo.muted = true;
+            updateBackgroundSoundButton();
+          }
+        }
+      
+        backgroundSoundButton.addEventListener(
+          "click",
+          toggleBackgroundSound
+        );
+      
+        backgroundVideo.addEventListener(
+          "volumechange",
+          updateBackgroundSoundButton
+        );
+      
+        updateBackgroundSoundButton();
+      
+        const playPromise = backgroundVideo.play();
+      
+        if(
+          playPromise &&
+          typeof playPromise.catch === "function"
+        ) {
+          playPromise.catch(function () {
+            backgroundVideo.muted = true;
+            updateBackgroundSoundButton();
+          });
+        }
+      
+        document.addEventListener(
+          "visibilitychange",
+          function () {
+            if(
+              !document.hidden &&
+              backgroundVideo.paused
+            ) {
+              const resumePromise = backgroundVideo.play();
+      
+              if(
+                resumePromise &&
+                typeof resumePromise.catch === "function"
+              ) {
+                resumePromise.catch(function () {});
+              }
             }
           }
-        });
+        );
+      }
 
         const playPromise = backgroundVideo.play();
 
