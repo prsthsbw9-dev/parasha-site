@@ -119,34 +119,6 @@
       width: var(--content-width);
     }
 
-    /* הכפתור חלק מהעמוד ואינו מסתיר תוכן בזמן גלילה. */
-    .return-row {
-      display: flex;
-      justify-content: flex-start;
-      margin-bottom: clamp(12px, 3dvh, 24px);
-    }
-
-    .return-button {
-      min-height: 44px;
-      padding: 9px 15px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      border: 1px solid rgba(255,255,255,.34);
-      border-radius: 999px;
-      background: rgba(5,15,18,.78);
-      color: #fff;
-      text-decoration: none;
-      font-size: 15px;
-      font-weight: 800;
-      box-shadow: 0 7px 22px rgba(0,0,0,.30);
-      backdrop-filter: blur(9px);
-      -webkit-backdrop-filter: blur(9px);
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    .return-button:active,
     .action-button:active { transform: scale(.985); }
 
     .intro {
@@ -470,17 +442,6 @@
 
   <main class="page">
     <div class="content">
-      <div class="return-row">
-        <a
-          class="return-button"
-          href="index.html"
-          aria-label="חזרה לעץ הפרד״ס"
-        >
-          <span aria-hidden="true">←</span>
-          <span>חזרה לפרד״ס</span>
-        </a>
-      </div>
-
       <header class="intro">
 
         <h1>גם לך יש שם בלב</h1>
@@ -579,8 +540,6 @@
               id="termsLink"
               class="terms-link"
               href="names-terms.html"
-              target="_blank"
-              rel="noopener noreferrer"
             >תקנון שליחת השמות והבקשות</a>.
             אני מצהיר/ה שאני מוסמך/ת למסור את הפרטים והתמונה,
             ככל שתצורף.
