@@ -5056,6 +5056,19 @@
         overflow:hidden !important;
       }
 
+      /*
+        בנייד אין צורך בכותרת וב-X הפנימיים:
+        כפתור החזרה העגול בתחתית מחזיר לעץ.
+        הסתרת השורה מפנה מקום ומעלה את הסרטון למעלה.
+      */
+      body.pardes-video-open .pardes-video-head{
+        display:none !important;
+      }
+
+      body.pardes-video-open .pardes-video-body{
+        min-height:100dvh !important;
+      }
+
       body.pardes-video-open .pardes-fullscreen-actions{
         position:fixed;
         left:50%;
