@@ -884,7 +884,12 @@
 
         backgroundSoundButton.addEventListener("click", function () {
           const shouldPlaySound = backgroundVideo.muted;
-
+        
+          /* בהפעלת הקול הסרטון מתחיל מחדש */
+          if(shouldPlaySound) {
+            backgroundVideo.currentTime = 0;
+          }
+        
           backgroundVideo.muted = !shouldPlaySound;
           backgroundSoundButton.setAttribute(
             "aria-pressed",
