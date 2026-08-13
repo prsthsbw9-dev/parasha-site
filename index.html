@@ -3497,12 +3497,13 @@
       pointer-events:none !important;
     }
 
-     /* אפקט כניסה משותף לפירות פרד״ס */
+   /* אפקט כניסה משותף לפירות פרד״ס */
     .tree-pshat-live,
     .tree-remez-live,
     .tree-drash-live,
     .tree-sod-live,
-    .main-aliyah-live{
+    .main-aliyah-live,
+    .main-aliyah-orb{
       transition:
         transform .9s cubic-bezier(.22,.8,.18,1),
         filter .7s ease,
@@ -3522,12 +3523,13 @@
     }
 
     /* העלייה הראשית מתרחבת על כל המסך */
-    .main-aliyah-live.pardes-fruit-enter{
+    .main-aliyah-live.pardes-fruit-enter,
+    .main-aliyah-orb.pardes-fruit-enter{
       transform:translate(-50%, -50%) scale(24) !important;
       filter:brightness(.48) saturate(1.45);
       z-index:99999 !important;
       pointer-events:none;
-    }    
+    }   
 
     /*
       בזמן אפקט ההתרחבות מאפשרים לאייקון לצאת
@@ -4970,6 +4972,75 @@
           calc(env(safe-area-inset-bottom, 0px) + 67px);
       }
     }  
+
+     /* חלון סרטוני פרד״ס במסך מלא בנייד */
+    @media (max-width:900px){
+      body.pardes-video-open{
+        overflow:hidden !important;
+      }
+    
+      .pardes-video-panel{
+        z-index:100000;
+        padding:0 !important;
+        align-items:stretch !important;
+        justify-content:stretch !important;
+        background:#05090e;
+        backdrop-filter:none;
+        -webkit-backdrop-filter:none;
+      }
+    
+      .pardes-video-card{
+        width:100vw !important;
+        height:100dvh !important;
+        max-width:none !important;
+        max-height:none !important;
+        border:0 !important;
+        border-radius:0 !important;
+        box-shadow:none !important;
+        overflow:auto !important;
+      }
+    
+      .pardes-video-head{
+        min-height:58px;
+        padding:
+          max(10px, env(safe-area-inset-top))
+          14px
+          8px !important;
+      }
+    
+      .pardes-video-body{
+        min-height:calc(100dvh - 58px);
+        padding:
+          0
+          10px
+          max(12px, env(safe-area-inset-bottom)) !important;
+      }
+    
+      .pardes-video-empty.is-inapp-youtube{
+        width:min(
+          calc(100vw - 20px),
+          calc((100dvh - 165px) * 9 / 16)
+        ) !important;
+        max-height:calc(100dvh - 165px) !important;
+        aspect-ratio:9 / 16 !important;
+        border-radius:12px !important;
+      }
+    
+      iframe.pardes-inapp-youtube-link{
+        width:100%;
+        height:100%;
+        border:0;
+      }
+    
+      .pardes-youtube-open-btn{
+        position:static !important;
+        display:block;
+        width:min(100%, 520px) !important;
+        margin:10px auto 0 !important;
+        transform:none !important;
+        border-radius:10px !important;
+      }
+    }   
     
   </style>
 </head>
@@ -7023,7 +7094,12 @@ function normalizeParashaName(value){
           const element = document.getElementById(elementId);
           if(!element) return;
 
-          element.setAttribute("href", destination || "#");
+          /*
+            הסרטונים נפתחים בחלון מלא בתוך העמוד הראשי.
+            הכתובת לעמוד הנגן נשמרת רק לצורך בדיקת קיום הסרטון,
+            אך אינה משמשת עוד לניווט.
+          */
+          element.setAttribute("href", "#");
           element.toggleAttribute("aria-disabled", !destination);
         });
       });
@@ -7032,32 +7108,6 @@ function normalizeParashaName(value){
     function openLayerWithFruitEffect(element, layer){
       if(!element || pardesFruitTransitionRunning) return;
     
-      const isMobileInAppBrowser =
-        document.body.classList.contains("in-app-browser") &&
-        document.body.classList.contains("device-phone");
-    
-      /*
-        בכל דפדפן פנימי בנייד מבצעים את המעבר מיד מתוך הלחיצה.
-        כך נמנעת פתיחה בדפדפן חיצוני במכשירים שמגבילים
-        הפניות JavaScript שמתרחשות לאחר השהיה.
-      */
-      if(isMobileInAppBrowser){
-        const homeIntroAudio =
-          document.getElementById("pardesHomeIntroAudio");
-    
-        if(homeIntroAudio){
-          homeIntroAudio.pause();
-          homeIntroAudio.muted = true;
-        }
-    
-        openLayer(layer);
-        return;
-      }
-    
-      /*
-        בדפדפנים רגילים ובמחשב משאירים
-        את אנימציית הפרי ואת ההתנהגות הקיימת.
-      */
       pardesFruitTransitionRunning = true;
     
       document.body.classList.add("entering-pardes-fruit");
@@ -7071,11 +7121,20 @@ function normalizeParashaName(value){
         homeIntroAudio.muted = true;
       }
     
-      setTimeout(() => {
+      /*
+        לקראת סיום אפקט ההגדלה פותחים את הסרטון
+        בחלון מלא בתוך אותו עמוד.
+      */
+      window.setTimeout(function(){
         openLayer(layer);
     
-        document.body.classList.remove("entering-pardes-fruit");
-        element.classList.remove("pardes-fruit-enter");
+        document.body.classList.remove(
+          "entering-pardes-fruit"
+        );
+    
+        element.classList.remove(
+          "pardes-fruit-enter"
+        );
     
         pardesFruitTransitionRunning = false;
       }, 850);
@@ -7148,65 +7207,6 @@ function normalizeParashaName(value){
       const shouldOpenAsYouTubeShort =
         !!youtubeId &&
         isYouTubeShortVariant(directYouTubeVideo);
-
-       /*
-        בנייד כל העליות נפתחות ישירות בעמוד הנגן החדש.
-        לאורך משתמשים בגרסת הנייד, ולרוחב בגרסת הרוחב.
-      */
-      if(youtubeId){
-        const storedMobileVideo =
-          getStoredVideoVariant(item, "mobile");
-      
-        const storedWideVideo =
-          getStoredVideoVariant(item, "wide");
-      
-        const mobileYouTubeVideo =
-          isYouTubeVideo(storedMobileVideo)
-            ? storedMobileVideo
-            : directYouTubeVideo;
-      
-        const wideYouTubeVideo =
-          isYouTubeVideo(storedWideVideo)
-            ? storedWideVideo
-            : directYouTubeVideo;
-      
-        const mobileYoutubeId =
-          getYouTubeVideoId(mobileYouTubeVideo) ||
-          youtubeId;
-      
-        const wideYoutubeId =
-          getYouTubeVideoId(wideYouTubeVideo) ||
-          youtubeId;
-      
-        const mobileVideoType =
-          isYouTubeShortVariant(mobileYouTubeVideo)
-            ? "short"
-            : "regular";
-      
-        const wideVideoType =
-          isYouTubeShortVariant(wideYouTubeVideo)
-            ? "short"
-            : "regular";
-
-        function getSourceChannel(){
-          const body = document.body;
-
-          if(body.classList.contains("app-tiktok")) return "tiktok";
-          if(body.classList.contains("app-instagram")) return "instagram";
-          if(body.classList.contains("app-facebook")) return "facebook";
-          if(body.classList.contains("app-whatsapp")) return "whatsapp";
-          if(body.classList.contains("app-youtube")) return "youtube";
-
-          const sourceText = `${document.referrer || ""} ${navigator.userAgent || ""}`;
-
-          if(/tiktok|musical_ly|bytedance/i.test(sourceText)) return "tiktok";
-          if(/instagram/i.test(sourceText)) return "instagram";
-          if(/facebook|fbav|fban|fb_iab|messenger/i.test(sourceText)) return "facebook";
-          if(/whatsapp/i.test(sourceText)) return "whatsapp";
-          if(/youtube|youtu\.be/i.test(sourceText)) return "youtube";
-
-          return "";
-        }
 
         const sourceChannel = getSourceChannel();
       
@@ -7383,19 +7383,23 @@ function normalizeParashaName(value){
                
         empty.style.display = "block";
 
-        if(isMobileViewer()){
-          /* בנייד זו תמונה בלבד: אין נגן, אין Play והתמונה אינה לחיצה. */
-          empty.innerHTML = `
-            <div class="pardes-inapp-youtube-link" aria-hidden="true">
-              <img
-                class="pardes-inapp-youtube-image"
-                src="https://i.ytimg.com/vi/${youtubeId}/maxresdefault.jpg"
-                onerror="this.onerror=null;this.src='https://i.ytimg.com/vi/${youtubeId}/hqdefault.jpg';"
-                alt=""
-              >
-            </div>
-          `;
-        }else{
+          if(isMobileViewer()){
+            /*
+              בנייד טוענים את הסרטון בתוך חלון האתר עצמו.
+              אין מעבר לעמוד HTML נוסף.
+            */
+            empty.innerHTML = `
+              <iframe
+                class="pardes-inapp-youtube-link"
+                src="https://www.youtube.com/embed/${youtubeId}?playsinline=1&rel=0&modestbranding=1"
+                title="${layerName}"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowfullscreen
+                referrerpolicy="strict-origin-when-cross-origin"
+              ></iframe>
+            `;
+          }else{
+            
           /* במחשב נשמרת ההתנהגות הקיימת ללא שינוי. */
           empty.innerHTML = `
             <a
@@ -7635,99 +7639,72 @@ function normalizeParashaName(value){
       }
     }
 
-
-    document.getElementById("mainAliyahOrb")?.addEventListener("click", (event) => {
-      if(
-        usesDirectMobileVideoLinks() &&
-        event.currentTarget.getAttribute("href") !== "#"
-      ){
-        return;
-      }
-
+  document
+    .getElementById("mainAliyahOrb")
+    ?.addEventListener("click", function(event){
       event.preventDefault();
-      openLayer("main");
-    });
-
-    document.getElementById("mainAliyahLive")?.addEventListener("click", (event) => {
-      if(
-        usesDirectMobileVideoLinks() &&
-        event.currentTarget.getAttribute("href") !== "#"
-      ){
-        return;
-      }
-
-      event.preventDefault();
-    
+  
       openLayerWithFruitEffect(
         event.currentTarget,
         "main"
       );
     });
-
-    document.getElementById("pshatLink")?.addEventListener("click", (event) => {
-      if(
-        usesDirectMobileVideoLinks() &&
-        event.currentTarget.getAttribute("href") !== "#"
-      ){
-        return;
-      }
-
+  
+  document
+    .getElementById("mainAliyahLive")
+    ?.addEventListener("click", function(event){
       event.preventDefault();
-    
+  
+      openLayerWithFruitEffect(
+        event.currentTarget,
+        "main"
+      );
+    });
+  
+  document
+    .getElementById("pshatLink")
+    ?.addEventListener("click", function(event){
+      event.preventDefault();
+  
       openLayerWithFruitEffect(
         event.currentTarget,
         "pshat"
       );
     });
-    
-    document.getElementById("remezLink")?.addEventListener("click", (event) => {
-      if(
-        usesDirectMobileVideoLinks() &&
-        event.currentTarget.getAttribute("href") !== "#"
-      ){
-        return;
-      }
-
+  
+  document
+    .getElementById("remezLink")
+    ?.addEventListener("click", function(event){
       event.preventDefault();
-    
+  
       openLayerWithFruitEffect(
         event.currentTarget,
         "remez"
       );
     });
-
-    document.getElementById("drashLink")?.addEventListener("click", (event) => {
-      if(
-        usesDirectMobileVideoLinks() &&
-        event.currentTarget.getAttribute("href") !== "#"
-      ){
-        return;
-      }
-
+  
+  document
+    .getElementById("drashLink")
+    ?.addEventListener("click", function(event){
       event.preventDefault();
-    
+  
       openLayerWithFruitEffect(
         event.currentTarget,
         "drash"
       );
     });
-
-    document.getElementById("sodLink")?.addEventListener("click", (event) => {
-      if(
-        usesDirectMobileVideoLinks() &&
-        event.currentTarget.getAttribute("href") !== "#"
-      ){
-        return;
-      }
-
+  
+  document
+    .getElementById("sodLink")
+    ?.addEventListener("click", function(event){
       event.preventDefault();
-    
+  
       openLayerWithFruitEffect(
         event.currentTarget,
         "sod"
       );
     });
-
+    
     document.getElementById("pardesSearchForm")?.addEventListener("submit", async (event) => {
       event.preventDefault();
 
