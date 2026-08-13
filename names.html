@@ -982,22 +982,6 @@
           }
         );
       }
-
-        const playPromise = backgroundVideo.play();
-
-        if(playPromise && typeof playPromise.catch === "function") {
-          playPromise.catch(function () {});
-        }
-
-        document.addEventListener("visibilitychange", function () {
-          if(!document.hidden && backgroundVideo.paused) {
-            const resumePromise = backgroundVideo.play();
-            if(resumePromise && typeof resumePromise.catch === "function") {
-              resumePromise.catch(function () {});
-            }
-          }
-        });
-      }
     })();
   </script>
 </body>
