@@ -5192,6 +5192,56 @@
         padding-bottom:calc(132px + env(safe-area-inset-bottom)) !important;
       }
     }
+    /* חלון פנימי לדפי האתר — בדיקה ראשונה: מה שבלב */
+    .internal-page-overlay{
+      position:fixed;
+      inset:0;
+      z-index:200000;
+      display:none;
+      background:#05090d;
+    }
+
+    .internal-page-overlay.is-open{
+      display:block;
+    }
+
+    .internal-page-frame{
+      width:100%;
+      height:100%;
+      display:block;
+      border:0;
+      background:#05090d;
+    }
+
+    .internal-page-close{
+      position:absolute;
+      top:max(12px, env(safe-area-inset-top));
+      right:max(12px, env(safe-area-inset-right));
+      z-index:3;
+      width:48px;
+      height:48px;
+      padding:0;
+      border:1.5px solid rgba(255,255,255,.72);
+      border-radius:50%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:#fff;
+      background:rgba(5,12,18,.76);
+      box-shadow:0 6px 20px rgba(0,0,0,.42);
+      font-family:inherit;
+      font-size:25px;
+      font-weight:900;
+      line-height:1;
+      cursor:pointer;
+      backdrop-filter:blur(8px);
+      -webkit-backdrop-filter:blur(8px);
+      -webkit-tap-highlight-color:transparent;
+    }
+
+    body.internal-page-open{
+      overflow:hidden !important;
+    }
   </style>
 </head>
   
@@ -5966,6 +6016,32 @@
       <p class="spiritual-disclaimer">המדור נועד לחיזוק, הכוונה ולימוד בלבד. במצבי משבר זוגי משמעותי מומלץ לפנות לרב מוסמך או לאיש מקצוע מתאים.</p>
     </div>
   </section>
+
+  <div
+    id="internalPageOverlay"
+    class="internal-page-overlay"
+    aria-hidden="true"
+    role="dialog"
+    aria-modal="true"
+    aria-label="מה שבלב"
+  >
+    <iframe
+      id="internalPageFrame"
+      class="internal-page-frame"
+      title="מה שבלב"
+      allow="microphone; autoplay; clipboard-write"
+    ></iframe>
+
+    <button
+      id="internalPageClose"
+      class="internal-page-close"
+      type="button"
+      aria-label="חזרה לעץ הפרד״ס"
+      title="חזרה לעץ הפרד״ס"
+    >
+      <span aria-hidden="true">➜</span>
+    </button>
+  </div>
 
   <div id="pardesVideoPanel" class="pardes-video-panel" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="pardesVideoTitle">
     <div class="pardes-video-card" role="dialog" aria-modal="true" aria-labelledby="pardesVideoTitle">
@@ -9283,6 +9359,113 @@ if (sodGrapesVideo) {
       }
     });
   }
+})();
+</script>
+
+<script>
+(function(){
+  "use strict";
+
+  const overlay = document.getElementById("internalPageOverlay");
+  const frame = document.getElementById("internalPageFrame");
+  const closeButton = document.getElementById("internalPageClose");
+  const heartPage = "heart.html";
+
+  if(!overlay || !frame || !closeButton) return;
+
+  function stopHomeMedia(){
+    const introAudio = document.getElementById("pardesHomeIntroAudio");
+
+    if(introAudio){
+      introAudio.pause();
+      introAudio.muted = true;
+    }
+  }
+
+  function closeInternalPage(){
+    if(!overlay.classList.contains("is-open")) return;
+
+    /* החלפת המקור עוצרת מיד גם וידאו או שמע שפועלים בדף הפנימי. */
+    frame.src = "about:blank";
+    overlay.classList.remove("is-open");
+    overlay.setAttribute("aria-hidden", "true");
+    document.body.classList.remove("internal-page-open");
+  }
+
+  function openHeartPage(event){
+    event.preventDefault();
+    event.stopPropagation();
+    event.stopImmediatePropagation();
+
+    stopHomeMedia();
+    frame.src = heartPage;
+    overlay.classList.add("is-open");
+    overlay.setAttribute("aria-hidden", "false");
+    document.body.classList.add("internal-page-open");
+
+    try{
+      closeButton.focus({ preventScroll:true });
+    }catch(error){
+      closeButton.focus();
+    }
+  }
+
+  ["heartLink", "maShebalevLive"].forEach(function(id){
+    const link = document.getElementById(id);
+
+    if(link){
+      /* שלב הלכידה מבטל גם את מנגנון המעבר הישן של האייקון. */
+      link.addEventListener("click", openHeartPage, true);
+    }
+  });
+
+  closeButton.addEventListener("click", closeInternalPage);
+
+  frame.addEventListener("load", function(){
+    if(!overlay.classList.contains("is-open")) return;
+
+    try{
+      const frameUrl = new URL(frame.contentWindow.location.href);
+      const fileName = frameUrl.pathname.split("/").pop();
+
+      /* אם הדף הפנימי ביקש לחזור לעץ, סוגרים את החלון במקום
+         להציג את העמוד הראשי פעם נוספת בתוך ה-iframe. */
+      if(fileName === "index.html" || fileName === ""){
+        closeInternalPage();
+        return;
+      }
+
+      frame.contentDocument.addEventListener("click", function(event){
+        const link = event.target.closest && event.target.closest("a[href]");
+
+        if(!link) return;
+
+        const href = (link.getAttribute("href") || "").trim();
+
+        if(
+          href === "index.html" ||
+          href.startsWith("index.html?") ||
+          href === "./" ||
+          href === "/"
+        ){
+          event.preventDefault();
+          event.stopPropagation();
+          event.stopImmediatePropagation();
+          closeInternalPage();
+        }
+      }, true);
+    }catch(error){
+      /* אותו דומיין מאפשר את הבדיקה; במקרה חריג הכפתור החיצוני נשאר פעיל. */
+    }
+  });
+
+  document.addEventListener("keydown", function(event){
+    if(event.key === "Escape"){
+      closeInternalPage();
+    }
+  });
+
+  window.addEventListener("pagehide", closeInternalPage);
 })();
 </script>
 
