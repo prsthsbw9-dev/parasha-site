@@ -548,13 +548,17 @@
 
       async function toggleSound() {
         try {
-          video.muted = !video.muted;
-          video.volume = 1;
-
-          if (video.paused) {
+          if (video.muted || video.volume === 0) {
+            /* בהפעלת הקול מתחילים מחדש כדי שלא יפספסו מילים */
+            video.currentTime = 0;
+            video.muted = false;
+            video.volume = 1;
             await video.play();
+          } else {
+            /* לחיצה נוספת רק משתיקה, בלי להתחיל מחדש */
+            video.muted = true;
           }
-
+      
           updateSoundButton();
         } catch (error) {
           video.muted = true;
