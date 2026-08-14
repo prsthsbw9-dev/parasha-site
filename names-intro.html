@@ -399,8 +399,39 @@
         soundButton.classList.toggle("is-playing",shouldPlaySound);
         soundIcon.textContent = shouldPlaySound ? "🔊" : "🔇";
 
-        if(shouldPlaySound && video.paused && !finished){
-          video.play().catch(function(){});
+        if(shouldPlaySound){
+          clearTimeout(safetyTimer);
+          finished = false;
+          stage.classList.remove("is-finished");
+          video.pause();
+
+          function restartVideoWithSound(){
+            try{
+              video.currentTime = 0;
+            }catch(error){}
+
+            const restartPromise = video.play();
+
+            if(
+              restartPromise &&
+              typeof restartPromise.catch === "function"
+            ){
+              restartPromise.catch(function(){});
+            }
+
+            safetyTimer = window.setTimeout(showNamesButton,18000);
+          }
+
+          if(video.readyState >= 1){
+            restartVideoWithSound();
+          }else{
+            video.addEventListener(
+              "loadedmetadata",
+              restartVideoWithSound,
+              { once:true }
+            );
+            video.load();
+          }
         }
       });
 
