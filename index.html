@@ -5213,10 +5213,10 @@
       background:#05090d;
     }
 
-    .internal-page-close{
+    .internal-page-close,
+    .internal-page-skip{
       position:absolute;
       top:calc(env(safe-area-inset-top, 0px) + 24px);
-      right:max(12px, env(safe-area-inset-right));
       z-index:3;
       width:48px;
       height:48px;
@@ -5237,6 +5237,19 @@
       backdrop-filter:blur(8px);
       -webkit-backdrop-filter:blur(8px);
       -webkit-tap-highlight-color:transparent;
+    }
+
+    .internal-page-close{
+      right:max(12px, env(safe-area-inset-right));
+    }
+
+    .internal-page-skip{
+      right:calc(env(safe-area-inset-right, 0px) + 72px);
+      display:none;
+    }
+
+    .internal-page-overlay.show-names-skip .internal-page-skip{
+      display:flex;
     }
 
     body.internal-page-open{
@@ -6040,6 +6053,16 @@
       title="חזרה לעץ הפרד״ס"
     >
       <span aria-hidden="true">➜</span>
+    </button>
+
+    <button
+      id="internalPageSkip"
+      class="internal-page-skip"
+      type="button"
+      aria-label="דילוג על הסרטון ומעבר לדף השמות"
+      title="דילוג על הסרטון"
+    >
+      <span aria-hidden="true">↑</span>
     </button>
   </div>
 
@@ -9441,6 +9464,7 @@ if (sodGrapesVideo) {
   const overlay = document.getElementById("internalPageOverlay");
   const frame = document.getElementById("internalPageFrame");
   const closeButton = document.getElementById("internalPageClose");
+  const skipButton = document.getElementById("internalPageSkip");
 
   const internalPages = {
     heartLink: {
@@ -9473,7 +9497,23 @@ if (sodGrapesVideo) {
     }
   };
 
-  if(!overlay || !frame || !closeButton) return;
+  let nestedReturnPage = null;
+  let historyGuardActive = false;
+
+  if(!overlay || !frame || !closeButton || !skipButton) return;
+
+  function armMobileBackGuard(){
+    if(historyGuardActive) return;
+
+    try{
+      window.history.pushState(
+        { pardesInternalOverlay:true },
+        "",
+        window.location.href
+      );
+      historyGuardActive = true;
+    }catch(error){}
+  }
 
   function stopHomeMedia(){
     const introAudio = document.getElementById("pardesHomeIntroAudio");
@@ -9484,14 +9524,27 @@ if (sodGrapesVideo) {
     }
   }
 
-  function closeInternalPage(){
+  function closeInternalPage(fromBrowserBack){
     if(!overlay.classList.contains("is-open")) return;
+
+    nestedReturnPage = null;
 
     /* החלפת המקור עוצרת מיד גם וידאו או שמע שפועלים בדף הפנימי. */
     frame.src = "about:blank";
     overlay.classList.remove("is-open");
+    overlay.classList.remove("show-names-skip");
     overlay.setAttribute("aria-hidden", "true");
     document.body.classList.remove("internal-page-open");
+
+    if(historyGuardActive){
+      historyGuardActive = false;
+
+      if(!fromBrowserBack){
+        try{
+          window.history.back();
+        }catch(error){}
+      }
+    }
   }
 
   function showInternalPageById(id){
@@ -9504,12 +9557,18 @@ if (sodGrapesVideo) {
     }
 
     stopHomeMedia();
+    nestedReturnPage = null;
+    overlay.classList.toggle(
+      "show-names-skip",
+      id === "namesLink" || id === "drorNamesLink"
+    );
     frame.title = page.title;
     overlay.setAttribute("aria-label", page.title);
     frame.src = page.src;
     overlay.classList.add("is-open");
     overlay.setAttribute("aria-hidden", "false");
     document.body.classList.add("internal-page-open");
+    armMobileBackGuard();
 
     try{
       closeButton.focus({ preventScroll:true });
@@ -9528,6 +9587,23 @@ if (sodGrapesVideo) {
 
   window.openPardesInternalPageById = showInternalPageById;
 
+  function handleInternalBack(){
+    if(nestedReturnPage){
+      const returnPage = nestedReturnPage;
+      nestedReturnPage = null;
+      frame.title = "שמות";
+      overlay.setAttribute("aria-label", "שמות");
+      try{
+        frame.contentWindow.location.replace(returnPage);
+      }catch(error){
+        frame.src = returnPage;
+      }
+      return;
+    }
+
+    closeInternalPage();
+  }
+
   Object.keys(internalPages).forEach(function(id){
     /* בציפור ובאריה נותנים קודם לסרטון המעבר להסתיים. */
     if(id === "drorNamesLink" || id === "lionGuideLink") return;
@@ -9540,7 +9616,20 @@ if (sodGrapesVideo) {
     }
   });
 
-  closeButton.addEventListener("click", closeInternalPage);
+  closeButton.addEventListener("click", handleInternalBack);
+
+  skipButton.addEventListener("click", function(){
+    nestedReturnPage = null;
+    overlay.classList.remove("show-names-skip");
+    frame.title = "שמות";
+    overlay.setAttribute("aria-label", "שמות");
+
+    try{
+      frame.contentWindow.location.replace("names.html");
+    }catch(error){
+      frame.src = "names.html";
+    }
+  });
 
   frame.addEventListener("load", function(){
     if(!overlay.classList.contains("is-open")) return;
@@ -9548,6 +9637,11 @@ if (sodGrapesVideo) {
     try{
       const frameUrl = new URL(frame.contentWindow.location.href);
       const fileName = frameUrl.pathname.split("/").pop();
+
+      overlay.classList.toggle(
+        "show-names-skip",
+        fileName === "names-intro.html"
+      );
 
       /* אם הדף הפנימי ביקש לחזור לעץ, סוגרים את החלון במקום
          להציג את העמוד הראשי פעם נוספת בתוך ה-iframe. */
@@ -9562,6 +9656,26 @@ if (sodGrapesVideo) {
         if(!link) return;
 
         const href = (link.getAttribute("href") || "").trim();
+
+        if(
+          fileName === "names.html" &&
+          (href === "names-terms.html" || href.startsWith("names-terms.html?"))
+        ){
+          event.preventDefault();
+          nestedReturnPage = "names.html";
+          frame.title = "תקנון שליחת שמות ובקשות";
+          overlay.setAttribute("aria-label", "תקנון שליחת שמות ובקשות");
+          /* מאזין הלחיצה של דף השמות עדיין שומר את הטיוטה;
+             לאחר מכן מחליפים את הדף ללא הוספת שלב להיסטוריה. */
+          window.setTimeout(function(){
+            try{
+              frame.contentWindow.location.replace("names-terms.html");
+            }catch(error){
+              frame.src = "names-terms.html";
+            }
+          }, 0);
+          return;
+        }
 
         if(
           href === "index.html" ||
@@ -9582,11 +9696,18 @@ if (sodGrapesVideo) {
 
   document.addEventListener("keydown", function(event){
     if(event.key === "Escape"){
-      closeInternalPage();
+      handleInternalBack();
     }
   });
 
   window.addEventListener("pagehide", closeInternalPage);
+
+  window.addEventListener("popstate", function(){
+    if(!overlay.classList.contains("is-open")) return;
+
+    historyGuardActive = false;
+    closeInternalPage(true);
+  });
 })();
 </script>
 
