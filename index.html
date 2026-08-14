@@ -5239,8 +5239,13 @@
       -webkit-tap-highlight-color:transparent;
     }
 
-    .internal-page-close{
-      right:max(12px, env(safe-area-inset-right));
+    .internal-page-close {
+      right: max(12px, env(safe-area-inset-right));
+    }
+    
+    /* הרמת חץ החזרה בדף חיזוק אישי בלבד */
+    .internal-page-overlay.show-strength-page .internal-page-close {
+      top: calc(env(safe-area-inset-top, 0px) + 8px);
     }
 
     .internal-page-skip{
@@ -9549,6 +9554,7 @@ if (sodGrapesVideo) {
     overlay.classList.remove("is-names-content");
     overlay.setAttribute("aria-hidden", "true");
     document.body.classList.remove("internal-page-open");
+    overlay.classList.remove("show-strength-page");
 
     if(historyGuardActive){
       historyGuardActive = false;
@@ -9646,9 +9652,12 @@ if (sodGrapesVideo) {
         ){
           frame.contentWindow.skipStrengthIntro();
           overlay.classList.remove("show-names-skip");
+    
+          /* לאחר דילוג על הסרטון מעלים את חץ החזרה */
+          overlay.classList.add("show-strength-page");
         }
       }catch(error){}
-
+    
       return;
     }
 
@@ -9757,10 +9766,13 @@ if (sodGrapesVideo) {
       event.data.type === "pardes-strength-intro-finished"
     ){
       overlay.classList.remove("show-names-skip");
+  
+      /* לאחר סיום סרטון האריה – מעלים מעט את חץ החזרה */
+      overlay.classList.add("show-strength-page");
     }
   });
-})();
-</script>
+  })();
+  </script>
 
 </body>
 </html>
