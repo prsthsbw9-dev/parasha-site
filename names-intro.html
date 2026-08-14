@@ -369,7 +369,9 @@
       }
 
       cta.addEventListener("click",function(){
-        window.location.href = NAMES_PAGE;
+        /* החלפה ולא הוספת דף להיסטוריה: כפתור החזרה של הנייד
+           לא יחזיר את הצופה לסרטון לאחר שכבר עבר לדף השמות. */
+        window.location.replace(NAMES_PAGE);
       });
 
       video.addEventListener("ended",showNamesButton);
@@ -383,59 +385,22 @@
       video.muted = true;
       video.volume = 0.75;
 
-      soundButton.addEventListener("click",async function(){
-        const shouldPlaySound =
-          video.muted || video.volume === 0;
-      
-        if(shouldPlaySound){
-          /*
-            בהפעלת הקול:
-            סרטון הציפור מתחיל מחדש מההתחלה
-          */
-          clearTimeout(safetyTimer);
-      
-          finished = false;
-          stage.classList.remove("is-finished");
-      
-          video.pause();
-          video.currentTime = 0;
-          video.muted = false;
-          video.volume = 0.75;
-      
-          soundButton.setAttribute("aria-pressed","true");
-          soundButton.setAttribute(
-            "aria-label",
-            "השתקת מוזיקת הרקע"
-          );
-          soundButton.classList.add("is-playing");
-          soundIcon.textContent = "🔊";
-      
-          try{
-            await video.play();
-          }catch(error){
-            video.muted = true;
-            soundButton.setAttribute("aria-pressed","false");
-            soundButton.setAttribute(
-              "aria-label",
-              "הפעלת מוזיקת הרקע"
-            );
-            soundButton.classList.remove("is-playing");
-            soundIcon.textContent = "🔇";
-          }
-        }else{
-          /*
-            בלחיצה נוספת:
-            רק משתיקים, בלי להתחיל מחדש
-          */
-          video.muted = true;
-      
-          soundButton.setAttribute("aria-pressed","false");
-          soundButton.setAttribute(
-            "aria-label",
-            "הפעלת מוזיקת הרקע"
-          );
-          soundButton.classList.remove("is-playing");
-          soundIcon.textContent = "🔇";
+      soundButton.addEventListener("click",function(){
+        const shouldPlaySound = video.muted;
+
+        video.muted = !shouldPlaySound;
+        soundButton.setAttribute("aria-pressed",String(shouldPlaySound));
+        soundButton.setAttribute(
+          "aria-label",
+          shouldPlaySound
+            ? "השתקת מוזיקת הרקע"
+            : "הפעלת מוזיקת הרקע"
+        );
+        soundButton.classList.toggle("is-playing",shouldPlaySound);
+        soundIcon.textContent = shouldPlaySound ? "🔊" : "🔇";
+
+        if(shouldPlaySound && video.paused && !finished){
+          video.play().catch(function(){});
         }
       });
 
