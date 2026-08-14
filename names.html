@@ -144,6 +144,17 @@
       line-height: 1.14;
     }
 
+    /* בנייד: הכותרת נכנסת בנוחות בין הרמקול לחץ החזרה. */
+    @media (max-width: 700px) and (orientation: portrait) {
+      .intro h1 {
+        width: calc(100% - 128px);
+        margin-inline: auto;
+        padding-inline: 4px;
+        font-size: clamp(24px, 7vw, 32px);
+        line-height: 1.12;
+      }
+    }
+
     .intro-text {
       max-width: 540px;
       margin: 11px auto 0;
@@ -444,7 +455,7 @@
     <div class="content">
       <header class="intro">
 
-        <h1>גם לך יש שם בלב</h1>
+        <h1>הנציחו את יקירכם</h1>
 
           <p class="intro-text">
             השמות והבקשות שאתם מוסרים מצטרפים לתפילת הרבים —
