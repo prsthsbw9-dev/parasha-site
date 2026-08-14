@@ -295,6 +295,19 @@
       background: #000;
     }
 
+     /* בלפטופ ובמחשב: סרטון הפתיחה ממלא את כל המסך */
+    @media (min-width: 701px) {
+      .strength-intro-video {
+        width: 100vw !important;
+        height: 100vh !important;
+        height: 100dvh !important;
+        max-width: none !important;
+        max-height: none !important;
+        object-fit: cover !important;
+        object-position: center center !important;
+      }
+    }   
+
     .intro-sound-btn {
       position: absolute;
       bottom: calc(env(safe-area-inset-bottom, 0px) + 24px);
@@ -378,7 +391,7 @@
 
     @media (min-width: 800px) and (orientation: landscape) {
       .strength-intro-video {
-        object-fit: contain;
+        object-fit: cover;
       }
     }
 
