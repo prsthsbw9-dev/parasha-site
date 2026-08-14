@@ -550,6 +550,7 @@
         try {
           if (video.muted || video.volume === 0) {
             /* בהפעלת הקול מתחילים מחדש כדי שלא יפספסו מילים */
+            video.pause();
             video.currentTime = 0;
             video.muted = false;
             video.volume = 1;
@@ -577,7 +578,16 @@
           video.pause();
           intro.remove();
         }, 750);
+
+        if (window.parent !== window) {
+          window.parent.postMessage(
+            { type: "pardes-strength-intro-finished" },
+            window.location.origin
+          );
+        }
       }
+
+      window.skipStrengthIntro = finishIntro;
 
       soundButton.addEventListener("click", toggleSound);
       video.addEventListener("volumechange", updateSoundButton);
