@@ -144,14 +144,27 @@
       line-height: 1.14;
     }
 
-    /* בנייד: הכותרת נכנסת בנוחות בין הרמקול לחץ החזרה. */
+        /* בנייד: הכותרת נכנסת בנוחות בין הרמקול לחץ החזרה. */
     @media (max-width: 700px) and (orientation: portrait) {
-      .intro h1 {
+      .intro h1,
+      .intro-action-subtitle {
         width: calc(100% - 128px);
         margin-inline: auto;
         padding-inline: 4px;
-        font-size: clamp(24px, 7vw, 32px);
+      }
+    
+      .intro h1 {
+        font-size: clamp(23px, 6.7vw, 30px);
         line-height: 1.12;
+      }
+    
+      .intro-action-subtitle {
+        margin-top: 6px;
+        font-size: clamp(13px, 3.7vw, 16px);
+      }
+    
+      .intro-text {
+        margin-top: 30px;
       }
     }
 
@@ -455,7 +468,23 @@
     <div class="content">
       <header class="intro">
 
-        <h1>הנציחו את יקירכם</h1>
+          <h1>כל המברך יבורך</h1>
+          
+          <p class="intro-action-subtitle">
+            קיימו מצוות זיכוי הרבים בחינם
+          </p>
+
+          .intro-action-subtitle {
+            margin: 7px auto 0;
+            color: #fff3ad;
+            font-size: clamp(14px, 4vw, 18px);
+            font-weight: 800;
+            line-height: 1.3;
+            text-align: center;
+            text-shadow:
+              0 2px 5px rgba(0, 0, 0, 0.95),
+              0 0 12px rgba(255, 220, 120, 0.22);
+          }        
 
           <p class="intro-text">
             השמות והבקשות שאתם מוסרים מצטרפים לתפילת הרבים —
