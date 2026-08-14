@@ -5252,6 +5252,11 @@
       display:flex;
     }
 
+    /* בדף השמות בלבד: החץ מיושר לגובה כפתור הרמקול. */
+    .internal-page-overlay.is-names-content .internal-page-close{
+      top:max(14px, env(safe-area-inset-top));
+    }
+
     .internal-page-skip span{
       display:block;
       transform:rotate(-90deg);
@@ -9541,6 +9546,7 @@ if (sodGrapesVideo) {
     frame.src = "about:blank";
     overlay.classList.remove("is-open");
     overlay.classList.remove("show-names-skip");
+    overlay.classList.remove("is-names-content");
     overlay.setAttribute("aria-hidden", "true");
     document.body.classList.remove("internal-page-open");
 
@@ -9671,6 +9677,11 @@ if (sodGrapesVideo) {
           fileName === "personal-strength.html" &&
           Boolean(frame.contentDocument.getElementById("strengthIntro"))
         )
+      );
+
+      overlay.classList.toggle(
+        "is-names-content",
+        fileName === "names.html"
       );
 
       /* אם הדף הפנימי ביקש לחזור לעץ, סוגרים את החלון במקום
