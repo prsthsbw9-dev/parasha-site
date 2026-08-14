@@ -295,25 +295,27 @@
       background: #000;
     }
 
-    /* בלפטופ ובמחשב: הסרטון מוצג במלואו עם רקע ממלא */
+    /* בלפטופ ובמחשב: הסרטון המלא עם רקע בהיר מסביב */
     @media (min-width: 701px) {
       .strength-intro::before {
         content: "";
         position: absolute;
-        inset: -30px;
+        inset: -20px;
         z-index: 0;
-        background:
-          linear-gradient(
-            rgba(0, 0, 0, 0.05),
-            rgba(0, 0, 0, 0.05)
-          ),
-          url("personal-strength-promo-poster.jpg")
-          center center / cover no-repeat;
+    
+        background-image:
+          url("personal-strength-promo-poster.jpg");
+        background-position: center center;
+        background-size: cover;
+        background-repeat: no-repeat;
+    
         filter:
-          blur(11px)
-          brightness(1.28)
-          saturate(1.08);
-        transform: scale(1.08);
+          blur(3px)
+          brightness(1.55)
+          saturate(1.2);
+    
+        opacity: 1;
+        transform: scale(1.04);
       }
     
       .strength-intro-video {
