@@ -295,18 +295,33 @@
       background: #000;
     }
 
-     /* בלפטופ ובמחשב: סרטון הפתיחה ממלא את כל המסך */
+    /* בלפטופ ובמחשב: הסרטון מוצג במלואו עם רקע ממלא */
     @media (min-width: 701px) {
+      .strength-intro::before {
+        content: "";
+        position: absolute;
+        inset: -30px;
+        z-index: 0;
+        background:
+          linear-gradient(rgba(0, 0, 0, 0.28), rgba(0, 0, 0, 0.28)),
+          url("personal-strength-promo-poster.jpg") center center / cover no-repeat;
+        filter: blur(20px);
+        transform: scale(1.08);
+      }
+    
       .strength-intro-video {
+        position: relative;
+        z-index: 1;
         width: 100vw !important;
         height: 100vh !important;
         height: 100dvh !important;
         max-width: none !important;
         max-height: none !important;
-        object-fit: cover !important;
+        object-fit: contain !important;
         object-position: center center !important;
+        background: transparent !important;
       }
-    }   
+    }
 
     .intro-sound-btn {
       position: absolute;
@@ -391,7 +406,7 @@
 
     @media (min-width: 800px) and (orientation: landscape) {
       .strength-intro-video {
-        object-fit: cover;
+        object-fit: contain;
       }
     }
 
