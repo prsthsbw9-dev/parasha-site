@@ -9505,6 +9505,7 @@ if (sodGrapesVideo) {
 
   let nestedReturnPage = null;
   let historyGuardActive = false;
+  let activeInternalPageId = null;
 
   if(!overlay || !frame || !closeButton || !skipButton) return;
 
@@ -9534,6 +9535,7 @@ if (sodGrapesVideo) {
     if(!overlay.classList.contains("is-open")) return;
 
     nestedReturnPage = null;
+    activeInternalPageId = null;
 
     /* החלפת המקור עוצרת מיד גם וידאו או שמע שפועלים בדף הפנימי. */
     frame.src = "about:blank";
@@ -9564,9 +9566,12 @@ if (sodGrapesVideo) {
 
     stopHomeMedia();
     nestedReturnPage = null;
+    activeInternalPageId = id;
     overlay.classList.toggle(
       "show-names-skip",
-      id === "namesLink" || id === "drorNamesLink"
+      id === "namesLink" ||
+      id === "drorNamesLink" ||
+      id === "lionGuideLink"
     );
     frame.title = page.title;
     overlay.setAttribute("aria-label", page.title);
@@ -9626,6 +9631,21 @@ if (sodGrapesVideo) {
 
   skipButton.addEventListener("click", function(){
     nestedReturnPage = null;
+
+    if(activeInternalPageId === "lionGuideLink"){
+      try{
+        if(
+          frame.contentWindow &&
+          typeof frame.contentWindow.skipStrengthIntro === "function"
+        ){
+          frame.contentWindow.skipStrengthIntro();
+          overlay.classList.remove("show-names-skip");
+        }
+      }catch(error){}
+
+      return;
+    }
+
     overlay.classList.remove("show-names-skip");
     frame.title = "שמות";
     overlay.setAttribute("aria-label", "שמות");
@@ -9646,7 +9666,11 @@ if (sodGrapesVideo) {
 
       overlay.classList.toggle(
         "show-names-skip",
-        fileName === "names-intro.html"
+        fileName === "names-intro.html" ||
+        (
+          fileName === "personal-strength.html" &&
+          Boolean(frame.contentDocument.getElementById("strengthIntro"))
+        )
       );
 
       /* אם הדף הפנימי ביקש לחזור לעץ, סוגרים את החלון במקום
@@ -9713,6 +9737,16 @@ if (sodGrapesVideo) {
 
     historyGuardActive = false;
     closeInternalPage(true);
+  });
+
+  window.addEventListener("message", function(event){
+    if(
+      event.source === frame.contentWindow &&
+      event.data &&
+      event.data.type === "pardes-strength-intro-finished"
+    ){
+      overlay.classList.remove("show-names-skip");
+    }
   });
 })();
 </script>
