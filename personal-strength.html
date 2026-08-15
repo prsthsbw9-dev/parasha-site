@@ -444,11 +444,30 @@
     }
 
     .choice-btn.is-selected,
+    .area-btn.is-selected,
     .area-btn:hover,
     .area-btn:focus-visible {
       color: #211b0e;
       border-color: #ffe7a6;
       background: #ffe7a6;
+    }
+
+    .area-note {
+      margin: 15px 0 0;
+      color: rgba(255, 241, 202, 0.82);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .area-selection-status {
+      margin: 8px 0 0;
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .area-selection-status.is-warning {
+      color: #ffd27a;
     }
 
     .question-submit {
@@ -743,7 +762,7 @@
       </form>
 
       <div class="question-panel" id="areaQuestion" hidden>
-        <span class="question-label">באיזה תחום היית רוצה להתחזק תחילה?</span>
+        <span class="question-label">באילו תחומים היית רוצה להתחזק תחילה?</span>
         <div class="area-grid" id="areaGrid">
           <button class="area-btn" type="button">תפילה וברכות</button>
           <button class="area-btn" type="button">שבת</button>
@@ -753,8 +772,22 @@
           <button class="area-btn" type="button">חסד וצדקה</button>
           <button class="area-btn" type="button">אמונה וביטחון</button>
           <button class="area-btn" type="button">שליטה בכעס</button>
+          <button class="area-btn" type="button">זוגיות בונה</button>
           <button class="area-btn" type="button">תחום אחר</button>
         </div>
+
+        <p class="area-note">
+          אם רק התחלת את הדרך, מומלץ להתמקד ולא לבחור הכול יחד.
+          בשלב זה אפשר לבחור עד 3 נושאים עיקריים, ובהמשך יהיה ניתן להוסיף נושאים נוספים.
+        </p>
+
+        <p class="area-selection-status" id="areaSelectionStatus" aria-live="polite">
+          נבחרו 0 מתוך 3 נושאים
+        </p>
+
+        <button class="journey-btn primary question-submit" id="areaSubmit" type="button" disabled>
+          המשך עם הנושאים שבחרתי
+        </button>
       </div>
 
       <button class="back-to-welcome" id="backToWelcomeButton" type="button">
@@ -873,16 +906,20 @@
       const firstNameInput = document.getElementById("firstName");
       const identitySubmit = document.getElementById("identitySubmit");
       const areaQuestion = document.getElementById("areaQuestion");
+      const areaSubmit = document.getElementById("areaSubmit");
+      const areaSelectionStatus = document.getElementById("areaSelectionStatus");
       const genderButtons = Array.from(document.querySelectorAll("[data-gender]"));
       const areaButtons = Array.from(document.querySelectorAll(".area-btn"));
 
       if (
         !welcomeView || !chatView || !startButton || !continueButton ||
         !backButton || !status || !chatLog || !identityForm ||
-        !firstNameInput || !identitySubmit || !areaQuestion
+        !firstNameInput || !identitySubmit || !areaQuestion ||
+        !areaSubmit || !areaSelectionStatus
       ) return;
 
       let selectedGender = "";
+      let selectedAreas = [];
       let draft = loadDraft();
 
       function loadDraft() {
@@ -960,11 +997,23 @@
           const guideBubble = document.createElement("div");
           guideBubble.className = "chat-bubble guide";
           guideBubble.dataset.savedIdentity = "true";
-          guideBubble.textContent = `${greeting} באיזה תחום היית רוצה להתחזק תחילה?`;
+          guideBubble.textContent = `${greeting} באילו תחומים היית רוצה להתחזק תחילה?`;
           chatLog.appendChild(guideBubble);
         }
 
         chatLog.scrollTop = chatLog.scrollHeight;
+      }
+
+      function updateAreaSelection(message = "") {
+        areaButtons.forEach((button) => {
+          const isSelected = selectedAreas.includes(button.textContent.trim());
+          button.classList.toggle("is-selected", isSelected);
+          button.setAttribute("aria-pressed", String(isSelected));
+        });
+        areaSubmit.disabled = selectedAreas.length === 0;
+        areaSelectionStatus.classList.toggle("is-warning", Boolean(message));
+        areaSelectionStatus.textContent = message ||
+          `נבחרו ${selectedAreas.length} מתוך 3 נושאים`;
       }
 
       function restoreDraft() {
@@ -974,11 +1023,19 @@
         showChat();
         revealAreaQuestion(draft.name, draft.gender);
 
-        if (draft.area && !chatLog.querySelector("[data-saved-area]")) {
+        const savedAreas = Array.isArray(draft.areas)
+          ? draft.areas
+          : (draft.area ? [draft.area] : []);
+        selectedAreas = savedAreas.slice(0, 3);
+        updateAreaSelection();
+
+        const areasWereConfirmed = draft.areasConfirmed === true || Boolean(draft.area);
+
+        if (areasWereConfirmed && selectedAreas.length && !chatLog.querySelector("[data-saved-area]")) {
           const userBubble = document.createElement("div");
           userBubble.className = "chat-bubble user";
           userBubble.dataset.savedArea = "true";
-          userBubble.textContent = draft.area;
+          userBubble.textContent = selectedAreas.join(" · ");
           chatLog.appendChild(userBubble);
 
           const guideBubble = document.createElement("div");
@@ -1000,6 +1057,7 @@
         updateContinueButton();
         firstNameInput.value = "";
         selectedGender = "";
+        selectedAreas = [];
         genderButtons.forEach((button) => {
           button.classList.remove("is-selected");
           button.setAttribute("aria-pressed", "false");
@@ -1007,6 +1065,7 @@
         identityForm.hidden = false;
         areaQuestion.hidden = true;
         updateIdentitySubmit();
+        updateAreaSelection();
         showChat();
         window.setTimeout(() => firstNameInput.focus(), 250);
       });
@@ -1024,22 +1083,57 @@
         event.preventDefault();
         const name = firstNameInput.value.trim();
         if (!name || !selectedGender) return;
-        saveDraft({ name, gender: selectedGender, area: "" });
+        selectedAreas = [];
+        updateAreaSelection();
+        saveDraft({
+          name,
+          gender: selectedGender,
+          areas: [],
+          areasConfirmed: false
+        });
         revealAreaQuestion(name, selectedGender);
       });
 
       areaButtons.forEach((button) => {
+        button.setAttribute("aria-pressed", "false");
         button.addEventListener("click", () => {
           if (!draft || !draft.name || !draft.gender) return;
           const area = button.textContent.trim();
-          saveDraft({ ...draft, area });
-          appendBubble(area, "user");
-          appendBubble(
-            "בחירה מצוינת. בשלב הבא נתאים יחד צעד ראשון קטן ומעשי בתחום הזה.",
-            "guide"
-          );
-          areaQuestion.hidden = true;
+
+          if (selectedAreas.includes(area)) {
+            selectedAreas = selectedAreas.filter((item) => item !== area);
+            updateAreaSelection();
+          } else if (selectedAreas.length >= 3) {
+            updateAreaSelection("אפשר לבחור עד 3 נושאים בשלב הזה.");
+            return;
+          } else {
+            selectedAreas.push(area);
+            updateAreaSelection();
+          }
+
+          saveDraft({
+            ...draft,
+            areas: selectedAreas,
+            areasConfirmed: false
+          });
         });
+      });
+
+      areaSubmit.addEventListener("click", () => {
+        if (!draft || selectedAreas.length === 0) return;
+        saveDraft({
+          ...draft,
+          areas: selectedAreas,
+          areasConfirmed: true
+        });
+        appendBubble(selectedAreas.join(" · "), "user");
+        appendBubble(
+          selectedAreas.length === 1
+            ? "בחירה מצוינת. בשלב הבא נתאים יחד צעד ראשון קטן ומעשי בתחום הזה."
+            : "בחירות מצוינות. בשלב הבא נתאים יחד צעדים קטנים ומעשיים לנושאים שבחרת, בלי להעמיס.",
+          "guide"
+        );
+        areaQuestion.hidden = true;
       });
 
       updateContinueButton();
