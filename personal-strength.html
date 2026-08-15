@@ -251,6 +251,229 @@
       line-height: 1.5;
     }
 
+    .view[hidden] {
+      display: none;
+    }
+
+    .welcome-symbol {
+      width: clamp(102px, 22vw, 132px) !important;
+      height: clamp(102px, 22vw, 132px) !important;
+      margin-bottom: 16px !important;
+    }
+
+    .welcome-title {
+      margin-bottom: 14px;
+      font-size: clamp(29px, 6vw, 43px);
+    }
+
+    .welcome-copy {
+      margin: 0 auto 18px;
+      max-width: 530px;
+      color: rgba(255, 255, 255, 0.94);
+      font-size: clamp(17px, 3.8vw, 21px);
+      line-height: 1.75;
+    }
+
+    .welcome-copy strong {
+      color: #ffe7a6;
+    }
+
+    .strength-quote {
+      margin: 0 auto 25px;
+      max-width: 520px;
+      padding: 13px 16px;
+      color: #fff0c8;
+      font-size: clamp(15px, 3.3vw, 18px);
+      font-weight: 700;
+      line-height: 1.65;
+      border-block: 1px solid rgba(255, 224, 146, 0.32);
+    }
+
+    .welcome-actions {
+      width: min(100%, 410px);
+      display: grid;
+      gap: 11px;
+      margin: 0 auto;
+    }
+
+    .journey-btn {
+      min-height: 54px;
+      padding: 12px 20px;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 17px;
+      font-weight: 800;
+      border-radius: 13px;
+      transition: transform 0.2s ease, filter 0.2s ease, background 0.2s ease;
+    }
+
+    .journey-btn:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.06);
+    }
+
+    .journey-btn.primary {
+      color: #211b0e;
+      border: 0;
+      background: linear-gradient(135deg, #fff0bd, #d8a13b);
+      box-shadow: 0 10px 28px rgba(218, 165, 66, 0.28);
+    }
+
+    .journey-btn.secondary {
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.34);
+      background: rgba(0, 0, 0, 0.36);
+    }
+
+    .journey-btn.secondary:disabled {
+      cursor: not-allowed;
+      opacity: 0.48;
+      transform: none;
+    }
+
+    .local-note {
+      margin: 16px 0 0;
+      color: rgba(255, 255, 255, 0.62);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .chat-card {
+      width: min(100%, 720px);
+      padding: clamp(20px, 4.5vw, 34px);
+      text-align: right;
+    }
+
+    .chat-heading {
+      margin: 0 0 20px;
+      color: #fff3d0;
+      font-size: clamp(24px, 5vw, 34px);
+      text-align: center;
+    }
+
+    .chat-log {
+      display: grid;
+      gap: 13px;
+      max-height: min(48vh, 430px);
+      margin-bottom: 18px;
+      padding: 2px 3px 8px;
+      overflow-y: auto;
+      scroll-behavior: smooth;
+    }
+
+    .chat-bubble {
+      width: fit-content;
+      max-width: 88%;
+      padding: 14px 16px;
+      color: #ffffff;
+      font-size: 16px;
+      line-height: 1.65;
+      border: 1px solid rgba(255, 255, 255, 0.24);
+      border-radius: 14px;
+      background: rgba(0, 0, 0, 0.62);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
+    }
+
+    .chat-bubble.guide {
+      justify-self: start;
+      border-top-right-radius: 5px;
+    }
+
+    .chat-bubble.user {
+      justify-self: end;
+      color: #211b0e;
+      font-weight: 700;
+      border-color: rgba(255, 230, 165, 0.7);
+      border-top-left-radius: 5px;
+      background: rgba(255, 231, 166, 0.93);
+    }
+
+    .question-panel {
+      padding: 17px;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: 14px;
+      background: rgba(0, 0, 0, 0.58);
+    }
+
+    .question-label {
+      display: block;
+      margin-bottom: 9px;
+      color: #fff2ce;
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .name-input {
+      width: 100%;
+      height: 50px;
+      padding: 0 15px;
+      color: #ffffff;
+      font-family: inherit;
+      font-size: 17px;
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      border-radius: 11px;
+      outline: none;
+      background: rgba(255, 255, 255, 0.09);
+    }
+
+    .name-input:focus {
+      border-color: rgba(255, 225, 148, 0.86);
+      box-shadow: 0 0 0 3px rgba(255, 225, 148, 0.12);
+    }
+
+    .choice-row,
+    .area-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      margin-top: 14px;
+    }
+
+    .choice-btn,
+    .area-btn {
+      min-height: 44px;
+      padding: 9px 15px;
+      cursor: pointer;
+      color: #ffffff;
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 700;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 11px;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .choice-btn.is-selected,
+    .area-btn:hover,
+    .area-btn:focus-visible {
+      color: #211b0e;
+      border-color: #ffe7a6;
+      background: #ffe7a6;
+    }
+
+    .question-submit {
+      width: 100%;
+      margin-top: 15px;
+    }
+
+    .question-submit:disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+      filter: grayscale(0.3);
+    }
+
+    .back-to-welcome {
+      display: block;
+      margin: 16px auto 0;
+      padding: 4px 8px;
+      cursor: pointer;
+      color: rgba(255, 255, 255, 0.76);
+      font-family: inherit;
+      font-size: 14px;
+      border: 0;
+      background: transparent;
+    }
+
     /* פתיח חיזוק אישי */
     .strength-intro {
       position: fixed;
@@ -343,6 +566,10 @@
         border-radius: 16px;
       }
 
+      .chat-card {
+        padding: 22px 15px;
+      }
+
       .symbol {
         width: 88px;
         height: 88px;
@@ -360,6 +587,14 @@
 
       .submit-btn {
         width: 100%;
+      }
+
+      .chat-log {
+        max-height: 45vh;
+      }
+
+      .chat-bubble {
+        max-width: 94%;
       }
     }
 
@@ -427,8 +662,8 @@
   </a>
 
   <main class="page">
-    <section class="card" aria-labelledby="pageTitle">
-      <div class="symbol lion-symbol" aria-hidden="true">
+    <section class="card view" id="welcomeView" aria-labelledby="pageTitle">
+      <div class="symbol lion-symbol welcome-symbol" aria-hidden="true">
         <video
           class="personal-strength-lion"
           autoplay
@@ -441,70 +676,90 @@
         </video>
       </div>
 
-      <h1 id="pageTitle">כל הכבוד לך על הרצון להתחזק</h1>
+      <h1 class="welcome-title" id="pageTitle">החיזוק האישי שלך מתחיל כאן</h1>
 
-      <p class="message">
-        הדף הזה נמצא כרגע בבנייה,
-        וכשהוא יהיה מוכן —
-        <span class="highlight">יהיה שווה לחזור אליו.</span>
+      <p class="welcome-copy">
+        לכל אדם יש את הדרך שלו להתקרב.<br>
+        כאן נבנה יחד מסלול אישי, עדין ומעשי —
+        <strong>בקצב שלך</strong>, בהתאם למה שחשוב לך ולמקום שבו
+        את או אתה נמצאים היום.
       </p>
 
-      <p class="form-title">
-        רוצה שנעדכן אותך כשהדף יהיה מוכן?
+      <p class="welcome-copy">
+        בכל פעם נבחר צעד קטן אחד,
+        ונמשיך ממנו בהדרגה — בלי לחץ ובלי שיפוטיות.
       </p>
 
-      <form
-        class="email-form"
-        action="https://formsubmit.co/prsthsbw9@gmail.com"
-        method="POST"
-      >
-        <input
-          type="hidden"
-          name="_subject"
-          value="בקשת עדכון חדשה – דף חיזוק אישי"
-        >
+      <blockquote class="strength-quote">
+        „וְגִבּוֹר כָּאֲרִי, לַעֲשׂוֹת רְצוֹן אָבִיךָ שֶׁבַּשָּׁמַיִם”
+      </blockquote>
 
-        <input
-          type="hidden"
-          name="_template"
-          value="table"
-        >
+      <div class="welcome-actions">
+        <button class="journey-btn primary" id="startJourneyButton" type="button">
+          מתחילים את הדרך
+        </button>
 
-        <input
-          type="hidden"
-          name="_autoresponse"
-          value="תודה! קיבלנו את בקשתך ונעדכן אותך כאשר דף החיזוק האישי יהיה מוכן."
-        >
+        <button class="journey-btn secondary" id="continueJourneyButton" type="button">
+          המשך המסלול שלי
+        </button>
+      </div>
 
+      <p class="local-note" id="journeyStatus" aria-live="polite"></p>
+    </section>
+
+    <section class="card chat-card view" id="chatView" aria-labelledby="chatTitle" hidden>
+      <h2 class="chat-heading" id="chatTitle">הדרך האישית שלי</h2>
+
+      <div class="chat-log" id="chatLog" aria-live="polite">
+        <div class="chat-bubble guide">
+          <strong>ברוך הבא לחיזוק האישי.</strong><br>
+          לפני שנתחיל, אשמח להכיר אותך מעט כדי שהדרך שנבנה כאן באמת תתאים לך.<br>
+          כיצד תרצה או תרצי שאפנה אליך?
+        </div>
+      </div>
+
+      <form class="question-panel" id="identityForm">
+        <label class="question-label" for="firstName">השם הפרטי שלך</label>
         <input
+          class="name-input"
+          id="firstName"
+          name="firstName"
           type="text"
-          name="_honey"
-          tabindex="-1"
-          autocomplete="off"
-          style="display: none"
+          maxlength="40"
+          autocomplete="given-name"
+          placeholder="אפשר לכתוב כאן שם פרטי"
+          required
         >
 
-        <div class="email-row">
-          <input
-            class="email-input"
-            type="email"
-            name="email"
-            placeholder="your@email.com"
-            aria-label="כתובת המייל שלך"
-            autocomplete="email"
-            inputmode="email"
-            required
-          >
-
-          <button class="submit-btn" type="submit">
-            עדכנו אותי
-          </button>
+        <span class="question-label" style="margin-top: 15px;">כיצד לפנות אליך?</span>
+        <div class="choice-row" role="group" aria-label="בחירת לשון פנייה">
+          <button class="choice-btn" type="button" data-gender="male">בלשון זכר</button>
+          <button class="choice-btn" type="button" data-gender="female">בלשון נקבה</button>
         </div>
 
-        <p class="privacy-note">
-          כתובת המייל תשמש רק לשליחת עדכון כשהדף יהיה מוכן.
-        </p>
+        <button class="journey-btn primary question-submit" id="identitySubmit" type="submit" disabled>
+          המשך
+        </button>
       </form>
+
+      <div class="question-panel" id="areaQuestion" hidden>
+        <span class="question-label">באיזה תחום היית רוצה להתחזק תחילה?</span>
+        <div class="area-grid" id="areaGrid">
+          <button class="area-btn" type="button">תפילה וברכות</button>
+          <button class="area-btn" type="button">שבת</button>
+          <button class="area-btn" type="button">לימוד תורה</button>
+          <button class="area-btn" type="button">שמירת הלשון</button>
+          <button class="area-btn" type="button">כיבוד הורים</button>
+          <button class="area-btn" type="button">חסד וצדקה</button>
+          <button class="area-btn" type="button">אמונה וביטחון</button>
+          <button class="area-btn" type="button">שליטה בכעס</button>
+          <button class="area-btn" type="button">תחום אחר</button>
+        </div>
+      </div>
+
+      <button class="back-to-welcome" id="backToWelcomeButton" type="button">
+        חזרה למסך הפתיחה
+      </button>
     </section>
   </main>
 
@@ -601,6 +856,193 @@
           video.play().catch(finishIntro);
         });
       }
+    })();
+  </script>
+
+  <script>
+    (() => {
+      const storageKey = "pardesPersonalStrengthDraft";
+      const welcomeView = document.getElementById("welcomeView");
+      const chatView = document.getElementById("chatView");
+      const startButton = document.getElementById("startJourneyButton");
+      const continueButton = document.getElementById("continueJourneyButton");
+      const backButton = document.getElementById("backToWelcomeButton");
+      const status = document.getElementById("journeyStatus");
+      const chatLog = document.getElementById("chatLog");
+      const identityForm = document.getElementById("identityForm");
+      const firstNameInput = document.getElementById("firstName");
+      const identitySubmit = document.getElementById("identitySubmit");
+      const areaQuestion = document.getElementById("areaQuestion");
+      const genderButtons = Array.from(document.querySelectorAll("[data-gender]"));
+      const areaButtons = Array.from(document.querySelectorAll(".area-btn"));
+
+      if (
+        !welcomeView || !chatView || !startButton || !continueButton ||
+        !backButton || !status || !chatLog || !identityForm ||
+        !firstNameInput || !identitySubmit || !areaQuestion
+      ) return;
+
+      let selectedGender = "";
+      let draft = loadDraft();
+
+      function loadDraft() {
+        try {
+          return JSON.parse(localStorage.getItem(storageKey) || "null");
+        } catch (error) {
+          return null;
+        }
+      }
+
+      function saveDraft(nextDraft) {
+        draft = nextDraft;
+        try {
+          localStorage.setItem(storageKey, JSON.stringify(nextDraft));
+        } catch (error) {}
+        updateContinueButton();
+      }
+
+      function updateContinueButton() {
+        const hasDraft = Boolean(draft && draft.name && draft.gender);
+        continueButton.disabled = !hasDraft;
+        status.textContent = hasDraft
+          ? "המסלול שהתחלת נשמר במכשיר הזה."
+          : "לאחר תחילת הדרך, ניתן יהיה להמשיך מאותה נקודה במכשיר הזה.";
+      }
+
+      function showChat() {
+        welcomeView.hidden = true;
+        chatView.hidden = false;
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+
+      function showWelcome() {
+        chatView.hidden = true;
+        welcomeView.hidden = false;
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+
+      function appendBubble(text, type) {
+        const bubble = document.createElement("div");
+        bubble.className = `chat-bubble ${type}`;
+        bubble.textContent = text;
+        chatLog.appendChild(bubble);
+        chatLog.scrollTop = chatLog.scrollHeight;
+      }
+
+      function updateIdentitySubmit() {
+        identitySubmit.disabled = !(
+          firstNameInput.value.trim() && selectedGender
+        );
+      }
+
+      function selectGender(gender) {
+        selectedGender = gender;
+        genderButtons.forEach((button) => {
+          const isSelected = button.dataset.gender === gender;
+          button.classList.toggle("is-selected", isSelected);
+          button.setAttribute("aria-pressed", String(isSelected));
+        });
+        updateIdentitySubmit();
+      }
+
+      function revealAreaQuestion(name, gender) {
+        identityForm.hidden = true;
+        areaQuestion.hidden = false;
+        const greeting = `נעים מאוד, ${name}. טוב שבחרת להתחיל.`;
+
+        if (!chatLog.querySelector("[data-saved-identity]")) {
+          const userBubble = document.createElement("div");
+          userBubble.className = "chat-bubble user";
+          userBubble.dataset.savedIdentity = "true";
+          userBubble.textContent = `${name} · ${gender === "female" ? "לשון נקבה" : "לשון זכר"}`;
+          chatLog.appendChild(userBubble);
+
+          const guideBubble = document.createElement("div");
+          guideBubble.className = "chat-bubble guide";
+          guideBubble.dataset.savedIdentity = "true";
+          guideBubble.textContent = `${greeting} באיזה תחום היית רוצה להתחזק תחילה?`;
+          chatLog.appendChild(guideBubble);
+        }
+
+        chatLog.scrollTop = chatLog.scrollHeight;
+      }
+
+      function restoreDraft() {
+        if (!draft || !draft.name || !draft.gender) return;
+        firstNameInput.value = draft.name;
+        selectGender(draft.gender);
+        showChat();
+        revealAreaQuestion(draft.name, draft.gender);
+
+        if (draft.area && !chatLog.querySelector("[data-saved-area]")) {
+          const userBubble = document.createElement("div");
+          userBubble.className = "chat-bubble user";
+          userBubble.dataset.savedArea = "true";
+          userBubble.textContent = draft.area;
+          chatLog.appendChild(userBubble);
+
+          const guideBubble = document.createElement("div");
+          guideBubble.className = "chat-bubble guide";
+          guideBubble.dataset.savedArea = "true";
+          guideBubble.textContent = "בחירה מצוינת. בשלב הבא נתאים יחד צעד ראשון קטן ומעשי בתחום הזה.";
+          chatLog.appendChild(guideBubble);
+          areaQuestion.hidden = true;
+        }
+      }
+
+      startButton.addEventListener("click", () => {
+        chatLog.querySelectorAll("[data-saved-identity], [data-saved-area]")
+          .forEach((bubble) => bubble.remove());
+        draft = null;
+        try {
+          localStorage.removeItem(storageKey);
+        } catch (error) {}
+        updateContinueButton();
+        firstNameInput.value = "";
+        selectedGender = "";
+        genderButtons.forEach((button) => {
+          button.classList.remove("is-selected");
+          button.setAttribute("aria-pressed", "false");
+        });
+        identityForm.hidden = false;
+        areaQuestion.hidden = true;
+        updateIdentitySubmit();
+        showChat();
+        window.setTimeout(() => firstNameInput.focus(), 250);
+      });
+
+      continueButton.addEventListener("click", restoreDraft);
+      backButton.addEventListener("click", showWelcome);
+      firstNameInput.addEventListener("input", updateIdentitySubmit);
+
+      genderButtons.forEach((button) => {
+        button.setAttribute("aria-pressed", "false");
+        button.addEventListener("click", () => selectGender(button.dataset.gender));
+      });
+
+      identityForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const name = firstNameInput.value.trim();
+        if (!name || !selectedGender) return;
+        saveDraft({ name, gender: selectedGender, area: "" });
+        revealAreaQuestion(name, selectedGender);
+      });
+
+      areaButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          if (!draft || !draft.name || !draft.gender) return;
+          const area = button.textContent.trim();
+          saveDraft({ ...draft, area });
+          appendBubble(area, "user");
+          appendBubble(
+            "בחירה מצוינת. בשלב הבא נתאים יחד צעד ראשון קטן ומעשי בתחום הזה.",
+            "guide"
+          );
+          areaQuestion.hidden = true;
+        });
+      });
+
+      updateContinueButton();
     })();
   </script>
 </body>
