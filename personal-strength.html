@@ -87,6 +87,11 @@
       background: rgba(0, 0, 0, 0.78);
     }
 
+    /* כשהדף מוצג בתוך החלון הראשי משתמשים רק בחץ החזרה של החלון. */
+    body.is-embedded .pardes-return-btn {
+      display: none;
+    }
+
     .card {
       width: min(100%, 650px);
       padding: clamp(28px, 6vw, 52px);
@@ -511,6 +516,10 @@
       const soundButton = document.getElementById("introSoundButton");
       const soundIcon = document.getElementById("introSoundIcon");
 
+      if (window.self !== window.top) {
+        body.classList.add("is-embedded");
+      }
+
       if (!intro || !video || !soundButton || !soundIcon) {
         body.classList.remove("intro-active");
         return;
@@ -559,11 +568,22 @@
         intro.classList.add("is-closing");
         body.classList.remove("intro-active");
 
+        /* מודיעים ל-index.html להסתיר את חץ הדילוג. */
+        if (window.parent !== window) {
+          window.parent.postMessage(
+            { type: "pardes-strength-intro-finished" },
+            window.location.origin
+          );
+        }
+
         window.setTimeout(() => {
           video.pause();
           intro.remove();
         }, 750);
       }
+
+      /* מאפשר לחץ הדילוג שב-index.html לסגור מיד את סרטון הפתיחה. */
+      window.skipStrengthIntro = finishIntro;
 
       soundButton.addEventListener("click", toggleSound);
       video.addEventListener("volumechange", updateSoundButton);
