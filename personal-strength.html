@@ -829,6 +829,16 @@
       >
     </video>
 
+     <audio
+      id="strengthIntroAudio"
+      preload="auto"
+    >
+      <source
+        src="personal-strength-promo-audio.m4a"
+        type="audio/mp4"
+      >
+    </audio>   
+
     <button
       class="intro-sound-btn"
       id="introSoundButton"
@@ -1113,6 +1123,7 @@
       const body = document.body;
       const intro = document.getElementById("strengthIntro");
       const video = document.getElementById("strengthIntroVideo");
+      const audio = document.getElementById("strengthIntroAudio");
       const soundButton = document.getElementById("introSoundButton");
       const soundIcon = document.getElementById("introSoundIcon");
       const lionVideo = document.getElementById("personalStrengthLion");
@@ -1122,6 +1133,7 @@
       }
   
       let introFinished = false;
+      let soundEnabled = false;
   
       async function startLionVideo() {
         if (!lionVideo) return;
@@ -1130,61 +1142,81 @@
           lionVideo.muted = true;
           await lionVideo.play();
         } catch (error) {
-          /* אם הדפדפן חסם הפעלה אוטומטית, לא פוגעים בדף. */
+          /* חסימת הפעלה אוטומטית אינה פוגעת בדף. */
         }
       }
   
       function updateSoundButton() {
-        if (!video || !soundButton || !soundIcon) return;
+        if (!soundButton || !soundIcon) return;
   
-        const soundIsOff = video.muted || video.volume === 0;
-  
-        soundIcon.textContent = soundIsOff ? "🔇" : "🔊";
+        soundIcon.textContent = soundEnabled ? "🔊" : "🔇";
   
         soundButton.setAttribute(
           "aria-label",
-          soundIsOff ? "הפעלת הקול" : "השתקת הקול"
+          soundEnabled ? "השתקת הקול" : "הפעלת הקול"
         );
   
         soundButton.setAttribute(
           "aria-pressed",
-          soundIsOff ? "false" : "true"
+          soundEnabled ? "true" : "false"
         );
       }
   
       async function toggleSound() {
-        if (!video) return;
+        if (!video || !audio) return;
   
         try {
-          if (video.muted || video.volume === 0) {
+          if (!soundEnabled) {
             /*
-             * לא מחזירים את הסרטון להתחלה.
-             * החזרה ל-currentTime = 0 גרמה ל-TikTok לטעון אותו מחדש.
+             * מסנכרנים את האודיו לנקודה שבה הסרטון נמצא,
+             * בלי לשנות את currentTime של הסרטון עצמו.
              */
-            video.muted = false;
-            video.volume = 1;
+            const videoTime = video.currentTime || 0;
   
-            if (video.paused) {
-              await video.play();
+            if (audio.readyState < 1) {
+              await new Promise((resolve) => {
+                audio.addEventListener(
+                  "loadedmetadata",
+                  resolve,
+                  { once: true }
+                );
+              });
             }
+  
+            audio.currentTime = Math.min(
+              videoTime,
+              Math.max(0, (audio.duration || videoTime) - 0.05)
+            );
+  
+            audio.volume = 1;
+            await audio.play();
+            soundEnabled = true;
           } else {
-            video.muted = true;
+            audio.pause();
+            soundEnabled = false;
           }
   
           updateSoundButton();
         } catch (error) {
-          video.muted = true;
+          audio.pause();
+          soundEnabled = false;
           updateSoundButton();
         }
+      }
+  
+      function stopIntroAudio() {
+        if (!audio) return;
+  
+        audio.pause();
+        soundEnabled = false;
+        updateSoundButton();
       }
   
       function finishIntro() {
         if (introFinished) return;
         introFinished = true;
   
-        /*
-         * רק עכשיו מתחילים את סרטון האריה שנמצא בתוך הדף.
-         */
+        stopIntroAudio();
         startLionVideo();
   
         if (!intro) {
@@ -1205,14 +1237,6 @@
         window.setTimeout(() => {
           if (video) {
             video.pause();
-            video.removeAttribute("src");
-  
-            const source = video.querySelector("source");
-            if (source) {
-              source.removeAttribute("src");
-            }
-  
-            video.load();
           }
   
           intro.remove();
@@ -1221,43 +1245,52 @@
   
       window.skipStrengthIntro = finishIntro;
   
-      /*
-       * אם רכיבי הפתיחה אינם קיימים, מציגים מיד את הדף
-       * ומפעילים רק את סרטון האריה.
-       */
-      if (!intro || !video || !soundButton || !soundIcon) {
+      if (
+        !intro ||
+        !video ||
+        !audio ||
+        !soundButton ||
+        !soundIcon
+      ) {
         body.classList.remove("intro-active");
         startLionVideo();
         return;
       }
   
       /*
-       * מוודאים שסרטון האריה אינו פועל מתחת לסרטון הפתיחה.
+       * הווידאו נשאר מושתק תמיד.
+       * לעולם לא משנים אותו ל-muted = false.
        */
+      video.muted = true;
+  
       if (lionVideo) {
         lionVideo.pause();
         lionVideo.currentTime = 0;
       }
   
       soundButton.addEventListener("click", toggleSound);
-      video.addEventListener("volumechange", updateSoundButton);
+  
+      video.addEventListener("pause", () => {
+        if (!introFinished) {
+          stopIntroAudio();
+        }
+      });
+  
+      video.addEventListener("seeking", () => {
+        if (soundEnabled && audio.readyState >= 1) {
+          audio.currentTime = video.currentTime;
+        }
+      });
+  
       video.addEventListener("ended", finishIntro);
       video.addEventListener("error", finishIntro);
   
-      video.muted = true;
-      video.volume = 1;
       updateSoundButton();
   
       const playPromise = video.play();
   
       if (playPromise && typeof playPromise.catch === "function") {
-        playPromise.catch(() => {
-          video.muted = true;
-  
-          video.play().catch(() => {
-            finishIntro();
-          });
-        });
+        playPromise.catch(finishIntro);
       }
     })();
   </script>
