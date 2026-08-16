@@ -619,32 +619,6 @@
     }
 
     @media (max-width: 560px) {
-      body {
-        /*
-          background fixed גורם לריצוד בחלק מדפדפני Samsung
-          כאשר גובה התוכן משתנה.
-        */
-        background-attachment: scroll;
-        background-position: center top;
-      }
-
-      .chat-card {
-        /*
-          מונע ריצוד של הכרטיס השקוף בזמן מעבר בין השלבים.
-          הרקע נשאר שחור ושקוף, אך ללא חישוב טשטוש כבד.
-        */
-        backdrop-filter: none;
-        -webkit-backdrop-filter: none;
-        background: rgba(0, 0, 0, 0.72);
-      }
-
-      .chat-log {
-        /*
-          מונע התנגשות בין גלילת ההודעות לבין גלילת הדף.
-        */
-        scroll-behavior: auto;
-      } 
-      
       .page {
         align-items: flex-start;
       }
@@ -1261,24 +1235,8 @@
       }
 
       function showCheckInQuestion() {
-        /*
-          קודם מחליפים בין המסגרות.
-        */
         suggestionQuestion.hidden = true;
         checkInQuestion.hidden = false;
-      
-        /*
-          מחכים שהדפדפן יסיים לחשב את גובה הדף החדש,
-          ורק אז מציגים את השאלה האחרונה באזור הנראה.
-        */
-        window.requestAnimationFrame(() => {
-          window.requestAnimationFrame(() => {
-            checkInQuestion.scrollIntoView({
-              behavior: "auto",
-              block: "nearest"
-            });
-          });
-        });
       }
 
       function showFocusQuestion() {
@@ -1312,26 +1270,10 @@
           "guide",
           "focus-guide"
         );
-        currentStatusTitle.textContent =
-          `מה מתאר בצורה הטובה ביותר את המצב שלך כיום בנושא „${area}”?`;
-        
-        /* מסתירים את מסכי הבחירה הקודמים */
-        areaQuestion.hidden = true;
+        currentStatusTitle.textContent = `מה מתאר בצורה הטובה ביותר את המצב שלך כיום בנושא „${area}”?`;
         focusQuestion.hidden = true;
-        
-        /* מציגים את השלב הבא */
         currentStatusQuestion.hidden = false;
-        
-        /*
-          מחכים שהדפדפן יעדכן את מבנה הדף,
-          ואז גוללים בעדינות אל השאלה החדשה.
-        */
-        window.requestAnimationFrame(() => {
-          currentStatusQuestion.scrollIntoView({
-            behavior: "smooth",
-            block: "center"
-          });
-        });
+        chatLog.scrollTop = chatLog.scrollHeight;
       }
 
       function finishCurrentStatus(statusCode) {
@@ -1424,24 +1366,15 @@
 
         if (!areasWereConfirmed || !selectedAreas.length) return;
 
-        /*
-          אם נבחר נושא אחד בלבד, מדלגים על מסך
-          "מבין הנושאים שבחרת" וממשיכים איתו אוטומטית.
-        */
-        if (selectedAreas.length === 1) {
-          if (!draft.focusArea) {
-            selectFocusArea(selectedAreas[0]);
-            return;
-          }
-        } else {
-          appendBubble(selectedAreas.join(" · "), "user", "areas-user");
-          appendBubble(
-            "בחירות מצוינות. הנושאים נשמרו, ועכשיו נבחר אחד שבו מתחילים השבוע כדי לא להעמיס.",
-            "guide",
-            "areas-guide"
-          );
-        }
-        
+        appendBubble(selectedAreas.join(" · "), "user", "areas-user");
+        appendBubble(
+          selectedAreas.length === 1
+            ? "בחירה מצוינת. עכשיו נבחר את הנושא שבו מתחילים השבוע."
+            : "בחירות מצוינות. הנושאים נשמרו, ועכשיו נבחר אחד שבו מתחילים השבוע כדי לא להעמיס.",
+          "guide",
+          "areas-guide"
+        );
+
         if (!draft.focusArea) {
           showFocusQuestion();
           return;
@@ -1591,7 +1524,6 @@
 
       areaSubmit.addEventListener("click", () => {
         if (!draft || selectedAreas.length === 0) return;
-      
         saveDraft({
           ...draft,
           areas: selectedAreas,
@@ -1603,32 +1535,14 @@
           suggestionAccepted: false,
           checkIn: ""
         });
-      
-        /*
-          נושא יחיד נבחר אוטומטית ואין צורך להציג
-          את מסך בחירת הנושא השבועי.
-        */
-        if (selectedAreas.length === 1) {
-          selectFocusArea(selectedAreas[0]);
-          return;
-        }
-      
-        /*
-          רק כאשר נבחרו שניים או שלושה נושאים,
-          מבקשים לבחור באיזה מהם מתחילים השבוע.
-        */
+        appendBubble(selectedAreas.join(" · "), "user", "areas-user");
         appendBubble(
-          selectedAreas.join(" · "),
-          "user",
-          "areas-user"
-        );
-      
-        appendBubble(
-          "בחירות מצוינות. הנושאים נשמרו, ועכשיו נבחר אחד שבו מתחילים השבוע כדי לא להעמיס.",
+          selectedAreas.length === 1
+            ? "בחירה מצוינת. עכשיו נבחר את הנושא שבו מתחילים השבוע."
+            : "בחירות מצוינות. הנושאים נשמרו, ועכשיו נבחר אחד שבו מתחילים השבוע כדי לא להעמיס.",
           "guide",
           "areas-guide"
         );
-      
         showFocusQuestion();
       });
 
