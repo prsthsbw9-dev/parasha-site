@@ -255,6 +255,114 @@
       display: none;
     }
 
+    /* בחירה מקדימה והתאמת הפרזנטור */
+    .audience-choice-card {
+      width: min(100%, 620px);
+      padding: clamp(30px, 6vw, 52px);
+    }
+
+    .preliminary-label {
+      margin: 0 0 10px;
+      color: #ffe7a6;
+      font-size: 15px;
+      font-weight: 800;
+      letter-spacing: 0.03em;
+    }
+
+    .audience-choice-title {
+      margin-bottom: 14px;
+      font-size: clamp(28px, 6vw, 42px);
+    }
+
+    .audience-choice-copy {
+      margin: 0 auto 25px;
+      max-width: 510px;
+      color: rgba(255, 255, 255, 0.94);
+      font-size: clamp(17px, 3.8vw, 21px);
+      line-height: 1.75;
+    }
+
+    .audience-choice-actions {
+      width: min(100%, 410px);
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin: 0 auto;
+    }
+
+    .audience-choice-btn {
+      min-height: 58px;
+      padding: 12px 18px;
+      cursor: pointer;
+      color: #211b0e;
+      font-family: inherit;
+      font-size: 18px;
+      font-weight: 800;
+      border: 1px solid rgba(255, 235, 182, 0.75);
+      border-radius: 14px;
+      background: linear-gradient(135deg, #fff0bd, #d8a13b);
+      box-shadow: 0 10px 28px rgba(218, 165, 66, 0.25);
+    }
+
+    .audience-choice-btn:hover,
+    .audience-choice-btn:focus-visible {
+      filter: brightness(1.08);
+      transform: translateY(-1px);
+    }
+
+    .presenter-stage {
+      position: relative;
+      width: min(100%, 560px);
+      min-height: min(72svh, 760px);
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      margin: 0 auto;
+      overflow: hidden;
+    }
+
+    .presenter-video {
+      width: 100%;
+      max-height: min(72svh, 760px);
+      display: block;
+      object-fit: contain;
+      background: transparent;
+      filter: drop-shadow(0 18px 28px rgba(0, 0, 0, 0.48));
+    }
+
+    .presenter-sound-btn {
+      position: absolute;
+      left: 12px;
+      bottom: 14px;
+      z-index: 2;
+      width: 50px;
+      height: 50px;
+      display: grid;
+      place-items: center;
+      padding: 0;
+      cursor: pointer;
+      color: #ffffff;
+      font-size: 23px;
+      border: 1px solid rgba(255, 255, 255, 0.48);
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.62);
+    }
+
+    .presenter-end-note {
+      position: absolute;
+      right: 16px;
+      bottom: 18px;
+      left: 74px;
+      margin: 0;
+      padding: 10px 13px;
+      color: #fff0c8;
+      font-size: 14px;
+      line-height: 1.55;
+      border: 1px solid rgba(255, 229, 158, 0.28);
+      border-radius: 12px;
+      background: rgba(0, 0, 0, 0.62);
+    }
+
     .welcome-symbol {
       width: clamp(102px, 22vw, 132px) !important;
       height: clamp(102px, 22vw, 132px) !important;
@@ -784,6 +892,18 @@
       .chat-bubble {
         max-width: 94%;
       }
+
+      .audience-choice-actions {
+        grid-template-columns: 1fr;
+      }
+
+      .presenter-stage {
+        min-height: min(70svh, 680px);
+      }
+
+      .presenter-video {
+        max-height: min(70svh, 680px);
+      }
     }
 
     @media (min-width: 800px) and (orientation: landscape) {
@@ -860,7 +980,63 @@
   </a>
 
   <main class="page">
-    <section class="card view" id="welcomeView" aria-labelledby="pageTitle">
+    <section
+      class="card view audience-choice-card"
+      id="audienceChoiceView"
+      aria-labelledby="audienceChoiceTitle"
+    >
+      <p class="preliminary-label">שאלה מקדימה</p>
+
+      <h1 class="audience-choice-title" id="audienceChoiceTitle">
+        עם מי הכבוד — גבר או אישה?
+      </h1>
+
+      <p class="audience-choice-copy">
+        כדי שנוכל להתאים אליך או אלייך את הפנייה ואת המשך הדרך בצורה האישית והנעימה ביותר.
+      </p>
+
+      <div class="audience-choice-actions" role="group" aria-label="בחירת אופן הפנייה">
+        <button class="audience-choice-btn" type="button" data-presenter-gender="male">
+          אני גבר
+        </button>
+        <button class="audience-choice-btn" type="button" data-presenter-gender="female">
+          אני אישה
+        </button>
+      </div>
+    </section>
+
+    <section
+      class="view"
+      id="presenterView"
+      aria-label="קבלת פנים אישית"
+      hidden
+    >
+      <div class="presenter-stage">
+        <video
+          class="presenter-video"
+          id="personalPresenterVideo"
+          playsinline
+          webkit-playsinline
+          preload="metadata"
+        ></video>
+
+        <button
+          class="presenter-sound-btn"
+          id="presenterSoundButton"
+          type="button"
+          aria-label="השתקת קול הפרזנטור"
+          aria-pressed="true"
+        >
+          <span id="presenterSoundIcon" aria-hidden="true">🔊</span>
+        </button>
+
+        <p class="presenter-end-note" id="presenterEndNote" hidden>
+          מיד נמשיך לשלב ההיכרות האישית.
+        </p>
+      </div>
+    </section>
+
+    <section class="card view" id="welcomeView" aria-labelledby="pageTitle" hidden>
       <div class="symbol lion-symbol welcome-symbol" aria-hidden="true">
         <video
           class="personal-strength-lion"
@@ -1126,7 +1302,6 @@
       const audio = document.getElementById("strengthIntroAudio");
       const soundButton = document.getElementById("introSoundButton");
       const soundIcon = document.getElementById("introSoundIcon");
-      const lionVideo = document.getElementById("personalStrengthLion");
   
       if (window.self !== window.top) {
         body.classList.add("is-embedded");
@@ -1134,17 +1309,6 @@
   
       let introFinished = false;
       let soundEnabled = false;
-  
-      async function startLionVideo() {
-        if (!lionVideo) return;
-  
-        try {
-          lionVideo.muted = true;
-          await lionVideo.play();
-        } catch (error) {
-          /* חסימת הפעלה אוטומטית אינה פוגעת בדף. */
-        }
-      }
   
       function updateSoundButton() {
         if (!soundButton || !soundIcon) return;
@@ -1217,7 +1381,6 @@
         introFinished = true;
   
         stopIntroAudio();
-        startLionVideo();
   
         if (!intro) {
           body.classList.remove("intro-active");
@@ -1253,7 +1416,6 @@
         !soundIcon
       ) {
         body.classList.remove("intro-active");
-        startLionVideo();
         return;
       }
   
@@ -1262,11 +1424,6 @@
        * לעולם לא משנים אותו ל-muted = false.
        */
       video.muted = true;
-  
-      if (lionVideo) {
-        lionVideo.pause();
-        lionVideo.currentTime = 0;
-      }
   
       soundButton.addEventListener("click", toggleSound);
   
@@ -1292,6 +1449,110 @@
       if (playPromise && typeof playPromise.catch === "function") {
         playPromise.catch(finishIntro);
       }
+    })();
+  </script>
+
+  <script>
+    (() => {
+      const audienceChoiceView = document.getElementById("audienceChoiceView");
+      const presenterView = document.getElementById("presenterView");
+      const presenterVideo = document.getElementById("personalPresenterVideo");
+      const presenterSoundButton = document.getElementById("presenterSoundButton");
+      const presenterSoundIcon = document.getElementById("presenterSoundIcon");
+      const presenterEndNote = document.getElementById("presenterEndNote");
+      const presenterButtons = Array.from(
+        document.querySelectorAll("[data-presenter-gender]")
+      );
+
+      if (
+        !audienceChoiceView ||
+        !presenterView ||
+        !presenterVideo ||
+        !presenterSoundButton ||
+        !presenterSoundIcon ||
+        !presenterEndNote ||
+        !presenterButtons.length
+      ) return;
+
+      const presenterFiles = {
+        male: "male-guide-transparent.webm",
+        female: "female-guide-mobile.webm"
+      };
+
+      function updatePresenterSoundButton() {
+        const soundIsOn = !presenterVideo.muted;
+        presenterSoundIcon.textContent = soundIsOn ? "🔊" : "🔇";
+        presenterSoundButton.setAttribute(
+          "aria-label",
+          soundIsOn ? "השתקת קול הפרזנטור" : "הפעלת קול הפרזנטור"
+        );
+        presenterSoundButton.setAttribute("aria-pressed", String(soundIsOn));
+      }
+
+      async function showPresenter(gender) {
+        const fileName = presenterFiles[gender];
+        if (!fileName) return;
+
+        presenterButtons.forEach((button) => {
+          button.disabled = true;
+        });
+
+        audienceChoiceView.hidden = true;
+        presenterView.hidden = false;
+        presenterEndNote.hidden = true;
+
+        presenterVideo.pause();
+        presenterVideo.src = fileName;
+        presenterVideo.currentTime = 0;
+        presenterVideo.volume = 1;
+        presenterVideo.muted = false;
+        presenterVideo.load();
+        updatePresenterSoundButton();
+
+        try {
+          await presenterVideo.play();
+        } catch (error) {
+          /* אם הדפדפן חוסם קול, הסרטון יתחיל מושתק והצופה יוכל להפעילו. */
+          presenterVideo.muted = true;
+          updatePresenterSoundButton();
+
+          try {
+            await presenterVideo.play();
+          } catch (playError) {
+            presenterEndNote.textContent = "לחצו על סמל הרמקול כדי להתחיל את קבלת הפנים.";
+            presenterEndNote.hidden = false;
+          }
+        }
+      }
+
+      presenterButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          showPresenter(button.dataset.presenterGender || "");
+        });
+      });
+
+      presenterSoundButton.addEventListener("click", async () => {
+        presenterVideo.muted = !presenterVideo.muted;
+        updatePresenterSoundButton();
+
+        if (presenterVideo.paused && !presenterVideo.ended) {
+          try {
+            await presenterVideo.play();
+          } catch (error) {}
+        }
+      });
+
+      presenterVideo.addEventListener("ended", () => {
+        presenterEndNote.textContent = "מיד נמשיך לשלב ההיכרות האישית.";
+        presenterEndNote.hidden = false;
+      });
+
+      presenterVideo.addEventListener("error", () => {
+        presenterEndNote.textContent = "לא הצלחנו לטעון את סרטון קבלת הפנים. נסו לרענן את הדף.";
+        presenterEndNote.hidden = false;
+      });
+
+      updatePresenterSoundButton();
     })();
   </script>
 
