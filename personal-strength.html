@@ -790,6 +790,36 @@
         </button>
       </div>
 
+      <div class="question-panel" id="focusQuestion" hidden>
+        <span class="question-label">
+          מבין הנושאים שבחרת, במה היית רוצה להתחיל השבוע?
+        </span>
+        <p class="area-note">
+          שאר הנושאים נשמרו ולא נעלמו — כרגע נתמקד בנושא אחד כדי ליצור התחלה שאפשר באמת לקיים.
+        </p>
+        <div class="area-grid" id="focusGrid" role="group" aria-label="בחירת הנושא הראשון לשבוע"></div>
+      </div>
+
+      <div class="question-panel" id="currentStatusQuestion" hidden>
+        <span class="question-label" id="currentStatusTitle">
+          כדי להתאים לך צעד נכון, מה מתאר אותך בצורה הטובה ביותר כיום?
+        </span>
+        <div class="area-grid" role="group" aria-label="בחירת המצב הנוכחי">
+          <button class="area-btn current-status-btn" type="button" data-status="רק בתחילת הדרך">
+            רק בתחילת הדרך
+          </button>
+          <button class="area-btn current-status-btn" type="button" data-status="משתדל או משתדלת מדי פעם">
+            משתדל/ת מדי פעם
+          </button>
+          <button class="area-btn current-status-btn" type="button" data-status="יש לי כבר הרגל מסוים">
+            יש לי כבר הרגל מסוים
+          </button>
+          <button class="area-btn current-status-btn" type="button" data-status="רוצה לחזק נקודה מסוימת">
+            רוצה לחזק נקודה מסוימת
+          </button>
+        </div>
+      </div>
+
       <button class="back-to-welcome" id="backToWelcomeButton" type="button">
         חזרה למסך הפתיחה
       </button>
@@ -908,14 +938,20 @@
       const areaQuestion = document.getElementById("areaQuestion");
       const areaSubmit = document.getElementById("areaSubmit");
       const areaSelectionStatus = document.getElementById("areaSelectionStatus");
+      const focusQuestion = document.getElementById("focusQuestion");
+      const focusGrid = document.getElementById("focusGrid");
+      const currentStatusQuestion = document.getElementById("currentStatusQuestion");
+      const currentStatusTitle = document.getElementById("currentStatusTitle");
       const genderButtons = Array.from(document.querySelectorAll("[data-gender]"));
-      const areaButtons = Array.from(document.querySelectorAll(".area-btn"));
+      const areaButtons = Array.from(document.querySelectorAll("#areaGrid .area-btn"));
+      const currentStatusButtons = Array.from(document.querySelectorAll(".current-status-btn"));
 
       if (
         !welcomeView || !chatView || !startButton || !continueButton ||
         !backButton || !status || !chatLog || !identityForm ||
         !firstNameInput || !identitySubmit || !areaQuestion ||
-        !areaSubmit || !areaSelectionStatus
+        !areaSubmit || !areaSelectionStatus || !focusQuestion ||
+        !focusGrid || !currentStatusQuestion || !currentStatusTitle
       ) return;
 
       let selectedGender = "";
@@ -958,12 +994,61 @@
         window.scrollTo({ top: 0, behavior: "smooth" });
       }
 
-      function appendBubble(text, type) {
+      function appendBubble(text, type, flowKey = "") {
+        if (flowKey && chatLog.querySelector(`[data-flow-key="${flowKey}"]`)) {
+          return;
+        }
         const bubble = document.createElement("div");
         bubble.className = `chat-bubble ${type}`;
         bubble.textContent = text;
+        if (flowKey) bubble.dataset.flowKey = flowKey;
         chatLog.appendChild(bubble);
         chatLog.scrollTop = chatLog.scrollHeight;
+      }
+
+      function showFocusQuestion() {
+        focusGrid.textContent = "";
+        selectedAreas.forEach((area) => {
+          const button = document.createElement("button");
+          button.className = "area-btn focus-area-btn";
+          button.type = "button";
+          button.textContent = area;
+          button.addEventListener("click", () => selectFocusArea(area));
+          focusGrid.appendChild(button);
+        });
+        areaQuestion.hidden = true;
+        currentStatusQuestion.hidden = true;
+        focusQuestion.hidden = false;
+      }
+
+      function selectFocusArea(area) {
+        saveDraft({
+          ...draft,
+          focusArea: area,
+          currentStatus: ""
+        });
+        appendBubble(area, "user", "focus-user");
+        appendBubble(
+          `בחירה טובה. נתחיל השבוע ב${area}. כדי להתאים לך צעד נכון, מה מתאר אותך בצורה הטובה ביותר כיום?`,
+          "guide",
+          "focus-guide"
+        );
+        currentStatusTitle.textContent = `מה מתאר בצורה הטובה ביותר את המצב שלך כיום בנושא „${area}”?`;
+        focusQuestion.hidden = true;
+        currentStatusQuestion.hidden = false;
+        chatLog.scrollTop = chatLog.scrollHeight;
+      }
+
+      function finishCurrentStatus(statusValue) {
+        if (!draft || !draft.focusArea) return;
+        saveDraft({ ...draft, currentStatus: statusValue });
+        appendBubble(statusValue, "user", "status-user");
+        appendBubble(
+          `תודה ששיתפת. עכשיו כבר אפשר להתחיל להתאים לך צעד ראשון בנושא „${draft.focusArea}” לפי המקום שבו נמצאים היום. בשלב הבא נבחר יחד את רמת הקושי המתאימה.`,
+          "guide",
+          "status-guide"
+        );
+        currentStatusQuestion.hidden = true;
       }
 
       function updateIdentitySubmit() {
@@ -1031,24 +1116,48 @@
 
         const areasWereConfirmed = draft.areasConfirmed === true || Boolean(draft.area);
 
-        if (areasWereConfirmed && selectedAreas.length && !chatLog.querySelector("[data-saved-area]")) {
-          const userBubble = document.createElement("div");
-          userBubble.className = "chat-bubble user";
-          userBubble.dataset.savedArea = "true";
-          userBubble.textContent = selectedAreas.join(" · ");
-          chatLog.appendChild(userBubble);
+        if (!areasWereConfirmed || !selectedAreas.length) return;
 
-          const guideBubble = document.createElement("div");
-          guideBubble.className = "chat-bubble guide";
-          guideBubble.dataset.savedArea = "true";
-          guideBubble.textContent = "בחירה מצוינת. בשלב הבא נתאים יחד צעד ראשון קטן ומעשי בתחום הזה.";
-          chatLog.appendChild(guideBubble);
-          areaQuestion.hidden = true;
+        appendBubble(selectedAreas.join(" · "), "user", "areas-user");
+        appendBubble(
+          selectedAreas.length === 1
+            ? "בחירה מצוינת. עכשיו נבחר את הנושא שבו מתחילים השבוע."
+            : "בחירות מצוינות. הנושאים נשמרו, ועכשיו נבחר אחד שבו מתחילים השבוע כדי לא להעמיס.",
+          "guide",
+          "areas-guide"
+        );
+
+        if (!draft.focusArea) {
+          showFocusQuestion();
+          return;
         }
+
+        appendBubble(draft.focusArea, "user", "focus-user");
+        appendBubble(
+          `בחירה טובה. נתחיל השבוע ב${draft.focusArea}. כדי להתאים לך צעד נכון, מה מתאר אותך בצורה הטובה ביותר כיום?`,
+          "guide",
+          "focus-guide"
+        );
+        areaQuestion.hidden = true;
+        focusQuestion.hidden = true;
+        currentStatusTitle.textContent = `מה מתאר בצורה הטובה ביותר את המצב שלך כיום בנושא „${draft.focusArea}”?`;
+
+        if (!draft.currentStatus) {
+          currentStatusQuestion.hidden = false;
+          return;
+        }
+
+        appendBubble(draft.currentStatus, "user", "status-user");
+        appendBubble(
+          `תודה ששיתפת. עכשיו כבר אפשר להתחיל להתאים לך צעד ראשון בנושא „${draft.focusArea}” לפי המקום שבו נמצאים היום. בשלב הבא נבחר יחד את רמת הקושי המתאימה.`,
+          "guide",
+          "status-guide"
+        );
+        currentStatusQuestion.hidden = true;
       }
 
       startButton.addEventListener("click", () => {
-        chatLog.querySelectorAll("[data-saved-identity], [data-saved-area]")
+        chatLog.querySelectorAll("[data-saved-identity], [data-saved-area], [data-flow-key]")
           .forEach((bubble) => bubble.remove());
         draft = null;
         try {
@@ -1064,6 +1173,8 @@
         });
         identityForm.hidden = false;
         areaQuestion.hidden = true;
+        focusQuestion.hidden = true;
+        currentStatusQuestion.hidden = true;
         updateIdentitySubmit();
         updateAreaSelection();
         showChat();
@@ -1114,7 +1225,9 @@
           saveDraft({
             ...draft,
             areas: selectedAreas,
-            areasConfirmed: false
+            areasConfirmed: false,
+            focusArea: "",
+            currentStatus: ""
           });
         });
       });
@@ -1124,16 +1237,25 @@
         saveDraft({
           ...draft,
           areas: selectedAreas,
-          areasConfirmed: true
+          areasConfirmed: true,
+          focusArea: "",
+          currentStatus: ""
         });
-        appendBubble(selectedAreas.join(" · "), "user");
+        appendBubble(selectedAreas.join(" · "), "user", "areas-user");
         appendBubble(
           selectedAreas.length === 1
-            ? "בחירה מצוינת. בשלב הבא נתאים יחד צעד ראשון קטן ומעשי בתחום הזה."
-            : "בחירות מצוינות. בשלב הבא נתאים יחד צעדים קטנים ומעשיים לנושאים שבחרת, בלי להעמיס.",
-          "guide"
+            ? "בחירה מצוינת. עכשיו נבחר את הנושא שבו מתחילים השבוע."
+            : "בחירות מצוינות. הנושאים נשמרו, ועכשיו נבחר אחד שבו מתחילים השבוע כדי לא להעמיס.",
+          "guide",
+          "areas-guide"
         );
-        areaQuestion.hidden = true;
+        showFocusQuestion();
+      });
+
+      currentStatusButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          finishCurrentStatus(button.dataset.status || button.textContent.trim());
+        });
       });
 
       updateContinueButton();
