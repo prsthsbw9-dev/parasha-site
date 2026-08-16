@@ -470,6 +470,49 @@
       color: #ffd27a;
     }
 
+    .recommended-choice {
+      position: relative;
+      border-color: rgba(255, 225, 148, 0.72);
+    }
+
+    .recommended-badge {
+      display: block;
+      margin-top: 3px;
+      color: #ffe7a6;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .recommended-choice:hover .recommended-badge,
+    .recommended-choice:focus-visible .recommended-badge {
+      color: #5f4718;
+    }
+
+    .suggestion-box {
+      margin-top: 12px;
+      padding: 18px;
+      color: #ffffff;
+      font-size: 16px;
+      line-height: 1.75;
+      white-space: pre-line;
+      border: 1px solid rgba(255, 228, 158, 0.38);
+      border-radius: 13px;
+      background: rgba(0, 0, 0, 0.58);
+    }
+
+    .suggestion-title {
+      display: block;
+      margin-bottom: 7px;
+      color: #ffe7a6;
+      font-size: 18px;
+    }
+
+    .suggestion-actions {
+      display: grid;
+      gap: 9px;
+      margin-top: 14px;
+    }
+
     .question-submit {
       width: 100%;
       margin-top: 15px;
@@ -805,18 +848,65 @@
           כדי להתאים לך צעד נכון, מה מתאר אותך בצורה הטובה ביותר כיום?
         </span>
         <div class="area-grid" role="group" aria-label="בחירת המצב הנוכחי">
-          <button class="area-btn current-status-btn" type="button" data-status="רק בתחילת הדרך">
+          <button class="area-btn current-status-btn" type="button" data-status="beginner">
             רק בתחילת הדרך
           </button>
-          <button class="area-btn current-status-btn" type="button" data-status="משתדל או משתדלת מדי פעם">
+          <button class="area-btn current-status-btn" type="button" data-status="sometimes">
             משתדל/ת מדי פעם
           </button>
-          <button class="area-btn current-status-btn" type="button" data-status="יש לי כבר הרגל מסוים">
+          <button class="area-btn current-status-btn" type="button" data-status="habit">
             יש לי כבר הרגל מסוים
           </button>
-          <button class="area-btn current-status-btn" type="button" data-status="רוצה לחזק נקודה מסוימת">
+          <button class="area-btn current-status-btn" type="button" data-status="specific">
             רוצה לחזק נקודה מסוימת
           </button>
+        </div>
+      </div>
+
+      <div class="question-panel" id="paceQuestion" hidden>
+        <span class="question-label">איזו רמת התחלה מתאימה לך?</span>
+        <p class="area-note">
+          המטרה היא לבחור צעד שאפשר להתמיד בו, לא להעמיס כבר בתחילת הדרך.
+        </p>
+        <div class="area-grid" role="group" aria-label="בחירת רמת הקושי">
+          <button class="area-btn pace-btn recommended-choice" type="button" data-pace="small">
+            קטן וקל להתחלה
+            <span class="recommended-badge">מומלץ להתחלה</span>
+          </button>
+          <button class="area-btn pace-btn" type="button" data-pace="balanced">
+            מאוזן ומעשי
+          </button>
+          <button class="area-btn pace-btn" type="button" data-pace="challenge">
+            אתגר משמעותי
+          </button>
+        </div>
+      </div>
+
+      <div class="question-panel" id="suggestionQuestion" hidden>
+        <div class="suggestion-box">
+          <strong class="suggestion-title">הצעד הראשון שלך לשבוע הקרוב</strong>
+          <span id="suggestionText"></span>
+        </div>
+        <div class="suggestion-actions">
+          <button class="journey-btn primary" id="acceptSuggestionButton" type="button">
+            אני מקבל את הצעד הזה
+          </button>
+          <button class="journey-btn secondary" id="alternateSuggestionButton" type="button">
+            הציעו לי צעד אחר
+          </button>
+          <button class="journey-btn secondary" id="easierSuggestionButton" type="button">
+            אני רוצה צעד קל יותר
+          </button>
+        </div>
+      </div>
+
+      <div class="question-panel" id="checkInQuestion" hidden>
+        <span class="question-label">מתי נוח לך שנבדוק יחד איך היה?</span>
+        <div class="area-grid" role="group" aria-label="בחירת זמן לבדיקה חוזרת">
+          <button class="area-btn check-in-btn" type="button" data-check-in="מחר">מחר</button>
+          <button class="area-btn check-in-btn" type="button" data-check-in="בעוד שלושה ימים">בעוד שלושה ימים</button>
+          <button class="area-btn check-in-btn" type="button" data-check-in="בסוף השבוע">בסוף השבוע</button>
+          <button class="area-btn check-in-btn" type="button" data-check-in="בלי תזכורת כרגע">בלי תזכורת כרגע</button>
         </div>
       </div>
 
@@ -942,16 +1032,28 @@
       const focusGrid = document.getElementById("focusGrid");
       const currentStatusQuestion = document.getElementById("currentStatusQuestion");
       const currentStatusTitle = document.getElementById("currentStatusTitle");
+      const paceQuestion = document.getElementById("paceQuestion");
+      const suggestionQuestion = document.getElementById("suggestionQuestion");
+      const suggestionText = document.getElementById("suggestionText");
+      const acceptSuggestionButton = document.getElementById("acceptSuggestionButton");
+      const alternateSuggestionButton = document.getElementById("alternateSuggestionButton");
+      const easierSuggestionButton = document.getElementById("easierSuggestionButton");
+      const checkInQuestion = document.getElementById("checkInQuestion");
       const genderButtons = Array.from(document.querySelectorAll("[data-gender]"));
       const areaButtons = Array.from(document.querySelectorAll("#areaGrid .area-btn"));
       const currentStatusButtons = Array.from(document.querySelectorAll(".current-status-btn"));
+      const paceButtons = Array.from(document.querySelectorAll(".pace-btn"));
+      const checkInButtons = Array.from(document.querySelectorAll(".check-in-btn"));
 
       if (
         !welcomeView || !chatView || !startButton || !continueButton ||
         !backButton || !status || !chatLog || !identityForm ||
         !firstNameInput || !identitySubmit || !areaQuestion ||
         !areaSubmit || !areaSelectionStatus || !focusQuestion ||
-        !focusGrid || !currentStatusQuestion || !currentStatusTitle
+        !focusGrid || !currentStatusQuestion || !currentStatusTitle ||
+        !paceQuestion || !suggestionQuestion || !suggestionText ||
+        !acceptSuggestionButton || !alternateSuggestionButton ||
+        !easierSuggestionButton || !checkInQuestion
       ) return;
 
       let selectedGender = "";
@@ -1006,6 +1108,137 @@
         chatLog.scrollTop = chatLog.scrollHeight;
       }
 
+      function statusLabel(statusCode) {
+        const female = ((draft && draft.gender) || selectedGender) === "female";
+        if (
+          statusCode === "משתדל או משתדלת מדי פעם" ||
+          statusCode === "משתדל/ת מדי פעם"
+        ) {
+          return female ? "משתדלת מדי פעם" : "משתדל מדי פעם";
+        }
+        const labels = {
+          beginner: "רק בתחילת הדרך",
+          sometimes: female ? "משתדלת מדי פעם" : "משתדל מדי פעם",
+          habit: "יש לי כבר הרגל מסוים",
+          specific: female ? "רוצה לחזק נקודה מסוימת" : "רוצה לחזק נקודה מסוימת"
+        };
+        return labels[statusCode] || statusCode;
+      }
+
+      function presentLocationText() {
+        return (draft && draft.gender) === "female"
+          ? "לפי המקום שבו את נמצאת היום"
+          : "לפי המקום שבו אתה נמצא היום";
+      }
+
+      function paceLabel(pace) {
+        return {
+          small: "קטן וקל להתחלה",
+          balanced: "מאוזן ומעשי",
+          challenge: "אתגר משמעותי"
+        }[pace] || pace;
+      }
+
+      function getSuggestion(area, pace, alternate = false) {
+        const suggestions = {
+          "שליטה בכעס": {
+            small: "פעם אחת השבוע, כשמתחיל להתעורר כעס, לעצור לעשר שניות לפני שמגיבים ולקחת נשימה עמוקה אחת.",
+            balanced: "פעם אחת ביום, ברגע שבו מתחיל להתעורר כעס, לא להגיב מיד. לעצור לעשר שניות, לקחת נשימה עמוקה ולשאול: „האם מה שאני עומד לומר יעזור למצב או יחמיר אותו?”",
+            challenge: "במשך שבוע לזהות בכל יום רגע אחד של כעס, לעצור לפני התגובה ולרשום לאחר מכן במשפט קצר מה הפעיל את הכעס ומה היה אפשר לומר אחרת.",
+            alternate: "לבחור משפט מרגיע קצר, כמו „אני רוצה לענות נכון ולא רק מהר”, ולומר אותו בלב פעם אחת לפני תגובה מתוך כעס."
+          },
+          "תפילה וברכות": {
+            small: "לבחור ברכה אחת ביום, לומר אותה בנחת ולהקדיש כמה שניות להבנת המילים.",
+            balanced: "לבחור שלוש ברכות קבועות ביום ולומר אותן בלי למהר, מתוך תשומת לב למילים.",
+            challenge: "לקבוע זמן יומי קצר לתפילה או לברכות, ולהקדיש לפחות עשר דקות לתפילה בנחת ובריכוז.",
+            alternate: "לפני ברכה אחת ביום לעצור לשתי שניות ולזכור למי פונים ומדוע מודים."
+          },
+          "שבת": {
+            small: "לבחור הכנה אחת קטנה לכבוד שבת ולבצע אותה כבר ביום שישי בלי לחץ.",
+            balanced: "להקדיש ביום שישי עשרים דקות מסודרות להכנה לשבת וללמוד הלכה אחת ממקור מוסמך.",
+            challenge: "לבחור תחום אחד בשמירת השבת, ללמוד אותו ממקור הלכתי מוסמך ולתכנן מראש כיצד ליישם אותו במהלך השבת הקרובה.",
+            alternate: "להכניס את השבת מתוך רגע אחד של שקט: לעצור לפני כניסתה, להניח את העיסוקים בצד ולכוון לקבל אותה בשמחה."
+          },
+          "לימוד תורה": {
+            small: "ללמוד בכל יום חמש דקות בזמן קבוע, אפילו קטע קצר אחד.",
+            balanced: "לקבוע עשר דקות לימוד ביום ולסכם במשפט אחד את הרעיון שנלמד.",
+            challenge: "לקבוע עשרים דקות לימוד יומיות בנושא אחד ולהתמיד בו במשך כל השבוע.",
+            alternate: "לבחור משנה, הלכה או פסוק אחד ולחזור עליו במהלך היום עד שהרעיון נעשה מוכר."
+          },
+          "שמירת הלשון": {
+            small: "פעם אחת השבוע לזהות משפט שעלול לפגוע ולעצור לפני שאומרים אותו.",
+            balanced: "בכל יום לבחור שיחה אחת שבה מקפידים במיוחד שלא לדבר בגנות אדם אחר.",
+            challenge: "לקבוע פרק זמן יומי של שעה שבו שמים לב במיוחד לכל דיבור על אחרים ולרשום בסוף היום הצלחה אחת.",
+            alternate: "להחליף פעם אחת ביום משפט ביקורתי במשפט מכבד או בשתיקה."
+          },
+          "כיבוד הורים": {
+            small: "לעשות השבוע מעשה אחד קטן ומשמח עבור אחד ההורים בלי שיבקשו.",
+            balanced: "ליצור קשר פעם אחת ביום, להקשיב בנחת או לעזור בדבר מעשי קטן.",
+            challenge: "לקבוע השבוע זמן מסודר לשיחה, לביקור או לעזרה משמעותית לאחד ההורים.",
+            alternate: "לומר השבוע תודה מפורשת על דבר אחד שקיבלת מההורים."
+          },
+          "חסד וצדקה": {
+            small: "לעשות השבוע מעשה חסד קטן אחד שאיש אינו חייב לדעת עליו.",
+            balanced: "לבחור בכל יום פעולה קטנה אחת של עזרה, הקשבה או נתינה.",
+            challenge: "לקבוע מעשה חסד משמעותי אחד לשבוע ולתכנן מראש מתי וכיצד לבצע אותו.",
+            alternate: "לזהות אדם אחד בסביבה שזקוק לעידוד ולשלוח לו הודעה טובה."
+          },
+          "אמונה וביטחון": {
+            small: "בסוף כל יום לומר תודה על דבר אחד טוב שקרה, גם אם היה קטן.",
+            balanced: "להקדיש חמש דקות ביום לכתיבת שלושה דברים שעליהם אפשר להודות.",
+            challenge: "בכל יום לזהות דאגה אחת, לכתוב מה בשליטתך לעשות ולהוסיף תפילה קצרה על מה שאינו בשליטתך.",
+            alternate: "לפתוח את הבוקר במשפט קצר של אמונה והודיה ולחזור עליו במהלך היום."
+          },
+          "זוגיות בונה": {
+            small: "לומר לבן או לבת הזוג פעם אחת ביום משפט אמיתי של הערכה.",
+            balanced: "לקבוע עשר דקות השבוע לשיחה שבה מקשיבים בלי טלפון ובלי לקטוע.",
+            challenge: "לקבוע שיחה שבועית מסודרת: דבר אחד שהיה טוב, דבר אחד שדורש שיפור וצעד משותף אחד לשבוע הבא.",
+            alternate: "לעשות השבוע מחווה קטנה אחת שמראה תשומת לב, בלי לחכות לבקשה."
+          },
+          "תחום אחר": {
+            small: "להגדיר פעולה אחת קטנה וברורה שאפשר לבצע פעם אחת השבוע.",
+            balanced: "להגדיר פעולה מעשית אחת ולבצע אותה שלוש פעמים במהלך השבוע.",
+            challenge: "לבנות התחייבות יומית קצרה, לעקוב אחריה במשך שבוע ולרשום בכל יום אם בוצעה.",
+            alternate: "לכתוב במשפט אחד מה רוצים לשנות ומה יהיה הסימן הראשון לכך שהתחילה התקדמות."
+          }
+        };
+        const topic = suggestions[area] || suggestions["תחום אחר"];
+        return alternate ? topic.alternate : topic[pace] || topic.small;
+      }
+
+      function showPaceQuestion() {
+        currentStatusQuestion.hidden = true;
+        suggestionQuestion.hidden = true;
+        checkInQuestion.hidden = true;
+        paceQuestion.hidden = false;
+      }
+
+      function choosePace(pace) {
+        const text = getSuggestion(draft.focusArea, pace);
+        saveDraft({
+          ...draft,
+          pace,
+          suggestionText: text,
+          suggestionAccepted: false,
+          checkIn: ""
+        });
+        const existingPaceBubble = chatLog.querySelector('[data-flow-key="pace-user"]');
+        if (existingPaceBubble) {
+          existingPaceBubble.textContent = paceLabel(pace);
+        } else {
+          appendBubble(paceLabel(pace), "user", "pace-user");
+        }
+        appendBubble("לפי הבחירות שלך, זו ההצעה הראשונה שמתאימה להתחלה:", "guide", "pace-guide");
+        suggestionText.textContent = text + "\n\nלא צריך להצליח בכל פעם. המטרה היא להתחיל לזהות את הרגע הנכון ולבנות הרגל שאפשר לשמור עליו.";
+        paceQuestion.hidden = true;
+        suggestionQuestion.hidden = false;
+      }
+
+      function showCheckInQuestion() {
+        suggestionQuestion.hidden = true;
+        checkInQuestion.hidden = false;
+      }
+
       function showFocusQuestion() {
         focusGrid.textContent = "";
         selectedAreas.forEach((area) => {
@@ -1025,7 +1258,11 @@
         saveDraft({
           ...draft,
           focusArea: area,
-          currentStatus: ""
+          currentStatus: "",
+          pace: "",
+          suggestionText: "",
+          suggestionAccepted: false,
+          checkIn: ""
         });
         appendBubble(area, "user", "focus-user");
         appendBubble(
@@ -1039,16 +1276,24 @@
         chatLog.scrollTop = chatLog.scrollHeight;
       }
 
-      function finishCurrentStatus(statusValue) {
+      function finishCurrentStatus(statusCode) {
         if (!draft || !draft.focusArea) return;
-        saveDraft({ ...draft, currentStatus: statusValue });
-        appendBubble(statusValue, "user", "status-user");
+        const selectedStatusLabel = statusLabel(statusCode);
+        saveDraft({
+          ...draft,
+          currentStatus: statusCode,
+          pace: "",
+          suggestionText: "",
+          suggestionAccepted: false,
+          checkIn: ""
+        });
+        appendBubble(selectedStatusLabel, "user", "status-user");
         appendBubble(
-          `תודה ששיתפת. עכשיו כבר אפשר להתחיל להתאים לך צעד ראשון בנושא „${draft.focusArea}” לפי המקום שבו נמצאים היום. בשלב הבא נבחר יחד את רמת הקושי המתאימה.`,
+          `תודה ששיתפת. עכשיו כבר אפשר להתחיל להתאים לך צעד ראשון בנושא „${draft.focusArea}” ${presentLocationText()}. בשלב הבא נבחר יחד את רמת הקושי המתאימה.`,
           "guide",
           "status-guide"
         );
-        currentStatusQuestion.hidden = true;
+        showPaceQuestion();
       }
 
       function updateIdentitySubmit() {
@@ -1063,6 +1308,9 @@
           const isSelected = button.dataset.gender === gender;
           button.classList.toggle("is-selected", isSelected);
           button.setAttribute("aria-pressed", String(isSelected));
+        });
+        currentStatusButtons.forEach((button) => {
+          button.textContent = statusLabel(button.dataset.status || "");
         });
         updateIdentitySubmit();
       }
@@ -1147,13 +1395,48 @@
           return;
         }
 
-        appendBubble(draft.currentStatus, "user", "status-user");
+        appendBubble(statusLabel(draft.currentStatus), "user", "status-user");
         appendBubble(
-          `תודה ששיתפת. עכשיו כבר אפשר להתחיל להתאים לך צעד ראשון בנושא „${draft.focusArea}” לפי המקום שבו נמצאים היום. בשלב הבא נבחר יחד את רמת הקושי המתאימה.`,
+          `תודה ששיתפת. עכשיו כבר אפשר להתחיל להתאים לך צעד ראשון בנושא „${draft.focusArea}” ${presentLocationText()}. בשלב הבא נבחר יחד את רמת הקושי המתאימה.`,
           "guide",
           "status-guide"
         );
         currentStatusQuestion.hidden = true;
+
+        if (!draft.pace) {
+          showPaceQuestion();
+          return;
+        }
+
+        appendBubble(paceLabel(draft.pace), "user", "pace-user");
+        appendBubble("לפי הבחירות שלך, זו ההצעה הראשונה שמתאימה להתחלה:", "guide", "pace-guide");
+        suggestionText.textContent = (draft.suggestionText || getSuggestion(draft.focusArea, draft.pace)) +
+          "\n\nלא צריך להצליח בכל פעם. המטרה היא להתחיל לזהות את הרגע הנכון ולבנות הרגל שאפשר לשמור עליו.";
+        paceQuestion.hidden = true;
+
+        if (!draft.suggestionAccepted) {
+          suggestionQuestion.hidden = false;
+          return;
+        }
+
+        appendBubble("אני מקבל את הצעד הזה", "user", "accept-user");
+        appendBubble("מצוין. הצעד נשמר כחלק מהמסלול האישי שלך.", "guide", "accept-guide");
+        suggestionQuestion.hidden = true;
+
+        if (!draft.checkIn) {
+          checkInQuestion.hidden = false;
+          return;
+        }
+
+        appendBubble(draft.checkIn, "user", "checkin-user");
+        appendBubble(
+          draft.checkIn === "בלי תזכורת כרגע"
+            ? "הבחירה נשמרה. אפשר לחזור לכאן בכל זמן ולהמשיך בקצב שלך."
+            : `מצוין. שמרנו שהבדיקה הבאה תהיה ${draft.checkIn}. בשלב זה זו הדגמה מקומית בלבד, ולכן עדיין לא תישלח הודעה בפועל.`,
+          "guide",
+          "checkin-guide"
+        );
+        checkInQuestion.hidden = true;
       }
 
       startButton.addEventListener("click", () => {
@@ -1175,6 +1458,9 @@
         areaQuestion.hidden = true;
         focusQuestion.hidden = true;
         currentStatusQuestion.hidden = true;
+        paceQuestion.hidden = true;
+        suggestionQuestion.hidden = true;
+        checkInQuestion.hidden = true;
         updateIdentitySubmit();
         updateAreaSelection();
         showChat();
@@ -1227,7 +1513,11 @@
             areas: selectedAreas,
             areasConfirmed: false,
             focusArea: "",
-            currentStatus: ""
+            currentStatus: "",
+            pace: "",
+            suggestionText: "",
+            suggestionAccepted: false,
+            checkIn: ""
           });
         });
       });
@@ -1239,7 +1529,11 @@
           areas: selectedAreas,
           areasConfirmed: true,
           focusArea: "",
-          currentStatus: ""
+          currentStatus: "",
+          pace: "",
+          suggestionText: "",
+          suggestionAccepted: false,
+          checkIn: ""
         });
         appendBubble(selectedAreas.join(" · "), "user", "areas-user");
         appendBubble(
@@ -1255,6 +1549,56 @@
       currentStatusButtons.forEach((button) => {
         button.addEventListener("click", () => {
           finishCurrentStatus(button.dataset.status || button.textContent.trim());
+        });
+      });
+
+      paceButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          if (!draft || !draft.focusArea || !draft.currentStatus) return;
+          choosePace(button.dataset.pace || "small");
+        });
+      });
+
+      alternateSuggestionButton.addEventListener("click", () => {
+        if (!draft || !draft.focusArea || !draft.pace) return;
+        const alternateText = getSuggestion(draft.focusArea, draft.pace, true);
+        saveDraft({
+          ...draft,
+          suggestionText: alternateText,
+          suggestionAccepted: false,
+          checkIn: ""
+        });
+        suggestionText.textContent = alternateText +
+          "\n\nלא צריך להצליח בכל פעם. המטרה היא לבנות צעד שאפשר לשמור עליו.";
+      });
+
+      easierSuggestionButton.addEventListener("click", () => {
+        if (!draft || !draft.focusArea) return;
+        choosePace("small");
+      });
+
+      acceptSuggestionButton.addEventListener("click", () => {
+        if (!draft || !draft.suggestionText) return;
+        saveDraft({ ...draft, suggestionAccepted: true, checkIn: "" });
+        appendBubble("אני מקבל את הצעד הזה", "user", "accept-user");
+        appendBubble("מצוין. הצעד נשמר כחלק מהמסלול האישי שלך.", "guide", "accept-guide");
+        showCheckInQuestion();
+      });
+
+      checkInButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          if (!draft || !draft.suggestionAccepted) return;
+          const checkIn = button.dataset.checkIn || button.textContent.trim();
+          saveDraft({ ...draft, checkIn });
+          appendBubble(checkIn, "user", "checkin-user");
+          appendBubble(
+            checkIn === "בלי תזכורת כרגע"
+              ? "הבחירה נשמרה. אפשר לחזור לכאן בכל זמן ולהמשיך בקצב שלך."
+              : `מצוין. שמרנו שהבדיקה הבאה תהיה ${checkIn}. בשלב זה זו הדגמה מקומית בלבד, ולכן עדיין לא תישלח הודעה בפועל.`,
+            "guide",
+            "checkin-guide"
+          );
+          checkInQuestion.hidden = true;
         });
       });
 
