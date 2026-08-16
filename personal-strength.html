@@ -338,6 +338,42 @@
       line-height: 1.5;
     }
 
+    .returning-member-option {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      padding: 8px 4px;
+      cursor: pointer;
+      color: rgba(255, 255, 255, 0.92);
+      font-size: 15px;
+      line-height: 1.5;
+    }
+
+    .returning-member-option input {
+      width: 19px;
+      height: 19px;
+      margin: 0;
+      cursor: pointer;
+      accent-color: #e0b455;
+    }
+
+    .returning-member-panel {
+      padding: 15px;
+      text-align: right;
+      border: 1px solid rgba(255, 255, 255, 0.24);
+      border-radius: 13px;
+      background: rgba(0, 0, 0, 0.48);
+    }
+
+    .member-lookup-status {
+      min-height: 21px;
+      margin: 11px 0 0;
+      color: rgba(255, 241, 202, 0.86);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
     .chat-card {
       width: min(100%, 720px);
       padding: clamp(20px, 4.5vw, 34px);
@@ -619,6 +655,32 @@
     }
 
     @media (max-width: 560px) {
+      body {
+        /*
+          background fixed גורם לריצוד בחלק מדפדפני Samsung
+          כאשר גובה התוכן משתנה.
+        */
+        background-attachment: scroll;
+        background-position: center top;
+      }
+
+      .chat-card {
+        /*
+          מונע ריצוד של הכרטיס השקוף בזמן מעבר בין השלבים.
+          הרקע נשאר שחור ושקוף, אך ללא חישוב טשטוש כבד.
+        */
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        background: rgba(0, 0, 0, 0.72);
+      }
+
+      .chat-log {
+        /*
+          מונע התנגשות בין גלילת ההודעות לבין גלילת הדף.
+        */
+        scroll-behavior: auto;
+      } 
+      
       .page {
         align-items: flex-start;
       }
@@ -761,6 +823,41 @@
           מתחילים את הדרך
         </button>
 
+        <label class="returning-member-option">
+          <input id="returningMemberCheckbox" type="checkbox">
+          <span>אני כבר חלק מתהליך החיזוק</span>
+        </label>
+
+        <div class="returning-member-panel" id="returningMemberPanel" hidden>
+          <label class="question-label" for="returningMemberName">
+            רשמו את השם שבו התחלתם את התהליך
+          </label>
+
+          <input
+            class="name-input"
+            id="returningMemberName"
+            type="text"
+            maxlength="40"
+            autocomplete="given-name"
+            enterkeyhint="go"
+            placeholder="השם הפרטי שנשמר"
+          >
+
+          <button
+            class="journey-btn primary question-submit"
+            id="findJourneyButton"
+            type="button"
+          >
+            איתור המסלול שלי
+          </button>
+
+          <p
+            class="member-lookup-status"
+            id="memberLookupStatus"
+            aria-live="polite"
+          ></p>
+        </div>
+
         <button class="journey-btn secondary" id="continueJourneyButton" type="button">
           המשך המסלול שלי
         </button>
@@ -789,6 +886,7 @@
           type="text"
           maxlength="40"
           autocomplete="given-name"
+          enterkeyhint="next"
           placeholder="אפשר לכתוב כאן שם פרטי"
           required
         >
@@ -1021,6 +1119,11 @@
       const continueButton = document.getElementById("continueJourneyButton");
       const backButton = document.getElementById("backToWelcomeButton");
       const status = document.getElementById("journeyStatus");
+      const returningMemberCheckbox = document.getElementById("returningMemberCheckbox");
+      const returningMemberPanel = document.getElementById("returningMemberPanel");
+      const returningMemberName = document.getElementById("returningMemberName");
+      const findJourneyButton = document.getElementById("findJourneyButton");
+      const memberLookupStatus = document.getElementById("memberLookupStatus");
       const chatLog = document.getElementById("chatLog");
       const identityForm = document.getElementById("identityForm");
       const firstNameInput = document.getElementById("firstName");
@@ -1053,7 +1156,9 @@
         !focusGrid || !currentStatusQuestion || !currentStatusTitle ||
         !paceQuestion || !suggestionQuestion || !suggestionText ||
         !acceptSuggestionButton || !alternateSuggestionButton ||
-        !easierSuggestionButton || !checkInQuestion
+        !easierSuggestionButton || !checkInQuestion ||
+        !returningMemberCheckbox || !returningMemberPanel ||
+        !returningMemberName || !findJourneyButton || !memberLookupStatus
       ) return;
 
       let selectedGender = "";
@@ -1235,8 +1340,24 @@
       }
 
       function showCheckInQuestion() {
+        /*
+          קודם מחליפים בין המסגרות.
+        */
         suggestionQuestion.hidden = true;
         checkInQuestion.hidden = false;
+      
+        /*
+          מחכים שהדפדפן יסיים לחשב את גובה הדף החדש,
+          ורק אז מציגים את השאלה האחרונה באזור הנראה.
+        */
+        window.requestAnimationFrame(() => {
+          window.requestAnimationFrame(() => {
+            checkInQuestion.scrollIntoView({
+              behavior: "auto",
+              block: "nearest"
+            });
+          });
+        });
       }
 
       function showFocusQuestion() {
@@ -1270,10 +1391,26 @@
           "guide",
           "focus-guide"
         );
-        currentStatusTitle.textContent = `מה מתאר בצורה הטובה ביותר את המצב שלך כיום בנושא „${area}”?`;
+        currentStatusTitle.textContent =
+          `מה מתאר בצורה הטובה ביותר את המצב שלך כיום בנושא „${area}”?`;
+        
+        /* מסתירים את מסכי הבחירה הקודמים */
+        areaQuestion.hidden = true;
         focusQuestion.hidden = true;
+        
+        /* מציגים את השלב הבא */
         currentStatusQuestion.hidden = false;
-        chatLog.scrollTop = chatLog.scrollHeight;
+        
+        /*
+          מחכים שהדפדפן יעדכן את מבנה הדף,
+          ואז גוללים בעדינות אל השאלה החדשה.
+        */
+        window.requestAnimationFrame(() => {
+          currentStatusQuestion.scrollIntoView({
+            behavior: "smooth",
+            block: "center"
+          });
+        });
       }
 
       function finishCurrentStatus(statusCode) {
@@ -1366,15 +1503,24 @@
 
         if (!areasWereConfirmed || !selectedAreas.length) return;
 
-        appendBubble(selectedAreas.join(" · "), "user", "areas-user");
-        appendBubble(
-          selectedAreas.length === 1
-            ? "בחירה מצוינת. עכשיו נבחר את הנושא שבו מתחילים השבוע."
-            : "בחירות מצוינות. הנושאים נשמרו, ועכשיו נבחר אחד שבו מתחילים השבוע כדי לא להעמיס.",
-          "guide",
-          "areas-guide"
-        );
-
+        /*
+          אם נבחר נושא אחד בלבד, מדלגים על מסך
+          "מבין הנושאים שבחרת" וממשיכים איתו אוטומטית.
+        */
+        if (selectedAreas.length === 1) {
+          if (!draft.focusArea) {
+            selectFocusArea(selectedAreas[0]);
+            return;
+          }
+        } else {
+          appendBubble(selectedAreas.join(" · "), "user", "areas-user");
+          appendBubble(
+            "בחירות מצוינות. הנושאים נשמרו, ועכשיו נבחר אחד שבו מתחילים השבוע כדי לא להעמיס.",
+            "guide",
+            "areas-guide"
+          );
+        }
+        
         if (!draft.focusArea) {
           showFocusQuestion();
           return;
@@ -1439,6 +1585,68 @@
         checkInQuestion.hidden = true;
       }
 
+      function normalizeMemberName(value) {
+        return value.trim().replace(/\s+/g, " ").toLocaleLowerCase("he-IL");
+      }
+
+      function findSavedJourney() {
+        const enteredName = returningMemberName.value.trim();
+
+        if (!enteredName) {
+          memberLookupStatus.textContent =
+            "כדי לאתר את המסלול, יש לרשום תחילה את השם.";
+          returningMemberName.focus();
+          return;
+        }
+
+        const savedDraft = loadDraft();
+
+        if (
+          savedDraft &&
+          savedDraft.name &&
+          normalizeMemberName(savedDraft.name) === normalizeMemberName(enteredName)
+        ) {
+          draft = savedDraft;
+          returningMemberName.blur();
+          memberLookupStatus.textContent = "";
+          restoreDraft();
+          return;
+        }
+
+        memberLookupStatus.textContent =
+          "לא נמצא מסלול בשם הזה במכשיר הנוכחי. ייתכן שהתהליך התחיל במכשיר או בדפדפן אחר.";
+      }
+
+      returningMemberCheckbox.addEventListener("change", () => {
+        const isReturningMember = returningMemberCheckbox.checked;
+        returningMemberPanel.hidden = !isReturningMember;
+        memberLookupStatus.textContent = "";
+
+        if (!isReturningMember) {
+          returningMemberName.value = "";
+          return;
+        }
+
+        if (draft && draft.name) {
+          returningMemberName.value = draft.name;
+        }
+
+        window.requestAnimationFrame(() => {
+          returningMemberPanel.scrollIntoView({
+            behavior: "smooth",
+            block: "nearest"
+          });
+        });
+      });
+
+      findJourneyButton.addEventListener("click", findSavedJourney);
+
+      returningMemberName.addEventListener("keydown", (event) => {
+        if (event.key !== "Enter") return;
+        event.preventDefault();
+        findSavedJourney();
+      });
+
       startButton.addEventListener("click", () => {
         chatLog.querySelectorAll("[data-saved-identity], [data-saved-area], [data-flow-key]")
           .forEach((bubble) => bubble.remove());
@@ -1464,12 +1672,41 @@
         updateIdentitySubmit();
         updateAreaSelection();
         showChat();
-        window.setTimeout(() => firstNameInput.focus(), 250);
+        window.requestAnimationFrame(() => {
+          identityForm.scrollIntoView({
+            behavior: "auto",
+            block: "nearest"
+          });
+        });
       });
 
       continueButton.addEventListener("click", restoreDraft);
       backButton.addEventListener("click", showWelcome);
       firstNameInput.addEventListener("input", updateIdentitySubmit);
+
+      firstNameInput.addEventListener("keydown", (event) => {
+        if (event.key !== "Enter") return;
+
+        event.preventDefault();
+
+        if (!firstNameInput.value.trim()) return;
+
+        if (selectedGender) {
+          firstNameInput.blur();
+          identityForm.requestSubmit();
+          return;
+        }
+
+        firstNameInput.blur();
+        const genderChoiceRow = identityForm.querySelector(".choice-row");
+
+        window.requestAnimationFrame(() => {
+          genderChoiceRow?.scrollIntoView({
+            behavior: "smooth",
+            block: "center"
+          });
+        });
+      });
 
       genderButtons.forEach((button) => {
         button.setAttribute("aria-pressed", "false");
@@ -1524,6 +1761,7 @@
 
       areaSubmit.addEventListener("click", () => {
         if (!draft || selectedAreas.length === 0) return;
+      
         saveDraft({
           ...draft,
           areas: selectedAreas,
@@ -1535,14 +1773,32 @@
           suggestionAccepted: false,
           checkIn: ""
         });
-        appendBubble(selectedAreas.join(" · "), "user", "areas-user");
+      
+        /*
+          נושא יחיד נבחר אוטומטית ואין צורך להציג
+          את מסך בחירת הנושא השבועי.
+        */
+        if (selectedAreas.length === 1) {
+          selectFocusArea(selectedAreas[0]);
+          return;
+        }
+      
+        /*
+          רק כאשר נבחרו שניים או שלושה נושאים,
+          מבקשים לבחור באיזה מהם מתחילים השבוע.
+        */
         appendBubble(
-          selectedAreas.length === 1
-            ? "בחירה מצוינת. עכשיו נבחר את הנושא שבו מתחילים השבוע."
-            : "בחירות מצוינות. הנושאים נשמרו, ועכשיו נבחר אחד שבו מתחילים השבוע כדי לא להעמיס.",
+          selectedAreas.join(" · "),
+          "user",
+          "areas-user"
+        );
+      
+        appendBubble(
+          "בחירות מצוינות. הנושאים נשמרו, ועכשיו נבחר אחד שבו מתחילים השבוע כדי לא להעמיס.",
           "guide",
           "areas-guide"
         );
+      
         showFocusQuestion();
       });
 
@@ -1589,7 +1845,13 @@
         button.addEventListener("click", () => {
           if (!draft || !draft.suggestionAccepted) return;
           const checkIn = button.dataset.checkIn || button.textContent.trim();
-          saveDraft({ ...draft, checkIn });
+          saveDraft({
+            ...draft,
+            checkIn,
+            isMember: true,
+            setupCompleted: true,
+            updatedAt: new Date().toISOString()
+          });
           appendBubble(checkIn, "user", "checkin-user");
           appendBubble(
             checkIn === "בלי תזכורת כרגע"
