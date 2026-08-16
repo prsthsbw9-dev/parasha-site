@@ -549,6 +549,70 @@
       margin-top: 14px;
     }
 
+    .route-summary-title {
+      margin: 0 0 15px;
+      color: #ffe7a6;
+      font-size: 22px;
+      text-align: center;
+    }
+
+    .route-summary-list {
+      display: grid;
+      gap: 10px;
+      margin: 0 0 16px;
+    }
+
+    .route-summary-row {
+      padding: 11px 13px;
+      color: rgba(255, 255, 255, 0.94);
+      line-height: 1.6;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 11px;
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .route-summary-row strong {
+      color: #fff0c8;
+    }
+
+    .route-local-note {
+      margin: 13px 0 0;
+      color: rgba(255, 255, 255, 0.63);
+      font-size: 12px;
+      line-height: 1.55;
+      text-align: center;
+    }
+
+    .daily-step {
+      margin: 0 0 15px;
+      padding: 16px;
+      color: #ffffff;
+      font-size: 17px;
+      line-height: 1.75;
+      border: 1px solid rgba(255, 228, 158, 0.38);
+      border-radius: 13px;
+      background: rgba(0, 0, 0, 0.46);
+    }
+
+    .encouragement-line {
+      margin: 14px 0;
+      color: #fff0c8;
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 1.7;
+      text-align: center;
+    }
+
+    .progress-message {
+      min-height: 24px;
+      margin: 13px 0 0;
+      color: #ffe7a6;
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1.6;
+      text-align: center;
+    }
+
     .question-submit {
       width: 100%;
       margin-top: 15px;
@@ -1008,6 +1072,35 @@
         </div>
       </div>
 
+      <div class="question-panel" id="completionSummary" hidden>
+        <h3 class="route-summary-title">המסלול האישי שלך מוכן</h3>
+        <div class="route-summary-list">
+          <div class="route-summary-row"><strong>הנושא השבועי:</strong> <span id="summaryArea"></span></div>
+          <div class="route-summary-row"><strong>הצעד שנבחר:</strong> <span id="summaryStep"></span></div>
+          <div class="route-summary-row"><strong>הבדיקה הבאה:</strong> <span id="summaryCheckIn"></span></div>
+          <div class="route-summary-row"><strong>סטטוס:</strong> <span>השבוע הראשון שלי</span></div>
+        </div>
+        <div class="suggestion-actions">
+          <button class="journey-btn primary" id="openJourneyButton" type="button">כניסה למסלול האישי שלי</button>
+          <button class="journey-btn secondary" id="changeStepButton" type="button">שינוי הצעד שבחרתי</button>
+        </div>
+        <p class="route-local-note">בשלב זה המעקב נשמר במכשיר הזה. אפשר לחזור לכאן ולהמשיך בכל עת.</p>
+      </div>
+
+      <div class="question-panel" id="journeyDashboard" hidden>
+        <h3 class="route-summary-title">המסלול האישי שלי</h3>
+        <div class="route-summary-row" style="margin-bottom: 12px;"><strong>הנושא שלי השבוע:</strong> <span id="dashboardArea"></span></div>
+        <div class="daily-step"><strong class="suggestion-title">הצעד שלי להיום</strong><span id="dashboardStep"></span></div>
+        <p class="encouragement-line">גם צעד קטן שנעשה בכוונה טובה יכול לפתוח דרך גדולה.</p>
+        <div class="suggestion-actions">
+          <button class="journey-btn primary" id="completedTodayButton" type="button">ביצעתי היום</button>
+          <button class="journey-btn secondary" id="notYetButton" type="button">עדיין לא, אנסה בהמשך</button>
+        </div>
+        <p class="progress-message" id="progressMessage" aria-live="polite"></p>
+        <div class="route-summary-row" style="margin-top: 14px;"><strong>הבדיקה הבאה:</strong> <span id="dashboardCheckIn"></span></div>
+        <div class="route-summary-row" id="savedAreasRow" style="margin-top: 10px;" hidden><strong>נושאים נוספים ששמרנו להמשך:</strong> <span id="dashboardSavedAreas"></span></div>
+      </div>
+
       <button class="back-to-welcome" id="backToWelcomeButton" type="button">
         חזרה למסך הפתיחה
       </button>
@@ -1142,6 +1235,21 @@
       const alternateSuggestionButton = document.getElementById("alternateSuggestionButton");
       const easierSuggestionButton = document.getElementById("easierSuggestionButton");
       const checkInQuestion = document.getElementById("checkInQuestion");
+      const completionSummary = document.getElementById("completionSummary");
+      const summaryArea = document.getElementById("summaryArea");
+      const summaryStep = document.getElementById("summaryStep");
+      const summaryCheckIn = document.getElementById("summaryCheckIn");
+      const openJourneyButton = document.getElementById("openJourneyButton");
+      const changeStepButton = document.getElementById("changeStepButton");
+      const journeyDashboard = document.getElementById("journeyDashboard");
+      const dashboardArea = document.getElementById("dashboardArea");
+      const dashboardStep = document.getElementById("dashboardStep");
+      const dashboardCheckIn = document.getElementById("dashboardCheckIn");
+      const savedAreasRow = document.getElementById("savedAreasRow");
+      const dashboardSavedAreas = document.getElementById("dashboardSavedAreas");
+      const completedTodayButton = document.getElementById("completedTodayButton");
+      const notYetButton = document.getElementById("notYetButton");
+      const progressMessage = document.getElementById("progressMessage");
       const genderButtons = Array.from(document.querySelectorAll("[data-gender]"));
       const areaButtons = Array.from(document.querySelectorAll("#areaGrid .area-btn"));
       const currentStatusButtons = Array.from(document.querySelectorAll(".current-status-btn"));
@@ -1158,7 +1266,12 @@
         !acceptSuggestionButton || !alternateSuggestionButton ||
         !easierSuggestionButton || !checkInQuestion ||
         !returningMemberCheckbox || !returningMemberPanel ||
-        !returningMemberName || !findJourneyButton || !memberLookupStatus
+        !returningMemberName || !findJourneyButton || !memberLookupStatus ||
+        !completionSummary || !summaryArea || !summaryStep ||
+        !summaryCheckIn || !openJourneyButton || !changeStepButton ||
+        !journeyDashboard || !dashboardArea || !dashboardStep ||
+        !dashboardCheckIn || !savedAreasRow || !dashboardSavedAreas ||
+        !completedTodayButton || !notYetButton || !progressMessage
       ) return;
 
       let selectedGender = "";
@@ -1357,6 +1470,53 @@
               block: "nearest"
             });
           });
+        });
+      }
+
+      function fillJourneyDetails() {
+        if (!draft) return;
+
+        const step = draft.suggestionText ||
+          getSuggestion(draft.focusArea, draft.pace || "small");
+        const additionalAreas = Array.isArray(draft.areas)
+          ? draft.areas.filter((area) => area !== draft.focusArea)
+          : [];
+
+        summaryArea.textContent = draft.focusArea || "";
+        summaryStep.textContent = step;
+        summaryCheckIn.textContent = draft.checkIn || "טרם נקבע";
+        dashboardArea.textContent = draft.focusArea || "";
+        dashboardStep.textContent = step;
+        dashboardCheckIn.textContent = draft.checkIn || "טרם נקבע";
+        dashboardSavedAreas.textContent = additionalAreas.join(" · ");
+        savedAreasRow.hidden = additionalAreas.length === 0;
+
+        progressMessage.textContent = draft.lastProgress === "completed"
+          ? "כל הכבוד. ההתקדמות של היום נשמרה."
+          : draft.lastProgress === "not-yet"
+            ? "זה בסדר. המסלול מחכה לך בלי לחץ ובלי שיפוטיות."
+            : "";
+      }
+
+      function showCompletionSummary() {
+        checkInQuestion.hidden = true;
+        suggestionQuestion.hidden = true;
+        journeyDashboard.hidden = true;
+        fillJourneyDetails();
+        completionSummary.hidden = false;
+
+        window.requestAnimationFrame(() => {
+          completionSummary.scrollIntoView({ behavior: "auto", block: "nearest" });
+        });
+      }
+
+      function showJourneyDashboard() {
+        fillJourneyDetails();
+        completionSummary.hidden = true;
+        journeyDashboard.hidden = false;
+
+        window.requestAnimationFrame(() => {
+          journeyDashboard.scrollIntoView({ behavior: "auto", block: "nearest" });
         });
       }
 
@@ -1578,11 +1738,17 @@
         appendBubble(
           draft.checkIn === "בלי תזכורת כרגע"
             ? "הבחירה נשמרה. אפשר לחזור לכאן בכל זמן ולהמשיך בקצב שלך."
-            : `מצוין. שמרנו שהבדיקה הבאה תהיה ${draft.checkIn}. בשלב זה זו הדגמה מקומית בלבד, ולכן עדיין לא תישלח הודעה בפועל.`,
+            : `מצוין. המסלול האישי שלך מוכן, והצעד הראשון נשמר. ניפגש כאן ${draft.checkIn} כדי לבדוק יחד איך היה ולהתאים את הצעד הבא.`,
           "guide",
           "checkin-guide"
         );
         checkInQuestion.hidden = true;
+
+        if (draft.dashboardOpened) {
+          showJourneyDashboard();
+        } else {
+          showCompletionSummary();
+        }
       }
 
       function normalizeMemberName(value) {
@@ -1669,6 +1835,8 @@
         paceQuestion.hidden = true;
         suggestionQuestion.hidden = true;
         checkInQuestion.hidden = true;
+        completionSummary.hidden = true;
+        journeyDashboard.hidden = true;
         updateIdentitySubmit();
         updateAreaSelection();
         showChat();
@@ -1850,18 +2018,65 @@
             checkIn,
             isMember: true,
             setupCompleted: true,
+            dashboardOpened: false,
+            lastProgress: "",
+            lastProgressAt: "",
             updatedAt: new Date().toISOString()
           });
           appendBubble(checkIn, "user", "checkin-user");
           appendBubble(
             checkIn === "בלי תזכורת כרגע"
               ? "הבחירה נשמרה. אפשר לחזור לכאן בכל זמן ולהמשיך בקצב שלך."
-              : `מצוין. שמרנו שהבדיקה הבאה תהיה ${checkIn}. בשלב זה זו הדגמה מקומית בלבד, ולכן עדיין לא תישלח הודעה בפועל.`,
+              : `מצוין. המסלול האישי שלך מוכן, והצעד הראשון נשמר. ניפגש כאן ${checkIn} כדי לבדוק יחד איך היה ולהתאים את הצעד הבא.`,
             "guide",
             "checkin-guide"
           );
-          checkInQuestion.hidden = true;
+          showCompletionSummary();
         });
+      });
+
+      openJourneyButton.addEventListener("click", () => {
+        if (!draft || !draft.checkIn) return;
+        saveDraft({
+          ...draft,
+          dashboardOpened: true,
+          updatedAt: new Date().toISOString()
+        });
+        showJourneyDashboard();
+      });
+
+      changeStepButton.addEventListener("click", () => {
+        if (!draft || !draft.focusArea || !draft.pace) return;
+        completionSummary.hidden = true;
+        journeyDashboard.hidden = true;
+        suggestionQuestion.hidden = false;
+
+        window.requestAnimationFrame(() => {
+          suggestionQuestion.scrollIntoView({ behavior: "auto", block: "nearest" });
+        });
+      });
+
+      completedTodayButton.addEventListener("click", () => {
+        if (!draft) return;
+        saveDraft({
+          ...draft,
+          lastProgress: "completed",
+          lastProgressAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        });
+        progressMessage.textContent = "כל הכבוד. ההתקדמות של היום נשמרה.";
+      });
+
+      notYetButton.addEventListener("click", () => {
+        if (!draft) return;
+        saveDraft({
+          ...draft,
+          lastProgress: "not-yet",
+          lastProgressAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        });
+        progressMessage.textContent =
+          "זה בסדר. המסלול מחכה לך בלי לחץ ובלי שיפוטיות.";
       });
 
       updateContinueButton();
