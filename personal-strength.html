@@ -1270,10 +1270,26 @@
           "guide",
           "focus-guide"
         );
-        currentStatusTitle.textContent = `מה מתאר בצורה הטובה ביותר את המצב שלך כיום בנושא „${area}”?`;
+        currentStatusTitle.textContent =
+          `מה מתאר בצורה הטובה ביותר את המצב שלך כיום בנושא „${area}”?`;
+        
+        /* מסתירים את מסכי הבחירה הקודמים */
+        areaQuestion.hidden = true;
         focusQuestion.hidden = true;
+        
+        /* מציגים את השלב הבא */
         currentStatusQuestion.hidden = false;
-        chatLog.scrollTop = chatLog.scrollHeight;
+        
+        /*
+          מחכים שהדפדפן יעדכן את מבנה הדף,
+          ואז גוללים בעדינות אל השאלה החדשה.
+        */
+        window.requestAnimationFrame(() => {
+          currentStatusQuestion.scrollIntoView({
+            behavior: "smooth",
+            block: "center"
+          });
+        });
       }
 
       function finishCurrentStatus(statusCode) {
