@@ -1366,15 +1366,24 @@
 
         if (!areasWereConfirmed || !selectedAreas.length) return;
 
-        appendBubble(selectedAreas.join(" · "), "user", "areas-user");
-        appendBubble(
-          selectedAreas.length === 1
-            ? "בחירה מצוינת. עכשיו נבחר את הנושא שבו מתחילים השבוע."
-            : "בחירות מצוינות. הנושאים נשמרו, ועכשיו נבחר אחד שבו מתחילים השבוע כדי לא להעמיס.",
-          "guide",
-          "areas-guide"
-        );
-
+        /*
+          אם נבחר נושא אחד בלבד, מדלגים על מסך
+          "מבין הנושאים שבחרת" וממשיכים איתו אוטומטית.
+        */
+        if (selectedAreas.length === 1) {
+          if (!draft.focusArea) {
+            selectFocusArea(selectedAreas[0]);
+            return;
+          }
+        } else {
+          appendBubble(selectedAreas.join(" · "), "user", "areas-user");
+          appendBubble(
+            "בחירות מצוינות. הנושאים נשמרו, ועכשיו נבחר אחד שבו מתחילים השבוע כדי לא להעמיס.",
+            "guide",
+            "areas-guide"
+          );
+        }
+        
         if (!draft.focusArea) {
           showFocusQuestion();
           return;
@@ -1524,6 +1533,7 @@
 
       areaSubmit.addEventListener("click", () => {
         if (!draft || selectedAreas.length === 0) return;
+      
         saveDraft({
           ...draft,
           areas: selectedAreas,
@@ -1535,14 +1545,32 @@
           suggestionAccepted: false,
           checkIn: ""
         });
-        appendBubble(selectedAreas.join(" · "), "user", "areas-user");
+      
+        /*
+          נושא יחיד נבחר אוטומטית ואין צורך להציג
+          את מסך בחירת הנושא השבועי.
+        */
+        if (selectedAreas.length === 1) {
+          selectFocusArea(selectedAreas[0]);
+          return;
+        }
+      
+        /*
+          רק כאשר נבחרו שניים או שלושה נושאים,
+          מבקשים לבחור באיזה מהם מתחילים השבוע.
+        */
         appendBubble(
-          selectedAreas.length === 1
-            ? "בחירה מצוינת. עכשיו נבחר את הנושא שבו מתחילים השבוע."
-            : "בחירות מצוינות. הנושאים נשמרו, ועכשיו נבחר אחד שבו מתחילים השבוע כדי לא להעמיס.",
+          selectedAreas.join(" · "),
+          "user",
+          "areas-user"
+        );
+      
+        appendBubble(
+          "בחירות מצוינות. הנושאים נשמרו, ועכשיו נבחר אחד שבו מתחילים השבוע כדי לא להעמיס.",
           "guide",
           "areas-guide"
         );
+      
         showFocusQuestion();
       });
 
