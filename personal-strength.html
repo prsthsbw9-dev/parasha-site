@@ -619,6 +619,32 @@
     }
 
     @media (max-width: 560px) {
+      body {
+        /*
+          background fixed גורם לריצוד בחלק מדפדפני Samsung
+          כאשר גובה התוכן משתנה.
+        */
+        background-attachment: scroll;
+        background-position: center top;
+      }
+
+      .chat-card {
+        /*
+          מונע ריצוד של הכרטיס השקוף בזמן מעבר בין השלבים.
+          הרקע נשאר שחור ושקוף, אך ללא חישוב טשטוש כבד.
+        */
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        background: rgba(0, 0, 0, 0.72);
+      }
+
+      .chat-log {
+        /*
+          מונע התנגשות בין גלילת ההודעות לבין גלילת הדף.
+        */
+        scroll-behavior: auto;
+      } 
+      
       .page {
         align-items: flex-start;
       }
@@ -1235,8 +1261,24 @@
       }
 
       function showCheckInQuestion() {
+        /*
+          קודם מחליפים בין המסגרות.
+        */
         suggestionQuestion.hidden = true;
         checkInQuestion.hidden = false;
+      
+        /*
+          מחכים שהדפדפן יסיים לחשב את גובה הדף החדש,
+          ורק אז מציגים את השאלה האחרונה באזור הנראה.
+        */
+        window.requestAnimationFrame(() => {
+          window.requestAnimationFrame(() => {
+            checkInQuestion.scrollIntoView({
+              behavior: "auto",
+              block: "nearest"
+            });
+          });
+        });
       }
 
       function showFocusQuestion() {
