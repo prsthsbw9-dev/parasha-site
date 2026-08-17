@@ -1901,6 +1901,18 @@
         phoneInput.addEventListener("input", () => { channels.hidden = !phoneInput.value.trim(); });
         channels.hidden = true;
         form.addEventListener("submit", handleProfileSubmit);
+        
+        function clearProfileErrorAfterCorrection() {
+          const errorMessage = document.getElementById("profileError");
+        
+          if (errorMessage) {
+            errorMessage.textContent = "";
+          }
+        }
+        
+        form.addEventListener("input", clearProfileErrorAfterCorrection);
+        form.addEventListener("change", clearProfileErrorAfterCorrection);
+        
         form.addEventListener("focusin", (event) => {
           if (!event.target.matches("input")) return;
           window.setTimeout(() => event.target.scrollIntoView({ behavior: "smooth", block: "center" }), 280);
