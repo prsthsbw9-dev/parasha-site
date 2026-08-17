@@ -517,6 +517,31 @@
     .terms-approve-btn:disabled { opacity: 0.46; cursor: not-allowed; }
     .terms-status { min-height: 22px; margin: 9px 0 0; color: #fff0bd; font-size: 13px; text-align: center; }
 
+    .profile-form { display: grid; gap: 15px; text-align: right; }
+    .profile-step[hidden] { display: none; }
+    .profile-step-title { margin: 0 0 7px; color: #ffe7a6; font-size: clamp(18px, 4.5vw, 23px); text-align: center; }
+    .profile-step-copy { margin: 0 0 14px; color: rgba(255,255,255,.9); font-size: 14px; line-height: 1.65; text-align: center; }
+    .profile-field { display: grid; gap: 7px; margin-bottom: 13px; }
+    .profile-label, .profile-legend { color: #fff4d5; font-size: 15px; font-weight: 800; line-height: 1.5; }
+    .profile-input { width: 100%; min-height: 48px; padding: 11px 13px; color: #fff; font: inherit; font-size: 16px; border: 1px solid rgba(255,255,255,.38); border-radius: 12px; outline: 0; background: rgba(0,0,0,.48); }
+    .profile-input:focus { border-color: #ffe29a; box-shadow: 0 0 0 3px rgba(255,226,154,.16); }
+    .profile-options { display: grid; gap: 9px; margin-top: 10px; }
+    .profile-option { position: relative; display: flex; align-items: center; gap: 10px; min-height: 48px; padding: 10px 12px; color: #fff; border: 1px solid rgba(255,255,255,.28); border-radius: 12px; background: rgba(0,0,0,.42); cursor: pointer; }
+    .profile-option:has(input:checked) { color: #fff4d5; border-color: rgba(255,224,141,.85); background: rgba(110,77,10,.42); }
+    .profile-option input { width: 20px; height: 20px; flex: 0 0 auto; accent-color: #e5b849; }
+    .profile-help { margin: -3px 0 0; color: rgba(255,255,255,.72); font-size: 12px; line-height: 1.5; }
+    .profile-error { min-height: 22px; margin: 2px 0 0; color: #ffd0c7; font-size: 13px; font-weight: 700; text-align: center; }
+    .profile-actions { display: flex; gap: 9px; margin-top: 4px; }
+    .profile-next, .profile-back { min-height: 48px; padding: 10px 16px; font: inherit; font-size: 15px; font-weight: 800; border-radius: 12px; cursor: pointer; }
+    .profile-next { flex: 1; color: #18130a; border: 0; background: linear-gradient(135deg,#fff0b7,#ddb143); }
+    .profile-back { color: #fff; border: 1px solid rgba(255,255,255,.34); background: rgba(0,0,0,.45); }
+    .profile-progress { height: 5px; overflow: hidden; border-radius: 10px; background: rgba(255,255,255,.12); }
+    .profile-progress-bar { height: 100%; border-radius: inherit; background: linear-gradient(90deg,#c9942e,#fff0b7); transition: width .35s ease; }
+    .profile-minor-message { padding: 8px 3px 2px; text-align: center; }
+    .profile-minor-message h2 { margin: 0 0 12px; color: #ffe7a6; font-size: clamp(20px,5vw,26px); }
+    .profile-minor-message p { margin: 0 0 16px; font-size: 15px; line-height: 1.75; }
+    .contact-channels[hidden] { display: none; }
+
     .welcome-symbol {
       width: clamp(102px, 22vw, 132px) !important;
       height: clamp(102px, 22vw, 132px) !important;
@@ -1722,6 +1747,192 @@
       let currentCaptionText = "";
       let termsTypingTimer = 0;
       let termsSequenceToken = 0;
+      let currentGender = "male";
+      let currentProfileStep = 0;
+      const profileDraft = {};
+
+      function genderText(maleText, femaleText) {
+        return currentGender === "female" ? femaleText : maleText;
+      }
+
+      function escapeHtml(value) {
+        return String(value).replace(/[&<>'"]/g, (character) => ({
+          "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;"
+        })[character]);
+      }
+
+      function renderQuestionnaire() {
+        window.clearTimeout(termsTypingTimer);
+        termsSequenceToken += 1;
+        currentProfileStep = 0;
+        Object.keys(profileDraft).forEach((key) => delete profileDraft[key]);
+
+        presenterEndNote.textContent = genderText(
+          "בוא נכיר אותך קצת לעומק כדי שאוכל להציג לך מה שבאמת מדבר אליך.",
+          "בואי נכיר אותך קצת לעומק כדי שאוכל להציג לך מה שבאמת מדבר אלייך."
+        );
+
+        termsPanel.innerHTML = `
+          <div class="profile-progress" aria-hidden="true"><div class="profile-progress-bar" id="profileProgressBar" style="width:16.66%"></div></div>
+          <form class="profile-form" id="personalProfileForm" novalidate>
+            <section class="profile-step" data-profile-step="0">
+              <h2 class="profile-step-title">נעים להכיר</h2>
+              <p class="profile-step-copy">נתחיל בשני פרטים קצרים.</p>
+              <label class="profile-field"><span class="profile-label">מה שמך? <small>(שם פרטי בלבד)</small></span><input class="profile-input" id="profileFirstName" name="firstName" autocomplete="given-name" maxlength="30" enterkeyhint="next"></label>
+              <label class="profile-field"><span class="profile-label">${genderText("בן כמה אתה?", "בת כמה את?")}</span><input class="profile-input" id="profileAge" name="age" type="number" inputmode="numeric" min="1" max="120" enterkeyhint="next"></label>
+            </section>
+
+            <section class="profile-step" data-profile-step="1" hidden>
+              <h2 class="profile-step-title">${genderText("עד כמה אתה מאמין בה׳?", "עד כמה את מאמינה בה׳?")}</h2>
+              <p class="profile-step-copy">אין כאן תשובה נכונה או לא נכונה — חשוב לבחור בכנות.</p>
+              <div class="profile-options">
+                <label class="profile-option"><input type="radio" name="belief" value="very-believing">${genderText("מאמין מאוד", "מאמינה מאוד")}</label>
+                <label class="profile-option"><input type="radio" name="belief" value="generally-believing">${genderText("מאמין בגדול", "מאמינה בגדול")}</label>
+                <label class="profile-option"><input type="radio" name="belief" value="unsure">${genderText("לא בטוח ומבולבל", "לא בטוחה ומבולבלת")}</label>
+                <label class="profile-option"><input type="radio" name="belief" value="not-believing">${genderText("לא מאמין כרגע", "לא מאמינה כרגע")}</label>
+              </div>
+            </section>
+
+            <section class="profile-step" data-profile-step="2" hidden>
+              <h2 class="profile-step-title">מה הביא אותך לחיזוק האישי?</h2>
+              <p class="profile-step-copy">אפשר לבחור יותר מתשובה אחת.</p>
+              <div class="profile-options">
+                <label class="profile-option"><input type="checkbox" name="reason" value="strengthen">רצון להתחזק</label>
+                <label class="profile-option"><input type="checkbox" name="reason" value="find-faith">רצון למצוא או לחזק את האמונה</label>
+                <label class="profile-option"><input type="checkbox" name="reason" value="practice-gap">${genderText("אני חזק באמונה אבל מתקשה בקיום המצוות", "אני חזקה באמונה אבל מתקשה בקיום המצוות")}</label>
+                <label class="profile-option"><input type="checkbox" name="reason" value="difficult-period">${genderText("אני עובר תקופה שדורשת חיזוק", "אני עוברת תקופה שדורשת חיזוק")}</label>
+                <label class="profile-option"><input type="checkbox" name="reason" value="curiosity">סקרנות ורצון ללמוד</label>
+              </div>
+            </section>
+
+            <section class="profile-step" data-profile-step="3" hidden>
+              <h2 class="profile-step-title">מה הכי חשוב לך לחזק עכשיו?</h2>
+              <div class="profile-options">
+                <label class="profile-option"><input type="radio" name="focus" value="faith">אמונה וביטחון בה׳</label>
+                <label class="profile-option"><input type="radio" name="focus" value="mitzvot">קיום מצוות בצעדים פשוטים</label>
+                <label class="profile-option"><input type="radio" name="focus" value="prayer">תפילה וקשר אישי עם ה׳</label>
+                <label class="profile-option"><input type="radio" name="focus" value="learning">לימוד תורה והבנה</label>
+                <label class="profile-option"><input type="radio" name="focus" value="inner-strength">חיזוק פנימי והתמודדות</label>
+              </div>
+            </section>
+
+            <section class="profile-step" data-profile-step="4" hidden>
+              <h2 class="profile-step-title">איזה קצב מתאים לך?</h2>
+              <div class="profile-options">
+                <label class="profile-option"><input type="radio" name="pace" value="gentle">צעדים קטנים ועדינים</label>
+                <label class="profile-option"><input type="radio" name="pace" value="steady">קצב קבוע ומאוזן</label>
+                <label class="profile-option"><input type="radio" name="pace" value="challenging">${genderText("אני מוכן לאתגר משמעותי", "אני מוכנה לאתגר משמעותי")}</label>
+              </div>
+            </section>
+
+            <section class="profile-step" data-profile-step="5" hidden>
+              <h2 class="profile-step-title">איך נוכל לשמור איתך על קשר?</h2>
+              <p class="profile-step-copy">מספיק למלא מספר נייד או דוא״ל אחד.</p>
+              <label class="profile-field"><span class="profile-label">מספר נייד</span><input class="profile-input" id="profilePhone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="05X-XXXXXXX"><small class="profile-help">המספר ישמש רק לשליחת התזכורות והעדכונים שבחרת. ניתן להפסיק בכל עת.</small></label>
+              <fieldset class="profile-field contact-channels" id="contactChannels"><legend class="profile-legend">כיצד ${genderText("אתה מעדיף", "את מעדיפה")} לקבל הודעות?</legend><div class="profile-options"><label class="profile-option"><input type="checkbox" name="channel" value="whatsapp">WhatsApp</label><label class="profile-option"><input type="checkbox" name="channel" value="sms">SMS</label></div></fieldset>
+              <label class="profile-field"><span class="profile-label">דוא״ל <small>(אם יש)</small></span><input class="profile-input" id="profileEmail" name="email" type="email" inputmode="email" autocomplete="email" placeholder="name@example.com"></label>
+              <label class="profile-option"><input type="checkbox" id="profileContactConsent" name="contactConsent">אני מסכים/ה לשמירת הפרטים ולשליחת הודעות ועדכונים בהתאם לבחירותיי. ידוע לי שניתן לבטל את ההסכמה בכל עת.</label>
+              <p class="profile-help">התשובות ישמשו להתאמת מסלול החיזוק האישי ולשליחת ההודעות שבחרת בלבד, בהתאם למדיניות הפרטיות.</p>
+            </section>
+
+            <p class="profile-error" id="profileError" role="alert" aria-live="assertive"></p>
+            <div class="profile-actions"><button class="profile-back" id="profileBackButton" type="button" hidden>חזרה</button><button class="profile-next" id="profileNextButton" type="submit">המשך</button></div>
+          </form>`;
+
+        const form = document.getElementById("personalProfileForm");
+        const phoneInput = document.getElementById("profilePhone");
+        const channels = document.getElementById("contactChannels");
+        phoneInput.addEventListener("input", () => { channels.hidden = !phoneInput.value.trim(); });
+        channels.hidden = true;
+        form.addEventListener("submit", handleProfileSubmit);
+        document.getElementById("profileBackButton").addEventListener("click", () => showProfileStep(currentProfileStep - 1));
+        document.getElementById("profileFirstName").focus({ preventScroll: true });
+      }
+
+      function showProfileStep(stepIndex) {
+        currentProfileStep = Math.max(0, Math.min(5, stepIndex));
+        document.querySelectorAll("[data-profile-step]").forEach((step) => { step.hidden = Number(step.dataset.profileStep) !== currentProfileStep; });
+        const backButton = document.getElementById("profileBackButton");
+        const nextButton = document.getElementById("profileNextButton");
+        const progressBar = document.getElementById("profileProgressBar");
+        const error = document.getElementById("profileError");
+        if (backButton) backButton.hidden = currentProfileStep === 0;
+        if (nextButton) nextButton.textContent = currentProfileStep === 5 ? "סיום ובניית המסלול" : "המשך";
+        if (progressBar) progressBar.style.width = `${((currentProfileStep + 1) / 6) * 100}%`;
+        if (error) error.textContent = "";
+        termsPanel.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+
+      function selectedValue(form, name) {
+        return form.querySelector(`[name="${name}"]:checked`)?.value || "";
+      }
+
+      function showMinorMessage(name) {
+        const safeName = escapeHtml(name);
+        presenterEndNote.textContent = genderText("תודה ששיתפת אותי.", "תודה ששיתפת אותי.");
+        termsPanel.innerHTML = `<div class="profile-minor-message"><h2>${safeName}, איזו זכות שבחרת להיכנס וללמוד</h2><p>${genderText(
+          "עדיין לא הגעת לגיל שבו מתחיל החיוב במצוות כאדם בוגר. לכן לא נמשיך כרגע לתוכנית האישית הזאת. אתה תמיד מוזמן לחזור לעץ הפרד״ס, ללמוד את תורתנו הקדושה בקצב שנעים לך ולהמשיך לגדול באור עד שתגיע לגיל מצוות.",
+          "עדיין לא הגעת לגיל שבו מתחיל החיוב במצוות כאדם בוגר. לכן לא נמשיך כרגע לתוכנית האישית הזאת. את תמיד מוזמנת לחזור לעץ הפרד״ס, ללמוד את תורתנו הקדושה בקצב שנעים לך ולהמשיך לגדול באור עד שתגיעי לגיל מצוות."
+        )}</p><a class="terms-approve-btn" style="display:grid;place-items:center;text-decoration:none" href="index.html">חזרה לעץ הפרד״ס</a></div>`;
+      }
+
+      function handleProfileSubmit(event) {
+        event.preventDefault();
+        const form = event.currentTarget;
+        const error = document.getElementById("profileError");
+        error.textContent = "";
+
+        if (currentProfileStep === 0) {
+          const name = form.firstName.value.trim();
+          const age = Number(form.age.value);
+          if (name.length < 2 || !Number.isInteger(age) || age < 1 || age > 120) {
+            error.textContent = genderText("כדי שנוכל להכיר אותך, יש למלא שם פרטי וגיל תקין.", "כדי שנוכל להכיר אותך, יש למלא שם פרטי וגיל תקין.");
+            return;
+          }
+          profileDraft.firstName = name;
+          profileDraft.age = age;
+          profileDraft.gender = currentGender;
+          if ((currentGender === "male" && age < 13) || (currentGender === "female" && age < 12)) {
+            showMinorMessage(name);
+            return;
+          }
+        } else if (currentProfileStep === 1) {
+          profileDraft.belief = selectedValue(form, "belief");
+          if (!profileDraft.belief) { error.textContent = "יש לבחור את התשובה שהכי קרובה למה שמרגיש לך כרגע."; return; }
+        } else if (currentProfileStep === 2) {
+          profileDraft.reasons = Array.from(form.querySelectorAll('[name="reason"]:checked'), (input) => input.value);
+          if (!profileDraft.reasons.length) { error.textContent = "יש לבחור לפחות סיבה אחת כדי שנוכל להתאים את הדרך עבורך."; return; }
+        } else if (currentProfileStep === 3) {
+          profileDraft.focus = selectedValue(form, "focus");
+          if (!profileDraft.focus) { error.textContent = "יש לבחור את התחום שהכי חשוב לך לחזק כעת."; return; }
+        } else if (currentProfileStep === 4) {
+          profileDraft.pace = selectedValue(form, "pace");
+          if (!profileDraft.pace) { error.textContent = "יש לבחור קצב שנראה לך מתאים."; return; }
+        } else {
+          const phone = form.phone.value.trim();
+          const email = form.email.value.trim();
+          const phoneDigits = phone.replace(/\D/g, "");
+          const channels = Array.from(form.querySelectorAll('[name="channel"]:checked'), (input) => input.value);
+          if (!phone && !email) { error.textContent = "יש למלא מספר נייד או כתובת דוא״ל אחת לפחות."; return; }
+          if (phone && (phoneDigits.length < 9 || phoneDigits.length > 10)) { error.textContent = "נראה שמספר הנייד אינו מלא. כדאי לבדוק אותו שוב."; return; }
+          if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { error.textContent = "נראה שכתובת הדוא״ל אינה תקינה. כדאי לבדוק אותה שוב."; return; }
+          if (phone && !channels.length) { error.textContent = "יש לבחור אם לקבל הודעות ב־WhatsApp, ב־SMS או בשניהם."; return; }
+          if (!form.contactConsent.checked) { error.textContent = "כדי לשמור את הפרטים ולשלוח הודעות, יש לאשר את ההסכמה שבתחתית הטופס."; return; }
+          Object.assign(profileDraft, { phone: phoneDigits, email, channels, contactConsent: true, termsAcceptedAt: new Date().toISOString() });
+          profileDraft.internalSummary = {
+            beliefLevel: ({ "very-believing": 4, "generally-believing": 3, "unsure": 2, "not-believing": 1 })[profileDraft.belief],
+            primaryFocus: profileDraft.focus,
+            preferredPace: profileDraft.pace,
+            motivations: profileDraft.reasons
+          };
+          try { localStorage.setItem("pardesPersonalStrengthProfile", JSON.stringify(profileDraft)); } catch (storageError) {}
+          presenterEndNote.textContent = genderText(`תודה ${profileDraft.firstName}, עכשיו אוכל להתאים לך דרך אישית.`, `תודה ${profileDraft.firstName}, עכשיו אוכל להתאים לך דרך אישית.`);
+          termsPanel.innerHTML = `<div class="profile-minor-message"><h2>תודה, ${escapeHtml(profileDraft.firstName)}</h2><p>${genderText("ענית על כל השאלות. הפרטים נשמרו בדפדפן, והשלב הבא יהיה בניית מסלול החיזוק האישי שמתאים לך.", "ענית על כל השאלות. הפרטים נשמרו בדפדפן, והשלב הבא יהיה בניית מסלול החיזוק האישי שמתאים לך.")}</p></div>`;
+          return;
+        }
+
+        showProfileStep(currentProfileStep + 1);
+      }
 
       function resetTerms() {
         window.clearTimeout(termsTypingTimer);
@@ -1847,6 +2058,7 @@
         const posterName = presenterPosters[gender];
         const captionFileName = presenterCaptionFiles[gender];
         if (!fileName || !posterName || !captionFileName) return;
+        currentGender = gender;
 
         presenterButtons.forEach((button) => {
           button.disabled = true;
@@ -1925,7 +2137,8 @@
 
       termsApproveButton.addEventListener("click", () => {
         if (!termsCheckbox.checked) return;
-        termsStatus.textContent = "התקנון אושר. בשלב הבא נחבר מכאן את ההיכרות האישית.";
+        termsStatus.textContent = "התקנון אושר.";
+        window.setTimeout(renderQuestionnaire, 280);
       });
 
       presenterVideo.addEventListener("playing", () => {
