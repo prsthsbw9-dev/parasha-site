@@ -541,7 +541,9 @@
     .profile-minor-message h2 { margin: 0 0 12px; color: #ffe7a6; font-size: clamp(20px,5vw,26px); }
     .profile-minor-message p { margin: 0 0 16px; font-size: 15px; line-height: 1.75; }
     .contact-channels[hidden] { display: none; }
-    .hebrew-date-preview { min-height: 23px; margin: 2px 0 0; color: #ffe7a6; font-size: 14px; font-weight: 700; line-height: 1.55; text-align: center; }
+    .hebrew-date-preview { min-height: 23px; display: grid; gap: 4px; margin: 2px 0 0; color: #ffe7a6; font-size: 14px; font-weight: 700; line-height: 1.55; text-align: center; }
+    .hebrew-date-preview .zodiac-line { color: #ffffff; font-weight: 600; }
+    .hebrew-date-preview .date-assumption { color: rgba(255,255,255,.66); font-size: 11px; font-weight: 400; }
 
     .welcome-symbol {
       width: clamp(102px, 22vw, 132px) !important;
@@ -1791,6 +1793,15 @@
               <h2 class="profile-step-title">מתי יום ההולדת שלך?</h2>
               <p class="profile-step-copy">אפשר לרשום את התאריך בלוח הלועזי — המערכת תציג גם את התאריך העברי.</p>
               <label class="profile-field"><span class="profile-label">תאריך לידה לועזי</span><input class="profile-input" id="profileBirthDate" name="birthDate" type="date" autocomplete="bday"></label>
+              <fieldset class="profile-field">
+                <legend class="profile-legend">האם נולדת לאחר השקיעה?</legend>
+                <p class="profile-help">אם אינך בטוח/ה, אפשר לבחור „איני יודע/ת”.</p>
+                <div class="profile-options">
+                  <label class="profile-option"><input type="radio" name="birthTiming" value="before-sunset">לפני השקיעה</label>
+                  <label class="profile-option"><input type="radio" name="birthTiming" value="after-sunset">לאחר השקיעה</label>
+                  <label class="profile-option"><input type="radio" name="birthTiming" value="unknown">איני יודע/ת</label>
+                </div>
+              </fieldset>
               <p class="hebrew-date-preview" id="hebrewBirthDate" aria-live="polite"></p>
             </section>
 
@@ -1858,10 +1869,35 @@
         const hebrewBirthDate = document.getElementById("hebrewBirthDate");
         birthDateInput.max = new Date().toISOString().slice(0, 10);
         birthDateInput.min = "1900-01-01";
-        birthDateInput.addEventListener("change", () => {
-          const convertedDate = formatHebrewDate(birthDateInput.value);
-          hebrewBirthDate.textContent = convertedDate ? `התאריך העברי: ${convertedDate}` : "";
-        });
+        function renderBirthdayPreview() {
+          const civilBirthDate = parseLocalDate(birthDateInput.value);
+          const timing = selectedValue(form, "birthTiming") || "unknown";
+          const candidates = getBirthDateCandidates(civilBirthDate, timing);
+          hebrewBirthDate.replaceChildren();
+          if (!candidates.length) return;
+
+          candidates.forEach((candidate, index) => {
+            const info = getHebrewDateInfo(candidate);
+            if (!info) return;
+            const dateLine = document.createElement("span");
+            dateLine.textContent = candidates.length > 1
+              ? `אפשרות ${index + 1}: ${info.formatted}`
+              : `התאריך העברי: ${info.formatted}`;
+            const zodiacLine = document.createElement("span");
+            zodiacLine.className = "zodiac-line";
+            zodiacLine.textContent = `מזל החודש לפי המסורת: ${info.zodiac}`;
+            hebrewBirthDate.append(dateLine, zodiacLine);
+          });
+
+          const assumptionLine = document.createElement("small");
+          assumptionLine.className = "date-assumption";
+          assumptionLine.textContent = timing === "unknown"
+            ? "נשמור את שתי האפשרויות ונשתמש בברכת יום הולדת שמתאימה לשתיהן."
+            : "החישוב הותאם לבחירה שלך ביחס לשעת השקיעה.";
+          hebrewBirthDate.append(assumptionLine);
+        }
+        birthDateInput.addEventListener("change", renderBirthdayPreview);
+        form.querySelectorAll('[name="birthTiming"]').forEach((input) => input.addEventListener("change", renderBirthdayPreview));
         phoneInput.addEventListener("input", () => { channels.hidden = !phoneInput.value.trim(); });
         channels.hidden = true;
         form.addEventListener("submit", handleProfileSubmit);
@@ -1884,24 +1920,99 @@
         return Number.isNaN(date.getTime()) ? null : date;
       }
 
-      function formatHebrewDate(isoDate) {
-        const date = parseLocalDate(isoDate);
-        if (!date) return "";
+      function addCalendarDays(date, days) {
+        if (!date) return null;
+        const result = new Date(date);
+        result.setDate(result.getDate() + days);
+        return result;
+      }
+
+      function getBirthDateCandidates(civilBirthDate, timing) {
+        if (!civilBirthDate) return [];
+        if (timing === "after-sunset") return [addCalendarDays(civilBirthDate, 1)];
+        if (timing === "before-sunset") return [civilBirthDate];
+        return [civilBirthDate, addCalendarDays(civilBirthDate, 1)];
+      }
+
+      const hebrewMonths = {
+        Tishri: { he: "תשרי", biblical: 7, order: 0, zodiac: "מאזניים" },
+        Tishrei: { he: "תשרי", biblical: 7, order: 0, zodiac: "מאזניים" },
+        Heshvan: { he: "חשוון", biblical: 8, order: 1, zodiac: "עקרב" },
+        Cheshvan: { he: "חשוון", biblical: 8, order: 1, zodiac: "עקרב" },
+        Kislev: { he: "כסלו", biblical: 9, order: 2, zodiac: "קשת" },
+        Tevet: { he: "טבת", biblical: 10, order: 3, zodiac: "גדי" },
+        Shevat: { he: "שבט", biblical: 11, order: 4, zodiac: "דלי" },
+        "Adar I": { he: "אדר א׳", biblical: 12, order: 5, zodiac: "דגים" },
+        Adar: { he: "אדר", biblical: 12, order: 6, zodiac: "דגים" },
+        "Adar II": { he: "אדר ב׳", biblical: 13, order: 6, zodiac: "דגים" },
+        Nisan: { he: "ניסן", biblical: 1, order: 7, zodiac: "טלה" },
+        Iyar: { he: "אייר", biblical: 2, order: 8, zodiac: "שור" },
+        Sivan: { he: "סיוון", biblical: 3, order: 9, zodiac: "תאומים" },
+        Tamuz: { he: "תמוז", biblical: 4, order: 10, zodiac: "סרטן" },
+        Tammuz: { he: "תמוז", biblical: 4, order: 10, zodiac: "סרטן" },
+        Av: { he: "אב", biblical: 5, order: 11, zodiac: "אריה" },
+        Elul: { he: "אלול", biblical: 6, order: 12, zodiac: "בתולה" }
+      };
+
+      function addHebrewPunctuation(letters) {
+        if (letters.length <= 1) return `${letters}׳`;
+        return `${letters.slice(0, -1)}״${letters.slice(-1)}`;
+      }
+
+      function hebrewNumber(number) {
+        let value = Math.max(1, Math.floor(number));
+        let letters = "";
+        const hundreds = [[400,"ת"],[300,"ש"],[200,"ר"],[100,"ק"]];
+        const tens = [[90,"צ"],[80,"פ"],[70,"ע"],[60,"ס"],[50,"נ"],[40,"מ"],[30,"ל"],[20,"כ"],[10,"י"]];
+        const ones = ["","א","ב","ג","ד","ה","ו","ז","ח","ט"];
+        for (const [amount, letter] of hundreds) while (value >= amount) { letters += letter; value -= amount; }
+        if (value === 15) { letters += "טו"; value = 0; }
+        else if (value === 16) { letters += "טז"; value = 0; }
+        for (const [amount, letter] of tens) if (value >= amount) { letters += letter; value -= amount; break; }
+        letters += ones[value] || "";
+        return addHebrewPunctuation(letters);
+      }
+
+      function hebrewYear(number) {
+        const thousands = Math.floor(number / 1000);
+        const remainder = number % 1000;
+        const thousandsLetter = ["","א","ב","ג","ד","ה","ו","ז","ח","ט"][thousands] || "";
+        return `${thousandsLetter ? `${thousandsLetter}׳` : ""}${hebrewNumber(remainder)}`;
+      }
+
+      function getHebrewDateInfo(date) {
+        if (!date) return null;
         try {
-          return new Intl.DateTimeFormat("he-IL-u-ca-hebrew", {
+          const parts = new Intl.DateTimeFormat("en-u-ca-hebrew", {
             day: "numeric", month: "long", year: "numeric"
-          }).format(date);
+          }).formatToParts(date);
+          const values = Object.fromEntries(parts.filter((part) => part.type !== "literal").map((part) => [part.type, part.value]));
+          const month = hebrewMonths[values.month];
+          if (!month) return null;
+          const day = Number(values.day);
+          const year = Number(values.year);
+          return {
+            day, year, monthKey: values.month, monthOrder: month.order,
+            monthNumber: month.biblical, monthName: month.he, zodiac: month.zodiac,
+            formatted: `${hebrewNumber(day)} (${day}) ב${month.he} (${month.biblical}) ${hebrewYear(year)} (${year})`
+          };
         } catch (error) {
-          return "התאריך יומר בהמשך במערכת";
+          return null;
         }
       }
 
-      function calculateAge(birthDate) {
-        const today = new Date();
-        let age = today.getFullYear() - birthDate.getFullYear();
-        const birthdayPassed = today.getMonth() > birthDate.getMonth() ||
-          (today.getMonth() === birthDate.getMonth() && today.getDate() >= birthDate.getDate());
-        if (!birthdayPassed) age -= 1;
+      function formatHebrewDate(isoDate) {
+        return getHebrewDateInfo(parseLocalDate(isoDate))?.formatted || "";
+      }
+
+      function calculateHebrewAge(birthDate) {
+        const birth = getHebrewDateInfo(birthDate);
+        const today = getHebrewDateInfo(new Date());
+        if (!birth || !today) return null;
+        let age = today.year - birth.year;
+        const birthdayNotReached = today.monthOrder < birth.monthOrder ||
+          (today.monthOrder === birth.monthOrder && today.day < birth.day);
+        if (birthdayNotReached) age -= 1;
         return age;
       }
 
@@ -1953,23 +2064,43 @@
             return;
           }
           profileDraft.age = age;
-          if ((currentGender === "male" && age < 13) || (currentGender === "female" && age < 12)) {
-            showMinorMessage(profileDraft.firstName);
-            return;
-          }
         } else if (currentProfileStep === 2) {
           const birthDate = parseLocalDate(form.birthDate.value);
+          const birthTiming = selectedValue(form, "birthTiming");
           if (!birthDate || birthDate > new Date()) {
             error.textContent = "יש לבחור תאריך לידה תקין.";
             return;
           }
-          const calculatedAge = calculateAge(birthDate);
-          if (calculatedAge !== profileDraft.age) {
-            error.textContent = `לפי תאריך הלידה הגיל הוא ${calculatedAge}. כדאי לחזור ולבדוק את הגיל או את התאריך.`;
+          if (!birthTiming) {
+            error.textContent = "יש לבחור אם הלידה הייתה לפני השקיעה, לאחר השקיעה או שאינך יודע/ת.";
             return;
           }
+          const birthDateCandidates = getBirthDateCandidates(birthDate, birthTiming);
+          const possibleAges = [...new Set(birthDateCandidates.map(calculateHebrewAge).filter((age) => age !== null))];
+          if (!possibleAges.length) {
+            error.textContent = "לא הצלחנו לחשב את התאריך העברי בדפדפן הזה. כדאי לנסות שוב בדפדפן מעודכן.";
+            return;
+          }
+          if (!possibleAges.includes(profileDraft.age)) {
+            error.textContent = `לפי יום ההולדת העברי הגיל הוא ${possibleAges.join(" או ")}. כדאי לחזור ולבדוק את הגיל או את התאריך.`;
+            return;
+          }
+          const possibleHebrewBirthInfo = birthDateCandidates.map(getHebrewDateInfo).filter(Boolean);
           profileDraft.birthDateGregorian = form.birthDate.value;
-          profileDraft.birthDateHebrew = formatHebrewDate(form.birthDate.value);
+          profileDraft.birthTiming = birthTiming;
+          profileDraft.birthDateHebrew = possibleHebrewBirthInfo[0]?.formatted || "";
+          profileDraft.possibleHebrewBirthDates = possibleHebrewBirthInfo.map((info) => info.formatted);
+          profileDraft.hebrewBirthMonthNumber = possibleHebrewBirthInfo[0]?.monthNumber || null;
+          profileDraft.zodiac = possibleHebrewBirthInfo[0]?.zodiac || "";
+          profileDraft.possibleZodiacSigns = [...new Set(possibleHebrewBirthInfo.map((info) => info.zodiac))];
+          profileDraft.birthdayGreetingMode = birthTiming === "unknown" ? "today-or-evening" : "exact";
+          profileDraft.birthdayGreetingText = birthTiming === "unknown"
+            ? "לכבוד יום הולדתך העברי — החל היום או עם כניסת הערב — יהי רצון שהקב״ה ימלא את משאלות לבך לטובה, יחזק אותך באמונה ובשמחה וישפיע עליך שפע של בריאות, ברכה, הצלחה ואור."
+            : "מזל טוב ליום הולדתך העברי! יהי רצון שהקב״ה ימלא את משאלות לבך לטובה, יחזק אותך באמונה ובשמחה וישפיע עליך שפע של בריאות, ברכה, הצלחה ואור.";
+          if ((currentGender === "male" && profileDraft.age < 13) || (currentGender === "female" && profileDraft.age < 12)) {
+            showMinorMessage(profileDraft.firstName);
+            return;
+          }
         } else if (currentProfileStep === 3) {
           profileDraft.belief = selectedValue(form, "belief");
           if (!profileDraft.belief) { error.textContent = "יש לבחור את התשובה שהכי קרובה למה שמרגיש לך כרגע."; return; }
