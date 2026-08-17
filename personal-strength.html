@@ -378,6 +378,50 @@
       opacity: 0;
     }
 
+    .presenter-captions {
+      position: absolute;
+      right: 14px;
+      bottom: 82px;
+      left: 14px;
+      z-index: 3;
+      min-height: 54px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 11px 15px;
+      direction: rtl;
+      color: #ffffff;
+      font-size: clamp(16px, 4.2vw, 21px);
+      font-weight: 700;
+      line-height: 1.55;
+      text-align: center;
+      border: 1px solid rgba(255, 255, 255, 0.42);
+      border-radius: 14px;
+      background: rgba(0, 0, 0, 0.74);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.34);
+      backdrop-filter: blur(7px);
+      -webkit-backdrop-filter: blur(7px);
+    }
+
+    .presenter-captions[hidden] {
+      display: none;
+    }
+
+    .presenter-caption-text::after {
+      content: "";
+      display: inline-block;
+      width: 2px;
+      height: 1em;
+      margin-right: 4px;
+      vertical-align: -0.12em;
+      background: #ffe7a6;
+      animation: caption-cursor 0.75s steps(1) infinite;
+    }
+
+    @keyframes caption-cursor {
+      50% { opacity: 0; }
+    }
+
     .presenter-sound-btn {
       position: absolute;
       left: 12px;
@@ -1078,7 +1122,24 @@
           playsinline
           webkit-playsinline
           preload="metadata"
-        ></video>
+        >
+          <track
+            id="personalPresenterCaptionTrack"
+            kind="captions"
+            srclang="he"
+            label="עברית"
+          >
+        </video>
+
+        <div
+          class="presenter-captions"
+          id="presenterCaptions"
+          aria-live="polite"
+          aria-atomic="true"
+          hidden
+        >
+          <span class="presenter-caption-text" id="presenterCaptionText"></span>
+        </div>
 
         <button
           class="presenter-sound-btn"
@@ -1518,6 +1579,9 @@
       const presenterView = document.getElementById("presenterView");
       const presenterVideo = document.getElementById("personalPresenterVideo");
       const presenterPoster = document.getElementById("personalPresenterPoster");
+      const presenterCaptionTrack = document.getElementById("personalPresenterCaptionTrack");
+      const presenterCaptions = document.getElementById("presenterCaptions");
+      const presenterCaptionText = document.getElementById("presenterCaptionText");
       const presenterSoundButton = document.getElementById("presenterSoundButton");
       const presenterSoundIcon = document.getElementById("presenterSoundIcon");
       const presenterEndNote = document.getElementById("presenterEndNote");
@@ -1530,6 +1594,9 @@
         !presenterView ||
         !presenterVideo ||
         !presenterPoster ||
+        !presenterCaptionTrack ||
+        !presenterCaptions ||
+        !presenterCaptionText ||
         !presenterSoundButton ||
         !presenterSoundIcon ||
         !presenterEndNote ||
@@ -1546,6 +1613,66 @@
         female: "female-guide-poster.webp"
       };
 
+      const presenterCaptionFiles = {
+        male: "male-guide-captions.vtt",
+        female: "female-guide-captions.vtt"
+      };
+
+      let captionTypingTimer = 0;
+      let currentCaptionText = "";
+
+      function clearCaptionTyping() {
+        window.clearTimeout(captionTypingTimer);
+        captionTypingTimer = 0;
+      }
+
+      function hidePresenterCaption() {
+        clearCaptionTyping();
+        currentCaptionText = "";
+        presenterCaptionText.textContent = "";
+        presenterCaptions.hidden = true;
+      }
+
+      function typePresenterCaption(text, cue) {
+        if (!text || text === currentCaptionText) return;
+
+        clearCaptionTyping();
+        currentCaptionText = text;
+        presenterCaptionText.textContent = "";
+        presenterCaptions.hidden = false;
+
+        const remainingMilliseconds = Math.max(
+          350,
+          ((cue.endTime || 0) - presenterVideo.currentTime) * 1000
+        );
+        const typingDelay = Math.max(
+          12,
+          Math.min(34, Math.floor((remainingMilliseconds * 0.72) / text.length))
+        );
+        let characterIndex = 0;
+
+        function addNextCharacter() {
+          if (characterIndex >= text.length) return;
+          characterIndex += 1;
+          presenterCaptionText.textContent = text.slice(0, characterIndex);
+          captionTypingTimer = window.setTimeout(addNextCharacter, typingDelay);
+        }
+
+        addNextCharacter();
+      }
+
+      function updateCaptionFromTrack() {
+        const activeCues = presenterCaptionTrack.track.activeCues;
+        const activeCue = activeCues && activeCues.length ? activeCues[0] : null;
+
+        if (!activeCue) {
+          hidePresenterCaption();
+          return;
+        }
+
+        typePresenterCaption(activeCue.text.trim(), activeCue);
+      }
+
       function updatePresenterSoundButton() {
         const soundIsOn = !presenterVideo.muted;
         presenterSoundIcon.textContent = soundIsOn ? "🔊" : "🔇";
@@ -1559,7 +1686,8 @@
       async function showPresenter(gender) {
         const fileName = presenterFiles[gender];
         const posterName = presenterPosters[gender];
-        if (!fileName || !posterName) return;
+        const captionFileName = presenterCaptionFiles[gender];
+        if (!fileName || !posterName || !captionFileName) return;
 
         presenterButtons.forEach((button) => {
           button.disabled = true;
@@ -1569,6 +1697,9 @@
         presenterPoster.hidden = false;
         presenterPoster.classList.remove("is-playing");
         presenterVideo.poster = posterName;
+        hidePresenterCaption();
+        presenterCaptionTrack.src = captionFileName;
+        presenterCaptionTrack.track.mode = "hidden";
 
         audienceChoiceView.hidden = true;
         presenterView.hidden = false;
@@ -1616,6 +1747,7 @@
       });
 
       presenterVideo.addEventListener("ended", () => {
+        hidePresenterCaption();
         presenterEndNote.textContent = "מיד נמשיך לשלב ההיכרות האישית.";
         presenterEndNote.hidden = false;
       });
@@ -1631,10 +1763,16 @@
       });
 
       presenterVideo.addEventListener("error", () => {
+        hidePresenterCaption();
         presenterPoster.hidden = false;
         presenterPoster.classList.remove("is-playing");
         presenterEndNote.textContent = "לא הצלחנו לטעון את סרטון קבלת הפנים. נסו לרענן את הדף.";
         presenterEndNote.hidden = false;
+      });
+
+      presenterCaptionTrack.addEventListener("load", () => {
+        presenterCaptionTrack.track.mode = "hidden";
+        presenterCaptionTrack.track.addEventListener("cuechange", updateCaptionFromTrack);
       });
 
       updatePresenterSoundButton();
