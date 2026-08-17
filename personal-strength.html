@@ -523,7 +523,7 @@
     .profile-step-copy { margin: 0 0 14px; color: rgba(255,255,255,.9); font-size: 14px; line-height: 1.65; text-align: center; }
     .profile-field { display: grid; gap: 7px; margin-bottom: 13px; }
     .profile-label, .profile-legend { color: #fff4d5; font-size: 15px; font-weight: 800; line-height: 1.5; }
-    .profile-input { width: 100%; min-height: 48px; padding: 11px 13px; color: #fff; font: inherit; font-size: 16px; border: 1px solid rgba(255,255,255,.38); border-radius: 12px; outline: 0; background: rgba(0,0,0,.48); }
+    .profile-input { width: 100%; min-height: 48px; padding: 11px 13px; color: #fff; font: inherit; font-size: 16px; border: 1px solid rgba(255,255,255,.38); border-radius: 12px; outline: 0; background: rgba(0,0,0,.48); scroll-margin-top: 110px; scroll-margin-bottom: 42vh; }
     .profile-input:focus { border-color: #ffe29a; box-shadow: 0 0 0 3px rgba(255,226,154,.16); }
     .profile-options { display: grid; gap: 9px; margin-top: 10px; }
     .profile-option { position: relative; display: flex; align-items: center; gap: 10px; min-height: 48px; padding: 10px 12px; color: #fff; border: 1px solid rgba(255,255,255,.28); border-radius: 12px; background: rgba(0,0,0,.42); cursor: pointer; }
@@ -541,6 +541,7 @@
     .profile-minor-message h2 { margin: 0 0 12px; color: #ffe7a6; font-size: clamp(20px,5vw,26px); }
     .profile-minor-message p { margin: 0 0 16px; font-size: 15px; line-height: 1.75; }
     .contact-channels[hidden] { display: none; }
+    .hebrew-date-preview { min-height: 23px; margin: 2px 0 0; color: #ffe7a6; font-size: 14px; font-weight: 700; line-height: 1.55; text-align: center; }
 
     .welcome-symbol {
       width: clamp(102px, 22vw, 132px) !important;
@@ -1773,16 +1774,27 @@
         );
 
         termsPanel.innerHTML = `
-          <div class="profile-progress" aria-hidden="true"><div class="profile-progress-bar" id="profileProgressBar" style="width:16.66%"></div></div>
+          <div class="profile-progress" aria-hidden="true"><div class="profile-progress-bar" id="profileProgressBar" style="width:12.5%"></div></div>
           <form class="profile-form" id="personalProfileForm" novalidate>
             <section class="profile-step" data-profile-step="0">
               <h2 class="profile-step-title">נעים להכיר</h2>
-              <p class="profile-step-copy">נתחיל בשני פרטים קצרים.</p>
+              <p class="profile-step-copy">נתחיל בפרט קטן אחד.</p>
               <label class="profile-field"><span class="profile-label">מה שמך? <small>(שם פרטי בלבד)</small></span><input class="profile-input" id="profileFirstName" name="firstName" autocomplete="given-name" maxlength="30" enterkeyhint="next"></label>
-              <label class="profile-field"><span class="profile-label">${genderText("בן כמה אתה?", "בת כמה את?")}</span><input class="profile-input" id="profileAge" name="age" type="number" inputmode="numeric" min="1" max="120" enterkeyhint="next"></label>
             </section>
 
             <section class="profile-step" data-profile-step="1" hidden>
+              <h2 class="profile-step-title">${genderText("בן כמה אתה?", "בת כמה את?")}</h2>
+              <label class="profile-field"><span class="profile-label">גיל</span><input class="profile-input" id="profileAge" name="age" type="number" inputmode="numeric" min="1" max="120" enterkeyhint="next"></label>
+            </section>
+
+            <section class="profile-step" data-profile-step="2" hidden>
+              <h2 class="profile-step-title">מתי יום ההולדת שלך?</h2>
+              <p class="profile-step-copy">אפשר לרשום את התאריך בלוח הלועזי — המערכת תציג גם את התאריך העברי.</p>
+              <label class="profile-field"><span class="profile-label">תאריך לידה לועזי</span><input class="profile-input" id="profileBirthDate" name="birthDate" type="date" autocomplete="bday"></label>
+              <p class="hebrew-date-preview" id="hebrewBirthDate" aria-live="polite"></p>
+            </section>
+
+            <section class="profile-step" data-profile-step="3" hidden>
               <h2 class="profile-step-title">${genderText("עד כמה אתה מאמין בה׳?", "עד כמה את מאמינה בה׳?")}</h2>
               <p class="profile-step-copy">אין כאן תשובה נכונה או לא נכונה — חשוב לבחור בכנות.</p>
               <div class="profile-options">
@@ -1793,7 +1805,7 @@
               </div>
             </section>
 
-            <section class="profile-step" data-profile-step="2" hidden>
+            <section class="profile-step" data-profile-step="4" hidden>
               <h2 class="profile-step-title">מה הביא אותך לחיזוק האישי?</h2>
               <p class="profile-step-copy">אפשר לבחור יותר מתשובה אחת.</p>
               <div class="profile-options">
@@ -1805,7 +1817,7 @@
               </div>
             </section>
 
-            <section class="profile-step" data-profile-step="3" hidden>
+            <section class="profile-step" data-profile-step="5" hidden>
               <h2 class="profile-step-title">מה הכי חשוב לך לחזק עכשיו?</h2>
               <div class="profile-options">
                 <label class="profile-option"><input type="radio" name="focus" value="faith">אמונה וביטחון בה׳</label>
@@ -1816,7 +1828,7 @@
               </div>
             </section>
 
-            <section class="profile-step" data-profile-step="4" hidden>
+            <section class="profile-step" data-profile-step="6" hidden>
               <h2 class="profile-step-title">איזה קצב מתאים לך?</h2>
               <div class="profile-options">
                 <label class="profile-option"><input type="radio" name="pace" value="gentle">צעדים קטנים ועדינים</label>
@@ -1825,7 +1837,7 @@
               </div>
             </section>
 
-            <section class="profile-step" data-profile-step="5" hidden>
+            <section class="profile-step" data-profile-step="7" hidden>
               <h2 class="profile-step-title">איך נוכל לשמור איתך על קשר?</h2>
               <p class="profile-step-copy">מספיק למלא מספר נייד או דוא״ל אחד.</p>
               <label class="profile-field"><span class="profile-label">מספר נייד</span><input class="profile-input" id="profilePhone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="05X-XXXXXXX"><small class="profile-help">המספר ישמש רק לשליחת התזכורות והעדכונים שבחרת. ניתן להפסיק בכל עת.</small></label>
@@ -1842,23 +1854,67 @@
         const form = document.getElementById("personalProfileForm");
         const phoneInput = document.getElementById("profilePhone");
         const channels = document.getElementById("contactChannels");
+        const birthDateInput = document.getElementById("profileBirthDate");
+        const hebrewBirthDate = document.getElementById("hebrewBirthDate");
+        birthDateInput.max = new Date().toISOString().slice(0, 10);
+        birthDateInput.min = "1900-01-01";
+        birthDateInput.addEventListener("change", () => {
+          const convertedDate = formatHebrewDate(birthDateInput.value);
+          hebrewBirthDate.textContent = convertedDate ? `התאריך העברי: ${convertedDate}` : "";
+        });
         phoneInput.addEventListener("input", () => { channels.hidden = !phoneInput.value.trim(); });
         channels.hidden = true;
         form.addEventListener("submit", handleProfileSubmit);
+        form.addEventListener("focusin", (event) => {
+          if (!event.target.matches("input")) return;
+          window.setTimeout(() => event.target.scrollIntoView({ behavior: "smooth", block: "center" }), 280);
+        });
+        form.addEventListener("keydown", (event) => {
+          if (event.key !== "Enter" || !event.target.matches("input:not([type=radio]):not([type=checkbox]):not([type=date])")) return;
+          event.preventDefault();
+          form.requestSubmit();
+        });
         document.getElementById("profileBackButton").addEventListener("click", () => showProfileStep(currentProfileStep - 1));
-        document.getElementById("profileFirstName").focus({ preventScroll: true });
+      }
+
+      function parseLocalDate(isoDate) {
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(isoDate)) return null;
+        const [year, month, day] = isoDate.split("-").map(Number);
+        const date = new Date(year, month - 1, day, 12, 0, 0);
+        return Number.isNaN(date.getTime()) ? null : date;
+      }
+
+      function formatHebrewDate(isoDate) {
+        const date = parseLocalDate(isoDate);
+        if (!date) return "";
+        try {
+          return new Intl.DateTimeFormat("he-IL-u-ca-hebrew", {
+            day: "numeric", month: "long", year: "numeric"
+          }).format(date);
+        } catch (error) {
+          return "התאריך יומר בהמשך במערכת";
+        }
+      }
+
+      function calculateAge(birthDate) {
+        const today = new Date();
+        let age = today.getFullYear() - birthDate.getFullYear();
+        const birthdayPassed = today.getMonth() > birthDate.getMonth() ||
+          (today.getMonth() === birthDate.getMonth() && today.getDate() >= birthDate.getDate());
+        if (!birthdayPassed) age -= 1;
+        return age;
       }
 
       function showProfileStep(stepIndex) {
-        currentProfileStep = Math.max(0, Math.min(5, stepIndex));
+        currentProfileStep = Math.max(0, Math.min(7, stepIndex));
         document.querySelectorAll("[data-profile-step]").forEach((step) => { step.hidden = Number(step.dataset.profileStep) !== currentProfileStep; });
         const backButton = document.getElementById("profileBackButton");
         const nextButton = document.getElementById("profileNextButton");
         const progressBar = document.getElementById("profileProgressBar");
         const error = document.getElementById("profileError");
         if (backButton) backButton.hidden = currentProfileStep === 0;
-        if (nextButton) nextButton.textContent = currentProfileStep === 5 ? "סיום ובניית המסלול" : "המשך";
-        if (progressBar) progressBar.style.width = `${((currentProfileStep + 1) / 6) * 100}%`;
+        if (nextButton) nextButton.textContent = currentProfileStep === 7 ? "סיום ובניית המסלול" : "המשך";
+        if (progressBar) progressBar.style.width = `${((currentProfileStep + 1) / 8) * 100}%`;
         if (error) error.textContent = "";
         termsPanel.scrollIntoView({ behavior: "smooth", block: "start" });
       }
@@ -1884,28 +1940,46 @@
 
         if (currentProfileStep === 0) {
           const name = form.firstName.value.trim();
-          const age = Number(form.age.value);
-          if (name.length < 2 || !Number.isInteger(age) || age < 1 || age > 120) {
-            error.textContent = genderText("כדי שנוכל להכיר אותך, יש למלא שם פרטי וגיל תקין.", "כדי שנוכל להכיר אותך, יש למלא שם פרטי וגיל תקין.");
+          if (name.length < 2) {
+            error.textContent = "כדי שנוכל להכיר אותך, יש למלא שם פרטי.";
             return;
           }
           profileDraft.firstName = name;
-          profileDraft.age = age;
           profileDraft.gender = currentGender;
-          if ((currentGender === "male" && age < 13) || (currentGender === "female" && age < 12)) {
-            showMinorMessage(name);
+        } else if (currentProfileStep === 1) {
+          const age = Number(form.age.value);
+          if (!Number.isInteger(age) || age < 1 || age > 120) {
+            error.textContent = "יש למלא גיל תקין כדי שנוכל להמשיך.";
             return;
           }
-        } else if (currentProfileStep === 1) {
+          profileDraft.age = age;
+          if ((currentGender === "male" && age < 13) || (currentGender === "female" && age < 12)) {
+            showMinorMessage(profileDraft.firstName);
+            return;
+          }
+        } else if (currentProfileStep === 2) {
+          const birthDate = parseLocalDate(form.birthDate.value);
+          if (!birthDate || birthDate > new Date()) {
+            error.textContent = "יש לבחור תאריך לידה תקין.";
+            return;
+          }
+          const calculatedAge = calculateAge(birthDate);
+          if (calculatedAge !== profileDraft.age) {
+            error.textContent = `לפי תאריך הלידה הגיל הוא ${calculatedAge}. כדאי לחזור ולבדוק את הגיל או את התאריך.`;
+            return;
+          }
+          profileDraft.birthDateGregorian = form.birthDate.value;
+          profileDraft.birthDateHebrew = formatHebrewDate(form.birthDate.value);
+        } else if (currentProfileStep === 3) {
           profileDraft.belief = selectedValue(form, "belief");
           if (!profileDraft.belief) { error.textContent = "יש לבחור את התשובה שהכי קרובה למה שמרגיש לך כרגע."; return; }
-        } else if (currentProfileStep === 2) {
+        } else if (currentProfileStep === 4) {
           profileDraft.reasons = Array.from(form.querySelectorAll('[name="reason"]:checked'), (input) => input.value);
           if (!profileDraft.reasons.length) { error.textContent = "יש לבחור לפחות סיבה אחת כדי שנוכל להתאים את הדרך עבורך."; return; }
-        } else if (currentProfileStep === 3) {
+        } else if (currentProfileStep === 5) {
           profileDraft.focus = selectedValue(form, "focus");
           if (!profileDraft.focus) { error.textContent = "יש לבחור את התחום שהכי חשוב לך לחזק כעת."; return; }
-        } else if (currentProfileStep === 4) {
+        } else if (currentProfileStep === 6) {
           profileDraft.pace = selectedValue(form, "pace");
           if (!profileDraft.pace) { error.textContent = "יש לבחור קצב שנראה לך מתאים."; return; }
         } else {
@@ -1931,7 +2005,8 @@
           return;
         }
 
-        showProfileStep(currentProfileStep + 1);
+        if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
+        window.setTimeout(() => showProfileStep(currentProfileStep + 1), 80);
       }
 
       function resetTerms() {
