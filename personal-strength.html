@@ -1795,17 +1795,29 @@
               <label class="profile-field"><span class="profile-label">תאריך לידה לועזי</span><input class="profile-input" id="profileBirthDate" name="birthDate" type="date" autocomplete="bday"></label>
               <fieldset class="profile-field">
                 <legend class="profile-legend">האם נולדת לאחר השקיעה?</legend>
-                
-                <p class="profile-help">
+              
+                <div class="profile-options">
+                  <label class="profile-option">
+                    <input type="radio" name="birthTiming" value="before-sunset">
+                    לפני השקיעה
+                  </label>
+              
+                  <label class="profile-option">
+                    <input type="radio" name="birthTiming" value="after-sunset">
+                    לאחר השקיעה
+                  </label>
+              
+                  <label class="profile-option">
+                    <input type="radio" name="birthTiming" value="unknown">
+                    איני יודע/ת
+                  </label>
+                </div>
+              
+                <p class="profile-help" id="birthTimingUnknownHelp" hidden>
                   כדי לדייק, אפשר לשאול את ההורים אם הם זוכרים האם הלידה הייתה לפני השקיעה או לאחריה,
                   ולהשוות לתאריך העברי המופיע בתעודת הזהות.
                   במקרה של סתירה או לידה סמוך לשקיעה, מומלץ לבדוק לפי שעת ומקום הלידה.
                 </p>
-                <div class="profile-options">
-                  <label class="profile-option"><input type="radio" name="birthTiming" value="before-sunset">לפני השקיעה</label>
-                  <label class="profile-option"><input type="radio" name="birthTiming" value="after-sunset">לאחר השקיעה</label>
-                  <label class="profile-option"><input type="radio" name="birthTiming" value="unknown">איני יודע/ת</label>
-                </div>
               </fieldset>
               <p class="hebrew-date-preview" id="hebrewBirthDate" aria-live="polite"></p>
             </section>
@@ -1867,42 +1879,118 @@
             <div class="profile-actions"><button class="profile-back" id="profileBackButton" type="button" hidden>חזרה</button><button class="profile-next" id="profileNextButton" type="submit">המשך</button></div>
           </form>`;
 
-        const form = document.getElementById("personalProfileForm");
-        const phoneInput = document.getElementById("profilePhone");
-        const channels = document.getElementById("contactChannels");
-        const birthDateInput = document.getElementById("profileBirthDate");
-        const hebrewBirthDate = document.getElementById("hebrewBirthDate");
-        birthDateInput.max = new Date().toISOString().slice(0, 10);
-        birthDateInput.min = "1900-01-01";
-        function renderBirthdayPreview() {
-          const civilBirthDate = parseLocalDate(birthDateInput.value);
-          const timing = selectedValue(form, "birthTiming") || "unknown";
-          const candidates = getBirthDateCandidates(civilBirthDate, timing);
-          hebrewBirthDate.replaceChildren();
-          if (!candidates.length) return;
+          const form = document.getElementById("personalProfileForm");
+          const phoneInput = document.getElementById("profilePhone");
+          const channels = document.getElementById("contactChannels");
+          const birthDateInput = document.getElementById("profileBirthDate");
+          const hebrewBirthDate = document.getElementById("hebrewBirthDate");
+          const birthTimingUnknownHelp =
+            document.getElementById("birthTimingUnknownHelp");
+          
+          birthDateInput.max = new Date().toISOString().slice(0, 10);
+          birthDateInput.min = "1900-01-01";
+          
+          function renderBirthdayPreview() {
+            const civilBirthDate = parseLocalDate(
+              birthDateInput.value
+            );
+          
+            const timing = selectedValue(
+              form,
+              "birthTiming"
+            );
+          
+            /* ההסבר יוצג רק כשנבחרה האפשרות "איני יודע/ת". */
+            if (birthTimingUnknownHelp) {
+              birthTimingUnknownHelp.hidden =
+                timing !== "unknown";
+            }
+          
+            /* מחיקת התאריך והתוצאה הקודמים. */
+            hebrewBirthDate.replaceChildren();
+          
+            /*
+             * כל עוד לא נבחר מועד הלידה ביחס לשקיעה,
+             * לא מציגים תאריך עברי או שתי אפשרויות.
+             */
+            if (!timing) {
+              return;
+            }
+          
+            /*
+             * אם עדיין לא הוזן תאריך לועזי,
+             * לא ניתן לבצע את ההמרה.
+             */
+            if (!civilBirthDate) {
+              return;
+            }
+          
+            const candidates = getBirthDateCandidates(
+              civilBirthDate,
+              timing
+            );
+          
+            if (!candidates.length) {
+              return;
+            }
+          
+            candidates.forEach((candidate, index) => {
+              const info = getHebrewDateInfo(candidate);
+          
+              if (!info) {
+                return;
+              }
+          
+              const dateLine = document.createElement("span");
+          
+              dateLine.textContent =
+                candidates.length > 1
+                  ? `אפשרות ${index + 1}: ${info.formatted}`
+                  : `התאריך העברי: ${info.formatted}`;
+          
+              const zodiacLine =
+                document.createElement("span");
+          
+              zodiacLine.className = "zodiac-line";
+          
+              zodiacLine.textContent =
+                `מזל החודש לפי המסורת: ${info.zodiac}`;
+          
+              hebrewBirthDate.append(
+                dateLine,
+                zodiacLine
+              );
+            });
+          
+            const assumptionLine =
+              document.createElement("small");
+          
+            assumptionLine.className = "date-assumption";
+          
+            assumptionLine.textContent =
+              timing === "unknown"
+                ? "נשמור את שתי האפשרויות ונשתמש בברכת יום הולדת שמתאימה לשתיהן."
+                : "החישוב הותאם לבחירה שלך ביחס לשעת השקיעה.";
+          
+            hebrewBirthDate.append(assumptionLine);
+          }
+          
+          /* עדכון התוצאה לאחר שינוי תאריך הלידה. */
+          birthDateInput.addEventListener(
+            "change",
+            renderBirthdayPreview
+          );
+          
+          /* עדכון התוצאה לאחר בחירת האפשרות ביחס לשקיעה. */
+          form
+            .querySelectorAll('[name="birthTiming"]')
+            .forEach((input) => {
+              input.addEventListener(
+                "change",
+                renderBirthdayPreview
+              );
+            });
 
-          candidates.forEach((candidate, index) => {
-            const info = getHebrewDateInfo(candidate);
-            if (!info) return;
-            const dateLine = document.createElement("span");
-            dateLine.textContent = candidates.length > 1
-              ? `אפשרות ${index + 1}: ${info.formatted}`
-              : `התאריך העברי: ${info.formatted}`;
-            const zodiacLine = document.createElement("span");
-            zodiacLine.className = "zodiac-line";
-            zodiacLine.textContent = `מזל החודש לפי המסורת: ${info.zodiac}`;
-            hebrewBirthDate.append(dateLine, zodiacLine);
-          });
-
-          const assumptionLine = document.createElement("small");
-          assumptionLine.className = "date-assumption";
-          assumptionLine.textContent = timing === "unknown"
-            ? "נשמור את שתי האפשרויות ונשתמש בברכת יום הולדת שמתאימה לשתיהן."
-            : "החישוב הותאם לבחירה שלך ביחס לשעת השקיעה.";
-          hebrewBirthDate.append(assumptionLine);
-        }
-        birthDateInput.addEventListener("change", renderBirthdayPreview);
-        form.querySelectorAll('[name="birthTiming"]').forEach((input) => input.addEventListener("change", renderBirthdayPreview));
         phoneInput.addEventListener("input", () => { channels.hidden = !phoneInput.value.trim(); });
         channels.hidden = true;
         form.addEventListener("submit", handleProfileSubmit);
