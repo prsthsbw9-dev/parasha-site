@@ -342,6 +342,26 @@
       justify-content: center;
       margin: 0 auto;
       overflow: hidden;
+      transform-origin: center center;
+      transition: width 0.85s cubic-bezier(0.22, 1, 0.36, 1), min-height 0.85s cubic-bezier(0.22, 1, 0.36, 1), margin 0.85s cubic-bezier(0.22, 1, 0.36, 1), transform 0.85s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    #presenterView { width: min(100%, 760px); }
+
+    #presenterView.is-compact .presenter-stage {
+      width: clamp(168px, 34vw, 245px);
+      min-height: min(46svh, 470px);
+      margin-right: 0;
+      margin-left: auto;
+      transform: translateZ(0);
+    }
+
+    #presenterView.is-compact .presenter-video { max-height: min(46svh, 470px); }
+
+    #presenterView.is-compact .presenter-sound-btn {
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
     }
 
     .presenter-video {
@@ -453,7 +473,49 @@
       border: 1px solid rgba(255, 229, 158, 0.28);
       border-radius: 12px;
       background: rgba(0, 0, 0, 0.62);
+      text-align: center;
+      transition: right 0.85s cubic-bezier(0.22, 1, 0.36, 1), left 0.85s cubic-bezier(0.22, 1, 0.36, 1), bottom 0.85s cubic-bezier(0.22, 1, 0.36, 1);
     }
+
+    #presenterView.is-compact .presenter-end-note {
+      right: 8px;
+      bottom: 10px;
+      left: 8px;
+      padding: 8px 9px;
+      font-size: clamp(12px, 3.15vw, 14px);
+      line-height: 1.45;
+    }
+
+    .terms-panel {
+      width: 100%;
+      max-width: 760px;
+      margin-top: 18px;
+      padding: 18px 16px;
+      direction: rtl;
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.34);
+      border-radius: 16px;
+      background: rgba(0, 0, 0, 0.7);
+      box-shadow: 0 14px 36px rgba(0, 0, 0, 0.34);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity 0.45s ease, transform 0.45s ease;
+    }
+
+    .terms-panel.is-visible { opacity: 1; transform: translateY(0); }
+    .terms-title { margin: 0 0 10px; color: #ffe7a6; font-size: clamp(18px, 4.5vw, 23px); text-align: center; }
+    .terms-intro { margin: 0 0 12px; color: rgba(255, 255, 255, 0.9); font-size: 14px; line-height: 1.6; text-align: center; }
+    .terms-list { max-height: min(42svh, 390px); margin: 0; padding: 0 24px 0 4px; overflow-y: auto; color: rgba(255, 255, 255, 0.96); font-size: 14px; line-height: 1.7; text-align: right; scrollbar-color: rgba(255, 231, 166, 0.7) rgba(255, 255, 255, 0.08); }
+    .terms-list li { margin-bottom: 10px; padding-right: 4px; }
+    .terms-list li::marker { color: #ffe7a6; font-weight: 800; }
+    .terms-typing-cursor::after { content: ""; display: inline-block; width: 2px; height: 1em; margin-right: 4px; vertical-align: -0.12em; background: #ffe7a6; animation: caption-cursor 0.75s steps(1) infinite; }
+    .terms-acceptance { display: flex; align-items: flex-start; gap: 9px; margin-top: 15px; font-size: 14px; line-height: 1.55; cursor: pointer; }
+    .terms-acceptance input { width: 20px; height: 20px; flex: 0 0 auto; margin-top: 1px; accent-color: #e5b849; }
+    .terms-approve-btn { width: 100%; min-height: 48px; margin-top: 13px; color: #18130a; font: inherit; font-size: 16px; font-weight: 800; border: 0; border-radius: 13px; background: linear-gradient(135deg, #fff0b7, #ddb143); cursor: pointer; }
+    .terms-approve-btn:disabled { opacity: 0.46; cursor: not-allowed; }
+    .terms-status { min-height: 22px; margin: 9px 0 0; color: #fff0bd; font-size: 13px; text-align: center; }
 
     .welcome-symbol {
       width: clamp(102px, 22vw, 132px) !important;
@@ -993,6 +1055,9 @@
         min-height: min(70svh, 680px);
       }
 
+      #presenterView.is-compact .presenter-stage { width: clamp(164px, 44vw, 205px); min-height: min(40svh, 410px); }
+      #presenterView.is-compact .presenter-video { max-height: min(40svh, 410px); }
+
       .presenter-video {
         max-height: min(70svh, 680px);
       }
@@ -1152,9 +1217,21 @@
         </button>
 
         <p class="presenter-end-note" id="presenterEndNote" hidden>
-          מיד נמשיך לשלב ההיכרות האישית.
+          לפני שנתחיל במסע, יש לקרוא את התקנון ולאשר אותו.
         </p>
       </div>
+
+      <section class="terms-panel" id="termsPanel" aria-labelledby="termsTitle" hidden>
+        <h2 class="terms-title" id="termsTitle">תקנון ותנאי שימוש</h2>
+        <p class="terms-intro">נא לקרוא את הסעיפים בעיון. ניתן לגלול בתוך המסגרת עד סוף התקנון.</p>
+        <ol class="terms-list" id="termsList"></ol>
+        <label class="terms-acceptance">
+          <input id="termsCheckbox" type="checkbox">
+          <span>קראתי והבנתי את תנאי השימוש ואת מדיניות הפרטיות, ואני מסכים/ה להם מרצוני.</span>
+        </label>
+        <button class="terms-approve-btn" id="termsApproveButton" type="button" disabled>אישור והמשך</button>
+        <p class="terms-status" id="termsStatus" role="status" aria-live="polite"></p>
+      </section>
     </section>
 
     <section class="card view" id="welcomeView" aria-labelledby="pageTitle" hidden>
@@ -1585,6 +1662,11 @@
       const presenterSoundButton = document.getElementById("presenterSoundButton");
       const presenterSoundIcon = document.getElementById("presenterSoundIcon");
       const presenterEndNote = document.getElementById("presenterEndNote");
+      const termsPanel = document.getElementById("termsPanel");
+      const termsList = document.getElementById("termsList");
+      const termsCheckbox = document.getElementById("termsCheckbox");
+      const termsApproveButton = document.getElementById("termsApproveButton");
+      const termsStatus = document.getElementById("termsStatus");
       const presenterButtons = Array.from(
         document.querySelectorAll("[data-presenter-gender]")
       );
@@ -1600,6 +1682,11 @@
         !presenterSoundButton ||
         !presenterSoundIcon ||
         !presenterEndNote ||
+        !termsPanel ||
+        !termsList ||
+        !termsCheckbox ||
+        !termsApproveButton ||
+        !termsStatus ||
         !presenterButtons.length
       ) return;
 
@@ -1618,8 +1705,80 @@
         female: "female-guide-captions.vtt"
       };
 
+      const termsSections = [
+        "הדמויות המוצגות באתר הן דמויות מלאכותיות שנוצרו לצורכי המחשה, נוחות וחוויית שימוש בלבד. הן אינן אנשים אמיתיים, אינן מייצגות רב, פוסק או איש מקצוע מסוים, ואין לראות בהן התחזות לאדם כלשהו.",
+        "תכני הלימוד והתשובות עשויים להיווצר או להיות מותאמים באמצעות מערכות בינה מלאכותית, על בסיס מקורות יהודיים שהוגדרו למערכת. אף שנעשים מאמצי בדיקה ושיפור, בינה מלאכותית עלולה לטעות, להשמיט מידע או להציג ניסוח שאינו מדויק.",
+        "המידע באתר נועד ללימוד, לעידוד ולהכוונה כללית בלבד. הוא אינו פסק הלכה ואינו תחליף להתייעצות עם רב מוסמך. בכל שאלה מעשית, ספק הלכתי או סתירה בין תוכן האתר לבין הוראה מוסמכת, יש לפנות לרב מוסמך ולפעול לפי הנחייתו.",
+        "התכנים אינם מהווים ייעוץ רפואי, נפשי, משפטי, כספי או מקצועי אחר. במצב חירום, מצוקה או צורך מקצועי יש לפנות ללא דיחוי לגורם מוסמך ומתאים.",
+        "האחריות לבחירת אופן השימוש באתר וליישום התכנים היא של המשתמש או המשתמשת. האתר ויוצריו אינם מתחייבים לכך שהתוכן יתאים לכל אדם או לכל נסיבות, ואינם אחראים לנזק עקיף הנובע מהסתמכות בלתי סבירה על תוכן שנועד להכוונה כללית, והכול בכפוף להוראות הדין שאין להתנות עליהן.",
+        "אם יתבקשו שם, מספר טלפון, כתובת דואר אלקטרוני או פרטים אחרים, יוצגו לפני המסירה מטרות האיסוף, האם מסירת המידע היא חובה או רשות, למי הוא עשוי להימסר וכיצד ניתן לעיין בו, לתקנו או לבקש את מחיקתו — בהתאם לדין ולמדיניות הפרטיות של האתר.",
+        "הודעות, תזכורות ועדכונים יישלחו רק בהתאם להסכמה שניתנה ולדין. ניתן לבקש להפסיק הודעות או לצאת מתוכנית הלימוד בכל עת באמצעות אפשרות ההסרה שתוצג באתר או בהודעה.",
+        "המשתמש או המשתמשת מתחייבים לעשות באתר שימוש אישי, חוקי ומכבד, ולא לנסות לפגוע באתר, לעקוף מנגנוני אבטחה, להזין תוכן פוגעני או להשתמש בשירות לפגיעה באדם אחר.",
+        "האתר רשאי לעדכן את התכנים, אופן הפעולה ותנאי השימוש מעת לעת. שינוי מהותי יחול ממועד הצגתו, ובמקרה המתאים תתבקש הסכמה מחודשת.",
+        "אישור התקנון מעיד כי התנאים הוצגו למשתמש או למשתמשת וכי ניתנה הסכמה להם. אין באישור כדי לשלול זכויות, תרופות, אפשרות לפנות לרשות מוסמכת או אחריות שלא ניתן להגביל על פי דין."
+      ];
+
       let captionTypingTimer = 0;
       let currentCaptionText = "";
+      let termsTypingTimer = 0;
+      let termsSequenceToken = 0;
+
+      function resetTerms() {
+        window.clearTimeout(termsTypingTimer);
+        termsSequenceToken += 1;
+        termsList.replaceChildren();
+        termsPanel.hidden = true;
+        termsPanel.classList.remove("is-visible");
+        termsCheckbox.checked = false;
+        termsCheckbox.disabled = true;
+        termsApproveButton.disabled = true;
+        termsStatus.textContent = "";
+      }
+
+      function typeTerms() {
+        const sequenceToken = ++termsSequenceToken;
+        let sectionIndex = 0;
+
+        function typeSection() {
+          if (sequenceToken !== termsSequenceToken) return;
+          if (sectionIndex >= termsSections.length) {
+            termsCheckbox.disabled = false;
+            return;
+          }
+
+          const item = document.createElement("li");
+          item.className = "terms-typing-cursor";
+          termsList.appendChild(item);
+          const fullText = termsSections[sectionIndex];
+          let characterIndex = 0;
+
+          function typeNextCharacter() {
+            if (sequenceToken !== termsSequenceToken) return;
+            if (characterIndex >= fullText.length) {
+              item.classList.remove("terms-typing-cursor");
+              sectionIndex += 1;
+              termsTypingTimer = window.setTimeout(typeSection, 80);
+              return;
+            }
+            characterIndex += 2;
+            item.textContent = fullText.slice(0, characterIndex);
+            termsList.scrollTop = termsList.scrollHeight;
+            termsTypingTimer = window.setTimeout(typeNextCharacter, 7);
+          }
+
+          typeNextCharacter();
+        }
+
+        typeSection();
+      }
+
+      function revealTerms() {
+        termsPanel.hidden = false;
+        window.requestAnimationFrame(() => {
+          termsPanel.classList.add("is-visible");
+          typeTerms();
+        });
+      }
 
       function clearCaptionTyping() {
         window.clearTimeout(captionTypingTimer);
@@ -1703,7 +1862,9 @@
 
         audienceChoiceView.hidden = true;
         presenterView.hidden = false;
+        presenterView.classList.remove("is-compact");
         presenterEndNote.hidden = true;
+        resetTerms();
 
         presenterVideo.pause();
         presenterVideo.src = fileName;
@@ -1748,8 +1909,23 @@
 
       presenterVideo.addEventListener("ended", () => {
         hidePresenterCaption();
-        presenterEndNote.textContent = "מיד נמשיך לשלב ההיכרות האישית.";
+        presenterEndNote.textContent = "לפני שנתחיל במסע, יש לקרוא את התקנון ולאשר אותו.";
         presenterEndNote.hidden = false;
+
+        window.setTimeout(() => {
+          presenterView.classList.add("is-compact");
+          window.setTimeout(revealTerms, 700);
+        }, 850);
+      });
+
+      termsCheckbox.addEventListener("change", () => {
+        termsApproveButton.disabled = !termsCheckbox.checked;
+        termsStatus.textContent = "";
+      });
+
+      termsApproveButton.addEventListener("click", () => {
+        if (!termsCheckbox.checked) return;
+        termsStatus.textContent = "התקנון אושר. בשלב הבא נחבר מכאן את ההיכרות האישית.";
       });
 
       presenterVideo.addEventListener("playing", () => {
