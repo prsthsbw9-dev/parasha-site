@@ -7217,6 +7217,10 @@ function normalizeParashaName(value){
     
     let videoSessionId = 0;
     let pardesSupportPlaybackState = null;
+    let lastPardesYouTubeTime = 0;
+    let pendingPardesRestoreTime = 0;
+    const PARDES_PAYMENT_RETURN_KEY =
+      "pardesPaymentVideoReturnV1";
 
     function stopPardesVideo(){
       videoSessionId += 1;
@@ -7315,6 +7319,41 @@ function normalizeParashaName(value){
       }catch(error){}
     }
 
+    function startListeningToPardesYouTube(frame){
+      try{
+        frame.contentWindow?.postMessage(
+          JSON.stringify({event:"listening"}),
+          "*"
+        );
+      }catch(error){}
+    }
+
+    window.addEventListener("message", (event) => {
+      if(!/https:\/\/(www\.)?youtube(-nocookie)?\.com$/i.test(event.origin)){
+        return;
+      }
+
+      let data = event.data;
+
+      if(typeof data === "string"){
+        try{
+          data = JSON.parse(data);
+        }catch(error){
+          return;
+        }
+      }
+
+      const reportedTime = Number(data?.info?.currentTime);
+
+      if(
+        data?.event === "infoDelivery" &&
+        Number.isFinite(reportedTime) &&
+        reportedTime >= 0
+      ){
+        lastPardesYouTubeTime = reportedTime;
+      }
+    });
+
     function pausePardesVideoForSupport(){
       const panel = document.getElementById("pardesVideoPanel");
 
@@ -7342,6 +7381,7 @@ function normalizeParashaName(value){
       }catch(error){}
 
       youtubeFrames.forEach((frame) => {
+        startListeningToPardesYouTube(frame);
         sendPardesYouTubeCommand(frame,"pauseVideo");
       });
 
@@ -7382,6 +7422,116 @@ function normalizeParashaName(value){
 
     window.pausePardesVideoForSupport = pausePardesVideoForSupport;
     window.returnToPardesVideoAfterSupport = returnToPardesVideoAfterSupport;
+
+    function savePardesVideoReturnForPayment(provider){
+      if(!currentOpenLayer) return;
+
+      const player = document.getElementById("pardesVideoPlayer");
+      const nativeTime = Number(player?.currentTime);
+      const videoTime =
+        player?.currentSrc && Number.isFinite(nativeTime)
+          ? nativeTime
+          : lastPardesYouTubeTime;
+
+      try{
+        sessionStorage.setItem(
+          PARDES_PAYMENT_RETURN_KEY,
+          JSON.stringify({
+            parasha:currentParasha,
+            aliyah:currentAliyah,
+            layer:currentOpenLayer,
+            time:Number.isFinite(videoTime) ? videoTime : 0,
+            provider:String(provider || ""),
+            savedAt:Date.now()
+          })
+        );
+      }catch(error){}
+    }
+
+    window.savePardesVideoReturnForPayment =
+      savePardesVideoReturnForPayment;
+
+    function readPardesPaymentReturnState(){
+      try{
+        const state = JSON.parse(
+          sessionStorage.getItem(PARDES_PAYMENT_RETURN_KEY) || "null"
+        );
+
+        if(
+          !state ||
+          !["main","pshat","remez","drash","sod"].includes(state.layer) ||
+          Date.now() - Number(state.savedAt || 0) > 4 * 60 * 60 * 1000
+        ){
+          sessionStorage.removeItem(PARDES_PAYMENT_RETURN_KEY);
+          return null;
+        }
+
+        return state;
+      }catch(error){
+        return null;
+      }
+    }
+
+    function clearPardesPaymentReturnState(){
+      try{
+        sessionStorage.removeItem(PARDES_PAYMENT_RETURN_KEY);
+      }catch(error){}
+    }
+
+    let pardesPaymentRestoreRunning = false;
+
+    async function restorePardesVideoAfterPayment(){
+      if(pardesPaymentRestoreRunning) return false;
+
+      const paymentReturnState = readPardesPaymentReturnState();
+      if(!paymentReturnState) return false;
+
+      pardesPaymentRestoreRunning = true;
+
+      try{
+        if(paymentReturnState.parasha && paymentReturnState.aliyah){
+          try{
+            await loadSpecificAliyah(
+              paymentReturnState.parasha,
+              paymentReturnState.aliyah,
+              { saveLocal:false }
+            );
+          }catch(error){}
+        }
+
+        pendingPardesRestoreTime =
+          Number(paymentReturnState.time) || 0;
+        clearPardesPaymentReturnState();
+        openLayer(paymentReturnState.layer);
+        return true;
+      }finally{
+        pardesPaymentRestoreRunning = false;
+      }
+    }
+
+    window.addEventListener("message", (event) => {
+      if(event.origin !== window.location.origin) return;
+
+      if(event.data?.type === "pardes-support-payment-start"){
+        savePardesVideoReturnForPayment(event.data.provider);
+      }
+    });
+
+    window.addEventListener("pageshow", (event) => {
+      if(!event.persisted) return;
+
+      window.setTimeout(() => {
+        restorePardesVideoAfterPayment();
+      },120);
+    });
+
+    document.addEventListener("visibilitychange", () => {
+      if(document.hidden) return;
+
+      window.setTimeout(() => {
+        restorePardesVideoAfterPayment();
+      },120);
+    });
 
     let lastFocusedElementBeforeVideo = null;
 
@@ -7544,6 +7694,15 @@ function normalizeParashaName(value){
     }
     
     function openLayer(layer){
+      currentOpenLayer = layer;
+      lastPardesYouTubeTime = 0;
+
+      const requestedResumeTime = Math.max(
+        0,
+        Number(pendingPardesRestoreTime) || 0
+      );
+      pendingPardesRestoreTime = 0;
+
       document.body.classList.add("pardes-video-open");
     
       const homeIntroAudio = document.getElementById("pardesHomeIntroAudio");
@@ -7743,7 +7902,7 @@ function normalizeParashaName(value){
             empty.innerHTML = `
               <iframe
                 class="pardes-inapp-youtube-link"
-                src="https://www.youtube.com/embed/${youtubeId}?playsinline=1&rel=0&modestbranding=1&enablejsapi=1"
+                src="https://www.youtube.com/embed/${youtubeId}?playsinline=1&rel=0&modestbranding=1&enablejsapi=1&start=${Math.floor(requestedResumeTime)}"
                 title="${layerName}"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 allowfullscreen
@@ -7835,7 +7994,7 @@ function normalizeParashaName(value){
                 youtubeViewport.classList.add("is-horizontal");
               }
 
-              youtubePlayer.src = `${embedUrl}?rel=0&modestbranding=1&playsinline=1&enablejsapi=1`;
+              youtubePlayer.src = `${embedUrl}?rel=0&modestbranding=1&playsinline=1&enablejsapi=1&start=${Math.floor(requestedResumeTime)}`;
               youtubePlayer.style.visibility = "visible";
               youtubeViewport.style.display = "block";
             }
@@ -7902,6 +8061,17 @@ function normalizeParashaName(value){
 
         player.onloadedmetadata = () => {
           if(currentSession !== videoSessionId) return;
+
+          if(requestedResumeTime > 0){
+            try{
+              player.currentTime = Math.min(
+                requestedResumeTime,
+                Number.isFinite(player.duration)
+                  ? Math.max(0,player.duration - 0.25)
+                  : requestedResumeTime
+              );
+            }catch(error){}
+          }
 
           const ratio = player.videoWidth && player.videoHeight
             ? player.videoWidth / player.videoHeight
@@ -8805,7 +8975,11 @@ function normalizeParashaName(value){
     setupMobileSearchKeyboardFix();
 
     loadInitialAliyah()
-      .then(() => {
+      .then(async () => {
+        if(await restorePardesVideoAfterPayment()){
+          return;
+        }
+
         const requestedLayer =
           new URLSearchParams(window.location.search)
             .get("openLayer");
