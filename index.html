@@ -7216,9 +7216,11 @@ function normalizeParashaName(value){
     let currentOpenLayer = "";    
     
     let videoSessionId = 0;
+    let pardesSupportPlaybackState = null;
 
     function stopPardesVideo(){
       videoSessionId += 1;
+      pardesSupportPlaybackState = null;
 
       const player = document.getElementById("pardesVideoPlayer");
       const youtubePlayer = document.getElementById("pardesYoutubePlayer");
@@ -7284,6 +7286,102 @@ function normalizeParashaName(value){
       player.style.visibility = "visible";
       player.style.display = "block";
     }
+
+    function getPardesYouTubeFrames(){
+      return [
+        document.getElementById("pardesYoutubePlayer"),
+        document.querySelector("#pardesVideoEmpty iframe")
+      ].filter((frame, index, frames) => {
+        const source = frame?.getAttribute("src") || "";
+
+        return (
+          frame &&
+          frames.indexOf(frame) === index &&
+          /youtube\.com\/embed\//i.test(source)
+        );
+      });
+    }
+
+    function sendPardesYouTubeCommand(frame, command){
+      try{
+        frame.contentWindow?.postMessage(
+          JSON.stringify({
+            event:"command",
+            func:command,
+            args:[]
+          }),
+          "*"
+        );
+      }catch(error){}
+    }
+
+    function pausePardesVideoForSupport(){
+      const panel = document.getElementById("pardesVideoPanel");
+
+      if(!panel?.classList.contains("is-open")){
+        pardesSupportPlaybackState = null;
+        return false;
+      }
+
+      const player = document.getElementById("pardesVideoPlayer");
+      const youtubeFrames = getPardesYouTubeFrames();
+      const nativeVideoWasPlaying = Boolean(
+        player &&
+        player.currentSrc &&
+        !player.paused &&
+        !player.ended
+      );
+
+      pardesSupportPlaybackState = {
+        nativeVideoWasPlaying,
+        youtubeWasOpen:youtubeFrames.length > 0
+      };
+
+      try{
+        player?.pause();
+      }catch(error){}
+
+      youtubeFrames.forEach((frame) => {
+        sendPardesYouTubeCommand(frame,"pauseVideo");
+      });
+
+      return true;
+    }
+
+    function returnToPardesVideoAfterSupport(){
+      const playbackState = pardesSupportPlaybackState;
+      pardesSupportPlaybackState = null;
+
+      if(!playbackState) return;
+
+      const panel = document.getElementById("pardesVideoPanel");
+      const player = document.getElementById("pardesVideoPlayer");
+
+      document.body.classList.add("pardes-video-open");
+      panel?.classList.add("is-open");
+      panel?.setAttribute("aria-hidden","false");
+
+      if(playbackState.nativeVideoWasPlaying && player?.currentSrc){
+        const playPromise = player.play();
+
+        if(playPromise && typeof playPromise.catch === "function"){
+          playPromise.catch(() => {});
+        }
+      }
+
+      if(playbackState.youtubeWasOpen){
+        getPardesYouTubeFrames().forEach((frame) => {
+          sendPardesYouTubeCommand(frame,"playVideo");
+        });
+      }
+
+      window.setTimeout(() => {
+        document.getElementById("pardesVideoClose")?.focus();
+      },50);
+    }
+
+    window.pausePardesVideoForSupport = pausePardesVideoForSupport;
+    window.returnToPardesVideoAfterSupport = returnToPardesVideoAfterSupport;
 
     let lastFocusedElementBeforeVideo = null;
 
@@ -7645,7 +7743,7 @@ function normalizeParashaName(value){
             empty.innerHTML = `
               <iframe
                 class="pardes-inapp-youtube-link"
-                src="https://www.youtube.com/embed/${youtubeId}?playsinline=1&rel=0&modestbranding=1"
+                src="https://www.youtube.com/embed/${youtubeId}?playsinline=1&rel=0&modestbranding=1&enablejsapi=1"
                 title="${layerName}"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 allowfullscreen
@@ -7737,7 +7835,7 @@ function normalizeParashaName(value){
                 youtubeViewport.classList.add("is-horizontal");
               }
 
-              youtubePlayer.src = `${embedUrl}?rel=0&modestbranding=1&playsinline=1`;
+              youtubePlayer.src = `${embedUrl}?rel=0&modestbranding=1&playsinline=1&enablejsapi=1`;
               youtubePlayer.style.visibility = "visible";
               youtubeViewport.style.display = "block";
             }
@@ -7873,6 +7971,7 @@ function normalizeParashaName(value){
     /* סגירת חלון סרטוני פרד״ס */
     function closePanel(){
       document.body.classList.remove("pardes-video-open");
+      pardesSupportPlaybackState = null;
 
       const panel = document.getElementById("pardesVideoPanel");
 
@@ -7995,10 +8094,6 @@ function normalizeParashaName(value){
     document
       .getElementById("pardesFullscreenBack")
       ?.addEventListener("click", closePanel);
-
-    document
-      .getElementById("pardesFullscreenSupport")
-      ?.addEventListener("click", stopPardesVideo);
 
     document
       .getElementById("pardesYoutubeOpenBtn")
@@ -9520,6 +9615,7 @@ if (sodGrapesVideo) {
   let nestedReturnPage = null;
   let historyGuardActive = false;
   let activeInternalPageId = null;
+  let supportOpenedFromVideo = false;
 
   if(!overlay || !frame || !closeButton || !skipButton) return;
 
@@ -9548,8 +9644,13 @@ if (sodGrapesVideo) {
   function closeInternalPage(fromBrowserBack){
     if(!overlay.classList.contains("is-open")) return;
 
+    const shouldReturnToVideo =
+      activeInternalPageId === "pardesFullscreenSupport" &&
+      supportOpenedFromVideo;
+
     nestedReturnPage = null;
     activeInternalPageId = null;
+    supportOpenedFromVideo = false;
 
     /* החלפת המקור עוצרת מיד גם וידאו או שמע שפועלים בדף הפנימי. */
     frame.src = "about:blank";
@@ -9559,6 +9660,13 @@ if (sodGrapesVideo) {
     overlay.setAttribute("aria-hidden", "true");
     document.body.classList.remove("internal-page-open");
     overlay.classList.remove("show-strength-page");
+
+    if(
+      shouldReturnToVideo &&
+      typeof window.returnToPardesVideoAfterSupport === "function"
+    ){
+      window.returnToPardesVideoAfterSupport();
+    }
 
     if(historyGuardActive){
       historyGuardActive = false;
@@ -9583,6 +9691,11 @@ if (sodGrapesVideo) {
     stopHomeMedia();
     nestedReturnPage = null;
     activeInternalPageId = id;
+
+    supportOpenedFromVideo =
+      id === "pardesFullscreenSupport" &&
+      typeof window.pausePardesVideoForSupport === "function" &&
+      window.pausePardesVideoForSupport();
     overlay.classList.toggle(
       "show-names-skip",
       id === "namesLink" ||
