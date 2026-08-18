@@ -9605,71 +9605,11 @@ if (sodGrapesVideo) {
   }
 
   function openInternalPage(event){
-    const requestedPageId = event.currentTarget.id;
-    const userAgent = navigator.userAgent || navigator.vendor || "";
-    const isTikTokBrowser =
-      /TikTok|musical_ly|musically|BytedanceWebview/i.test(userAgent);
-
-    if(
-      requestedPageId === "pardesFullscreenSupport" &&
-      isTikTokBrowser
-    ){
-      event.preventDefault();
-      event.stopPropagation();
-      event.stopImmediatePropagation();
-
-      const supportUrl = new URL("support.html", window.location.href);
-      const isAndroid = /Android/i.test(userAgent);
-      const isIOS =
-        /iPad|iPhone|iPod/i.test(userAgent) ||
-        (
-          navigator.platform === "MacIntel" &&
-          navigator.maxTouchPoints > 1
-        );
-
-      if(isAndroid){
-        const intentUrl =
-          `intent://${supportUrl.host}${supportUrl.pathname}${supportUrl.search}` +
-          "#Intent;scheme=https;action=android.intent.action.VIEW;" +
-          `S.browser_fallback_url=${encodeURIComponent(supportUrl.href)};end`;
-
-        window.top.location.href = intentUrl;
-        return;
-      }
-
-      if(isIOS){
-        if(navigator.clipboard && window.isSecureContext){
-          navigator.clipboard.writeText(supportUrl.href)
-            .then(() => {
-              window.alert(
-                "TikTok באייפון אינו מאפשר לאתר לפתוח את Safari באופן אוטומטי. " +
-                "כתובת דף התרומות הועתקה. פתחו את Safari והדביקו אותה בשורת הכתובת."
-              );
-            })
-            .catch(() => {
-              window.prompt(
-                "פתחו את Safari והעתיקו אליו את כתובת דף התרומות:",
-                supportUrl.href
-              );
-            });
-        }else{
-          window.prompt(
-            "פתחו את Safari והעתיקו אליו את כתובת דף התרומות:",
-            supportUrl.href
-          );
-        }
-        return;
-      }
-
-      window.open(supportUrl.href,"_blank","noopener");
-      return;
-    }
-
     event.preventDefault();
     event.stopPropagation();
     event.stopImmediatePropagation();
 
-    showInternalPageById(requestedPageId);
+    showInternalPageById(event.currentTarget.id);
   }
 
   window.openPardesInternalPageById = showInternalPageById;
