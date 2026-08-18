@@ -9905,8 +9905,16 @@ if (sodGrapesVideo) {
     if(nestedReturnPage){
       const returnPage = nestedReturnPage;
       nestedReturnPage = null;
-      frame.title = "שמות";
-      overlay.setAttribute("aria-label", "שמות");
+      const returningToSupport = returnPage === "support.html";
+      frame.title = returningToSupport
+        ? "לתמיכה בעץ הפרד״ס החי"
+        : "שמות";
+      overlay.setAttribute(
+        "aria-label",
+        returningToSupport
+          ? "לתמיכה בעץ הפרד״ס החי"
+          : "שמות"
+      );
       try{
         frame.contentWindow.location.replace(returnPage);
       }catch(error){
@@ -9984,6 +9992,13 @@ if (sodGrapesVideo) {
         fileName === "names.html"
       );
 
+      if(
+        fileName === "support.html" &&
+        nestedReturnPage === "support.html"
+      ){
+        nestedReturnPage = null;
+      }
+
       /* אם הדף הפנימי ביקש לחזור לעץ, סוגרים את החלון במקום
          להציג את העמוד הראשי פעם נוספת בתוך ה-iframe. */
       if(fileName === "index.html" || fileName === ""){
@@ -9997,6 +10012,28 @@ if (sodGrapesVideo) {
         if(!link) return;
 
         const href = (link.getAttribute("href") || "").trim();
+
+        if(
+          fileName === "support.html" &&
+          (
+            href === "support-terms.html" ||
+            href.startsWith("support-terms.html?")
+          )
+        ){
+          event.preventDefault();
+          nestedReturnPage = "support.html";
+          frame.title = "תקנון התמיכה";
+          overlay.setAttribute("aria-label", "תקנון התמיכה");
+
+          window.setTimeout(function(){
+            try{
+              frame.contentWindow.location.replace("support-terms.html");
+            }catch(error){
+              frame.src = "support-terms.html";
+            }
+          },0);
+          return;
+        }
 
         if(
           fileName === "names.html" &&
