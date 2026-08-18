@@ -665,6 +665,14 @@
     .pardes-youtube-open-btn .mobile-break{
       display:none;
     }
+
+    .pardes-youtube-open-btn .youtube-mobile-heart{
+      display:none;
+    }
+
+    .pardes-youtube-open-btn .youtube-desktop-label{
+      display:inline;
+    }
     
     .pardes-video-player.is-horizontal,
     .pardes-youtube-player.is-horizontal{
@@ -5192,6 +5200,101 @@
         padding-bottom:calc(132px + env(safe-area-inset-bottom)) !important;
       }
     }
+
+    /* בנייד: כל פעולות הסרטון בשורה אחת, בגובה קבוע. */
+    @media (max-width:900px){
+      body.pardes-video-open .pardes-fullscreen-actions{
+        direction:ltr;
+        flex-direction:row;
+        align-items:center;
+        justify-content:center;
+        gap:10px;
+        min-height:calc(72px + env(safe-area-inset-bottom));
+        padding:
+          10px
+          max(10px,env(safe-area-inset-right))
+          max(10px,env(safe-area-inset-bottom))
+          max(10px,env(safe-area-inset-left));
+      }
+
+      body.pardes-video-open .pardes-fullscreen-bottom-row{
+        display:contents;
+      }
+
+      body.pardes-video-open .pardes-fullscreen-button{
+        height:52px;
+        min-height:52px;
+        max-height:52px;
+      }
+
+      body.pardes-video-open .pardes-fullscreen-button.is-back{
+        order:3;
+        flex:0 0 52px;
+        width:52px;
+        min-width:52px;
+        max-width:52px;
+      }
+
+      body.pardes-video-open .pardes-fullscreen-button.is-support{
+        order:2;
+        flex:1 1 auto;
+        min-width:0;
+        max-width:486px;
+        padding:8px 10px;
+        direction:rtl;
+        white-space:nowrap;
+        font-size:clamp(13px,4vw,16px);
+      }
+
+      body.pardes-video-open .pardes-fullscreen-actions .pardes-youtube-open-btn{
+        order:1;
+        flex:0 0 52px;
+        display:flex !important;
+        align-items:center;
+        justify-content:center;
+        width:52px !important;
+        min-width:52px !important;
+        max-width:52px !important;
+        height:52px;
+        min-height:52px;
+        max-height:52px;
+        margin:0 !important;
+        padding:0 !important;
+        border-radius:50% !important;
+        font-size:27px;
+        line-height:1;
+        white-space:nowrap;
+      }
+
+      body.pardes-video-open .pardes-fullscreen-actions .pardes-youtube-open-btn[hidden]{
+        display:none !important;
+      }
+
+      .pardes-youtube-open-btn .youtube-mobile-heart{
+        display:block;
+        color:#fff;
+        transform:translateY(-1px);
+      }
+
+      .pardes-youtube-open-btn .youtube-desktop-label{
+        display:none;
+      }
+
+      body.pardes-video-open .pardes-video-body{
+        padding-bottom:calc(82px + env(safe-area-inset-bottom)) !important;
+      }
+    }
+
+    @media (max-width:900px) and (orientation:landscape){
+      body.pardes-video-open .pardes-fullscreen-actions{
+        min-height:calc(68px + env(safe-area-inset-bottom));
+        padding-top:8px;
+      }
+
+      body.pardes-video-open .pardes-video-body{
+        padding-bottom:calc(78px + env(safe-area-inset-bottom)) !important;
+      }
+    }
     /* חלון פנימי לדפי האתר */
     .internal-page-overlay{
       position:fixed;
@@ -6094,7 +6197,10 @@
           <iframe id="pardesYoutubePlayer" class="pardes-video-player pardes-youtube-player" title="נגן YouTube של עומק העלייה" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
         </div>
         <div class="pardes-fullscreen-actions">
-          <a id="pardesYoutubeOpenBtn" class="pardes-youtube-open-btn" href="#" target="_blank" rel="noopener noreferrer" aria-label="כל לייק, תגובה ושיתוף = חלק מזיכוי הרבים שלך!">כל לייק, תגובה ושיתוף = חלק<span class="mobile-break">מזיכוי הרבים שלך!</span><span class="desktop-only"> מזיכוי הרבים שלך!</span></a>
+          <a id="pardesYoutubeOpenBtn" class="pardes-youtube-open-btn" href="#" target="_blank" rel="noopener noreferrer" aria-label="פתיחת הסרטון ב־YouTube ללייק, תגובה ושיתוף" hidden>
+            <span class="youtube-mobile-heart" aria-hidden="true">♥</span>
+            <span class="youtube-desktop-label">כל לייק, תגובה ושיתוף = חלק מזיכוי הרבים שלך!</span>
+          </a>
 
           <div class="pardes-fullscreen-bottom-row">
             <button
@@ -6112,8 +6218,7 @@
               class="pardes-fullscreen-button is-support"
               href="support.html"
             >
-              <span aria-hidden="true">✨</span>
-              <span>גם אני רוצה להיות חלק מזה</span>
+              <span>תרמו להפצת התורה</span>
             </a>
           </div>
         </div>
@@ -7209,6 +7314,7 @@ function normalizeParashaName(value){
       const youtubeOpenBtn = document.getElementById("pardesYoutubeOpenBtn");
       if(!youtubeOpenBtn) return;
 
+      youtubeOpenBtn.hidden = true;
       youtubeOpenBtn.style.display = "none";
       youtubeOpenBtn.href = "#";
     }
@@ -7956,6 +8062,7 @@ function normalizeParashaName(value){
             youtubeOpenBtn.removeAttribute("target");
           }
         
+          youtubeOpenBtn.hidden = false;
           youtubeOpenBtn.style.display = "block";
         }
       
@@ -8008,6 +8115,7 @@ function normalizeParashaName(value){
                 youtubeOpenBtn.removeAttribute("target");
               }
             
+              youtubeOpenBtn.hidden = false;
               youtubeOpenBtn.style.display = "block";
             }
           }
@@ -8043,6 +8151,7 @@ function normalizeParashaName(value){
             selectedVideo.__youtubeVideo
           );
         
+          youtubeOpenBtn.hidden = false;
           youtubeOpenBtn.style.display = "block";
         }else{
           hideYouTubeOpenButton();
