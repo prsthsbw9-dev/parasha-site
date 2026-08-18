@@ -5240,10 +5240,34 @@
         flex:1 1 auto;
         min-width:0;
         max-width:486px;
-        padding:8px 10px;
+        height:52px;
+        padding:5px 8px;
         direction:rtl;
+        flex-direction:column;
+        gap:2px;
+        overflow:hidden;
+        white-space:normal;
+        text-align:center;
+        line-height:1;
+      }
+      
+      body.pardes-video-open .support-button-main{
+        display:block;
+        width:100%;
+        font-size:clamp(12px,3.5vw,16px);
+        font-weight:900;
+        line-height:1.05;
         white-space:nowrap;
-        font-size:clamp(13px,4vw,16px);
+      }
+      
+      body.pardes-video-open .support-button-sub{
+        display:block;
+        width:100%;
+        font-size:clamp(8px,2.25vw,10px);
+        font-weight:600;
+        line-height:1.05;
+        white-space:nowrap;
+        opacity:.92;
       }
 
       body.pardes-video-open .pardes-fullscreen-actions .pardes-youtube-open-btn{
