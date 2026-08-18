@@ -843,6 +843,30 @@
 
           const provider = link.dataset.paymentProvider || "unknown";
 
+          if(window.parent && window.parent !== window){
+            let returnStateSaved = false;
+
+            try{
+              if(
+                typeof window.parent.savePardesVideoReturnForPayment ===
+                "function"
+              ){
+                window.parent.savePardesVideoReturnForPayment(provider);
+                returnStateSaved = true;
+              }
+            }catch(error){}
+
+            if(!returnStateSaved){
+              window.parent.postMessage(
+                {
+                  type:"pardes-support-payment-start",
+                  provider
+                },
+                window.location.origin
+              );
+            }
+          }
+
           if(isTikTokBrowser && !ENABLE_TIKTOK_PHONE_COPY){
             const providerNames = {
               bit:"Bit",
