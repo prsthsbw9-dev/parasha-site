@@ -842,6 +842,21 @@
 
           const provider = link.dataset.paymentProvider || "unknown";
 
+          if(isTikTokBrowser && !ENABLE_TIKTOK_PHONE_COPY){
+            const providerNames = {
+              bit:"Bit",
+              paybox:"PayBox",
+              paypal:"PayPal"
+            };
+            const providerName = providerNames[provider] || "אמצעי התשלום שבחרת";
+
+            window.alert(
+              `הינך מועבר/ת לתשלום באמצעות ${providerName}.\n\n` +
+              "כדי להמשיך בתהליך, יש ללחוץ על שלוש הנקודות למעלה " +
+              "ולבחור „פתח בדפדפן”."
+            );
+          }
+
           if(
             ENABLE_TIKTOK_PHONE_COPY &&
             isTikTokBrowser &&
