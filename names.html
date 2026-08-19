@@ -356,12 +356,14 @@
       line-height: 1.45;
     }
 
-    .native-photo-picker {
-      position: relative;
+    .native-photo-picker input[type="file"] {
+      position: absolute;
+      inset: 0;
       width: 100%;
-      min-height: 46px;
-      overflow: hidden;
-      border-radius: 14px;
+      height: 100%;
+      opacity: 0;
+      cursor: pointer;
+      z-index: 2;
     }
 
     .native-photo-picker-small {
