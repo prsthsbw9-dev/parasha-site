@@ -234,6 +234,13 @@
       text-shadow: 0 2px 6px rgba(0,0,0,.95);
     }
 
+    .name-instruction {
+      display: inline;
+      color: rgba(255,255,255,.78);
+      font-size: .78em;
+      font-weight: 600;
+    }
+
     .optional {
       color: rgba(255,255,255,.79);
       font-size: .82em;
@@ -633,6 +640,10 @@
             לעילוי נשמה, לרפואה, לזיווג, להצלחה ולכל אשר על הלב.
             לאחר בדיקה, הם עשויים להשתלב באחת העליות הקרובות
             ולהופיע בפני הצופים, כדי שיוכלו לברך ולענות אמן למענם.
+            <br>
+            <span class="photo-option">
+              (ניתן לצרף תמונה ישירות מהגלריה — והכול בחינם)
+            </span>
           </p>
       </header>
 
@@ -653,7 +664,10 @@
         </div>
 
         <div id="nameField" class="field">
-          <label for="blessingName">השם לברכה או להקדשה</label>
+          <label for="blessingName">
+            השם לברכה או להקדשה
+            <span class="name-instruction">(יש לרשום את השם בתוספת בן/בת ושם ההורה)</span>
+          </label>
           <input
             id="blessingName"
             name="השם לברכה או להקדשה"
@@ -663,7 +677,7 @@
             placeholder="לדוגמה: דוד בן שרה"
             required
           >
-          <div class="error">יש להזין שם לברכה או להקדשה.</div>
+          <div id="nameFormatError" class="error">יש למלא את השם כנדרש: שם + בן/בת + שם ההורה.</div>
         </div>
 
         <div id="requestField" class="field">
@@ -712,15 +726,19 @@
             accept="image/jpeg,image/png,image/webp,image/heic,image/heif"
           >
 
-          <label class="photo-pick-button" for="photoInput">
+          <button
+            id="photoPickButton"
+            class="photo-pick-button"
+            type="button"
+          >
             📷 בחירת תמונה מהגלריה
-          </label>
+          </button>
 
           <div id="photoPreviewWrap" class="photo-preview-wrap" hidden>
             <img id="photoPreview" class="photo-preview" alt="תצוגה מקדימה של התמונה שנבחרה">
 
             <div class="photo-preview-actions">
-              <label class="photo-change-button" for="photoInput">החלפת תמונה</label>
+              <button id="photoChangeButton" class="photo-change-button" type="button">החלפת תמונה</button>
               <button id="removePhotoButton" class="photo-remove-button" type="button">הסרת תמונה</button>
             </div>
 
@@ -788,6 +806,8 @@
       const requestText = document.getElementById("requestText");
       const contactEmail = document.getElementById("contactEmail");
       const photoInput = document.getElementById("photoInput");
+      const photoPickButton = document.getElementById("photoPickButton");
+      const photoChangeButton = document.getElementById("photoChangeButton");
       const photoPreviewWrap = document.getElementById("photoPreviewWrap");
       const photoPreview = document.getElementById("photoPreview");
       const removePhotoButton = document.getElementById("removePhotoButton");
@@ -811,6 +831,11 @@
 
       function clean(value) {
         return String(value || "").replace(/\r\n/g, "\n").trim();
+      }
+
+      function hasValidBlessingNameFormat(value) {
+        const normalized = clean(value).replace(/\s+/g, " ");
+        return /^.+\s+(?:בן|בת)\s+.+$/u.test(normalized);
       }
 
       function showMessage(message) {
@@ -876,7 +901,7 @@
       termsLink.addEventListener("click", saveDraft);
 
       function validate() {
-        const hasName = !!clean(blessingName.value);
+        const hasName = hasValidBlessingNameFormat(blessingName.value);
         const hasRequest = !!clean(requestText.value);
         const emailValue = clean(contactEmail.value);
         const hasValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailValue);
@@ -922,8 +947,10 @@
       });
 
       blessingName.addEventListener("input", function () {
-        if(clean(blessingName.value)) {
+        if(hasValidBlessingNameFormat(blessingName.value)) {
           nameField.classList.remove("has-error");
+        } else if(clean(blessingName.value)) {
+          nameField.classList.add("has-error");
         }
         saveDraft();
         hideMessage();
@@ -1056,6 +1083,14 @@
           height
         };
       }
+
+      photoPickButton.addEventListener("click", function () {
+        photoInput.click();
+      });
+
+      photoChangeButton.addEventListener("click", function () {
+        photoInput.click();
+      });
 
       photoInput.addEventListener("change", async function () {
         photoError.textContent = "";
