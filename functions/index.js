@@ -1,289 +1,799 @@
-from pathlib import Path
+const { onRequest } = require("firebase-functions/v2/https");
+const { defineSecret } = require("firebase-functions/params");
+const OpenAI = require("openai");
+const nodemailer = require("nodemailer");
 
-main_src = Path("/mnt/data/index-main-tiktok-gate-designed.html")
-support_src = Path("/mnt/data/support-payment-top-navigation.html")
+const openaiApiKey = defineSecret("OPENAI_API_KEY");
+const gmailAppPassword = defineSecret("GMAIL_APP_PASSWORD");
 
-main = main_src.read_text(encoding="utf-8")
-support = support_src.read_text(encoding="utf-8")
+exports.createPersonalReading = onRequest(
+  {
+    region: "us-central1",
+    secrets: [openaiApiKey],
+    cors: true
+  },
+  async (req, res) => {
+    try {
+      if (req.method !== "POST") {
+        return res.status(405).json({
+          error: "Method not allowed"
+        });
+      }
 
-# ---------- MAIN PAGE ----------
-old_save = '''    function savePardesVideoReturnForPayment(provider){
-      if(!currentOpenLayer) return;
+      const input = req.body || {};
 
-      const player = document.getElementById("pardesVideoPlayer");
-      const nativeTime = Number(player?.currentTime);
-      const videoTime =
-        player?.currentSrc && Number.isFinite(nativeTime)
-          ? nativeTime
-          : lastPardesYouTubeTime;
+      const safeData = {
+        firstName: cleanText(input.firstName, 40),
+        jewishName: cleanText(input.jewishName, 90),
+        gender: cleanText(input.gender, 20),
 
-      try{
-        sessionStorage.setItem(
-          PARDES_PAYMENT_RETURN_KEY,
-          JSON.stringify({
-            parasha:currentParasha,
-            aliyah:currentAliyah,
-            layer:currentOpenLayer,
-            time:Number.isFinite(videoTime) ? videoTime : 0,
-            provider:String(provider || ""),
-            savedAt:Date.now()
-          })
-        );
-      }catch(error){}
-    }
+        isBeforeMitzvah: Boolean(input.isBeforeMitzvah),
+        ageYears: Number(input.ageYears || 0),
+        pronounGender: cleanText(input.pronounGender, 20),
 
-    window.savePardesVideoReturnForPayment =
-      savePardesVideoReturnForPayment;
-'''
+        hebrewDate: cleanText(input.hebrewDate, 80),
+        hebrewMonth: cleanText(input.hebrewMonth, 40),
+        weekday: cleanText(input.weekday, 40),
+        birthTime: cleanText(input.birthTime, 40),
 
-new_save = '''    function getPardesVideoReturnState(provider){
-      if(!currentOpenLayer) return null;
+        mitzvahType: cleanText(input.mitzvahType, 30),
+        mitzvahHebrewDate: cleanText(input.mitzvahHebrewDate, 80),
+        mitzvahGregorianDate: cleanText(input.mitzvahGregorianDate, 40),
 
-      const player = document.getElementById("pardesVideoPlayer");
-      const nativeTime = Number(player?.currentTime);
-      const videoTime =
-        player?.currentSrc && Number.isFinite(nativeTime)
-          ? nativeTime
-          : lastPardesYouTubeTime;
+        parasha: cleanText(input.parasha, 80),
 
-      return {
-        parasha:currentParasha,
-        aliyah:currentAliyah,
-        layer:currentOpenLayer,
-        time:Number.isFinite(videoTime) ? videoTime : 0,
-        provider:String(provider || ""),
-        savedAt:Date.now()
+        birthParasha: cleanText(
+          input.birthParasha || input.personalParasha || input.parasha,
+          90
+        ),
+
+        mitzvahParasha: cleanText(
+          input.mitzvahParasha || input.parasha,
+          90
+        )
       };
-    }
 
-    function buildPardesEmailReturnUrl(provider){
-      const state = getPardesVideoReturnState(provider);
-      if(!state) return "";
-
-      const returnUrl = new URL(
-        window.location.pathname,
-        window.location.origin
-      );
-
-      if(state.parasha){
-        returnUrl.searchParams.set(
-          "returnParasha",
-          state.parasha
-        );
+      if (!safeData.firstName || !safeData.jewishName) {
+        return res.status(400).json({
+          error: "Missing required fields"
+        });
       }
 
-      if(state.aliyah){
-        returnUrl.searchParams.set(
-          "returnAliyah",
-          state.aliyah
-        );
-      }
-
-      returnUrl.searchParams.set(
-        "openLayer",
-        state.layer
-      );
-
-      returnUrl.searchParams.set(
-        "resume",
-        String(Math.max(0,Math.floor(Number(state.time) || 0)))
-      );
-
-      returnUrl.searchParams.set(
-        "from",
-        "support-email"
-      );
-
-      return returnUrl.href;
-    }
-
-    function savePardesVideoReturnForPayment(provider){
-      const state = getPardesVideoReturnState(provider);
-      if(!state) return "";
-
-      try{
-        sessionStorage.setItem(
-          PARDES_PAYMENT_RETURN_KEY,
-          JSON.stringify(state)
-        );
-      }catch(error){}
-
-      return buildPardesEmailReturnUrl(provider);
-    }
-
-    window.getPardesEmailReturnUrl =
-      buildPardesEmailReturnUrl;
-
-    window.savePardesVideoReturnForPayment =
-      savePardesVideoReturnForPayment;
-'''
-
-if old_save not in main:
-    raise RuntimeError("Main: save function block not found")
-main = main.replace(old_save, new_save, 1)
-
-# Insert email URL restore function after session restore function.
-marker = '''    window.addEventListener("message", (event) => {
-'''
-email_restore = '''    async function restorePardesVideoFromEmailUrl(){
-      const params =
-        new URLSearchParams(window.location.search);
-
-      const requestedLayer =
-        params.get("openLayer");
-
-      const requestedParasha =
-        params.get("returnParasha");
-
-      const requestedAliyah =
-        params.get("returnAliyah");
-
-      const requestedResumeTime =
-        Math.max(0,Number(params.get("resume")) || 0);
-
-      const allowedLayers = [
-        "main",
-        "pshat",
-        "remez",
-        "drash",
-        "sod"
-      ];
-
-      if(
-        params.get("from") !== "support-email" ||
-        !allowedLayers.includes(requestedLayer)
-      ){
-        return false;
-      }
-
-      if(requestedParasha && requestedAliyah){
-        try{
-          await loadSpecificAliyah(
-            requestedParasha,
-            requestedAliyah,
-            { saveLocal:false }
-          );
-        }catch(error){
-          console.error(
-            "לא ניתן היה לטעון את העלייה מקישור החזרה:",
-            error
-          );
-        }
-      }
-
-      pendingPardesRestoreTime =
-        requestedResumeTime;
-
-      const cleanUrl = new URL(window.location.href);
-      [
-        "returnParasha",
-        "returnAliyah",
-        "openLayer",
-        "resume",
-        "from"
-      ].forEach((name) => {
-        cleanUrl.searchParams.delete(name);
+      const client = new OpenAI({
+        apiKey: openaiApiKey.value()
       });
 
-      window.history.replaceState(
-        {},
-        "",
-        cleanUrl.pathname +
-          cleanUrl.search +
-          cleanUrl.hash
-      );
+      const prompt = `
+גרסת פרומפט: PRDS_SHLICHUT_V3
 
-      window.setTimeout(() => {
-        openLayer(requestedLayer);
-      },250);
+אתה כותב בעברית תקנית, טבעית, ברורה, נקייה ואחראית, בסגנון יהודי עמוק ומחזק.
+לפני החזרת התשובה בצע הגהה פנימית מלאה.
+אל תשתמש במילים מומצאות, שיבושי כתיב, ערבוב אנגלית או ניסוחים לא מובנים.
+אם ניסוח מסוים נשמע מסורבל, פשט אותו לעברית קצרה, נקייה ומובנת.
 
-      return true;
+המטרה:
+לכתוב לצופה קריאה אישית על "השליחות האישית שלו" לפי:
+1. התאריך העברי שלו
+2. פרשת השבוע האישית ששויכה לתאריך הלידה שלו
+3. פרשת השבוע שבה הגיע לגיל מצוות
+4. ארבעת רבדי פרד״ס: פשט, רמז, דרש, סוד
+
+חשוב מאוד:
+אל תכתוב "הייעוד האמיתי שלך בוודאות".
+אל תקבע גורל.
+אל תקבע שורש נשמה בוודאות.
+אל תכתוב נבואה.
+אל תכתוב כאילו יש לך רוח הקודש.
+אל תבטיח ישועות.
+אל תיתן פסיקת הלכה.
+אל תיתן ייעוץ רפואי, נפשי, משפטי או כלכלי.
+אל תמציא מקורות, פסוקים או ציטוטים מדויקים אם אינך בטוח.
+אם אתה מזכיר פסוק, עשה זאת רק אם הוא מוכר ובטוח.
+
+חשוב במיוחד:
+אל תשתמש בגימטריית השם.
+אל תשתמש בעליית השורש.
+אל תשתמש במזל, יסוד, שבט או חוש פנימי.
+אל תשתמש במפת עומק אישית, שנת חיים או מספרים.
+אל תכתוב על חודש כמזל.
+אל תכתוב על מספרים, הרמוניה מספרית, או משמעות מספרית של השם.
+גם אם נתונים כאלה נשלחו מהדף — התעלם מהם לגמרי.
+
+התשובה חייבת להתבסס רק על:
+1. התאריך העברי
+2. פרשת השבוע האישית לפי תאריך הלידה
+3. פרשת השבוע של גיל המצוות
+4. ארבעת רבדי פרד״ס
+
+כתוב בלשון זהירה אבל לא חלשה:
+"לפי הכיוון של הפרשה אפשר לראות..."
+"ברובד הפשט אפשר לקרוא בזה..."
+"ברובד הרמז ייתכן שיש כאן..."
+"על דרך הדרש אפשר ללמוד..."
+"ברובד הסוד, בזהירות, אפשר לראות נקודת עומק..."
+
+הנתונים שחושבו כבר בדף:
+שם פרטי: ${safeData.firstName}
+שם תורני: ${safeData.jewishName}
+האם הצופה לפני גיל מצוות:
+${safeData.isBeforeMitzvah ? "כן" : "לא"}
+
+גיל בשנים:
+${safeData.ageYears || "לא זוהה"}
+
+לשון פנייה:
+${safeData.pronounGender === "female" ? "נקבה" : "זכר"}
+
+תאריך עברי: ${safeData.hebrewDate}
+יום לידה: ${safeData.weekday}
+חודש עברי: ${safeData.hebrewMonth}
+זמן לידה אם ידוע: ${safeData.birthTime || "לא ידוע"}
+
+סוג מצווה: ${safeData.mitzvahType}
+תאריך מצווה עברי: ${safeData.mitzvahHebrewDate}
+תאריך מצווה לועזי: ${safeData.mitzvahGregorianDate}
+
+פרשת השבוע לפי תאריך הלידה של הצופה:
+${safeData.birthParasha || safeData.parasha || "לא זוהתה"}
+
+פרשת השבוע שבה הצופה הגיע לגיל מצוות:
+${safeData.mitzvahParasha || safeData.parasha || "לא זוהתה"}
+
+כתוב את התשובה במבנה הבא בלבד:
+
+כותרת:
+השליחות האישית שלך
+
+פתיחה קצרה:
+כתוב פנייה אישית בשם האדם.
+הסבר במשפט אחד שהדברים אינם נבואה או קביעה מוחלטת, אלא קריאה רוחנית אפשרית לפי הפרשה והתאריך העברי.
+
+חלק 1 — לפי פרשת השבוע האישית:
+כתוב מה הכיוון המרכזי של פרשת השבוע ששייכת לתאריך הלידה.
+חבר את זה לשליחות של האדם בחיים.
+כתוב בצורה עמוקה אבל מובנת.
+
+חלק 2 — לפי פרשת גיל המצוות:
+כתוב מה אפשר ללמוד מהפרשה שבה האדם הגיע לגיל מצוות.
+לא להתייחס לעלייה מסוימת.
+להסביר מה זה מוסיף להבנת השליחות שלו.
+
+חלק 3 — מה השליחות שלי לפי ארבעת פירושי הפרד״ס?
+
+פשט — הבחירה והדרך:
+כתוב 2-3 משפטים.
+הסבר מה המסר הפשוט של הפרשה לחיים של האדם.
+סיים בשורה:
+הכיוון שלך בפשט:
+ואז כתוב משפט חד וברור על השליחות שלו.
+
+רמז — העומק שמתחת לפני השטח:
+כתוב 2-3 משפטים.
+הסבר איזה רמז פנימי אפשר לראות בפרשה ובנתונים.
+סיים בשורה:
+הכיוון שלך ברמז:
+ואז כתוב משפט חד וברור על השליחות שלו.
+
+דרש — להפוך תורה להדרכה מעשית:
+כתוב 2-3 משפטים.
+הסבר איך האדם יכול להפוך את המסר לחיים, משפחה, עבודה, נתינה, אחריות או השפעה.
+סיים בשורה:
+הכיוון שלך בדרש:
+ואז כתוב משפט חד וברור על השליחות שלו.
+
+סוד — נקודת העומק הפנימית:
+כתוב בזהירות רבה 2-3 משפטים.
+אל תכתוב קבלה מעשית.
+אל תכתוב דברים מוחלטים.
+כתוב על תיקון פנימי, אור מתוך ניסיון, אמונה, בחירה, או הפיכת קושי לכלי של ברכה.
+סיים בשורה:
+הכיוון שלך בסוד:
+ואז כתוב משפט חד וברור על השליחות שלו.
+
+חלק 4 — כיוון בתחום הקשר והקירבה:
+אם "האם הצופה לפני גיל מצוות" הוא כן — אל תכתוב ניתוח זוגי ואל תשתמש במילים זוגיות, בן זוג, בת זוג, נישואין או קשר רומנטי. במקום זאת כתוב בקצרה:
+בגיל הזה נכון להתמקד בבניית לב טוב, מידות טובות, כיבוד הורים, חברות טובה, שמחה, לימוד והקשבה לעצמך.
+
+אם הצופה בגיל מצוות ומעלה — כתוב 2-3 משפטים בלבד על כיוון בתחום הקשר והקירבה האנושית.
+אל תניח אם האדם רווק, נשוי, גרוש, אלמן, בזוגיות, ללא זוגיות, בפרק ב׳, או בכל מצב חיים אחר.
+אל תניח נטייה מינית או סיפור אישי שלא נמסרו.
+אל תבטיח זוגיות.
+אל תכתוב שימצא או תמצא בן/בת זוג.
+אל תיתן ייעוץ זוגי מחייב.
+כתוב בלשון פתוחה ומכבדת:
+"בין אם יש כרגע קשר זוגי ובין אם לא..."
+"הכיוון שעולה בתחום הקשר והקירבה הוא..."
+תן כיוון מעשי אחד שקשור להקשבה, אמון, גבולות, נתינה, אמת פנימית או בחירה נכונה.
+
+חלק 5 — כיוון בתחום העשייה והעיסוק:
+אם "האם הצופה לפני גיל מצוות" הוא כן — אל תכתוב ניתוח מקצועי למבוגרים ואל תמליץ על מקצוע. במקום זאת כתוב בקצרה:
+בגיל הזה נכון להתמקד בלימוד, גילוי כישרונות, אחריות קטנה, התמדה, שמחה ושאלת עצה מהורים או ממבוגר אחראי.
+
+אם הצופה בגיל מצוות ומעלה — כתוב 2-3 משפטים בלבד על תחומי עשייה כלליים שיכולים להתאים לכיוון שעולה מהפרשות והפרד״ס.
+אל תקבע מקצוע ודאי.
+אל תיתן ייעוץ כלכלי או תעסוקתי מחייב.
+אל תכתוב "זה המקצוע שלך".
+כתוב בסגנון:
+"תחומים שיכולים להתאים לכיוון שלך הם..."
+בחר 2-3 כיוונים כלליים בלבד, כמו חינוך, הדרכה, יצירה, כתיבה, ניהול, סדר וארגון, נתינה קהילתית, לימוד, עבודת עומק עם אנשים, יזמות, או תחום אחר שעולה מהפרשות.
+סיים במשפט מעשי קצר:
+"צעד קטן שאפשר להתחיל ממנו הוא..."
+
+חלק 6 — הסיכום הכי מדויק:
+כתוב סיכום חד של 2-3 שורות שמתחיל כך:
+לפי הכיוון שעולה מהפרשות והפרד״ס, השליחות שלך נראית כך:
+
+אחר כך כתוב משפט אחד חזק, אישי וברור, בסגנון:
+"לראות עמוק, לבחור נכון, ולהראות לאחרים איך להפוך תורה, ניסיון חיים וקושי אישי לדרך של ברכה."
+
+חלק 7 — במילים פשוטות יותר:
+כתוב משפט אחד פשוט, אנושי וקליט שמסכם את השליחות.
+
+חלק 8 — קבלה קטנה למעשה:
+תן פעולה אחת קטנה שהאדם יכול לקחת על עצמו השבוע.
+
+סיום:
+סיים במשפט עדין שמזמין להוסיף שם בערוץ לזכות, ברכה, חיזוק או תפילה.
+
+אורך כולל: עד 620 מילים.
+`;
+
+      const completion = await client.responses.create({
+        model: "gpt-4.1-mini",
+        input: prompt
+      });
+
+      const message = completion.output_text || "";
+
+      return res.status(200).json({
+        message
+      });
+    } catch (err) {
+      console.error("createPersonalReading error:", err);
+
+      return res.status(500).json({
+        error: "AI generation failed"
+      });
     }
+  }
+);
 
-'''
-if marker not in main:
-    raise RuntimeError("Main: message marker not found")
-main = main.replace(marker, email_restore + marker, 1)
-
-old_startup = '''    loadInitialAliyah()
-      .then(async () => {
-        if(await restorePardesVideoAfterPayment()){
-          return;
-        }
-
-        const requestedLayer =
-          new URLSearchParams(window.location.search)
-            .get("openLayer");
-'''
-
-new_startup = '''    loadInitialAliyah()
-      .then(async () => {
-        if(await restorePardesVideoFromEmailUrl()){
-          return;
-        }
-
-        if(await restorePardesVideoAfterPayment()){
-          return;
-        }
-
-        const requestedLayer =
-          new URLSearchParams(window.location.search)
-            .get("openLayer");
-'''
-if old_startup not in main:
-    raise RuntimeError("Main: startup block not found")
-main = main.replace(old_startup, new_startup, 1)
-
-# ---------- SUPPORT PAGE ----------
-# Add helper before buildSupportNotificationPayload
-marker2 = '''      function buildSupportNotificationPayload(provider){
-'''
-helper = '''      function getSupportEmailReturnUrl(provider){
-        try{
-          if(
-            window.parent &&
-            window.parent !== window &&
-            typeof window.parent.getPardesEmailReturnUrl ===
-              "function"
-          ){
-            return String(
-              window.parent.getPardesEmailReturnUrl(provider) ||
-              ""
-            );
-          }
-        }catch(error){}
-
-        return "";
+exports.createSpiritualAnswer = onRequest(
+  {
+    region: "us-central1",
+    secrets: [openaiApiKey],
+    cors: true
+  },
+  async (req, res) => {
+    try {
+      if (req.method !== "POST") {
+        return res.status(405).json({
+          error: "Method not allowed"
+        });
       }
 
-'''
-if marker2 not in support:
-    raise RuntimeError("Support: payload marker not found")
-support = support.replace(marker2, helper + marker2, 1)
+      const input = req.body || {};
 
-old_payload_tail = '''          provider,
-          wantsPublicThanks,
-          publicName,
-          pageUrl: window.location.href,
-'''
-new_payload_tail = '''          provider,
-          wantsPublicThanks,
-          publicName,
-          returnUrl:getSupportEmailReturnUrl(provider),
-          pageUrl: window.location.href,
-'''
-if old_payload_tail not in support:
-    raise RuntimeError("Support: payload fields not found")
-support = support.replace(old_payload_tail, new_payload_tail, 1)
+      const character = cleanText(input.character, 30);
+      const question = cleanText(input.question, 1200);
 
-main_out = Path("/mnt/data/index-main-with-email-video-return.html")
-support_out = Path("/mnt/data/support-with-email-video-return.html")
-main_out.write_text(main, encoding="utf-8")
-support_out.write_text(support, encoding="utf-8")
+      if (!character || !question) {
+        return res.status(400).json({
+          error: "Missing required fields"
+        });
+      }
 
-print("נוצרו בהצלחה:")
-print(main_out)
-print(support_out)
-print("Main getter:", "window.getPardesEmailReturnUrl" in main)
-print("Main email restore:", "restorePardesVideoFromEmailUrl" in main)
-print("Support returnUrl payload:", "returnUrl:getSupportEmailReturnUrl(provider)" in support)
+      const characterMap = {
+        yosef: {
+          title: "יוסף הצדיק",
+          field: "חלומות, ניסיון, אמונה וירידה לצורך עלייה",
+          warning: "אל תציג את פירוש החלום כנבואה או קביעה ודאית."
+        },
+        avraham: {
+          title: "אברהם אבינו",
+          field: "אמונה, חסד, דרך חיים והכנסת אורחים",
+          warning: "אל תיתן פסיקת הלכה מעשית."
+        },
+        rambam: {
+          title: "הרמב״ם",
+          field: "בריאות, תזונה, הרגלי חיים ואיזון הגוף והנפש לפי דרכו הכללית של הרמב״ם",
+          warning: "אל תיתן אבחון רפואי, טיפול רפואי או הוראות מסוכנות. הפנה לרופא כשצריך."
+        },
+        rachel: {
+          title: "רחל אמנו",
+          field: "זוגיות, קשר, תפילה מהלב, שלום בית וחיזוק רגשי",
+          warning: "אל תבטיח זיווג, שלום בית או ישועה. במצבי משבר הפנה לרב מוסמך או איש מקצוע."
+        },
+        heart: {
+          title: "מה שבלב",
+          field: "הקשבה, חיזוק, אמונה, התמודדות, כאב אישי, פחדים, החלטות וכל מה שמכביד על הלב",
+          warning: "אל תציג את עצמך כרב, פסיכולוג או מטפל. אם יש מצוקה נפשית קשה, סכנה, אלימות, מחשבות פגיעה, בעיה רפואית או מצב חירום — כתוב בעדינות שחשוב לפנות מיד לאיש מקצוע מתאים, לרב מוסמך או לגורמי חירום."
+        }
+      };
+
+      const profile = characterMap[character];
+
+      if (!profile) {
+        return res.status(400).json({
+          error: "Invalid character"
+        });
+      }
+
+      const client = new OpenAI({
+        apiKey: openaiApiKey.value()
+      });
+
+      const prompt = `
+אתה כותב בעברית, בסגנון יהודי עדין, מחזק, אחראי ונקי.
+
+המדור: בהשראת ${profile.title}
+תחום המדור: ${profile.field}
+
+${character === "heart" ? `
+הוראות מיוחדות לדף "מה שבלב":
+
+האדם לא בהכרח יודע להגדיר את השאלה שלו. קודם כול הקשב, הרגיע, ותן תחושה שיש מקום למה שהוא מרגיש.
+
+אל תענה כמו רב פוסק.
+אל תענה כמו פסיכולוג.
+אל תענה כמו תשובה טכנית.
+
+ענה כמו מלווה יהודי עדין, חם ואחראי.
+
+מבנה התשובה:
+1. פתיחה אישית ומרגיעה.
+2. הבנה של מה שיושב על הלב.
+3. נקודת מבט יהודית פשוטה ומחזקת.
+4. עצה מעשית קטנה.
+5. מקור יהודי אחד, רק אם אתה בטוח בו.
+6. סיום קבוע:
+
+❤️ משפט ללב:
+כתוב משפט קצר ומחזק.
+
+🌱 קבלה קטנה להיום:
+תן פעולה אחת קטנה ופשוטה שהאדם יכול לעשות היום.
+
+אם מדובר במצוקה קשה, אלימות, סכנה, בריאות, דיכאון עמוק או מחשבות פגיעה — הפנה מיד לעזרה מתאימה.
+` : ""}
+
+השאלה של המשתמש:
+${question}
+
+כללים חשובים מאוד:
+- השתמש רק בשפה של השראה יהודית כללית ומקורות יהודיים ידועים.
+- אל תמציא מקורות.
+- אל תכתוב כאילו ${profile.title} עצמו מדבר.
+- אל תכתוב נבואה.
+- אל תבטיח ישועות.
+- אל תיתן פסיקת הלכה.
+- אל תיתן אבחון רפואי, נפשי, זוגי, משפטי או כלכלי.
+- כתוב בלשון זהירה: "אפשר ללמוד", "יש כאן כיוון", "ייתכן שיש כאן נקודת חיזוק".
+- ${profile.warning}
+
+כתוב תשובה במבנה הבא בלבד:
+
+1. פתיחה קצרה ומכבדת
+2. נקודת מבט לפי המדור
+3. חיזוק מעשי לחיים של היום
+4. פעולה קטנה שהאדם יכול לקחת על עצמו
+5. סיום קצר עם הסתייגות מתאימה
+
+אורך: עד 220 מילים.
+`;
+
+      const completion = await client.responses.create({
+        model: "gpt-4.1-mini",
+        input: prompt
+      });
+
+      const message = completion.output_text || "";
+
+      return res.status(200).json({
+        message
+      });
+    } catch (err) {
+      console.error("createSpiritualAnswer error:", err);
+
+      return res.status(500).json({
+        error: "AI generation failed"
+      });
+    }
+  }
+);
+
+exports.sendSupportEmails = onRequest(
+  {
+    region: "us-central1",
+    secrets: [gmailAppPassword],
+    cors: true
+  },
+  async (req, res) => {
+    try {
+      if (req.method !== "POST") {
+        return res.status(405).json({
+          error: "Method not allowed"
+        });
+      }
+
+      const input = req.body || {};
+
+      const donorEmail = cleanText(
+        input.donorEmail,
+        254
+      ).toLowerCase();
+
+      const provider = cleanText(
+        input.provider,
+        30
+      );
+
+      const wantsPublicThanks =
+        Boolean(input.wantsPublicThanks);
+
+      const publicName = wantsPublicThanks
+        ? cleanText(input.publicName, 80)
+        : "";
+
+      /*
+       * קישור החזרה שמגיע מדף התמיכה.
+       * אנחנו לא מכניסים למייל URL שרירותי:
+       * קודם מוודאים שהוא HTTPS ושייך לאתר שלנו.
+       */
+      const rawReturnUrl = cleanText(
+        input.returnUrl,
+        1200
+      );
+
+      let returnUrl = "";
+
+      if (rawReturnUrl) {
+        try {
+          const parsedReturnUrl =
+            new URL(rawReturnUrl);
+
+          const allowedReturnHosts = new Set([
+            "hsbw9-dev.github.io",
+            "parasha-site-links.web.app"
+          ]);
+
+          if (
+            parsedReturnUrl.protocol === "https:" &&
+            allowedReturnHosts.has(
+              parsedReturnUrl.hostname.toLowerCase()
+            )
+          ) {
+            returnUrl = parsedReturnUrl.href;
+          }
+        } catch (error) {
+          returnUrl = "";
+        }
+      }
+
+      const emailPattern =
+        /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+      const allowedProviders =
+        new Set([
+          "bit",
+          "paybox",
+          "paypal"
+        ]);
+
+      if (!emailPattern.test(donorEmail)) {
+        return res.status(400).json({
+          error: "Invalid email"
+        });
+      }
+
+      if (!allowedProviders.has(provider)) {
+        return res.status(400).json({
+          error: "Invalid payment provider"
+        });
+      }
+
+      if (wantsPublicThanks && !publicName) {
+        return res.status(400).json({
+          error: "Missing public name"
+        });
+      }
+
+      const channelEmail =
+        "prsthsbw9@gmail.com";
+
+      const transporter =
+        nodemailer.createTransport({
+          service: "gmail",
+
+          auth: {
+            user: channelEmail,
+            pass: gmailAppPassword.value()
+          }
+        });
+
+      const donorSubject =
+        "תודה רבה על תמיכתך בהפצת התורה";
+
+      const donorTextBase =
+        wantsPublicThanks
+          ? `תודה רבה לך על תרומתך והמצווה החשובה שעשית.
+
+בחרת ששמך יופיע בעלייה הבאה בדף התודה לכל המחזקים.
+
+לאחר אישור תרומתך מצידנו נפרסם את שמך בעז"ה בעלייה הקרובה.
+
+חשוב: הודעה זו נשלחה עם המעבר לאמצעי התשלום ואינה מהווה עדיין אישור שהתשלום התקבל.
+
+לאחר וידוא התשלום נשלח אליך אישור נוסף.
+
+תבורך מהשמיים.`
+          : `תודה רבה לך על תרומתך והמצווה החשובה שעשית.
+
+עצם זה שבחרת להישאר בעילום שם, זה רק מוכיח לנו איזה צדיקים יש בעולם הזה, ורק השם יודע את גודל המצווה שעשית.
+
+חשוב: הודעה זו נשלחה עם המעבר לאמצעי התשלום ואינה מהווה עדיין אישור שהתשלום התקבל.
+
+לאחר וידוא התשלום נשלח אליך שוב הודעה שהתשלום התקבל.
+
+תבורך מהשמיים.`;
+
+      /*
+       * גרסת טקסט רגילה של המייל.
+       * אם תוכנת המייל לא תומכת ב-HTML,
+       * עדיין יופיע קישור החזרה.
+       */
+      const donorText = returnUrl
+        ? `${donorTextBase}
+
+בחזרה לעץ הפרד״ס החי:
+${returnUrl}`
+        : donorTextBase;
+
+      /*
+       * הגנה על ה-URL לפני הכנסה ל-HTML.
+       */
+      const escapedReturnUrl =
+        returnUrl
+          .replace(/&/g, "&amp;")
+          .replace(/"/g, "&quot;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;");
+
+      const donorHtmlBase =
+        wantsPublicThanks
+          ? `
+<div
+  dir="rtl"
+  style="
+    font-family:Arial,sans-serif;
+    line-height:1.8;
+    color:#202020;
+  "
+>
+  <p>
+    תודה רבה לך על תרומתך והמצווה החשובה שעשית.
+  </p>
+
+  <p>
+    בחרת ששמך יופיע בעלייה הבאה בדף התודה לכל המחזקים.
+  </p>
+
+  <p>
+    לאחר אישור תרומתך מצידנו נפרסם את שמך בעז"ה בעלייה הקרובה.
+  </p>
+
+  <p>
+    <strong>חשוב:</strong>
+    הודעה זו נשלחה עם המעבר לאמצעי התשלום ואינה מהווה עדיין אישור שהתשלום התקבל.
+  </p>
+
+  <p>
+    לאחר וידוא התשלום נשלח אליך אישור נוסף.
+  </p>
+
+  <p>
+    תבורך מהשמיים.
+  </p>
+</div>
+`
+          : `
+<div
+  dir="rtl"
+  style="
+    font-family:Arial,sans-serif;
+    line-height:1.8;
+    color:#202020;
+  "
+>
+  <p>
+    תודה רבה לך על תרומתך והמצווה החשובה שעשית.
+  </p>
+
+  <p>
+    עצם זה שבחרת להישאר בעילום שם, זה רק מוכיח לנו איזה צדיקים יש בעולם הזה, ורק השם יודע את גודל המצווה שעשית.
+  </p>
+
+  <p>
+    <strong>חשוב:</strong>
+    הודעה זו נשלחה עם המעבר לאמצעי התשלום ואינה מהווה עדיין אישור שהתשלום התקבל.
+  </p>
+
+  <p>
+    לאחר וידוא התשלום נשלח אליך שוב הודעה שהתשלום התקבל.
+  </p>
+
+  <p>
+    תבורך מהשמיים.
+  </p>
+</div>
+`;
+
+      /*
+       * אם קיבלנו קישור חזרה תקין,
+       * מוסיפים כפתור למייל.
+       */
+      const donorHtml = returnUrl
+        ? `
+${donorHtmlBase}
+
+<div
+  dir="rtl"
+  style="
+    font-family:Arial,sans-serif;
+    text-align:center;
+    margin-top:28px;
+  "
+>
+  <a
+    href="${escapedReturnUrl}"
+    style="
+      display:inline-block;
+      padding:14px 24px;
+      border-radius:999px;
+      background:#1f6b3a;
+      color:#ffffff;
+      text-decoration:none;
+      font-size:17px;
+      font-weight:700;
+    "
+  >
+    🌳 בחזרה לעץ הפרד״ס החי
+  </a>
+
+  <p
+    style="
+      margin-top:12px;
+      color:#666;
+      font-size:13px;
+    "
+  >
+    הקישור יחזיר אותך לחלק בסרטון שבו הפסקת לצפות.
+  </p>
+</div>
+`
+        : donorHtmlBase;
+
+      const technicalDetails = {
+        donorEmail,
+        provider,
+        wantsPublicThanks,
+
+        publicName:
+          publicName ||
+          "לא ביקש להופיע בדף התודה",
+
+        sentAt: cleanText(
+          input.sentAt,
+          60
+        ),
+
+        pageUrl: cleanText(
+          input.pageUrl,
+          500
+        ),
+
+        returnUrl,
+
+        language: cleanText(
+          input.language,
+          40
+        ),
+
+        userAgent: cleanText(
+          input.userAgent,
+          500
+        ),
+
+        screenWidth:
+          Number(input.screen?.width || 0),
+
+        screenHeight:
+          Number(input.screen?.height || 0)
+      };
+
+      const channelText =
+`בקשת תמיכה חדשה התקבלה באתר.
+
+אימייל התומך: ${technicalDetails.donorEmail}
+אמצעי תשלום שנבחר: ${technicalDetails.provider}
+ביקש להופיע בדף התודה: ${technicalDetails.wantsPublicThanks ? "כן" : "לא"}
+שם להצגה: ${technicalDetails.publicName}
+
+זמן שליחה מהדפדפן:
+${technicalDetails.sentAt || "לא נמסר"}
+
+כתובת הדף:
+${technicalDetails.pageUrl || "לא נמסרה"}
+
+קישור חזרה לסרטון:
+${technicalDetails.returnUrl || "לא נוצר קישור חזרה"}
+
+שפת הדפדפן:
+${technicalDetails.language || "לא נמסרה"}
+
+גודל מסך:
+${technicalDetails.screenWidth || "?"}x${technicalDetails.screenHeight || "?"}
+
+User-Agent:
+${technicalDetails.userAgent || "לא נמסר"}
+
+הערה: זוהי הודעה שנשלחה לפני המעבר לאמצעי התשלום.
+אין לראות בה אישור שהתשלום בוצע או התקבל.`;
+
+      /*
+       * מייל לצופה.
+       */
+      await transporter.sendMail({
+        from:
+          `"פרשת השבוע - הפצת התורה" <${channelEmail}>`,
+
+        to: donorEmail,
+
+        replyTo: channelEmail,
+
+        subject: donorSubject,
+
+        text: donorText,
+
+        html: donorHtml
+      });
+
+      /*
+       * מייל לערוץ.
+       */
+      await transporter.sendMail({
+        from:
+          `"אתר פרשת השבוע" <${channelEmail}>`,
+
+        to: channelEmail,
+
+        replyTo: donorEmail,
+
+        subject:
+          `בקשת תמיכה חדשה - ${provider.toUpperCase()}`,
+
+        text: channelText
+      });
+
+      return res.status(200).json({
+        ok: true
+      });
+    } catch (err) {
+      console.error(
+        "sendSupportEmails error:",
+        err
+      );
+
+      return res.status(500).json({
+        error: "Email sending failed"
+      });
+    }
+  }
+);
+
+function cleanText(value, maxLength) {
+  return String(value || "")
+    .replace(/[<>]/g, "")
+    .trim()
+    .slice(0, maxLength);
+}
