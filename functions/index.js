@@ -1,6 +1,4 @@
-from pathlib import Path
-
-code = r'''const { onRequest } = require("firebase-functions/v2/https");
+const { onRequest } = require("firebase-functions/v2/https");
 const { defineSecret } = require("firebase-functions/params");
 const OpenAI = require("openai");
 const nodemailer = require("nodemailer");
@@ -645,9 +643,3 @@ function cleanText(value, maxLength) {
     .trim()
     .slice(0, maxLength);
 }
-'''
-
-out = Path("/mnt/data/index-with-name-request.js")
-out.write_text(code, encoding="utf-8")
-print(f"נוצר הקובץ: {out.name}")
-print(f"גודל: {out.stat().st_size:,} bytes")
