@@ -748,18 +748,24 @@
             מומלץ לבחור תמונה שבה הפנים מופיעות בבירור ובחזית
           </p>        
 
-          <div class="native-photo-picker">
-            <span class="photo-pick-button" aria-hidden="true">
-              📷 בחירת תמונה מהגלריה
-            </span>
-            <input
-              id="photoInput"
-              class="native-photo-input"
-              type="file"
-              accept="image/*"
-              aria-label="בחירת תמונה מהגלריה"
-            >
-          </div>
+          <iframe
+            class="pardes-inapp-youtube-link"
+            srcdoc="
+              <input
+                type='file'
+                accept='image/*'
+                style='
+                  width:100%;
+                  height:60px;
+                  font-size:18px;
+                '
+              >
+            "
+            title="פתיחת הגלריה"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowfullscreen
+            referrerpolicy="strict-origin-when-cross-origin"
+          ></iframe>
           <div id="photoPreviewWrap" class="photo-preview-wrap" hidden>
             <img id="photoPreview" class="photo-preview" alt="תצוגה מקדימה של התמונה שנבחרה">
 
