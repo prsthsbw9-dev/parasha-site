@@ -1147,16 +1147,11 @@
         </a>
       </div>
     </nav>
-
-    <header class="final-heading">
-      <p class="eyebrow">לתמיכה במצוות הפצת התורה</p>
-    </header>
-
-    <section class="form-card" aria-labelledby="supportFormTitle">
+<section class="form-card" aria-labelledby="supportFormTitle">
       <h2 id="supportFormTitle">תמיכה בהפצת התורה</h2>
 
       <p class="support-intro">
-        מלאו כתובת אימייל, אשרו את הסעיפים ובחרו את אמצעי התמיכה הנוח לכם.
+        מלאו כתובת אימייל, אשרו את התקנון ובחרו את אמצעי התמיכה הנוח לכם.
       </p>
 <div class="field">
         <label for="supportEmail">כתובת אימייל</label>
@@ -1182,25 +1177,10 @@
           </div>
         </div>
 
-        <div class="support-option">
-          <label class="check-row">
-            <input id="addBlessing" type="checkbox">
-            <span>האם תרצה/י להוסיף בחינם ברכה או לעילוי נשמת אדם היקר לליבך?</span>
-          </label>
-          <div id="blessingPanel" class="support-option-panel" hidden>
-            <p class="support-option-note">
-              ניתן להוסיף שם לברכה, לרפואה, להצלחה או לעילוי נשמה דרך דף השמות.
-            </p>
-            <a class="names-link" href="names-intro.html">מעבר להוספת שם</a>
-          </div>
-        </div>
+        
       </div>
 
       <div class="checks">
-        <label class="check-row">
-          <input id="ageConfirm" type="checkbox">
-          <span>אני בן/בת 18 ומעלה ופועל/ת בשמי, או שקיבלתי הרשאה מתאימה.</span>
-        </label>
 
         <label class="check-row">
           <input id="termsConsent" type="checkbox">
@@ -1209,15 +1189,10 @@
             <a id="termsLink" class="terms-link" href="support-terms.html">תקנון התמיכה</a>.
           </span>
         </label>
-
-        <label class="check-row">
-          <input id="donationIntentConfirm" type="checkbox">
-          <span>אני רוצה להמשיך לבחירת אמצעי התמיכה.</span>
-        </label>
       </div>
 
       <p class="email-required-note">
-        לאחר הזנת אימייל ואישור הסעיפים ייפתחו אמצעי התמיכה.
+        לאחר הזנת אימייל ואישור התקנון ייפתחו אמצעי התמיכה.
       </p>
 
       <div id="tiktokCopyHelp" class="tiktok-copy-help" hidden>
@@ -1259,7 +1234,7 @@
       </div>
 
       <p id="paymentHelp" class="payment-help" role="status" aria-live="polite">
-        יש להזין אימייל תקין ולאשר את הסעיפים כדי לפתוח את אמצעי התמיכה.
+        יש להזין אימייל תקין ולאשר את התקנון כדי לפתוח את אמצעי התמיכה.
       </p>
 
       <p class="legal-hint">
@@ -1286,10 +1261,10 @@
         "pardesSupportVideoReturnV1";
 
       const termsLink = document.getElementById("termsLink");
-      const ageConfirm = document.getElementById("ageConfirm");
+      const ageConfirm = { checked:true, addEventListener(){} };
       const termsConsent = document.getElementById("termsConsent");
       const supportEmail = document.getElementById("supportEmail");
-      const donationIntentConfirm = document.getElementById("donationIntentConfirm");
+      const donationIntentConfirm = { checked:true, addEventListener(){} };
       const showThankName = document.getElementById("showThankName");
       const thankNamePanel = document.getElementById("thankNamePanel");
       const publicSupportName = document.getElementById("publicSupportName");
@@ -1390,7 +1365,7 @@
 
         paymentHelp.textContent = enabled
           ? "אפשר לבחור כעת את אמצעי התמיכה הנוח לך."
-          : "יש להזין אימייל תקין ולאשר את הסעיפים כדי לפתוח את אמצעי התמיכה.";
+          : "יש להזין אימייל תקין ולאשר את התקנון כדי לפתוח את אמצעי התמיכה.";
       }
 
       function setupTikTokPaymentTargets(){
@@ -1468,10 +1443,6 @@
         }else{
           publicSupportName.value = "";
         }
-      });
-
-      addBlessing.addEventListener("change",() => {
-        blessingPanel.hidden = !addBlessing.checked;
       });
 
       paymentLinks.forEach((link) => {
