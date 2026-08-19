@@ -1425,11 +1425,28 @@ const returnNavigation =
 
       let preparedSupportReturnUrl = "";
 
+      function readReturnUrlFromSupportPage(){
+        try{
+          return String(
+            new URLSearchParams(window.location.search)
+              .get("returnUrl") ||
+            ""
+          );
+        }catch(error){
+          return "";
+        }
+      }
+
       function prepareSupportReturnUrl(provider){
-        preparedSupportReturnUrl = "";
+        preparedSupportReturnUrl =
+          readReturnUrlFromSupportPage();
 
         try{
-          if(window.parent && window.parent !== window){
+          if(
+            !preparedSupportReturnUrl &&
+            window.parent &&
+            window.parent !== window
+          ){
             if(
               typeof window.parent.savePardesVideoReturnForPayment ===
               "function"
@@ -1471,6 +1488,13 @@ const returnNavigation =
       function getSupportEmailReturnUrl(provider){
         if(preparedSupportReturnUrl){
           return preparedSupportReturnUrl;
+        }
+
+        const returnUrlFromPage =
+          readReturnUrlFromSupportPage();
+
+        if(returnUrlFromPage){
+          return returnUrlFromPage;
         }
 
         try{
