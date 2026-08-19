@@ -356,15 +356,13 @@
       line-height: 1.45;
     }
 
-    .native-photo-picker input[type="file"] {
-      position: absolute;
-      inset: 0;
+    .native-photo-picker {
+      position: relative;
       width: 100%;
       height: 46px;
-      margin: 0;
-      opacity: 0;
-      cursor: pointer;
-      z-index: 2;
+      min-height: 46px;
+      overflow: hidden;
+      border-radius: 14px;
     }
     
     .native-photo-picker-small {
@@ -373,7 +371,7 @@
       min-height: 46px;
       overflow: hidden;
     }
-
+    
     .native-photo-input {
       position: absolute;
       inset: 0;
@@ -381,9 +379,8 @@
       width: 100%;
       height: 100%;
       margin: 0;
-      opacity: 0.001;
+      opacity: 0;
       cursor: pointer;
-      font-size: 100px;
     }
 
     .photo-pick-button,
@@ -759,11 +756,13 @@
               📷 בחירת תמונה מהגלריה
             </span>
           
-            <input
-              id="photoInput"
-              type="file"
-              accept="image/jpeg,image/png,image/webp"
-            >
+          <input
+            id="photoInput"
+            class="native-photo-input"
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            aria-label="בחירת תמונה מהגלריה"
+          >
           </div>
           <div id="photoPreviewWrap" class="photo-preview-wrap" hidden>
             <img id="photoPreview" class="photo-preview" alt="תצוגה מקדימה של התמונה שנבחרה">
