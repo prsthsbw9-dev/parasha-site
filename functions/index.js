@@ -1,4 +1,6 @@
-const { onRequest } = require("firebase-functions/v2/https");
+from pathlib import Path
+
+code = r'''const { onRequest } = require("firebase-functions/v2/https");
 const { defineSecret } = require("firebase-functions/params");
 const OpenAI = require("openai");
 const nodemailer = require("nodemailer");
@@ -408,6 +410,231 @@ ${technicalDetails.userAgent || "לא נמסר"}
   }
 );
 
+/*
+ * שליחת בקשת שם/ברכה דרך Firebase + Gmail.
+ * אם צורפה תמונה, הדף אמור להקטין אותה לפני השליחה
+ * ולשלוח אותה כ-data URL של JPEG/PNG/WEBP.
+ */
+exports.sendNameRequest = onRequest(
+  {
+    region: "us-central1",
+    secrets: [gmailAppPassword],
+    cors: true
+  },
+  async (req, res) => {
+    try {
+      if (req.method !== "POST") {
+        return res.status(405).json({
+          error: "Method not allowed"
+        });
+      }
+
+      const input = req.body || {};
+
+      const blessingName = cleanText(input.blessingName, 100);
+      const requestText = cleanText(input.requestText, 1500);
+      const contactEmail = cleanText(
+        input.contactEmail,
+        254
+      ).toLowerCase();
+
+      const termsAccepted = Boolean(input.termsAccepted);
+      const photoSinglePersonConfirmed =
+        Boolean(input.photoSinglePersonConfirmed);
+
+      const sourceUrl = cleanText(input.sourceUrl, 500);
+      const sentAt = cleanText(input.sentAt, 60);
+      const language = cleanText(input.language, 40);
+      const userAgent = cleanText(input.userAgent, 500);
+
+      const emailPattern =
+        /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+      if (!blessingName || !requestText) {
+        return res.status(400).json({
+          error: "Missing required fields"
+        });
+      }
+
+      if (!emailPattern.test(contactEmail)) {
+        return res.status(400).json({
+          error: "Invalid email"
+        });
+      }
+
+      if (!termsAccepted) {
+        return res.status(400).json({
+          error: "Terms not accepted"
+        });
+      }
+
+      let photoAttachment = null;
+      const photoDataUrl =
+        typeof input.photoDataUrl === "string"
+          ? input.photoDataUrl.trim()
+          : "";
+
+      if (photoDataUrl) {
+        if (!photoSinglePersonConfirmed) {
+          return res.status(400).json({
+            error: "Photo confirmation required"
+          });
+        }
+
+        const match = photoDataUrl.match(
+          /^data:(image\/(?:jpeg|png|webp));base64,([A-Za-z0-9+/=\r\n]+)$/i
+        );
+
+        if (!match) {
+          return res.status(400).json({
+            error: "Invalid image format"
+          });
+        }
+
+        const mimeType = match[1].toLowerCase();
+        const base64Data = match[2].replace(/\s/g, "");
+        const photoBuffer = Buffer.from(base64Data, "base64");
+
+        /*
+         * הדף יכוון ל-300–500KB.
+         * בשרת אנחנו משאירים מרווח ביטחון עד 1.2MB לאחר הדחיסה.
+         */
+        const MAX_PHOTO_BYTES = 1_200_000;
+
+        if (
+          !photoBuffer.length ||
+          photoBuffer.length > MAX_PHOTO_BYTES
+        ) {
+          return res.status(413).json({
+            error: "Image too large"
+          });
+        }
+
+        const extension =
+          mimeType === "image/png"
+            ? "png"
+            : mimeType === "image/webp"
+              ? "webp"
+              : "jpg";
+
+        photoAttachment = {
+          filename: `blessing-photo.${extension}`,
+          content: photoBuffer,
+          contentType: mimeType
+        };
+      }
+
+      const channelEmail = "prsthsbw9@gmail.com";
+
+      const transporter =
+        nodemailer.createTransport({
+          service: "gmail",
+          auth: {
+            user: channelEmail,
+            pass: gmailAppPassword.value()
+          }
+        });
+
+      const attachments = photoAttachment
+        ? [photoAttachment]
+        : [];
+
+      const donorSubject =
+        `בקשתך עבור ${blessingName} התקבלה`;
+
+      const donorText =
+        `שלום,
+
+קיבלנו את בקשתך עבור:
+${blessingName}
+
+הבקשה שנשלחה:
+${requestText}
+
+${photoAttachment
+  ? "התמונה שצירפת התקבלה בהצלחה וצורפה גם למייל זה."
+  : "לא צורפה תמונה לבקשה."}
+
+לאחר בדיקה, הבקשה עשויה להשתלב באחת העליות הקרובות כדי שהצופים יוכלו לברך ולענות אמן למענה.
+
+תודה שבחרת לקחת חלק בזיכוי הרבים.
+תבורך/י מהשמיים.`;
+
+      const channelSubject =
+        `בקשת שם חדשה — ${blessingName}`;
+
+      const channelText =
+        `בקשת שם/ברכה חדשה התקבלה באתר.
+
+השם לברכה או להקדשה:
+${blessingName}
+
+הבקשה:
+${requestText}
+
+אימייל השולח/ת:
+${contactEmail}
+
+צורפה תמונה:
+${photoAttachment ? "כן" : "לא"}
+
+אושר שבתמונה מופיע רק האדם שעבורו נשלחה הבקשה:
+${photoAttachment
+  ? (photoSinglePersonConfirmed ? "כן" : "לא")
+  : "לא רלוונטי — לא צורפה תמונה"}
+
+אישור תקנון:
+${termsAccepted ? "אושר" : "לא אושר"}
+
+זמן שליחה:
+${sentAt || "לא נמסר"}
+
+מקור הבקשה:
+${sourceUrl || "לא נמסר"}
+
+שפת הדפדפן:
+${language || "לא נמסרה"}
+
+User-Agent:
+${userAgent || "לא נמסר"}`;
+
+      await transporter.sendMail({
+        from:
+          `"כל המברך יבורך" <${channelEmail}>`,
+        to: contactEmail,
+        replyTo: channelEmail,
+        subject: donorSubject,
+        text: donorText,
+        attachments
+      });
+
+      await transporter.sendMail({
+        from:
+          `"עץ הפרד״ס החי - בקשות ושמות" <${channelEmail}>`,
+        to: channelEmail,
+        replyTo: contactEmail,
+        subject: channelSubject,
+        text: channelText,
+        attachments
+      });
+
+      return res.status(200).json({
+        ok: true,
+        photoReceived: Boolean(photoAttachment)
+      });
+    } catch (err) {
+      console.error(
+        "sendNameRequest error:",
+        err
+      );
+
+      return res.status(500).json({
+        error: "Name request email failed"
+      });
+    }
+  }
+);
+
 function cleanText(value, maxLength) {
   if (typeof value !== "string") {
     return "";
@@ -418,3 +645,9 @@ function cleanText(value, maxLength) {
     .trim()
     .slice(0, maxLength);
 }
+'''
+
+out = Path("/mnt/data/index-with-name-request.js")
+out.write_text(code, encoding="utf-8")
+print(f"נוצר הקובץ: {out.name}")
+print(f"גודל: {out.stat().st_size:,} bytes")
