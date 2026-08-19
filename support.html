@@ -1215,6 +1215,9 @@
       <p class="email-required-note">
         לאחר הזנת אימייל ואישור התקנון ייפתחו אמצעי התמיכה.
       </p>
+
+      
+
       <p id="prePaymentStatus" class="prepayment-status" role="status" aria-live="polite"></p>
 
       <div class="payment-methods" aria-label="בחירת אמצעי תמיכה">
@@ -1290,7 +1293,8 @@
        * יש להחליף בכתובת ה-HTTPS של ה-Cloud Function / השרת שלך.
        */
       const SUPPORT_NOTIFY_ENDPOINT = "https://us-central1-parasha-site-links.cloudfunctions.net/sendSupportEmails";
-const returnNavigation =
+
+      const returnNavigation =
         document.getElementById("returnNavigation");
       const returnToVideoButton =
         document.getElementById("returnToVideoButton");
@@ -1379,46 +1383,8 @@ const returnNavigation =
           ? "אפשר לבחור כעת את אמצעי התמיכה הנוח לך."
           : "יש להזין אימייל תקין ולאשר את התקנון כדי לפתוח את אמצעי התמיכה.";
       }
-        });
-      }
-        try{
-          if(navigator.clipboard && window.isSecureContext){
-            await navigator.clipboard.writeText(SUPPORT_PHONE_LOCAL);
-          }else{
-            const copyField = document.createElement("textarea");
-            copyField.value = SUPPORT_PHONE_LOCAL;
-            copyField.setAttribute("readonly","");
-            copyField.style.position = "fixed";
-            copyField.style.opacity = "0";
-            document.body.appendChild(copyField);
-            copyField.select();
 
-            const copied = document.execCommand("copy");
-            copyField.remove();
 
-            if(!copied) throw new Error("copy_failed");
-          }
-
-          copyPhoneStatus.textContent =
-            "המספר הועתק ✓ פתחו את האפליקציה, בחרו העברה לפי מספר והדביקו אותו באמצעות לחיצה ארוכה על השדה של הקלדת המספר.";
-          const originalText = clickedLink.textContent;
-          clickedLink.textContent = "המספר הועתק ✓";
-
-          window.setTimeout(() => {
-            clickedLink.textContent = originalText;
-          },3000);
-
-          window.dataLayer = window.dataLayer || [];
-          window.dataLayer.push({
-            event:"support_phone_copy",
-            payment_provider:provider,
-            wants_public_thanks:showThankName.checked
-          });
-        }catch(error){
-          copyPhoneStatus.textContent =
-            "ההעתקה לא הצליחה. יש לפתוח את הדף בדפדפן החיצוני ולנסות שוב.";
-        }
-      }
 
       [ageConfirm,termsConsent,donationIntentConfirm].forEach((checkbox) => {
         checkbox.addEventListener("change",updatePaymentLinks);
@@ -1586,6 +1552,9 @@ const returnNavigation =
               );
             }
           }
+
+
+
           window.dataLayer = window.dataLayer || [];
           window.dataLayer.push({
             event:"support_payment_click",
