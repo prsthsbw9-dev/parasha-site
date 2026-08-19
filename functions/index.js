@@ -453,6 +453,7 @@ exports.sendSupportEmails = onRequest(
             new URL(rawReturnUrl);
 
           const allowedReturnHosts = new Set([
+            "prsthsbw9-dev.github.io",
             "hsbw9-dev.github.io",
             "parasha-site-links.web.app"
           ]);
