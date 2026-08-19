@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- FIREBASE DIRECT SUBMIT + PHOTO UPLOAD + TIKTOK DIRECT PAGE — VERSION 9 — 2026-08-19 -->
+<!-- FIREBASE DIRECT SUBMIT + PHOTO UPLOAD — VERSION 10 — 2026-08-19 -->
 <html lang="he" dir="rtl">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#071014">
-  <title>לכל נשמה יש שם | שליחה ישירה v9</title>
+  <title>לכל נשמה יש שם | שליחה ישירה v10</title>
 
   <style>
     :root {
@@ -214,60 +214,6 @@
     }
 
     /* המעטפת שקופה לחלוטין; רק השדות והכפתורים אטומים. */
-    .tiktok-entry-notice {
-      margin: 0 0 16px;
-      padding: 14px 15px;
-      border: 1px solid rgba(255,227,154,.58);
-      border-radius: 15px;
-      background: rgba(92,65,8,.88);
-      color: #fff7d0;
-      text-align: center;
-      font-size: clamp(14px, 4vw, 17px);
-      line-height: 1.6;
-      font-weight: 700;
-      box-shadow: 0 8px 24px rgba(0,0,0,.34);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-    }
-
-    .tiktok-entry-notice strong {
-      color: #fff3ad;
-      font-weight: 900;
-    }
-
-    .tiktok-entry-browser-button {
-      display: block;
-      width: 100%;
-      min-height: 50px;
-      margin-top: 11px;
-      padding: 11px 14px;
-      border: 1px solid rgba(255,255,255,.48);
-      border-radius: 14px;
-      background: linear-gradient(135deg,#c18a23,#80550c);
-      color: #fff;
-      font-weight: 900;
-      cursor: pointer;
-      box-shadow: 0 7px 20px rgba(0,0,0,.28);
-    }
-
-    .tiktok-entry-fallback {
-      display: block;
-      margin-top: 9px;
-      color: rgba(255,255,255,.88);
-      font-size: .86em;
-      line-height: 1.45;
-    }
-
-    .tiktok-entry-notice.is-attention {
-      animation: tiktokEntryAttention .48s ease-in-out 0s 5 alternate;
-    }
-
-    @keyframes tiktokEntryAttention {
-      from {
-        transform: scale(1);
-        box-shadow: 0 8px 24px rgba(0,0,0,.34);
-        border-color: rgba(255,227,154,.58);
-      }
       to {
         transform: scale(1.018);
         box-shadow:
@@ -513,43 +459,6 @@
       font-weight: 800;
     }
 
-
-    .tiktok-photo-help {
-      display: none;
-      margin: 10px 0 0;
-      padding: 12px 13px;
-      border: 1px solid rgba(255,227,154,.42);
-      border-radius: 13px;
-      background: rgba(78,58,14,.30);
-      color: #fff7d0;
-      font-size: 13px;
-      line-height: 1.55;
-      font-weight: 700;
-      text-align: center;
-    }
-
-    .tiktok-photo-help.visible {
-      display: block;
-    }
-
-    .tiktok-photo-help strong {
-      color: #fff3ad;
-    }
-
-    .tiktok-browser-button {
-      width: 100%;
-      min-height: 48px;
-      margin-top: 9px;
-      padding: 10px 14px;
-      border: 1px solid rgba(255,255,255,.44);
-      border-radius: 14px;
-      background: linear-gradient(135deg,#c18a23,#80550c);
-      color: #fff;
-      font-weight: 900;
-      cursor: pointer;
-      box-shadow: 0 7px 20px rgba(0,0,0,.26);
-    }
-
     .honeypot {
       position: absolute !important;
       width: 1px !important;
@@ -747,19 +656,6 @@
             </span>
           </p>
       </header>
-
-      <div id="tiktokEntryNotice" class="tiktok-entry-notice" hidden role="alert" aria-live="polite">
-        <strong>פתחת את הדף מתוך TikTok.</strong><br>
-        כדי למלא את הבקשה ולצרף תמונה בצורה תקינה,
-        יש לפתוח את <strong>דף השמות עצמו</strong> בדפדפן החיצוני.
-        <button id="tiktokEntryBrowserButton" class="tiktok-entry-browser-button" type="button">
-          פתיחת דף השמות בדפדפן
-        </button>
-        <span class="tiktok-entry-fallback">
-          אם הכפתור אינו פותח דפדפן חיצוני, לחצו על שלוש הנקודות למעלה ובחרו „פתח בדפדפן”.
-        </span>
-      </div>
-
       <form
         id="requestForm"
         class="request-form"
@@ -846,17 +742,6 @@
           >
             📷 בחירת תמונה מהגלריה
           </button>
-
-          <div id="tiktokPhotoHelp" class="tiktok-photo-help" role="status" aria-live="polite">
-            <strong>פתחת את הדף מתוך TikTok.</strong><br>
-            כדי לבחור תמונה מהגלריה, יש לפתוח את הדף בדפדפן החיצוני של הטלפון.
-            <br>
-            לחצו על שלוש הנקודות למעלה ובחרו <b>„פתח בדפדפן”</b>.
-            <button id="tiktokBrowserButton" class="tiktok-browser-button" type="button">
-              פתיחת הדף בדפדפן
-            </button>
-          </div>
-
           <div id="photoPreviewWrap" class="photo-preview-wrap" hidden>
             <img id="photoPreview" class="photo-preview" alt="תצוגה מקדימה של התמונה שנבחרה">
 
@@ -925,21 +810,13 @@
         "https://us-central1-parasha-site-links.cloudfunctions.net/sendNameRequest";
 
       const form = document.getElementById("requestForm");
-      const tiktokEntryNotice = document.getElementById("tiktokEntryNotice");
-      const tiktokEntryBrowserButton = document.getElementById("tiktokEntryBrowserButton");
       const blessingName = document.getElementById("blessingName");
       const requestText = document.getElementById("requestText");
       const contactEmail = document.getElementById("contactEmail");
       const photoInput = document.getElementById("photoInput");
       const photoPickButton = document.getElementById("photoPickButton");
       const photoChangeButton = document.getElementById("photoChangeButton");
-      const tiktokPhotoHelp = document.getElementById("tiktokPhotoHelp");
-      const tiktokBrowserButton = document.getElementById("tiktokBrowserButton");
-      const isTikTokBrowser =
-        /TikTok|BytedanceWebview|musical_ly|musically/i.test(
-          navigator.userAgent || ""
-        );
-      const photoPreviewWrap = document.getElementById("photoPreviewWrap");
+const photoPreviewWrap = document.getElementById("photoPreviewWrap");
       const photoPreview = document.getElementById("photoPreview");
       const removePhotoButton = document.getElementById("removePhotoButton");
       const photoCompressionStatus = document.getElementById("photoCompressionStatus");
@@ -959,71 +836,6 @@
       const DRAFT_STORAGE_KEY = "pardesNamesFormDraftV2";
       let compressedPhotoDataUrl = "";
       let compressedPhotoBytes = 0;
-
-      /*
-       * בתוך TikTok הדף יכול להיטען בתוך iframe של האתר הראשי.
-       * window.location.href כאן הוא כתובת דף השמות הפנימי עצמו,
-       * ולכן הכפתור שלנו שומר אותה ומנסה לפתוח דווקא אותה.
-       */
-      const NAMES_DIRECT_URL = window.location.href;
-
-      function focusTikTokEntryNotice() {
-        if(!tiktokEntryNotice) return;
-
-        tiktokEntryNotice.hidden = false;
-        tiktokEntryNotice.classList.remove("is-attention");
-
-        tiktokEntryNotice.scrollIntoView({
-          behavior: "smooth",
-          block: "start"
-        });
-
-        window.setTimeout(function () {
-          tiktokEntryNotice.classList.add("is-attention");
-        }, 420);
-
-        window.setTimeout(function () {
-          tiktokEntryNotice.classList.remove("is-attention");
-        }, 3300);
-      }
-
-      function openNamesPageDirectly() {
-        /*
-         * ניסיון לפתוח את כתובת דף השמות עצמו בחלון חדש.
-         * אם TikTok חוסם מעבר לדפדפן חיצוני, ההנחיה הידנית נשארת גלויה.
-         */
-        try {
-          const opened = window.open(
-            NAMES_DIRECT_URL,
-            "_blank",
-            "noopener,noreferrer"
-          );
-
-          if(!opened) {
-            focusTikTokEntryNotice();
-          }
-        } catch(error) {
-          focusTikTokEntryNotice();
-        }
-      }
-
-      if(isTikTokBrowser && tiktokEntryNotice) {
-        tiktokEntryNotice.hidden = false;
-
-        if(tiktokEntryBrowserButton) {
-          tiktokEntryBrowserButton.addEventListener(
-            "click",
-            openNamesPageDirectly
-          );
-        }
-
-        window.setTimeout(function () {
-          tiktokEntryNotice.scrollIntoView({
-            behavior: "smooth",
-            block: "start"
-          });
-        }, 250);
-      }
 
       function clean(value) {
         return String(value || "").replace(/\r\n/g, "\n").trim();
@@ -1280,47 +1092,13 @@
         };
       }
 
-      function showTikTokPhotoHelp() {
-        /*
-         * לא מציגים יותר הודעה שנייה ליד העלאת התמונה.
-         * מחזירים את הצופה להודעה הראשית ומבליטים אותה.
-         */
-        if(tiktokPhotoHelp) {
-          tiktokPhotoHelp.classList.remove("visible");
-        }
-
-        focusTikTokEntryNotice();
-      }
-
-      function tryOpenExternalBrowser() {
-        openNamesPageDirectly();
-      }
-
       photoPickButton.addEventListener("click", function () {
-        if(isTikTokBrowser) {
-          showTikTokPhotoHelp();
-          return;
-        }
-
         photoInput.click();
       });
 
       photoChangeButton.addEventListener("click", function () {
-        if(isTikTokBrowser) {
-          showTikTokPhotoHelp();
-          return;
-        }
-
         photoInput.click();
       });
-
-      tiktokBrowserButton.addEventListener("click", function () {
-        tryOpenExternalBrowser();
-      });
-
-      if(isTikTokBrowser) {
-        photoPickButton.textContent = "📱 העלאת תמונה זמינה לאחר פתיחה בדפדפן";
-      }
 
       photoInput.addEventListener("change", async function () {
         photoError.textContent = "";
