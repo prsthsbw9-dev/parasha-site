@@ -616,10 +616,439 @@
       z-index:3;
     }
     
+  
+    /* ===== מסכי ההקדמה החדשים ===== */
+    body.intro-mode{
+      overflow:hidden;
+      background:#000;
+    }
+
+    .support-background-video{
+      transition:opacity .9s ease, filter .9s ease;
+    }
+
+    body.intro-mode .support-background-video{
+      opacity:0;
+    }
+
+    body.intro-mode.intro-video-soft .support-background-video{
+      opacity:.28;
+      filter:brightness(.72) saturate(.82);
+    }
+
+    body.final-mode .support-background-video{
+      opacity:1;
+      filter:none;
+    }
+
+    body.intro-mode .support-background-overlay{
+      background:rgba(0,0,0,.54);
+    }
+
+    .intro-shell{
+      position:relative;
+      z-index:4;
+      width:100%;
+      min-height:100svh;
+      overflow:hidden;
+      background:#000;
+    }
+
+    .intro-shell[hidden]{display:none}
+
+    .stars{
+      position:fixed;
+      inset:0;
+      z-index:0;
+      overflow:hidden;
+      pointer-events:none;
+      background:
+        radial-gradient(circle at 50% 35%, rgba(24,80,65,.08), transparent 38%),
+        linear-gradient(#000,#020406 70%,#000);
+      transition:opacity .8s ease;
+    }
+
+    .star{
+      position:absolute;
+      width:2px;
+      height:2px;
+      border-radius:50%;
+      background:#fff;
+      opacity:.22;
+      box-shadow:0 0 7px rgba(255,255,255,.75);
+      animation:starTwinkle 2.8s ease-in-out infinite;
+    }
+
+    @keyframes starTwinkle{
+      0%,100%{opacity:.14;transform:scale(.75)}
+      50%{opacity:.95;transform:scale(1.35)}
+    }
+
+    .intro-stage{
+      position:relative;
+      z-index:2;
+      min-height:100svh;
+      display:grid;
+      place-items:center;
+      padding:
+        max(78px,calc(env(safe-area-inset-top) + 64px))
+        20px
+        max(92px,calc(env(safe-area-inset-bottom) + 72px));
+    }
+
+    .intro-slide{
+      position:absolute;
+      inset:0;
+      display:grid;
+      place-items:center;
+      padding:
+        max(78px,calc(env(safe-area-inset-top) + 64px))
+        20px
+        max(92px,calc(env(safe-area-inset-bottom) + 72px));
+      opacity:0;
+      visibility:hidden;
+      transform:translateY(18px) scale(.985);
+      transition:opacity .55s ease,transform .55s ease,visibility .55s;
+      overflow-y:auto;
+      overscroll-behavior:contain;
+    }
+
+    .intro-slide.is-active{
+      opacity:1;
+      visibility:visible;
+      transform:none;
+    }
+
+    .slide-inner{
+      width:min(650px,100%);
+      margin:auto;
+      text-align:center;
+    }
+
+    .skip-intro{
+      position:fixed;
+      z-index:20;
+      top:max(18px,env(safe-area-inset-top));
+      left:16px;
+      min-height:42px;
+      padding:9px 14px;
+      border:1px solid rgba(255,255,255,.28);
+      border-radius:999px;
+      background:rgba(7,10,13,.58);
+      color:rgba(255,255,255,.86);
+      backdrop-filter:blur(8px);
+      font-weight:800;
+      font-size:.91rem;
+      cursor:pointer;
+      box-shadow:0 8px 24px rgba(0,0,0,.3);
+    }
+
+    .skip-intro[hidden]{display:none}
+
+    .intro-kicker{
+      margin:0 0 15px;
+      color:var(--gold-light);
+      font-size:clamp(.95rem,3.5vw,1.08rem);
+      font-weight:850;
+      letter-spacing:.02em;
+    }
+
+    .typed-line{
+      min-height:4.4em;
+      margin:0 auto;
+      color:#fff;
+      font-size:clamp(1.25rem,5.1vw,1.7rem);
+      line-height:1.75;
+      font-weight:800;
+      text-shadow:0 3px 16px rgba(0,0,0,.85);
+    }
+
+    .typed-line::after{
+      content:"";
+      display:inline-block;
+      width:2px;
+      height:1.05em;
+      margin-right:4px;
+      vertical-align:-.08em;
+      background:rgba(255,255,255,.85);
+      animation:cursorBlink .75s steps(1) infinite;
+    }
+
+    .typed-line.is-done::after{display:none}
+
+    @keyframes cursorBlink{50%{opacity:0}}
+
+    .intro-verse{
+      margin:22px auto 0;
+      padding:18px 8px;
+      border-block:1px solid rgba(77,226,142,.5);
+      color:#62e796;
+      font-size:clamp(1.45rem,6.3vw,2.25rem);
+      line-height:1.5;
+      font-weight:950;
+      opacity:0;
+      transform:scale(.9);
+      text-shadow:0 0 22px rgba(50,220,120,.17),0 3px 18px rgba(0,0,0,.92);
+    }
+
+    .intro-verse.is-visible{
+      animation:verseReveal .8s cubic-bezier(.2,.9,.2,1) forwards;
+    }
+
+    @keyframes verseReveal{
+      0%{opacity:0;transform:scale(.88);filter:blur(5px)}
+      70%{opacity:1;transform:scale(1.025);filter:blur(0)}
+      100%{opacity:1;transform:scale(1)}
+    }
+
+    .intro-verse small{
+      display:block;
+      margin-top:7px;
+      color:rgba(255,255,255,.68);
+      font-size:.48em;
+      font-weight:650;
+    }
+
+    .slide-title{
+      margin:0 0 25px;
+      color:#fff;
+      font-size:clamp(1.5rem,6vw,2.15rem);
+      line-height:1.35;
+      font-weight:950;
+      text-shadow:0 3px 18px rgba(0,0,0,.8);
+    }
+
+    .slide-title .gold{color:var(--gold-light)}
+
+    .intro-cards{
+      display:grid;
+      gap:13px;
+      width:min(610px,100%);
+      margin:0 auto;
+    }
+
+    .intro-card{
+      display:grid;
+      grid-template-columns:58px 1fr;
+      align-items:center;
+      gap:12px;
+      padding:16px 18px;
+      border:1px solid rgba(229,183,79,.34);
+      border-radius:20px;
+      background:rgba(7,12,15,.88);
+      text-align:right;
+      box-shadow:0 18px 36px rgba(0,0,0,.32);
+      opacity:0;
+      transform:scale(.68) translateY(16px);
+    }
+
+    .intro-card.pop{
+      animation:cardPop .62s cubic-bezier(.16,1.25,.28,1) forwards;
+    }
+
+    @keyframes cardPop{
+      0%{opacity:0;transform:scale(.68) translateY(18px)}
+      72%{opacity:1;transform:scale(1.055) translateY(-2px)}
+      100%{opacity:1;transform:scale(1) translateY(0)}
+    }
+
+    .intro-card .icon{
+      font-size:2rem;
+      text-align:center;
+    }
+
+    .intro-card strong{
+      display:block;
+      margin-bottom:4px;
+      color:var(--gold-light);
+      font-size:1.18rem;
+    }
+
+    .intro-card span{
+      color:#e1ddd2;
+      line-height:1.45;
+    }
+
+    .meaning-copy{
+      display:grid;
+      gap:16px;
+      width:min(620px,100%);
+      margin:0 auto;
+    }
+
+    .meaning-line{
+      margin:0;
+      padding:0 4px;
+      color:#f7f4ec;
+      font-size:clamp(1.08rem,4.3vw,1.34rem);
+      line-height:1.8;
+      font-weight:720;
+      opacity:0;
+      transform:translateY(14px);
+    }
+
+    .meaning-line.reveal{
+      animation:softReveal .65s ease forwards;
+    }
+
+    .meaning-line.emphasis{
+      color:var(--gold-light);
+      font-weight:900;
+    }
+
+    @keyframes softReveal{
+      to{opacity:1;transform:none}
+    }
+
+    .cta-heading{
+      margin:0 0 16px;
+      color:#fff;
+      font-size:clamp(1.75rem,7vw,2.65rem);
+      line-height:1.25;
+      font-weight:950;
+      opacity:0;
+      transform:translateY(18px);
+    }
+
+    .cta-heading.reveal,
+    .cta-copy.reveal{
+      animation:softReveal .75s ease forwards;
+    }
+
+    .cta-copy{
+      margin:0 auto;
+      max-width:590px;
+      color:#eee9dc;
+      font-size:clamp(1.08rem,4.3vw,1.32rem);
+      line-height:1.8;
+      font-weight:700;
+      opacity:0;
+      transform:translateY(16px);
+    }
+
+    .intro-next{
+      min-width:190px;
+      min-height:55px;
+      margin-top:28px;
+      padding:12px 25px;
+      border:1px solid rgba(255,255,255,.48);
+      border-radius:999px;
+      color:#fff;
+      background:linear-gradient(180deg,#19a85b,#087b3c);
+      font-weight:950;
+      font-size:1.08rem;
+      cursor:pointer;
+      box-shadow:0 12px 32px rgba(0,130,62,.26);
+      opacity:0;
+      pointer-events:none;
+      transform:translateY(10px);
+      transition:opacity .35s ease,transform .35s ease,filter .2s;
+    }
+
+    .intro-next.is-ready{
+      opacity:1;
+      pointer-events:auto;
+      transform:none;
+    }
+
+    .intro-next:active{transform:scale(.98)}
+
+    .intro-progress{
+      position:fixed;
+      z-index:19;
+      right:50%;
+      bottom:max(20px,env(safe-area-inset-bottom));
+      transform:translateX(50%);
+      display:flex;
+      gap:7px;
+    }
+
+    .intro-progress-dot{
+      width:7px;
+      height:7px;
+      border-radius:50%;
+      background:rgba(255,255,255,.28);
+      transition:width .3s ease,background .3s ease;
+    }
+
+    .intro-progress-dot.is-active{
+      width:22px;
+      border-radius:999px;
+      background:rgba(255,229,162,.9);
+    }
+
+    .final-page{
+      display:none;
+      position:relative;
+      z-index:4;
+      width:min(760px,100%);
+      margin:0 auto;
+      padding:
+        max(18px,env(safe-area-inset-top))
+        12px
+        max(30px,env(safe-area-inset-bottom));
+    }
+
+    body.final-mode{
+      overflow:auto;
+    }
+
+    body.final-mode .intro-shell{display:none}
+    body.final-mode .final-page{display:block}
+
+    .final-page .topbar{
+      margin-bottom:16px;
+    }
+
+    .final-heading{
+      margin:20px auto 20px;
+      text-align:center;
+    }
+
+    .final-heading .eyebrow{
+      margin-bottom:8px;
+    }
+
+    .final-heading h1{
+      margin:0;
+      font-size:clamp(1.7rem,7vw,2.7rem);
+      line-height:1.25;
+    }
+
+    @media(max-width:560px){
+      .intro-slide{
+        padding-inline:16px;
+      }
+
+      .skip-intro{
+        left:10px;
+        top:max(12px,env(safe-area-inset-top));
+        font-size:.82rem;
+        padding:8px 11px;
+      }
+
+      .intro-card{
+        grid-template-columns:48px 1fr;
+        padding:14px 15px;
+      }
+
+      .intro-card .icon{font-size:1.7rem}
+    }
+
+    @media(prefers-reduced-motion:reduce){
+      .star{animation:none;opacity:.55}
+      .intro-card,.meaning-line,.cta-heading,.cta-copy,.intro-verse{
+        opacity:1!important;
+        transform:none!important;
+        filter:none!important;
+        animation:none!important;
+      }
+    }
+
   </style>
 </head>
 
-<body>
+<body class="intro-mode">
 
   <video
     class="support-background-video"
@@ -632,78 +1061,112 @@
     poster="support-background-poster.jpg"
     aria-hidden="true"
   >
-    <source
-      src="support-background.mp4"
-      type="video/mp4"
-    >
+    <source src="support-background.mp4" type="video/mp4">
   </video>
 
-<div
-  class="support-background-overlay"
-  aria-hidden="true"
-></div>
-  
-  <main class="page">
+  <div class="support-background-overlay" aria-hidden="true"></div>
+
+  <section id="introShell" class="intro-shell" aria-label="הקדמה לתמיכה">
+    <div id="stars" class="stars" aria-hidden="true"></div>
+
+    <button id="skipIntro" class="skip-intro" type="button">דילוג על ההקדמה ›</button>
+
+    <div class="intro-stage">
+      <section class="intro-slide is-active" data-slide="0">
+        <div class="slide-inner">
+          <p id="introTypedLead" class="typed-line"></p>
+
+          <div id="introVerse" class="intro-verse">
+            ״עֵץ חַיִּים הִיא לַמַּחֲזִיקִים בָּהּ<br>
+            וְתֹמְכֶיהָ מְאֻשָּׁר״
+            <small>משלי ג׳, י״ח</small>
+          </div>
+
+          <button id="next0" class="intro-next" type="button">להמשיך</button>
+        </div>
+      </section>
+
+      <section class="intro-slide" data-slide="1">
+        <div class="slide-inner">
+          <h2 class="slide-title">תרומתך עוזרת לנו:</h2>
+
+          <div class="intro-cards">
+            <div class="intro-card">
+              <span class="icon">🎬</span>
+              <div><strong>יצירה</strong><span>הפקת תכנים וסרטונים חדשים</span></div>
+            </div>
+            <div class="intro-card">
+              <span class="icon">🌿</span>
+              <div><strong>הנגשה</strong><span>חיבור התורה לשפה של היום</span></div>
+            </div>
+            <div class="intro-card">
+              <span class="icon">✨</span>
+              <div><strong>הפצה</strong><span>הגעה לעוד אנשים ולעוד לבבות</span></div>
+            </div>
+          </div>
+
+          <button id="next1" class="intro-next" type="button">להמשיך</button>
+        </div>
+      </section>
+
+      <section class="intro-slide" data-slide="2">
+        <div class="slide-inner">
+          <div class="meaning-copy">
+            <p class="meaning-line">
+              לימוד התורה והפצתה אינם מתקיימים רק בזכות מי שלומד ומלמד,
+              אלא גם בזכות מי שמסייע לדברי התורה להמשיך ולהגיע לאחרים.
+            </p>
+            <p class="meaning-line">
+              לפעמים תמיכה אחת מאפשרת לעוד שיעור לצאת לאור, לעוד אדם להיחשף לדברי תורה,
+              ולעוד נשמה לגלות את העומק, החכמה והמשמעות שבתורתנו הקדושה לחיים שלנו היום.
+            </p>
+            <p class="meaning-line emphasis">
+              כאשר דברי התורה ממשיכים מאדם לאדם — גם מי שסייע להפצתם נעשה שותף בדרך שאפשרה להם להגיע הלאה.
+            </p>
+          </div>
+
+          <button id="next2" class="intro-next" type="button">להמשיך</button>
+        </div>
+      </section>
+
+      <section class="intro-slide" data-slide="3">
+        <div class="slide-inner">
+          <h2 class="cta-heading">גם לך יש הזדמנות להיות חלק מזיכוי הרבים</h2>
+          <p class="cta-copy">
+            בכל סכום שתבחרו, תוכלו לסייע לנו להמשיך להפיץ את התורה ולהביא את דבריה
+            לעוד ועוד אנשים בארץ ובעולם, כדי שיגלו את עומקה ויבינו את משמעותה
+            במציאות של חיינו.
+          </p>
+
+          <button id="goToSupport" class="intro-next" type="button">אני רוצה לקחת חלק</button>
+        </div>
+      </section>
+    </div>
+
+    <div class="intro-progress" aria-hidden="true">
+      <span class="intro-progress-dot is-active"></span>
+      <span class="intro-progress-dot"></span>
+      <span class="intro-progress-dot"></span>
+      <span class="intro-progress-dot"></span>
+    </div>
+  </section>
+
+  <main id="finalPage" class="final-page">
     <nav class="topbar" aria-label="ניווט">
       <div id="returnNavigation" class="return-navigation is-single">
-        <a
-          id="returnToVideoButton"
-          class="back-link is-video-return"
-          href="#"
-          hidden
-        >
+        <a id="returnToVideoButton" class="back-link is-video-return" href="#" hidden>
           ▶ חזרה לסרטון
         </a>
-
-        <a
-          id="nextLayerButton"
-          class="back-link is-next-layer"
-          href="#"
-          hidden
-        >
+        <a id="nextLayerButton" class="back-link is-next-layer" href="#" hidden>
           מעבר לחלק הבא ←
         </a>
-
       </div>
     </nav>
 
-    <header class="hero">
+    <header class="final-heading">
       <p class="eyebrow">לתמיכה במצוות הפצת התורה</p>
-      <h1>להיות חלק מהאור שממשיך הלאה</h1>
+      <h1>אני רוצה להיות שותף/ה בהפצת התורה</h1>
     </header>
-
-    <section class="source-opening" aria-label="משמעות התמיכה בהפצת התורה">
-      <p class="source-lead">
-        בספר משלי, פרק ג׳ פסוק י״ח, נאמר על התורה ועל המחזיקים בה:
-      </p>
-
-      <div class="source-verse">
-        ״עֵץ חַיִּים הִיא לַמַּחֲזִיקִים בָּהּ וְתֹמְכֶיהָ מְאֻשָּׁר״
-        <span class="source-ref">משלי ג׳, י״ח</span>
-      </div>
-
-      <p class="source-explanation">
-        לימוד התורה והפצתה אינם מתקיימים רק בזכות מי שלומד ומלמד,
-        אלא גם בזכות מי שמסייע לדברי התורה להמשיך ולהגיע לאחרים.
-        לפעמים תמיכה אחת מאפשרת לעוד שיעור לצאת לאור, לעוד אדם להיחשף לדברי תורה,
-        ולעוד נשמה לגלות את העומק, החכמה והמשמעות שבתורתנו הקדושה לחיים שלנו היום.
-        כאשר דברי התורה ממשיכים מאדם לאדם — גם מי שסייע להפצתם נעשה שותף בדרך
-        שאפשרה להם להגיע הלאה.
-      </p>
-
-      <p class="opportunity">
-        <strong>גם לך יש הזדמנות לקיים מצווה חשובה ולהיות חלק מזיכוי הרבים.</strong><br>
-        בכל סכום שתבחרו, תוכלו לסייע לנו להמשיך להפיץ את התורה ולהביא את דבריה
-        לעוד ועוד אנשים בארץ ובעולם, כדי שיגלו את עומקה ויבינו את משמעותה
-        במציאות של חיינו.
-      </p>
-    </section>
-
-    <section class="meaning-grid" aria-label="מטרות התמיכה">
-      <div class="meaning-card"><span class="icon">🎬</span><strong>יצירה</strong><span>הפקת תכנים וסרטונים חדשים</span></div>
-      <div class="meaning-card"><span class="icon">🌿</span><strong>הנגשה</strong><span>חיבור התורה לשפה של היום</span></div>
-      <div class="meaning-card"><span class="icon">✨</span><strong>הפצה</strong><span>הגעה לעוד אנשים ולעוד לבבות</span></div>
-    </section>
 
     <section class="form-card" aria-labelledby="supportFormTitle">
       <h2 id="supportFormTitle">אני רוצה להיות שותף/ה בהפצת התורה</h2>
@@ -834,6 +1297,7 @@
       תודה על הרצון לקחת חלק בהמשך היצירה, ההנגשה והפצת התורה.
     </p>
   </main>
+
 
   <script>
     (() => {
@@ -1103,6 +1567,169 @@
           });
         });
       });
+
+
+      /* ===== בקר מסכי ההקדמה ===== */
+      const introShell = document.getElementById("introShell");
+      const skipIntro = document.getElementById("skipIntro");
+      const slides = [...document.querySelectorAll(".intro-slide")];
+      const progressDots = [...document.querySelectorAll(".intro-progress-dot")];
+      const typedLead = document.getElementById("introTypedLead");
+      const introVerse = document.getElementById("introVerse");
+      const next0 = document.getElementById("next0");
+      const next1 = document.getElementById("next1");
+      const next2 = document.getElementById("next2");
+      const goToSupport = document.getElementById("goToSupport");
+      const introCards = [...document.querySelectorAll(".intro-card")];
+      const meaningLines = [...document.querySelectorAll(".meaning-line")];
+      const ctaHeading = document.querySelector(".cta-heading");
+      const ctaCopy = document.querySelector(".cta-copy");
+      const stars = document.getElementById("stars");
+      let currentSlide = 0;
+      let introTimers = [];
+
+      function clearIntroTimers(){
+        introTimers.forEach((timer) => window.clearTimeout(timer));
+        introTimers = [];
+      }
+
+      function later(fn,delay){
+        const timer = window.setTimeout(fn,delay);
+        introTimers.push(timer);
+        return timer;
+      }
+
+      function buildStars(){
+        if(!stars || stars.childElementCount) return;
+        const count = window.innerWidth < 600 ? 48 : 72;
+
+        for(let i=0;i<count;i++){
+          const star = document.createElement("span");
+          star.className = "star";
+          const size = 1 + Math.random()*2.2;
+          star.style.width = `${size}px`;
+          star.style.height = `${size}px`;
+          star.style.left = `${Math.random()*100}%`;
+          star.style.top = `${Math.random()*100}%`;
+          star.style.animationDelay = `${Math.random()*2.8}s`;
+          star.style.animationDuration = `${2.1 + Math.random()*2.6}s`;
+          stars.appendChild(star);
+        }
+      }
+
+      function typeText(element,text,speed=43,done){
+        element.textContent = "";
+        element.classList.remove("is-done");
+        let index = 0;
+
+        function step(){
+          if(index >= text.length){
+            element.classList.add("is-done");
+            if(typeof done === "function") done();
+            return;
+          }
+
+          element.textContent += text.charAt(index++);
+          later(step,speed);
+        }
+
+        step();
+      }
+
+      function updateProgress(){
+        progressDots.forEach((dot,index) => {
+          dot.classList.toggle("is-active",index === currentSlide);
+        });
+      }
+
+      function resetSlideAnimations(){
+        introCards.forEach((card) => card.classList.remove("pop"));
+        meaningLines.forEach((line) => line.classList.remove("reveal"));
+        ctaHeading?.classList.remove("reveal");
+        ctaCopy?.classList.remove("reveal");
+        [next0,next1,next2,goToSupport].forEach((button) => button?.classList.remove("is-ready"));
+      }
+
+      function animateSlide(index){
+        clearIntroTimers();
+
+        if(index === 0){
+          document.body.classList.remove("intro-video-soft");
+          introVerse.classList.remove("is-visible");
+          typedLead.textContent = "";
+          typedLead.classList.remove("is-done");
+
+          later(() => {
+            typeText(
+              typedLead,
+              "בספר משלי, פרק ג׳ פסוק י״ח, נאמר על התורה ועל המחזיקים בה:",
+              46,
+              () => {
+                later(() => introVerse.classList.add("is-visible"),350);
+                later(() => next0.classList.add("is-ready"),1200);
+              }
+            );
+          },1000);
+        }
+
+        if(index === 1){
+          document.body.classList.add("intro-video-soft");
+          introCards.forEach((card,cardIndex) => {
+            later(() => card.classList.add("pop"),450 + cardIndex*430);
+          });
+          later(() => next1.classList.add("is-ready"),1950);
+        }
+
+        if(index === 2){
+          document.body.classList.add("intro-video-soft");
+          meaningLines.forEach((line,lineIndex) => {
+            later(() => line.classList.add("reveal"),300 + lineIndex*650);
+          });
+          later(() => next2.classList.add("is-ready"),2350);
+        }
+
+        if(index === 3){
+          document.body.classList.add("intro-video-soft");
+          later(() => ctaHeading?.classList.add("reveal"),250);
+          later(() => ctaCopy?.classList.add("reveal"),850);
+          later(() => goToSupport.classList.add("is-ready"),1500);
+        }
+      }
+
+      function showSlide(index){
+        if(index < 0 || index >= slides.length) return;
+        clearIntroTimers();
+        currentSlide = index;
+
+        slides.forEach((slide,slideIndex) => {
+          slide.classList.toggle("is-active",slideIndex === index);
+          slide.setAttribute("aria-hidden",String(slideIndex !== index));
+        });
+
+        resetSlideAnimations();
+        updateProgress();
+        animateSlide(index);
+      }
+
+      function showFinalSupport(){
+        clearIntroTimers();
+        document.body.classList.remove("intro-mode","intro-video-soft");
+        document.body.classList.add("final-mode");
+        introShell.hidden = true;
+        skipIntro.hidden = true;
+        window.scrollTo({top:0,behavior:"auto"});
+        updatePaymentLinks();
+      }
+
+      next0?.addEventListener("click",() => showSlide(1));
+      next1?.addEventListener("click",() => showSlide(2));
+      next2?.addEventListener("click",() => showSlide(3));
+      goToSupport?.addEventListener("click",showFinalSupport);
+      skipIntro?.addEventListener("click",showFinalSupport);
+
+      buildStars();
+      showSlide(0);
+
 
       setupReturnNavigation();
       setupTikTokPaymentTargets();
