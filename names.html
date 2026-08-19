@@ -748,24 +748,17 @@
             מומלץ לבחור תמונה שבה הפנים מופיעות בבירור ובחזית
           </p>        
 
-          <a
-            href="https://parasha-site-links.web.app/gallery-test.html"
-            style="
-              display:flex;
-              align-items:center;
-              justify-content:center;
-              width:100%;
-              min-height:56px;
-              border-radius:16px;
-              background:#118dbd;
-              color:#fff;
-              font-size:17px;
-              font-weight:900;
-              text-decoration:none;
-            "
-          >
-            בדיקה — פתיחת דף הגלריה
-          </a>
+          <div class="native-photo-picker">
+            <span class="photo-pick-button" aria-hidden="true">
+              📷 בחירת תמונה מהגלריה
+            </span>
+          
+            <input
+              id="photoInput"
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+            >
+          </div>
           <div id="photoPreviewWrap" class="photo-preview-wrap" hidden>
             <img id="photoPreview" class="photo-preview" alt="תצוגה מקדימה של התמונה שנבחרה">
 
