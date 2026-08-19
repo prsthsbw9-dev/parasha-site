@@ -449,6 +449,43 @@
       font-weight: 800;
     }
 
+
+    .tiktok-photo-help {
+      display: none;
+      margin: 10px 0 0;
+      padding: 12px 13px;
+      border: 1px solid rgba(255,227,154,.42);
+      border-radius: 13px;
+      background: rgba(78,58,14,.30);
+      color: #fff7d0;
+      font-size: 13px;
+      line-height: 1.55;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .tiktok-photo-help.visible {
+      display: block;
+    }
+
+    .tiktok-photo-help strong {
+      color: #fff3ad;
+    }
+
+    .tiktok-browser-button {
+      width: 100%;
+      min-height: 48px;
+      margin-top: 9px;
+      padding: 10px 14px;
+      border: 1px solid rgba(255,255,255,.44);
+      border-radius: 14px;
+      background: linear-gradient(135deg,#c18a23,#80550c);
+      color: #fff;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 7px 20px rgba(0,0,0,.26);
+    }
+
     .honeypot {
       position: absolute !important;
       width: 1px !important;
@@ -734,6 +771,16 @@
             📷 בחירת תמונה מהגלריה
           </button>
 
+          <div id="tiktokPhotoHelp" class="tiktok-photo-help" role="status" aria-live="polite">
+            <strong>פתחת את הדף מתוך TikTok.</strong><br>
+            כדי לבחור תמונה מהגלריה, יש לפתוח את הדף בדפדפן החיצוני של הטלפון.
+            <br>
+            לחצו על שלוש הנקודות למעלה ובחרו <b>„פתח בדפדפן”</b>.
+            <button id="tiktokBrowserButton" class="tiktok-browser-button" type="button">
+              פתיחת הדף בדפדפן
+            </button>
+          </div>
+
           <div id="photoPreviewWrap" class="photo-preview-wrap" hidden>
             <img id="photoPreview" class="photo-preview" alt="תצוגה מקדימה של התמונה שנבחרה">
 
@@ -808,6 +855,12 @@
       const photoInput = document.getElementById("photoInput");
       const photoPickButton = document.getElementById("photoPickButton");
       const photoChangeButton = document.getElementById("photoChangeButton");
+      const tiktokPhotoHelp = document.getElementById("tiktokPhotoHelp");
+      const tiktokBrowserButton = document.getElementById("tiktokBrowserButton");
+      const isTikTokBrowser =
+        /TikTok|BytedanceWebview|musical_ly|musically/i.test(
+          navigator.userAgent || ""
+        );
       const photoPreviewWrap = document.getElementById("photoPreviewWrap");
       const photoPreview = document.getElementById("photoPreview");
       const removePhotoButton = document.getElementById("removePhotoButton");
@@ -1084,13 +1137,56 @@
         };
       }
 
+      function showTikTokPhotoHelp() {
+        tiktokPhotoHelp.classList.add("visible");
+        photoPickButton.textContent = "📱 פתחו בדפדפן כדי להעלות תמונה";
+        photoPickButton.setAttribute("aria-expanded","true");
+        tiktokPhotoHelp.scrollIntoView({
+          behavior: "smooth",
+          block: "center"
+        });
+      }
+
+      function tryOpenExternalBrowser() {
+        const currentUrl = window.location.href;
+
+        /*
+         * בחלק מגרסאות TikTok המעבר החוצה נחסם.
+         * אנחנו מנסים ניווט רגיל לאותה כתובת; אם TikTok משאיר
+         * את הדף בתוך האפליקציה, ההנחיה מעל נשארת מוצגת.
+         */
+        try {
+          window.open(currentUrl, "_blank", "noopener,noreferrer");
+        } catch(error) {
+          /* אין צורך להציג שגיאה נוספת; ההנחיה הידנית נשארת על המסך */
+        }
+      }
+
       photoPickButton.addEventListener("click", function () {
+        if(isTikTokBrowser) {
+          showTikTokPhotoHelp();
+          return;
+        }
+
         photoInput.click();
       });
 
       photoChangeButton.addEventListener("click", function () {
+        if(isTikTokBrowser) {
+          showTikTokPhotoHelp();
+          return;
+        }
+
         photoInput.click();
       });
+
+      tiktokBrowserButton.addEventListener("click", function () {
+        tryOpenExternalBrowser();
+      });
+
+      if(isTikTokBrowser) {
+        photoPickButton.textContent = "📱 פתחו בדפדפן כדי להעלות תמונה";
+      }
 
       photoInput.addEventListener("change", async function () {
         photoError.textContent = "";
