@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- FIREBASE DIRECT SUBMIT + PHOTO UPLOAD — VERSION 10 — 2026-08-19 -->
+<!-- FIREBASE DIRECT SUBMIT + NATIVE PHOTO PICKER TEST — VERSION 11 — 2026-08-19 -->
 <html lang="he" dir="rtl">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#071014">
-  <title>לכל נשמה יש שם | שליחה ישירה v10</title>
+  <title>לכל נשמה יש שם | שליחה ישירה v11</title>
 
   <style>
     :root {
@@ -356,12 +356,28 @@
       line-height: 1.45;
     }
 
-    .photo-file-input {
+    .native-photo-picker {
+      position: relative;
+      width: 100%;
+      min-height: 46px;
+      overflow: hidden;
+      border-radius: 14px;
+    }
+
+    .native-photo-picker-small {
+      min-height: 46px;
+    }
+
+    .native-photo-input {
       position: absolute;
-      width: 1px;
-      height: 1px;
-      opacity: 0;
-      pointer-events: none;
+      inset: 0;
+      z-index: 2;
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      opacity: 0.001;
+      cursor: pointer;
+      font-size: 100px;
     }
 
     .photo-pick-button,
@@ -384,6 +400,7 @@
       width: 100%;
       background: linear-gradient(135deg,#118dbd,#07668f);
       box-shadow: 0 7px 20px rgba(0,0,0,.26);
+      pointer-events: none;
     }
 
     .photo-preview-wrap {
@@ -410,7 +427,10 @@
     }
 
     .photo-change-button {
+      width: 100%;
+      height: 100%;
       background: rgba(17,141,189,.74);
+      pointer-events: none;
     }
 
     .photo-remove-button {
@@ -728,25 +748,32 @@
             מומלץ לבחור תמונה שבה הפנים מופיעות בבירור ובחזית.
           </p>
 
-          <input
-            id="photoInput"
-            class="photo-file-input"
-            type="file"
-            accept="image/jpeg,image/png,image/webp,image/heic,image/heif"
-          >
-
-          <button
-            id="photoPickButton"
-            class="photo-pick-button"
-            type="button"
-          >
-            📷 בחירת תמונה מהגלריה
-          </button>
+          <div class="native-photo-picker">
+            <span class="photo-pick-button" aria-hidden="true">
+              📷 בחירת תמונה מהגלריה
+            </span>
+            <input
+              id="photoInput"
+              class="native-photo-input"
+              type="file"
+              accept="image/*"
+              aria-label="בחירת תמונה מהגלריה"
+            >
+          </div>
           <div id="photoPreviewWrap" class="photo-preview-wrap" hidden>
             <img id="photoPreview" class="photo-preview" alt="תצוגה מקדימה של התמונה שנבחרה">
 
             <div class="photo-preview-actions">
-              <button id="photoChangeButton" class="photo-change-button" type="button">החלפת תמונה</button>
+              <div class="native-photo-picker native-photo-picker-small">
+                <span class="photo-change-button" aria-hidden="true">החלפת תמונה</span>
+                <input
+                  id="photoChangeInput"
+                  class="native-photo-input"
+                  type="file"
+                  accept="image/*"
+                  aria-label="החלפת תמונה"
+                >
+              </div>
               <button id="removePhotoButton" class="photo-remove-button" type="button">הסרת תמונה</button>
             </div>
 
@@ -814,8 +841,7 @@
       const requestText = document.getElementById("requestText");
       const contactEmail = document.getElementById("contactEmail");
       const photoInput = document.getElementById("photoInput");
-      const photoPickButton = document.getElementById("photoPickButton");
-      const photoChangeButton = document.getElementById("photoChangeButton");
+      const photoChangeInput = document.getElementById("photoChangeInput");
 const photoPreviewWrap = document.getElementById("photoPreviewWrap");
       const photoPreview = document.getElementById("photoPreview");
       const removePhotoButton = document.getElementById("removePhotoButton");
@@ -983,6 +1009,7 @@ const photoPreviewWrap = document.getElementById("photoPreviewWrap");
         compressedPhotoDataUrl = "";
         compressedPhotoBytes = 0;
         photoInput.value = "";
+        photoChangeInput.value = "";
         photoPreview.removeAttribute("src");
         photoPreviewWrap.hidden = true;
         photoCompressionStatus.textContent = "";
@@ -1092,22 +1119,16 @@ const photoPreviewWrap = document.getElementById("photoPreviewWrap");
         };
       }
 
-      photoPickButton.addEventListener("click", function () {
-        photoInput.click();
-      });
-
-      photoChangeButton.addEventListener("click", function () {
-        photoInput.click();
-      });
-
-      photoInput.addEventListener("change", async function () {
+      async function handleNativePhotoSelection(inputElement) {
         photoError.textContent = "";
         photoCompressionStatus.textContent = "";
         photoSinglePersonConfirmed.checked = false;
 
-        const file = photoInput.files && photoInput.files[0];
+        const file =
+          inputElement.files &&
+          inputElement.files[0];
+
         if(!file) {
-          resetPhotoState();
           return;
         }
 
@@ -1127,10 +1148,18 @@ const photoPreviewWrap = document.getElementById("photoPreviewWrap");
           console.error("Photo compression failed:", error);
           resetPhotoState();
           photoError.textContent =
-            "לא הצלחנו להכין את התמונה. נסו לבחור תמונת JPG/PNG/WEBP אחרת.";
+            "לא הצלחנו להכין את התמונה. נסו לבחור תמונה אחרת.";
         }
 
         hideMessage();
+      }
+
+      photoInput.addEventListener("change", function () {
+        handleNativePhotoSelection(photoInput);
+      });
+
+      photoChangeInput.addEventListener("change", function () {
+        handleNativePhotoSelection(photoChangeInput);
       });
 
       removePhotoButton.addEventListener("click", function () {
