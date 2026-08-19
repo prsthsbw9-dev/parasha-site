@@ -1501,6 +1501,24 @@
        * לאחר בדיקת התשלום בפועל ניתן לשלוח מייל אישור נוסף.
        */
 
+      function getSupportEmailReturnUrl(provider){
+        try{
+          if(
+            window.parent &&
+            window.parent !== window &&
+            typeof window.parent.getPardesEmailReturnUrl ===
+              "function"
+          ){
+            return String(
+              window.parent.getPardesEmailReturnUrl(provider) ||
+              ""
+            );
+          }
+        }catch(error){}
+
+        return "";
+      }
+
       function buildSupportNotificationPayload(provider){
         const wantsPublicThanks = Boolean(showThankName?.checked);
         const publicName = wantsPublicThanks
@@ -1512,6 +1530,7 @@
           provider,
           wantsPublicThanks,
           publicName,
+          returnUrl:getSupportEmailReturnUrl(provider),
           pageUrl: window.location.href,
           userAgent: navigator.userAgent || "",
           language: navigator.language || "",
