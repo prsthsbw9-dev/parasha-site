@@ -237,22 +237,7 @@
       font-size:.9rem;
       line-height:1.55;
     }
-
-    .names-link{
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      min-height:50px;
-      padding:11px 16px;
-      border:1px solid rgba(229,183,79,.5);
-      border-radius:14px;
-      color:#fff;
-      background:linear-gradient(135deg,#9a741d,#674807);
-      text-decoration:none;
-      font-weight:900;
-    }
-
-    .donation-confirm-wrap{
+.donation-confirm-wrap{
       margin-top:20px;
     }
 
@@ -1165,21 +1150,15 @@
 
     <header class="final-heading">
       <p class="eyebrow">לתמיכה במצוות הפצת התורה</p>
-      <h1>אני רוצה להיות שותף/ה בהפצת התורה</h1>
     </header>
 
     <section class="form-card" aria-labelledby="supportFormTitle">
-      <h2 id="supportFormTitle">אני רוצה להיות שותף/ה בהפצת התורה</h2>
+      <h2 id="supportFormTitle">תמיכה בהפצת התורה</h2>
 
       <p class="support-intro">
-        לפני בחירת אמצעי התמיכה, מלאו כתובת אימייל ואשרו את הסעיפים שלמטה.
+        מלאו כתובת אימייל, אשרו את הסעיפים ובחרו את אמצעי התמיכה הנוח לכם.
       </p>
-
-      <p class="support-disclosure">
-        התמיכה ניתנת מרצון, אינה רכישה של מוצר או שירות ואינה מקנה זיכוי ממס.
-      </p>
-
-      <div class="field">
+<div class="field">
         <label for="supportEmail">כתובת אימייל</label>
         <input id="supportEmail" type="email" autocomplete="email"
                placeholder="לדוגמה: name@example.com" required>
@@ -1189,7 +1168,7 @@
         <div class="support-option">
           <label class="check-row">
             <input id="showThankName" type="checkbox">
-            <span>האם להציג את שמך בדף תודה מיוחד שייראה בסוף אחת העליות הקרובות?</span>
+            <span>להציג את שמי בדף תודה בסוף אחת העליות הקרובות</span>
           </label>
           <div id="thankNamePanel" class="support-option-panel" hidden>
             <p class="support-option-note">
@@ -1233,12 +1212,12 @@
 
         <label class="check-row">
           <input id="donationIntentConfirm" type="checkbox">
-          <span>אני מאשר/ת שבכוונתי לבצע תמיכה באמצעות אחד מאמצעי התשלום שלמטה.</span>
+          <span>אני רוצה להמשיך לבחירת אמצעי התמיכה.</span>
         </label>
       </div>
 
       <p class="email-required-note">
-        אמצעי התמיכה ייפתחו לאחר הזנת אימייל תקין ואישור הסעיפים.
+        לאחר הזנת אימייל ואישור הסעיפים ייפתחו אמצעי התמיכה.
       </p>
 
       <div id="tiktokCopyHelp" class="tiktok-copy-help" hidden>
@@ -1314,8 +1293,6 @@
       const showThankName = document.getElementById("showThankName");
       const thankNamePanel = document.getElementById("thankNamePanel");
       const publicSupportName = document.getElementById("publicSupportName");
-      const addBlessing = document.getElementById("addBlessing");
-      const blessingPanel = document.getElementById("blessingPanel");
       const paymentHelp = document.getElementById("paymentHelp");
       const paymentLinks = [...document.querySelectorAll(".payment-link")];
       const tiktokCopyHelp = document.getElementById("tiktokCopyHelp");
@@ -1469,8 +1446,7 @@
           window.dataLayer.push({
             event:"support_phone_copy",
             payment_provider:provider,
-            wants_public_thanks:showThankName.checked,
-            wants_blessing:addBlessing.checked
+            wants_public_thanks:showThankName.checked
           });
         }catch(error){
           copyPhoneStatus.textContent =
@@ -1562,8 +1538,7 @@
           window.dataLayer.push({
             event:"support_payment_click",
             payment_provider:provider,
-            wants_public_thanks:showThankName.checked,
-            wants_blessing:addBlessing.checked
+            wants_public_thanks:showThankName.checked
           });
         });
       });
