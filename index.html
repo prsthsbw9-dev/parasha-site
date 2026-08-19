@@ -9605,6 +9605,20 @@ if (sodGrapesVideo) {
     if(birdLink){
       birdLink.addEventListener("click", function(event){
         event.preventDefault();
+
+        const isTikTokInApp =
+          document.body.classList.contains("in-app-browser") &&
+          document.body.classList.contains("app-tiktok");
+        
+        if(isTikTokInApp){
+          alert(
+            'כדי לשלוח בקשה ולצרף תמונה, יש לפתוח את האתר בדפדפן החיצוני.\n\n' +
+            'לחצו על שלוש הנקודות למעלה ובחרו "פתח בדפדפן".\n\n' +
+            'לאחר הפתיחה בדפדפן, לחצו שוב על הציפור כדי להמשיך.'
+          );
+        
+          return;
+        }   
     
         const birdFlightMobile =
           document.getElementById("birdFlightMobile");
@@ -9727,10 +9741,6 @@ if (sodGrapesVideo) {
           return;
         }
     
-        const isTikTokInApp =
-          document.body.classList.contains("in-app-browser") &&
-          document.body.classList.contains("app-tiktok");
-
         let birdWasRevealed = false;
 
         function revealBirdTransition(){
