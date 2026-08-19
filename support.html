@@ -1030,6 +1030,27 @@
       }
     }
 
+  
+    .prepayment-status{
+      display:none;
+      margin:14px 2px 0;
+      padding:12px 14px;
+      border:1px solid rgba(229,183,79,.35);
+      border-radius:14px;
+      background:rgba(10,18,20,.82);
+      color:#f4efe3;
+      text-align:center;
+      font-size:.92rem;
+      line-height:1.55;
+      font-weight:700;
+    }
+
+    .prepayment-status.show{display:block}
+    .prepayment-status.error{
+      border-color:rgba(255,129,119,.65);
+      color:#ffe2df;
+    }
+
   </style>
 </head>
 
@@ -1204,6 +1225,8 @@
         <p id="copyPhoneStatus" class="copy-phone-status" role="status" aria-live="polite"></p>
       </div>
 
+      <p id="prePaymentStatus" class="prepayment-status" role="status" aria-live="polite"></p>
+
       <div class="payment-methods" aria-label="בחירת אמצעי תמיכה">
         <a
           class="payment-link bit is-disabled"
@@ -1270,6 +1293,14 @@
       const publicSupportName = document.getElementById("publicSupportName");
       const paymentHelp = document.getElementById("paymentHelp");
       const paymentLinks = [...document.querySelectorAll(".payment-link")];
+      const prePaymentStatus = document.getElementById("prePaymentStatus");
+
+      /*
+       * כתובת שירות השרת ששולח את שני המיילים לפני המעבר לתשלום.
+       * יש להחליף בכתובת ה-HTTPS של ה-Cloud Function / השרת שלך.
+       */
+      const SUPPORT_NOTIFY_ENDPOINT = "PASTE_YOUR_SUPPORT_NOTIFY_ENDPOINT_HERE";
+
       const tiktokCopyHelp = document.getElementById("tiktokCopyHelp");
       const copyPhoneStatus = document.getElementById("copyPhoneStatus");
       const SUPPORT_PHONE_LOCAL = "0508618789";
@@ -1445,16 +1476,132 @@
         }
       });
 
+
+
+      /*
+       * החוזה הצפוי מהשרת:
+       *
+       * 1) מייל לתומך כאשר wantsPublicThanks=true:
+       *    "תודה רבה לך על תרומתך והמצווה החשובה שעשית.
+       *     בחרת ששמך יופיע בעלייה הבאה בדף התודה לכל המחזקים.
+       *     לאחר אישור תרומתך מצידנו נפרסם את שמך בעז״ה בעלייה הקרובה."
+       *
+       * 2) מייל לתומך כאשר wantsPublicThanks=false:
+       *    "תודה רבה לך על תרומתך והמצווה החשובה שעשית.
+       *     עצם זה שבחרת להישאר בעילום שם, זה רק מוכיח לנו איזה צדיקים יש בעולם הזה,
+       *     ורק השם יודע את גודל המצווה שעשית.
+       *     לאחר וידוא התשלום נשלח אליך שוב הודעה שהתשלום התקבל.
+       *     תבורך מהשמיים."
+       *
+       * 3) מייל לערוץ:
+       *    donorEmail, provider, wantsPublicThanks, publicName (אם קיים),
+       *    sentAt, pageUrl, language, userAgent, screen.
+       *
+       * חשוב: המייל הראשון נשלח לפני אישור עסקה ולכן אינו אומר שהתשלום התקבל.
+       * לאחר בדיקת התשלום בפועל ניתן לשלוח מייל אישור נוסף.
+       */
+
+      function buildSupportNotificationPayload(provider){
+        const wantsPublicThanks = Boolean(showThankName?.checked);
+        const publicName = wantsPublicThanks
+          ? (publicSupportName?.value || "").trim()
+          : "";
+
+        return {
+          donorEmail: supportEmail.value.trim(),
+          provider,
+          wantsPublicThanks,
+          publicName,
+          pageUrl: window.location.href,
+          userAgent: navigator.userAgent || "",
+          language: navigator.language || "",
+          screen: {
+            width: window.screen?.width || null,
+            height: window.screen?.height || null
+          },
+          sentAt: new Date().toISOString()
+        };
+      }
+
+      async function sendSupportNotificationBeforePayment(provider){
+        if(
+          !SUPPORT_NOTIFY_ENDPOINT ||
+          SUPPORT_NOTIFY_ENDPOINT === "PASTE_YOUR_SUPPORT_NOTIFY_ENDPOINT_HERE"
+        ){
+          throw new Error("support_notify_endpoint_missing");
+        }
+
+        const payload = buildSupportNotificationPayload(provider);
+
+        const response = await fetch(SUPPORT_NOTIFY_ENDPOINT,{
+          method:"POST",
+          headers:{
+            "Content-Type":"application/json"
+          },
+          body:JSON.stringify(payload)
+        });
+
+        if(!response.ok){
+          throw new Error(`support_notify_failed_${response.status}`);
+        }
+
+        return true;
+      }
+
+      function setPrePaymentStatus(text,isError=false){
+        if(!prePaymentStatus) return;
+        prePaymentStatus.textContent = text;
+        prePaymentStatus.classList.add("show");
+        prePaymentStatus.classList.toggle("error",Boolean(isError));
+      }
+
       paymentLinks.forEach((link) => {
-        link.addEventListener("click",(event) => {
+        link.addEventListener("click",async (event) => {
           if(!(ageConfirm.checked && termsConsent.checked && donationIntentConfirm.checked && isValidSupportEmail())){
             event.preventDefault();
-            paymentHelp.textContent = "לפני המעבר לתשלום יש להזין אימייל תקין ולאשר את הסעיפים.";
+            paymentHelp.textContent = "לפני המעבר לתשלום יש להזין אימייל תקין ולאשר את התקנון.";
             paymentHelp.scrollIntoView({behavior:"smooth",block:"center"});
             return;
           }
 
+          if(showThankName?.checked && !(publicSupportName?.value || "").trim()){
+            event.preventDefault();
+            thankNamePanel.hidden = false;
+            publicSupportName.focus();
+            setPrePaymentStatus("בחרת ששמך יופיע בדף התודה — יש להקליד את השם שיוצג.",true);
+            publicSupportName.scrollIntoView({behavior:"smooth",block:"center"});
+            return;
+          }
+
+          event.preventDefault();
+
           const provider = link.dataset.paymentProvider || "unknown";
+          const destinationUrl = link.href;
+
+          paymentLinks.forEach((item) => {
+            item.classList.add("is-disabled");
+            item.setAttribute("aria-disabled","true");
+          });
+
+          setPrePaymentStatus("שולחים אליך ואלינו את פרטי התמיכה…");
+
+          try{
+            await sendSupportNotificationBeforePayment(provider);
+          }catch(error){
+            console.error("Support notification failed:",error);
+            paymentLinks.forEach((item) => {
+              item.classList.remove("is-disabled");
+              item.setAttribute("aria-disabled","false");
+            });
+
+            setPrePaymentStatus(
+              "לא הצלחנו לשלוח כרגע את הודעת האימייל. אמצעי התשלום לא נפתח כדי שלא נאבד את פרטי התמיכה.",
+              true
+            );
+            return;
+          }
+
+          setPrePaymentStatus("ההודעה נשלחה ✓ מעבירים אותך כעת לאמצעי התשלום שבחרת…");
 
           if(window.parent && window.parent !== window){
             let returnStateSaved = false;
@@ -1489,7 +1636,9 @@
             const providerName = providerNames[provider] || "אמצעי התשלום שבחרת";
 
             window.alert(
-              `הינך מועבר/ת לתשלום באמצעות ${providerName}.\n\n` +
+              `הינך מועבר/ת לתשלום באמצעות ${providerName}.
+
+` +
               "במידה ולא נפתחת האפליקציה שבחרת, יש ללחוץ על שלוש הנקודות למעלה " +
               "ולבחור „פתח בדפדפן”."
             );
@@ -1500,8 +1649,7 @@
             isTikTokBrowser &&
             (provider === "bit" || provider === "paybox")
           ){
-            event.preventDefault();
-            copySupportPhone(provider,link);
+            await copySupportPhone(provider,link);
             return;
           }
 
@@ -1511,6 +1659,10 @@
             payment_provider:provider,
             wants_public_thanks:showThankName.checked
           });
+
+          window.setTimeout(() => {
+            window.location.href = destinationUrl;
+          },450);
         });
       });
 
