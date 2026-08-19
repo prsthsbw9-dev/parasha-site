@@ -1216,7 +1216,14 @@
         לאחר הזנת אימייל ואישור התקנון ייפתחו אמצעי התמיכה.
       </p>
 
-      
+      <div id="tiktokCopyHelp" class="tiktok-copy-help" hidden>
+        <p>
+          מתוך TikTok: לחיצה על Bit או PayBox תעתיק את מספר התמיכה.
+          לאחר מכן פתחו את האפליקציה, בחרו העברה לפי מספר והדביקו אותו
+          באמצעות לחיצה ארוכה על השדה של הקלדת המספר.
+        </p>
+        <p id="copyPhoneStatus" class="copy-phone-status" role="status" aria-live="polite"></p>
+      </div>
 
       <p id="prePaymentStatus" class="prepayment-status" role="status" aria-live="polite"></p>
 
@@ -1294,6 +1301,14 @@
        */
       const SUPPORT_NOTIFY_ENDPOINT = "https://us-central1-parasha-site-links.cloudfunctions.net/sendSupportEmails";
 
+      const tiktokCopyHelp = document.getElementById("tiktokCopyHelp");
+      const copyPhoneStatus = document.getElementById("copyPhoneStatus");
+      const SUPPORT_PHONE_LOCAL = "0508618789";
+      const ENABLE_TIKTOK_PHONE_COPY = false;
+      const isTikTokBrowser =
+        /TikTok|BytedanceWebview|musical_ly|musically/i.test(
+          navigator.userAgent || ""
+        );
       const returnNavigation =
         document.getElementById("returnNavigation");
       const returnToVideoButton =
@@ -1384,7 +1399,66 @@
           : "יש להזין אימייל תקין ולאשר את התקנון כדי לפתוח את אמצעי התמיכה.";
       }
 
+      function setupTikTokPaymentTargets(){
+        if(!ENABLE_TIKTOK_PHONE_COPY || !isTikTokBrowser) return;
 
+        tiktokCopyHelp.hidden = false;
+
+        paymentLinks.forEach((link) => {
+          const provider = link.dataset.paymentProvider;
+
+          if(provider === "bit"){
+            link.textContent = "העתקת מספר ל־Bit";
+          }else if(provider === "paybox"){
+            link.textContent = "העתקת מספר ל־PayBox";
+          }
+        });
+      }
+
+      async function copySupportPhone(provider,clickedLink){
+        if(!(ageConfirm.checked && termsConsent.checked && donationIntentConfirm.checked && isValidSupportEmail())){
+          copyPhoneStatus.textContent = "לפני ההעתקה יש להזין אימייל תקין ולאשר את הסעיפים.";
+          return;
+        }
+
+        try{
+          if(navigator.clipboard && window.isSecureContext){
+            await navigator.clipboard.writeText(SUPPORT_PHONE_LOCAL);
+          }else{
+            const copyField = document.createElement("textarea");
+            copyField.value = SUPPORT_PHONE_LOCAL;
+            copyField.setAttribute("readonly","");
+            copyField.style.position = "fixed";
+            copyField.style.opacity = "0";
+            document.body.appendChild(copyField);
+            copyField.select();
+
+            const copied = document.execCommand("copy");
+            copyField.remove();
+
+            if(!copied) throw new Error("copy_failed");
+          }
+
+          copyPhoneStatus.textContent =
+            "המספר הועתק ✓ פתחו את האפליקציה, בחרו העברה לפי מספר והדביקו אותו באמצעות לחיצה ארוכה על השדה של הקלדת המספר.";
+          const originalText = clickedLink.textContent;
+          clickedLink.textContent = "המספר הועתק ✓";
+
+          window.setTimeout(() => {
+            clickedLink.textContent = originalText;
+          },3000);
+
+          window.dataLayer = window.dataLayer || [];
+          window.dataLayer.push({
+            event:"support_phone_copy",
+            payment_provider:provider,
+            wants_public_thanks:showThankName.checked
+          });
+        }catch(error){
+          copyPhoneStatus.textContent =
+            "ההעתקה לא הצליחה. יש לפתוח את הדף בדפדפן החיצוני ולנסות שוב.";
+        }
+      }
 
       [ageConfirm,termsConsent,donationIntentConfirm].forEach((checkbox) => {
         checkbox.addEventListener("change",updatePaymentLinks);
@@ -1553,7 +1627,31 @@
             }
           }
 
+          if(isTikTokBrowser && !ENABLE_TIKTOK_PHONE_COPY){
+            const providerNames = {
+              bit:"Bit",
+              paybox:"PayBox",
+              paypal:"PayPal"
+            };
+            const providerName = providerNames[provider] || "אמצעי התשלום שבחרת";
 
+            window.alert(
+              `הינך מועבר/ת לתשלום באמצעות ${providerName}.
+
+` +
+              "במידה ולא נפתחת האפליקציה שבחרת, יש ללחוץ על שלוש הנקודות למעלה " +
+              "ולבחור „פתח בדפדפן”."
+            );
+          }
+
+          if(
+            ENABLE_TIKTOK_PHONE_COPY &&
+            isTikTokBrowser &&
+            (provider === "bit" || provider === "paybox")
+          ){
+            await copySupportPhone(provider,link);
+            return;
+          }
 
           window.dataLayer = window.dataLayer || [];
           window.dataLayer.push({
@@ -1563,7 +1661,16 @@
           });
 
           window.setTimeout(() => {
-            window.location.href = destinationUrl;
+            /*
+              דף התמיכה עצמו מוצג בתוך iframe של האתר הראשי.
+              לכן אין לפתוח את ספק התשלום בתוך אותו iframe,
+              אלא להחליף את החלון העליון של הדפדפן.
+            */
+            if(window.top && window.top !== window){
+              window.top.location.href = destinationUrl;
+            }else{
+              window.location.href = destinationUrl;
+            }
           },450);
         });
       });
@@ -1732,6 +1839,7 @@
 
 
       setupReturnNavigation();
+      setupTikTokPaymentTargets();
       updatePaymentLinks();
 
       window.addEventListener("pageshow",updatePaymentLinks);
