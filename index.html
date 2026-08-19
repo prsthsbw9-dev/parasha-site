@@ -5403,10 +5403,363 @@
     body.internal-page-open{
       overflow:hidden !important;
     }
+  
+    /* =========================================================
+       TikTok בלבד — מסך מעבר לדפדפן חיצוני
+       מוצג רק בתוך הדפדפן הפנימי של TikTok.
+       ========================================================= */
+    .tiktok-browser-gate{
+      position:fixed;
+      inset:0;
+      z-index:2147483647;
+      display:none;
+      overflow-y:auto;
+      -webkit-overflow-scrolling:touch;
+      background:
+        radial-gradient(circle at 50% 0%, rgba(255,248,224,.95), rgba(255,255,255,0) 36%),
+        linear-gradient(180deg,#fffdf8 0%,#fffaf1 100%);
+      color:#142319;
+      direction:rtl;
+      text-align:center;
+      padding:
+        max(22px, env(safe-area-inset-top))
+        18px
+        max(28px, env(safe-area-inset-bottom));
+    }
+
+    body.in-app-browser.app-tiktok .tiktok-browser-gate{
+      display:block;
+    }
+
+    body.in-app-browser.app-tiktok{
+      overflow:hidden !important;
+    }
+
+    .tiktok-browser-gate-inner{
+      width:min(100%, 560px);
+      margin:0 auto;
+      padding:6px 0 24px;
+    }
+
+    .tiktok-gate-logo{
+      width:112px;
+      height:112px;
+      object-fit:cover;
+      border-radius:50%;
+      display:block;
+      margin:4px auto 8px;
+      border:2px solid rgba(177,132,52,.42);
+      box-shadow:
+        0 10px 28px rgba(80,52,8,.12),
+        0 0 0 5px rgba(212,170,86,.10);
+    }
+
+    .tiktok-gate-brand{
+      margin:0 0 26px;
+      color:#60451f;
+      font-size:18px;
+      font-weight:900;
+      line-height:1.2;
+    }
+
+    .tiktok-gate-title{
+      margin:0 auto 10px;
+      max-width:500px;
+      color:#234f33;
+      font-size:clamp(28px,7vw,39px);
+      line-height:1.15;
+      font-weight:900;
+      letter-spacing:-.3px;
+    }
+
+    .tiktok-gate-subtitle{
+      margin:0 auto 24px;
+      color:#171717;
+      font-size:clamp(17px,4.4vw,21px);
+      line-height:1.45;
+      font-weight:700;
+    }
+
+    .tiktok-gate-browser-demo{
+      position:relative;
+      width:min(100%, 470px);
+      margin:0 auto 20px;
+      padding-top:6px;
+    }
+
+    .tiktok-gate-browser-bar{
+      position:relative;
+      height:118px;
+      border-radius:38px 38px 0 0;
+      background:linear-gradient(180deg,#202020,#111);
+      color:#fff;
+      box-shadow:0 16px 30px rgba(0,0,0,.18);
+      overflow:visible;
+    }
+
+    .tiktok-gate-browser-x{
+      position:absolute;
+      left:24px;
+      top:44px;
+      font-size:38px;
+      line-height:1;
+      font-weight:300;
+    }
+
+    .tiktok-gate-browser-center{
+      position:absolute;
+      inset:28px 90px auto;
+      text-align:center;
+      line-height:1.28;
+    }
+
+    .tiktok-gate-browser-center strong{
+      display:block;
+      font-size:16px;
+      font-weight:800;
+    }
+
+    .tiktok-gate-browser-center span{
+      display:block;
+      font-size:13px;
+      opacity:.94;
+      direction:ltr;
+    }
+
+    .tiktok-gate-share{
+      position:absolute;
+      right:76px;
+      top:43px;
+      font-size:28px;
+      line-height:1;
+    }
+
+    .tiktok-gate-dots{
+      position:absolute;
+      right:18px;
+      top:24px;
+      width:58px;
+      height:58px;
+      border:4px solid #e32626;
+      border-radius:50%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:35px;
+      line-height:1;
+      font-weight:900;
+      color:#fff;
+    }
+
+    .tiktok-gate-arrow{
+      position:absolute;
+      right:18px;
+      bottom:-44px;
+      color:#e32626;
+      font-size:54px;
+      line-height:1;
+      transform:rotate(18deg);
+      font-weight:900;
+      text-shadow:0 2px 0 rgba(255,255,255,.5);
+    }
+
+    .tiktok-gate-how{
+      margin:54px 0 16px;
+      color:#234f33;
+      font-size:clamp(24px,6vw,31px);
+      font-weight:900;
+    }
+
+    .tiktok-gate-steps{
+      width:min(100%, 455px);
+      margin:0 auto;
+      display:grid;
+      gap:14px;
+    }
+
+    .tiktok-gate-step{
+      display:grid;
+      grid-template-columns:42px 1fr;
+      gap:12px;
+      align-items:center;
+      text-align:right;
+      color:#1a1a1a;
+      font-size:clamp(16px,4.2vw,19px);
+      line-height:1.45;
+      font-weight:700;
+    }
+
+    .tiktok-gate-step-number{
+      width:42px;
+      height:42px;
+      border-radius:50%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:#285b39;
+      color:#fff;
+      font-weight:900;
+      font-size:18px;
+      box-shadow:0 6px 16px rgba(40,91,57,.18);
+    }
+
+    .tiktok-gate-step strong{
+      font-weight:900;
+    }
+
+    .tiktok-gate-note{
+      width:min(100%, 500px);
+      margin:24px auto 0;
+      padding:16px 18px;
+      border-radius:20px;
+      background:linear-gradient(180deg,#fff0bf,#ffefc7);
+      border:1px solid rgba(199,152,54,.20);
+      box-shadow:0 10px 25px rgba(132,91,15,.10);
+      color:#263d2d;
+    }
+
+    .tiktok-gate-note-title{
+      display:block;
+      margin-bottom:5px;
+      font-size:20px;
+      font-weight:900;
+    }
+
+    .tiktok-gate-note-text{
+      margin:0;
+      font-size:15px;
+      line-height:1.55;
+      font-weight:700;
+    }
+
+    .tiktok-gate-thanks{
+      margin:24px auto 0;
+      color:#2e6842;
+      font-size:17px;
+      line-height:1.5;
+      font-weight:800;
+    }
+
+    @media (max-width:420px){
+      .tiktok-browser-gate{
+        padding-left:14px;
+        padding-right:14px;
+      }
+
+      .tiktok-gate-logo{
+        width:92px;
+        height:92px;
+      }
+
+      .tiktok-gate-brand{
+        margin-bottom:20px;
+        font-size:16px;
+      }
+
+      .tiktok-gate-browser-bar{
+        height:108px;
+        border-radius:32px 32px 0 0;
+      }
+
+      .tiktok-gate-browser-center{
+        inset:25px 82px auto;
+      }
+
+      .tiktok-gate-share{
+        right:70px;
+        top:40px;
+      }
+
+      .tiktok-gate-dots{
+        right:14px;
+        width:54px;
+        height:54px;
+      }
+    }
+
   </style>
 </head>
   
 <body>
+  <!-- מסך הנחיה שמופיע רק בדפדפן הפנימי של TikTok -->
+  <section
+    id="tiktokBrowserGate"
+    class="tiktok-browser-gate"
+    aria-label="פתיחת האתר בדפדפן החיצוני"
+    aria-hidden="true"
+  >
+    <div class="tiktok-browser-gate-inner">
+      <img
+        class="tiktok-gate-logo"
+        src="logo.png"
+        alt="לוגו עץ הפרד״ס החי"
+      >
+
+      <p class="tiktok-gate-brand">עץ הפרד״ס החי</p>
+
+      <h2 class="tiktok-gate-title">
+        כדי להשתמש בכל האפשרויות באתר בצורה הטובה ביותר
+      </h2>
+
+      <p class="tiktok-gate-subtitle">
+        יש לפתוח את האתר בדפדפן החיצוני
+      </p>
+
+      <div class="tiktok-gate-browser-demo" aria-hidden="true">
+        <div class="tiktok-gate-browser-bar">
+          <span class="tiktok-gate-browser-x">×</span>
+
+          <div class="tiktok-gate-browser-center">
+            <strong>עץ הפרד״ס החי</strong>
+            <span>HAPARDES-ENTRY</span>
+          </div>
+
+          <span class="tiktok-gate-share">↗</span>
+          <span class="tiktok-gate-dots">⋮</span>
+          <span class="tiktok-gate-arrow">↗</span>
+        </div>
+      </div>
+
+      <h3 class="tiktok-gate-how">איך עושים את זה?</h3>
+
+      <div class="tiktok-gate-steps">
+        <div class="tiktok-gate-step">
+          <span class="tiktok-gate-step-number">1</span>
+          <span>
+            לחצו על <strong>שלוש הנקודות</strong> בחלק העליון של המסך.
+          </span>
+        </div>
+
+        <div class="tiktok-gate-step">
+          <span class="tiktok-gate-step-number">2</span>
+          <span>
+            בחרו באפשרות <strong>„פתח בדפדפן”</strong>.
+          </span>
+        </div>
+
+        <div class="tiktok-gate-step">
+          <span class="tiktok-gate-step-number">3</span>
+          <span>
+            האתר ייפתח בדפדפן החיצוני וכל האפשרויות יעבדו כרגיל.
+          </span>
+        </div>
+      </div>
+
+      <div class="tiktok-gate-note">
+        <span class="tiktok-gate-note-title">💡 למה זה חשוב?</span>
+        <p class="tiktok-gate-note-text">
+          הדפדפן הפנימי של TikTok מגביל פעולות מסוימות, ובהן העלאת תמונות.
+          פתיחה בדפדפן החיצוני מאפשרת להשתמש באתר בצורה מלאה.
+        </p>
+      </div>
+
+      <p class="tiktok-gate-thanks">
+        תודה שבחרתם להתחזק.<br>
+        צוות עץ הפרד״ס החי 💚
+      </p>
+    </div>
+  </section>
+
 
 <!-- סרטון הכניסה לפרדס — לפני מסך ההגנה של טעינת האייקונים -->
 <div id="pardesIntroOverlay" class="pardes-intro-overlay" aria-hidden="true">
@@ -9605,20 +9958,6 @@ if (sodGrapesVideo) {
     if(birdLink){
       birdLink.addEventListener("click", function(event){
         event.preventDefault();
-
-        const isTikTokInApp =
-          document.body.classList.contains("in-app-browser") &&
-          document.body.classList.contains("app-tiktok");
-        
-        if(isTikTokInApp){
-          alert(
-            'כדי לשלוח בקשה ולצרף תמונה, יש לפתוח את האתר בדפדפן החיצוני.\n\n' +
-            'לחצו על שלוש הנקודות למעלה ובחרו "פתח בדפדפן".\n\n' +
-            'לאחר הפתיחה בדפדפן, לחצו שוב על הציפור כדי להמשיך.'
-          );
-        
-          return;
-        }   
     
         const birdFlightMobile =
           document.getElementById("birdFlightMobile");
@@ -9741,6 +10080,10 @@ if (sodGrapesVideo) {
           return;
         }
     
+        const isTikTokInApp =
+          document.body.classList.contains("in-app-browser") &&
+          document.body.classList.contains("app-tiktok");
+
         let birdWasRevealed = false;
 
         function revealBirdTransition(){
@@ -10248,6 +10591,29 @@ if (sodGrapesVideo) {
       overlay.classList.add("show-strength-page");
     }
   });
+  })();
+  </script>
+
+
+  <script>
+  (function(){
+    "use strict";
+
+    const gate = document.getElementById("tiktokBrowserGate");
+    if(!gate) return;
+
+    function syncTikTokGate(){
+      const active =
+        document.body.classList.contains("in-app-browser") &&
+        document.body.classList.contains("app-tiktok");
+
+      gate.setAttribute("aria-hidden", active ? "false" : "true");
+    }
+
+    syncTikTokGate();
+    window.addEventListener("pageshow", syncTikTokGate);
+    window.setTimeout(syncTikTokGate, 250);
+    window.setTimeout(syncTikTokGate, 800);
   })();
   </script>
 
