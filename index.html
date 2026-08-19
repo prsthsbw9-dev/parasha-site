@@ -7817,6 +7817,81 @@ function normalizeParashaName(value){
       }catch(error){}
     }
 
+    async function restorePardesVideoFromEmailUrl(){
+      const params =
+        new URLSearchParams(window.location.search);
+
+      const requestedLayer =
+        params.get("openLayer");
+
+      const requestedParasha =
+        params.get("returnParasha");
+
+      const requestedAliyah =
+        params.get("returnAliyah");
+
+      const requestedResumeTime =
+        Math.max(0,Number(params.get("resume")) || 0);
+
+      const allowedLayers = [
+        "main",
+        "pshat",
+        "remez",
+        "drash",
+        "sod"
+      ];
+
+      if(
+        params.get("from") !== "support-email" ||
+        !allowedLayers.includes(requestedLayer)
+      ){
+        return false;
+      }
+
+      if(requestedParasha && requestedAliyah){
+        try{
+          await loadSpecificAliyah(
+            requestedParasha,
+            requestedAliyah,
+            { saveLocal:false }
+          );
+        }catch(error){
+          console.error(
+            "לא ניתן היה לטעון את העלייה מקישור החזרה:",
+            error
+          );
+        }
+      }
+
+      pendingPardesRestoreTime =
+        requestedResumeTime;
+
+      const cleanUrl = new URL(window.location.href);
+      [
+        "returnParasha",
+        "returnAliyah",
+        "openLayer",
+        "resume",
+        "from"
+      ].forEach((name) => {
+        cleanUrl.searchParams.delete(name);
+      });
+
+      window.history.replaceState(
+        {},
+        "",
+        cleanUrl.pathname +
+          cleanUrl.search +
+          cleanUrl.hash
+      );
+
+      window.setTimeout(() => {
+        openLayer(requestedLayer);
+      },250);
+
+      return true;
+    }
+
     window.addEventListener("message", (event) => {
       if(!/https:\/\/(www\.)?youtube(-nocookie)?\.com$/i.test(event.origin)){
         return;
@@ -7912,8 +7987,8 @@ function normalizeParashaName(value){
     window.pausePardesVideoForSupport = pausePardesVideoForSupport;
     window.returnToPardesVideoAfterSupport = returnToPardesVideoAfterSupport;
 
-    function savePardesVideoReturnForPayment(provider){
-      if(!currentOpenLayer) return;
+    function getPardesVideoReturnState(provider){
+      if(!currentOpenLayer) return null;
 
       const player = document.getElementById("pardesVideoPlayer");
       const nativeTime = Number(player?.currentTime);
@@ -7922,20 +7997,73 @@ function normalizeParashaName(value){
           ? nativeTime
           : lastPardesYouTubeTime;
 
+      return {
+        parasha:currentParasha,
+        aliyah:currentAliyah,
+        layer:currentOpenLayer,
+        time:Number.isFinite(videoTime) ? videoTime : 0,
+        provider:String(provider || ""),
+        savedAt:Date.now()
+      };
+    }
+
+    function buildPardesEmailReturnUrl(provider){
+      const state = getPardesVideoReturnState(provider);
+      if(!state) return "";
+
+      const returnUrl = new URL(
+        window.location.pathname,
+        window.location.origin
+      );
+
+      if(state.parasha){
+        returnUrl.searchParams.set(
+          "returnParasha",
+          state.parasha
+        );
+      }
+
+      if(state.aliyah){
+        returnUrl.searchParams.set(
+          "returnAliyah",
+          state.aliyah
+        );
+      }
+
+      returnUrl.searchParams.set(
+        "openLayer",
+        state.layer
+      );
+
+      returnUrl.searchParams.set(
+        "resume",
+        String(Math.max(0,Math.floor(Number(state.time) || 0)))
+      );
+
+      returnUrl.searchParams.set(
+        "from",
+        "support-email"
+      );
+
+      return returnUrl.href;
+    }
+
+    function savePardesVideoReturnForPayment(provider){
+      const state = getPardesVideoReturnState(provider);
+      if(!state) return "";
+
       try{
         sessionStorage.setItem(
           PARDES_PAYMENT_RETURN_KEY,
-          JSON.stringify({
-            parasha:currentParasha,
-            aliyah:currentAliyah,
-            layer:currentOpenLayer,
-            time:Number.isFinite(videoTime) ? videoTime : 0,
-            provider:String(provider || ""),
-            savedAt:Date.now()
-          })
+          JSON.stringify(state)
         );
       }catch(error){}
+
+      return buildPardesEmailReturnUrl(provider);
     }
+
+    window.getPardesEmailReturnUrl =
+      buildPardesEmailReturnUrl;
 
     window.savePardesVideoReturnForPayment =
       savePardesVideoReturnForPayment;
@@ -9468,6 +9596,10 @@ function normalizeParashaName(value){
 
     loadInitialAliyah()
       .then(async () => {
+        if(await restorePardesVideoFromEmailUrl()){
+          return;
+        }
+
         if(await restorePardesVideoAfterPayment()){
           return;
         }
