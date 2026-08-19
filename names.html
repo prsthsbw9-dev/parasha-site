@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- FIREBASE DIRECT SUBMIT + PHOTO UPLOAD + TIKTOK EARLY NOTICE — VERSION 8 — 2026-08-19 -->
+<!-- FIREBASE DIRECT SUBMIT + PHOTO UPLOAD + TIKTOK DIRECT PAGE — VERSION 9 — 2026-08-19 -->
 <html lang="he" dir="rtl">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#071014">
-  <title>לכל נשמה יש שם | שליחה ישירה v8</title>
+  <title>לכל נשמה יש שם | שליחה ישירה v9</title>
 
   <style>
     :root {
@@ -233,6 +233,49 @@
     .tiktok-entry-notice strong {
       color: #fff3ad;
       font-weight: 900;
+    }
+
+    .tiktok-entry-browser-button {
+      display: block;
+      width: 100%;
+      min-height: 50px;
+      margin-top: 11px;
+      padding: 11px 14px;
+      border: 1px solid rgba(255,255,255,.48);
+      border-radius: 14px;
+      background: linear-gradient(135deg,#c18a23,#80550c);
+      color: #fff;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 7px 20px rgba(0,0,0,.28);
+    }
+
+    .tiktok-entry-fallback {
+      display: block;
+      margin-top: 9px;
+      color: rgba(255,255,255,.88);
+      font-size: .86em;
+      line-height: 1.45;
+    }
+
+    .tiktok-entry-notice.is-attention {
+      animation: tiktokEntryAttention .48s ease-in-out 0s 5 alternate;
+    }
+
+    @keyframes tiktokEntryAttention {
+      from {
+        transform: scale(1);
+        box-shadow: 0 8px 24px rgba(0,0,0,.34);
+        border-color: rgba(255,227,154,.58);
+      }
+      to {
+        transform: scale(1.018);
+        box-shadow:
+          0 0 0 4px rgba(255,227,154,.18),
+          0 0 26px rgba(255,214,87,.60),
+          0 8px 24px rgba(0,0,0,.34);
+        border-color: rgba(255,243,173,.98);
+      }
     }
 
     .request-form {
@@ -707,9 +750,14 @@
 
       <div id="tiktokEntryNotice" class="tiktok-entry-notice" hidden role="alert" aria-live="polite">
         <strong>פתחת את הדף מתוך TikTok.</strong><br>
-        לפני מילוי הפרטים, יש ללחוץ על <strong>שלוש הנקודות למעלה</strong>
-        ולבחור <strong>„פתח בדפדפן”</strong>.<br>
-        הדפדפן ייפתח ישירות באותו דף השמות, ושם ניתן למלא את הבקשה ולצרף תמונה.
+        כדי למלא את הבקשה ולצרף תמונה בצורה תקינה,
+        יש לפתוח את <strong>דף השמות עצמו</strong> בדפדפן החיצוני.
+        <button id="tiktokEntryBrowserButton" class="tiktok-entry-browser-button" type="button">
+          פתיחת דף השמות בדפדפן
+        </button>
+        <span class="tiktok-entry-fallback">
+          אם הכפתור אינו פותח דפדפן חיצוני, לחצו על שלוש הנקודות למעלה ובחרו „פתח בדפדפן”.
+        </span>
       </div>
 
       <form
@@ -878,6 +926,7 @@
 
       const form = document.getElementById("requestForm");
       const tiktokEntryNotice = document.getElementById("tiktokEntryNotice");
+      const tiktokEntryBrowserButton = document.getElementById("tiktokEntryBrowserButton");
       const blessingName = document.getElementById("blessingName");
       const requestText = document.getElementById("requestText");
       const contactEmail = document.getElementById("contactEmail");
@@ -911,8 +960,63 @@
       let compressedPhotoDataUrl = "";
       let compressedPhotoBytes = 0;
 
+      /*
+       * בתוך TikTok הדף יכול להיטען בתוך iframe של האתר הראשי.
+       * window.location.href כאן הוא כתובת דף השמות הפנימי עצמו,
+       * ולכן הכפתור שלנו שומר אותה ומנסה לפתוח דווקא אותה.
+       */
+      const NAMES_DIRECT_URL = window.location.href;
+
+      function focusTikTokEntryNotice() {
+        if(!tiktokEntryNotice) return;
+
+        tiktokEntryNotice.hidden = false;
+        tiktokEntryNotice.classList.remove("is-attention");
+
+        tiktokEntryNotice.scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+        });
+
+        window.setTimeout(function () {
+          tiktokEntryNotice.classList.add("is-attention");
+        }, 420);
+
+        window.setTimeout(function () {
+          tiktokEntryNotice.classList.remove("is-attention");
+        }, 3300);
+      }
+
+      function openNamesPageDirectly() {
+        /*
+         * ניסיון לפתוח את כתובת דף השמות עצמו בחלון חדש.
+         * אם TikTok חוסם מעבר לדפדפן חיצוני, ההנחיה הידנית נשארת גלויה.
+         */
+        try {
+          const opened = window.open(
+            NAMES_DIRECT_URL,
+            "_blank",
+            "noopener,noreferrer"
+          );
+
+          if(!opened) {
+            focusTikTokEntryNotice();
+          }
+        } catch(error) {
+          focusTikTokEntryNotice();
+        }
+      }
+
       if(isTikTokBrowser && tiktokEntryNotice) {
         tiktokEntryNotice.hidden = false;
+
+        if(tiktokEntryBrowserButton) {
+          tiktokEntryBrowserButton.addEventListener(
+            "click",
+            openNamesPageDirectly
+          );
+        }
+
         window.setTimeout(function () {
           tiktokEntryNotice.scrollIntoView({
             behavior: "smooth",
@@ -1177,28 +1281,19 @@
       }
 
       function showTikTokPhotoHelp() {
-        tiktokPhotoHelp.classList.add("visible");
-        photoPickButton.textContent = "📱 פתחו בדפדפן כדי להעלות תמונה";
-        photoPickButton.setAttribute("aria-expanded","true");
-        tiktokPhotoHelp.scrollIntoView({
-          behavior: "smooth",
-          block: "center"
-        });
+        /*
+         * לא מציגים יותר הודעה שנייה ליד העלאת התמונה.
+         * מחזירים את הצופה להודעה הראשית ומבליטים אותה.
+         */
+        if(tiktokPhotoHelp) {
+          tiktokPhotoHelp.classList.remove("visible");
+        }
+
+        focusTikTokEntryNotice();
       }
 
       function tryOpenExternalBrowser() {
-        const currentUrl = window.location.href;
-
-        /*
-         * בחלק מגרסאות TikTok המעבר החוצה נחסם.
-         * אנחנו מנסים ניווט רגיל לאותה כתובת; אם TikTok משאיר
-         * את הדף בתוך האפליקציה, ההנחיה מעל נשארת מוצגת.
-         */
-        try {
-          window.open(currentUrl, "_blank", "noopener,noreferrer");
-        } catch(error) {
-          /* אין צורך להציג שגיאה נוספת; ההנחיה הידנית נשארת על המסך */
-        }
+        openNamesPageDirectly();
       }
 
       photoPickButton.addEventListener("click", function () {
@@ -1224,7 +1319,7 @@
       });
 
       if(isTikTokBrowser) {
-        photoPickButton.textContent = "📱 פתחו בדפדפן כדי להעלות תמונה";
+        photoPickButton.textContent = "📱 העלאת תמונה זמינה לאחר פתיחה בדפדפן";
       }
 
       photoInput.addEventListener("change", async function () {
