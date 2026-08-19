@@ -10494,6 +10494,37 @@ if (sodGrapesVideo) {
       id === "pardesFullscreenSupport" &&
       typeof window.pausePardesVideoForSupport === "function" &&
       window.pausePardesVideoForSupport();
+
+    let resolvedPageSrc = page.src;
+
+    if(
+      id === "pardesFullscreenSupport" &&
+      supportOpenedFromVideo &&
+      typeof window.savePardesVideoReturnForPayment === "function"
+    ){
+      try{
+        const preparedReturnUrl =
+          window.savePardesVideoReturnForPayment("support");
+
+        if(preparedReturnUrl){
+          const supportUrl = new URL(
+            page.src,
+            window.location.href
+          );
+
+          supportUrl.searchParams.set(
+            "returnUrl",
+            preparedReturnUrl
+          );
+
+          resolvedPageSrc =
+            supportUrl.pathname +
+            supportUrl.search +
+            supportUrl.hash;
+        }
+      }catch(error){}
+    }
+
     overlay.classList.toggle(
       "show-names-skip",
       id === "namesLink" ||
@@ -10502,7 +10533,7 @@ if (sodGrapesVideo) {
     );
     frame.title = page.title;
     overlay.setAttribute("aria-label", page.title);
-    frame.src = page.src;
+    frame.src = resolvedPageSrc;
     overlay.classList.add("is-open");
     overlay.setAttribute("aria-hidden", "false");
     document.body.classList.add("internal-page-open");
