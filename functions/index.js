@@ -440,10 +440,29 @@ exports.sendSupportEmails = onRequest(
        * אנחנו לא מכניסים למייל URL שרירותי:
        * קודם מוודאים שהוא HTTPS ושייך לאתר שלנו.
        */
-      const rawReturnUrl = cleanText(
+      let rawReturnUrl = cleanText(
         input.returnUrl,
         1200
       );
+      
+      /*
+       * אם returnUrl לא הגיע כשדה נפרד,
+       * מנסים לחלץ אותו מתוך כתובת support.html.
+       */
+      if (!rawReturnUrl) {
+        try {
+          const supportPageUrl = new URL(
+            cleanText(input.pageUrl, 2000)
+          );
+      
+          rawReturnUrl = cleanText(
+            supportPageUrl.searchParams.get("returnUrl"),
+            1200
+          );
+        } catch (error) {
+          rawReturnUrl = "";
+        }
+      }
 
       let returnUrl = "";
 
