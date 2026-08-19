@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- FIREBASE DIRECT SUBMIT + FIREBASE IFRAME PHOTO TEST — VERSION 12 — 2026-08-19 -->
+<!-- FIREBASE DIRECT SUBMIT + NATIVE PHOTO PICKER TEST — VERSION 11 — 2026-08-19 -->
 <html lang="he" dir="rtl">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#071014">
-  <title>לכל נשמה יש שם | שליחה ישירה v12</title>
+  <title>לכל נשמה יש שם | שליחה ישירה v11</title>
 
   <style>
     :root {
@@ -479,31 +479,6 @@
       font-weight: 800;
     }
 
-    .firebase-photo-test {
-      margin-top: 12px;
-      padding-top: 12px;
-      border-top: 1px dashed rgba(255,255,255,.26);
-    }
-
-    .firebase-photo-test-label {
-      margin: 0 0 8px;
-      color: #fff3ad;
-      text-align: center;
-      font-size: 12px;
-      line-height: 1.45;
-      font-weight: 800;
-    }
-
-    .firebase-photo-test-frame {
-      display: block;
-      width: 100%;
-      height: 150px;
-      border: 0;
-      border-radius: 14px;
-      background: transparent;
-      overflow: hidden;
-    }
-
     .honeypot {
       position: absolute !important;
       width: 1px !important;
@@ -808,19 +783,6 @@
               <input id="photoSinglePersonConfirmed" type="checkbox">
               <span>אני מאשר/ת שבתמונה מופיע רק האדם שעבורו נשלחה הבקשה.</span>
             </label>
-          </div>
-
-          <div class="firebase-photo-test">
-            <p class="firebase-photo-test-label">
-              בדיקת העלאת תמונה דרך Firebase
-            </p>
-
-            <iframe
-              class="firebase-photo-test-frame"
-              src="https://parasha-site-links.web.app/photo-test.html"
-              title="בדיקת בחירת תמונה דרך Firebase"
-              loading="eager"
-            ></iframe>
           </div>
 
           <p id="photoError" class="photo-error" role="alert"></p>
