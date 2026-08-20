@@ -562,12 +562,7 @@ exports.sendSupportEmails = onRequest(
        * אם תוכנת המייל לא תומכת ב-HTML,
        * עדיין יופיע קישור החזרה.
        */
-      const donorText = returnUrl
-        ? `${donorTextBase}
-
-בחזרה לעץ הפרד״ס החי:
-${returnUrl}`
-        : donorTextBase;
+      const donorText = donorTextBase;
 
       /*
        * הגנה על ה-URL לפני הכנסה ל-HTML.
@@ -654,43 +649,45 @@ ${returnUrl}`
        */
       const donorHtml = returnUrl
         ? `
-${donorHtmlBase}
-
-<div
-  dir="rtl"
-  style="
-    font-family:Arial,sans-serif;
-    text-align:center;
-    margin-top:28px;
-  "
->
-  <a
-    href="${escapedReturnUrl}"
-    style="
-      display:inline-block;
-      padding:14px 24px;
-      border-radius:999px;
-      background:#1f6b3a;
-      color:#ffffff;
-      text-decoration:none;
-      font-size:17px;
-      font-weight:700;
-    "
-  >
-    🌳 בחזרה לעץ הפרד״ס החי
-  </a>
-
-  <p
-    style="
-      margin-top:12px;
-      color:#666;
-      font-size:13px;
-    "
-  >
-    הקישור יחזיר אותך לחלק בסרטון שבו הפסקת לצפות.
-  </p>
-</div>
-`
+          ${donorHtmlBase}
+      
+          <div
+            dir="rtl"
+            style="
+              font-family:Arial,sans-serif;
+              text-align:center;
+              margin-top:28px;
+            "
+          >
+            <a
+              href="${escapedReturnUrl}"
+              style="
+                display:inline-block;
+                padding:14px 24px;
+                border-radius:999px;
+                background:#1f6b3a;
+                color:#ffffff;
+                text-decoration:none;
+                font-size:17px;
+                font-weight:700;
+              "
+            >
+              🌳 חזרה לפרד״ס
+            </a>
+          </div>
+        `
+        : donorHtmlBase;
+        <p
+          style="
+            margin-top:12px;
+            color:#666;
+            font-size:13px;
+          "
+        >
+          הקישור יחזיר אותך לחלק בסרטון שבו הפסקת לצפות.
+        </p>
+      </div>
+        `
         : donorHtmlBase;
 
       const technicalDetails = {
