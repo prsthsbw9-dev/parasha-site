@@ -426,7 +426,7 @@ exports.sendSupportEmails = onRequest(
       const provider = cleanText(
         input.provider,
         30
-      );
+      ).toLowerCase();
 
       const wantsPublicThanks =
         Boolean(input.wantsPublicThanks);
@@ -434,61 +434,6 @@ exports.sendSupportEmails = onRequest(
       const publicName = wantsPublicThanks
         ? cleanText(input.publicName, 80)
         : "";
-
-      /*
-       * קישור החזרה שמגיע מדף התמיכה.
-       * אנחנו לא מכניסים למייל URL שרירותי:
-       * קודם מוודאים שהוא HTTPS ושייך לאתר שלנו.
-       */
-      let rawReturnUrl = cleanText(
-        input.returnUrl,
-        1200
-      );
-      
-      /*
-       * אם returnUrl לא הגיע כשדה נפרד,
-       * מנסים לחלץ אותו מתוך כתובת support.html.
-       */
-      if (!rawReturnUrl) {
-        try {
-          const supportPageUrl = new URL(
-            cleanText(input.pageUrl, 2000)
-          );
-      
-          rawReturnUrl = cleanText(
-            supportPageUrl.searchParams.get("returnUrl"),
-            1200
-          );
-        } catch (error) {
-          rawReturnUrl = "";
-        }
-      }
-
-      let returnUrl = "";
-
-      if (rawReturnUrl) {
-        try {
-          const parsedReturnUrl =
-            new URL(rawReturnUrl);
-
-          const allowedReturnHosts = new Set([
-            "prsthsbw9-dev.github.io",
-            "hsbw9-dev.github.io",
-            "parasha-site-links.web.app"
-          ]);
-
-          if (
-            parsedReturnUrl.protocol === "https:" &&
-            allowedReturnHosts.has(
-              parsedReturnUrl.hostname.toLowerCase()
-            )
-          ) {
-            returnUrl = parsedReturnUrl.href;
-          }
-        } catch (error) {
-          returnUrl = "";
-        }
-      }
 
       const emailPattern =
         /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -521,22 +466,35 @@ exports.sendSupportEmails = onRequest(
       const channelEmail =
         "prsthsbw9@gmail.com";
 
+      const pardesHomeUrl =
+        "https://prsthsbw9-dev.github.io/parasha-site/index.html";
+
       const transporter =
         nodemailer.createTransport({
           service: "gmail",
-
           auth: {
             user: channelEmail,
             pass: gmailAppPassword.value()
           }
         });
 
+      const providerLabel = {
+        bit: "Bit",
+        paybox: "PayBox",
+        paypal: "PayPal"
+      }[provider] || provider;
+
       const donorSubject =
         "תודה רבה על תמיכתך בהפצת התורה";
 
-      const donorTextBase =
-        wantsPublicThanks
-          ? `תודה רבה לך על תרומתך והמצווה החשובה שעשית.
+      const donorText = wantsPublicThanks
+        ? `תודה רבה לך על תרומתך והמצווה החשובה שעשית.
+
+פרטי הבקשה שלך:
+אימייל: ${donorEmail}
+אמצעי התשלום שנבחר: ${providerLabel}
+הופעה בדף התודה: כן
+השם להצגה: ${publicName}
 
 בחרת ששמך יופיע בעלייה הבאה בדף התודה לכל המחזקים.
 
@@ -546,8 +504,16 @@ exports.sendSupportEmails = onRequest(
 
 לאחר וידוא התשלום נשלח אליך אישור נוסף.
 
-תבורך מהשמיים.`
-          : `תודה רבה לך על תרומתך והמצווה החשובה שעשית.
+תבורך מהשמיים.
+
+חזרה לפרד״ס:
+${pardesHomeUrl}`
+        : `תודה רבה לך על תרומתך והמצווה החשובה שעשית.
+
+פרטי הבקשה שלך:
+אימייל: ${donorEmail}
+אמצעי התשלום שנבחר: ${providerLabel}
+הופעה בדף התודה: לא
 
 עצם זה שבחרת להישאר בעילום שם, זה רק מוכיח לנו איזה צדיקים יש בעולם הזה, ורק השם יודע את גודל המצווה שעשית.
 
@@ -555,225 +521,153 @@ exports.sendSupportEmails = onRequest(
 
 לאחר וידוא התשלום נשלח אליך שוב הודעה שהתשלום התקבל.
 
-תבורך מהשמיים.`;
+תבורך מהשמיים.
 
-      /*
-       * גרסת טקסט רגילה של המייל.
-       * אם תוכנת המייל לא תומכת ב-HTML,
-       * עדיין יופיע קישור החזרה.
-       */
-      const donorText = donorTextBase;
+חזרה לפרד״ס:
+${pardesHomeUrl}`;
 
-      /*
-       * הגנה על ה-URL לפני הכנסה ל-HTML.
-       */
-      const escapedReturnUrl =
-        returnUrl
-          .replace(/&/g, "&amp;")
-          .replace(/"/g, "&quot;")
-          .replace(/</g, "&lt;")
-          .replace(/>/g, "&gt;");
+      const donorHtml = `
+        <div
+          dir="rtl"
+          style="
+            font-family:Arial,sans-serif;
+            line-height:1.8;
+            color:#202020;
+          "
+        >
+          <p>
+            תודה רבה לך על תרומתך והמצווה החשובה שעשית.
+          </p>
 
-      const donorHtmlBase =
-        wantsPublicThanks
-          ? `
-<div
-  dir="rtl"
-  style="
-    font-family:Arial,sans-serif;
-    line-height:1.8;
-    color:#202020;
-  "
->
-  <p>
-    תודה רבה לך על תרומתך והמצווה החשובה שעשית.
-  </p>
+          <div
+            style="
+              margin:18px 0;
+              padding:14px 16px;
+              border-radius:14px;
+              background:#f6f6f6;
+            "
+          >
+            <strong>פרטי הבקשה שלך:</strong><br>
+            אימייל: ${donorEmail}<br>
+            אמצעי התשלום שנבחר: ${providerLabel}<br>
+            הופעה בדף התודה:
+            ${wantsPublicThanks ? "כן" : "לא"}
+            ${
+              wantsPublicThanks
+                ? `<br>השם להצגה: ${publicName}`
+                : ""
+            }
+          </div>
 
-  <p>
-    בחרת ששמך יופיע בעלייה הבאה בדף התודה לכל המחזקים.
-  </p>
+          ${
+            wantsPublicThanks
+              ? `
+                <p>
+                  בחרת ששמך יופיע בעלייה הבאה בדף התודה לכל המחזקים.
+                </p>
 
-  <p>
-    לאחר אישור תרומתך מצידנו נפרסם את שמך בעז"ה בעלייה הקרובה.
-  </p>
+                <p>
+                  לאחר אישור תרומתך מצידנו נפרסם את שמך בעז"ה בעלייה הקרובה.
+                </p>
+              `
+              : `
+                <p>
+                  עצם זה שבחרת להישאר בעילום שם, זה רק מוכיח לנו איזה צדיקים יש בעולם הזה, ורק השם יודע את גודל המצווה שעשית.
+                </p>
+              `
+          }
 
-  <p>
-    <strong>חשוב:</strong>
-    הודעה זו נשלחה עם המעבר לאמצעי התשלום ואינה מהווה עדיין אישור שהתשלום התקבל.
-  </p>
+          <p>
+            <strong>חשוב:</strong>
+            הודעה זו נשלחה עם המעבר לאמצעי התשלום ואינה מהווה עדיין אישור שהתשלום התקבל.
+          </p>
 
-  <p>
-    לאחר וידוא התשלום נשלח אליך אישור נוסף.
-  </p>
+          <p>
+            לאחר וידוא התשלום נשלח אליך
+            ${
+              wantsPublicThanks
+                ? "אישור נוסף"
+                : "שוב הודעה שהתשלום התקבל"
+            }.
+          </p>
 
-  <p>
-    תבורך מהשמיים.
-  </p>
-</div>
-`
-          : `
-<div
-  dir="rtl"
-  style="
-    font-family:Arial,sans-serif;
-    line-height:1.8;
-    color:#202020;
-  "
->
-  <p>
-    תודה רבה לך על תרומתך והמצווה החשובה שעשית.
-  </p>
+          <p>
+            תבורך מהשמיים.
+          </p>
 
-  <p>
-    עצם זה שבחרת להישאר בעילום שם, זה רק מוכיח לנו איזה צדיקים יש בעולם הזה, ורק השם יודע את גודל המצווה שעשית.
-  </p>
-
-  <p>
-    <strong>חשוב:</strong>
-    הודעה זו נשלחה עם המעבר לאמצעי התשלום ואינה מהווה עדיין אישור שהתשלום התקבל.
-  </p>
-
-  <p>
-    לאחר וידוא התשלום נשלח אליך שוב הודעה שהתשלום התקבל.
-  </p>
-
-  <p>
-    תבורך מהשמיים.
-  </p>
-</div>
-`;
-
-      /*
-       * אם קיבלנו קישור חזרה תקין,
-       * מוסיפים כפתור למייל.
-       */
-      const donorHtml = returnUrl
-        ? `
-            ${donorHtmlBase}
-      
-            <div
-              dir="rtl"
+          <div
+            style="
+              text-align:center;
+              margin-top:30px;
+            "
+          >
+            <a
+              href="${pardesHomeUrl}"
               style="
-                font-family:Arial,sans-serif;
-                text-align:center;
-                margin-top:28px;
+                display:inline-block;
+                padding:14px 28px;
+                border-radius:999px;
+                background:#1f6b3a;
+                color:#ffffff;
+                text-decoration:none;
+                font-size:17px;
+                font-weight:700;
               "
             >
-              <a
-                href="${escapedReturnUrl}"
-                style="
-                  display:inline-block;
-                  padding:14px 24px;
-                  border-radius:999px;
-                  background:#1f6b3a;
-                  color:#ffffff;
-                  text-decoration:none;
-                  font-size:17px;
-                  font-weight:700;
-                "
-              >
-                🌳 חזרה לפרד״ס
-              </a>
-            </div>
-          `
-        : donorHtmlBase;
-
-      const technicalDetails = {
-        donorEmail,
-        provider,
-        wantsPublicThanks,
-
-        publicName:
-          publicName ||
-          "לא ביקש להופיע בדף התודה",
-
-        sentAt: cleanText(
-          input.sentAt,
-          60
-        ),
-
-        pageUrl: cleanText(
-          input.pageUrl,
-          500
-        ),
-
-        returnUrl,
-
-        language: cleanText(
-          input.language,
-          40
-        ),
-
-        userAgent: cleanText(
-          input.userAgent,
-          500
-        ),
-
-        screenWidth:
-          Number(input.screen?.width || 0),
-
-        screenHeight:
-          Number(input.screen?.height || 0)
-      };
+              🌳 חזרה לפרד״ס
+            </a>
+          </div>
+        </div>
+      `;
 
       const channelText =
 `בקשת תמיכה חדשה התקבלה באתר.
 
-אימייל התומך: ${technicalDetails.donorEmail}
-אמצעי תשלום שנבחר: ${technicalDetails.provider}
-ביקש להופיע בדף התודה: ${technicalDetails.wantsPublicThanks ? "כן" : "לא"}
-שם להצגה: ${technicalDetails.publicName}
+אימייל התומך:
+${donorEmail}
+
+אמצעי תשלום שנבחר:
+${providerLabel}
+
+ביקש להופיע בדף התודה:
+${wantsPublicThanks ? "כן" : "לא"}
+
+שם להצגה:
+${publicName || "לא ביקש להופיע בדף התודה"}
 
 זמן שליחה מהדפדפן:
-${technicalDetails.sentAt || "לא נמסר"}
-
-קישור חזרה לפרד״ס:
-${technicalDetails.returnUrl || "לא נוצר קישור חזרה"}
+${cleanText(input.sentAt, 60) || "לא נמסר"}
 
 שפת הדפדפן:
-${technicalDetails.language || "לא נמסרה"}
+${cleanText(input.language, 40) || "לא נמסרה"}
 
 גודל מסך:
-${technicalDetails.screenWidth || "?"}x${technicalDetails.screenHeight || "?"}
+${Number(input.screen?.width || 0) || "?"}x${Number(input.screen?.height || 0) || "?"}
 
 User-Agent:
-${technicalDetails.userAgent || "לא נמסר"}
+${cleanText(input.userAgent, 500) || "לא נמסר"}
 
-הערה: זוהי הודעה שנשלחה לפני המעבר לאמצעי התשלום.
+הערה:
+זוהי הודעה שנשלחה לפני המעבר לאמצעי התשלום.
 אין לראות בה אישור שהתשלום בוצע או התקבל.`;
 
-      /*
-       * מייל לצופה.
-       */
       await transporter.sendMail({
         from:
           `"פרשת השבוע - הפצת התורה" <${channelEmail}>`,
-
         to: donorEmail,
-
         replyTo: channelEmail,
-
         subject: donorSubject,
-
         text: donorText,
-
         html: donorHtml
       });
 
-      /*
-       * מייל לערוץ.
-       */
       await transporter.sendMail({
         from:
           `"אתר פרשת השבוע" <${channelEmail}>`,
-
         to: channelEmail,
-
         replyTo: donorEmail,
-
         subject:
           `בקשת תמיכה חדשה - ${provider.toUpperCase()}`,
-
         text: channelText
       });
 
