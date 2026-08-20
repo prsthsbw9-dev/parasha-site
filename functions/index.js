@@ -649,45 +649,33 @@ exports.sendSupportEmails = onRequest(
        */
       const donorHtml = returnUrl
         ? `
-          ${donorHtmlBase}
+            ${donorHtmlBase}
       
-          <div
-            dir="rtl"
-            style="
-              font-family:Arial,sans-serif;
-              text-align:center;
-              margin-top:28px;
-            "
-          >
-            <a
-              href="${escapedReturnUrl}"
+            <div
+              dir="rtl"
               style="
-                display:inline-block;
-                padding:14px 24px;
-                border-radius:999px;
-                background:#1f6b3a;
-                color:#ffffff;
-                text-decoration:none;
-                font-size:17px;
-                font-weight:700;
+                font-family:Arial,sans-serif;
+                text-align:center;
+                margin-top:28px;
               "
             >
-              🌳 חזרה לפרד״ס
-            </a>
-          </div>
-        `
-        : donorHtmlBase;
-        <p
-          style="
-            margin-top:12px;
-            color:#666;
-            font-size:13px;
-          "
-        >
-          הקישור יחזיר אותך לחלק בסרטון שבו הפסקת לצפות.
-        </p>
-      </div>
-        `
+              <a
+                href="${escapedReturnUrl}"
+                style="
+                  display:inline-block;
+                  padding:14px 24px;
+                  border-radius:999px;
+                  background:#1f6b3a;
+                  color:#ffffff;
+                  text-decoration:none;
+                  font-size:17px;
+                  font-weight:700;
+                "
+              >
+                🌳 חזרה לפרד״ס
+              </a>
+            </div>
+          `
         : donorHtmlBase;
 
       const technicalDetails = {
@@ -739,10 +727,7 @@ exports.sendSupportEmails = onRequest(
 זמן שליחה מהדפדפן:
 ${technicalDetails.sentAt || "לא נמסר"}
 
-כתובת הדף:
-${technicalDetails.pageUrl || "לא נמסרה"}
-
-קישור חזרה לסרטון:
+קישור חזרה לפרד״ס:
 ${technicalDetails.returnUrl || "לא נוצר קישור חזרה"}
 
 שפת הדפדפן:
