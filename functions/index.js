@@ -468,18 +468,50 @@ exports.sendSupportEmails = onRequest(
 
       /*
        * הכפתור הירוק:
-       * חזרה לעץ הפרד״ס הראשי.
+       * חזרה לעמוד הראשי של עץ הפרד״ס.
        */
       const pardesHomeUrl =
         "https://prsthsbw9-dev.github.io/parasha-site/index.html";
 
+
       /*
        * הכפתור הכחול:
-       * העמוד הראשי יקרא lastVideo=1
-       * ויפתח את הסרטון האחרון שנשמר.
+       * מקבל מהאתר את הקישור לסרטון שממנו
+       * הצופה הגיע לדף התמיכה.
        */
-      const pardesLastVideoUrl =
-        "https://prsthsbw9-dev.github.io/parasha-site/index.html?lastVideo=1";
+      const rawReturnUrl = cleanText(
+        input.returnUrl,
+        1800
+      );
+
+      let pardesLastVideoUrl = "";
+
+      if (rawReturnUrl) {
+        try {
+          const parsedReturnUrl =
+            new URL(rawReturnUrl);
+
+          const allowedReturnHosts =
+            new Set([
+              "prsthsbw9-dev.github.io",
+              "hsbw9-dev.github.io",
+              "parasha-site-links.web.app"
+            ]);
+
+          if (
+            parsedReturnUrl.protocol === "https:" &&
+            allowedReturnHosts.has(
+              parsedReturnUrl.hostname.toLowerCase()
+            )
+          ) {
+            pardesLastVideoUrl =
+              parsedReturnUrl.href;
+          }
+        } catch (error) {
+          pardesLastVideoUrl = "";
+        }
+      }
+
 
       const transporter =
         nodemailer.createTransport({
@@ -490,18 +522,21 @@ exports.sendSupportEmails = onRequest(
           }
         });
 
+
       const providerLabel = {
         bit: "Bit",
         paybox: "PayBox",
         paypal: "PayPal"
       }[provider] || provider;
 
+
       const donorSubject =
         "תודה רבה על תמיכתך בהפצת התורה";
 
+
       /*
-       * גרסת טקסט רגילה למקרה שתוכנת המייל
-       * אינה מציגה HTML.
+       * גרסת טקסט רגילה של המייל.
+       * מיועדת גם לתוכנות מייל שלא מציגות HTML.
        */
       const donorText = wantsPublicThanks
         ? `תודה רבה לך על תרומתך והמצווה החשובה שעשית.
@@ -525,11 +560,15 @@ exports.sendSupportEmails = onRequest(
 חזרה לפרד״ס:
 ${pardesHomeUrl}
 
-בחזרה לסרטון האחרון שצפית בו:
+${
+  pardesLastVideoUrl
+    ? `בחזרה לסרטון האחרון שצפית בו:
 ${pardesLastVideoUrl}
 
-לשיתוף אישור התשלום שלך:
-לחץ/י על "תשובה" ושלח/י לנו את אישור תשלום התרומה.`
+`
+    : ""
+}לשיתוף אישור התשלום שלך:
+לחץ על תשובה ושלח לנו את אישור תשלום התרומה.`
         : `תודה רבה לך על תרומתך והמצווה החשובה שעשית.
 
 פרטי הבקשה שלך:
@@ -548,11 +587,16 @@ ${pardesLastVideoUrl}
 חזרה לפרד״ס:
 ${pardesHomeUrl}
 
-בחזרה לסרטון האחרון שצפית בו:
+${
+  pardesLastVideoUrl
+    ? `בחזרה לסרטון האחרון שצפית בו:
 ${pardesLastVideoUrl}
 
-לשיתוף אישור התשלום שלך:
-לחץ/י על "תשובה" ושלח/י לנו את אישור תשלום התרומה.`;
+`
+    : ""
+}לשיתוף אישור התשלום שלך:
+לחץ על תשובה ושלח לנו את אישור תשלום התרומה.`;
+
 
       /*
        * גרסת HTML של המייל לצופה.
@@ -571,6 +615,7 @@ ${pardesLastVideoUrl}
             תודה רבה לך על תרומתך והמצווה החשובה שעשית.
           </p>
 
+
           <div
             style="
               margin:18px 0;
@@ -579,13 +624,21 @@ ${pardesLastVideoUrl}
               background:#f6f6f6;
             "
           >
-            <strong>פרטי הבקשה שלך:</strong><br>
+            <strong>
+              פרטי הבקשה שלך:
+            </strong>
+
+            <br>
 
             אימייל:
-            ${donorEmail}<br>
+            ${donorEmail}
+
+            <br>
 
             אמצעי התשלום שנבחר:
-            ${providerLabel}<br>
+            ${providerLabel}
+
+            <br>
 
             הופעה בדף התודה:
             ${wantsPublicThanks ? "כן" : "לא"}
@@ -596,6 +649,7 @@ ${pardesLastVideoUrl}
                 : ""
             }
           </div>
+
 
           ${
             wantsPublicThanks
@@ -617,11 +671,16 @@ ${pardesLastVideoUrl}
               `
           }
 
+
           <p>
-            <strong>חשוב:</strong>
+            <strong>
+              חשוב:
+            </strong>
+
             הודעה זו נשלחה עם המעבר לאמצעי התשלום
             ואינה מהווה עדיין אישור שהתשלום התקבל.
           </p>
+
 
           <p>
             לאחר וידוא התשלום נשלח אליך
@@ -632,12 +691,16 @@ ${pardesLastVideoUrl}
             }.
           </p>
 
+
           <p>
             תבורך מהשמיים.
           </p>
 
 
-          <!-- לחצן ירוק -->
+          <!-- ========================= -->
+          <!-- לחצן ירוק - חזרה לפרד״ס -->
+          <!-- ========================= -->
+
           <div
             style="
               text-align:center;
@@ -648,16 +711,30 @@ ${pardesLastVideoUrl}
               href="${pardesHomeUrl}"
               style="
                 display:block;
+                width:100%;
                 max-width:520px;
                 margin:0 auto;
                 padding:11px 18px;
-                border:1px solid #d7f4dd;
+
+                border:
+                  1px solid #c9efd1;
+
                 border-radius:10px;
+
                 background:#21813b;
+
                 color:#ffffff;
+
                 text-decoration:none;
+
                 font-size:17px;
+
+                line-height:1.35;
+
                 font-weight:700;
+
+                text-align:center;
+
                 box-sizing:border-box;
               "
             >
@@ -666,56 +743,100 @@ ${pardesLastVideoUrl}
           </div>
 
 
-          <!-- לחצן כחול -->
-          <div
-            style="
-              text-align:center;
-              margin-top:10px;
-            "
-          >
-            <a
-              href="${pardesLastVideoUrl}"
-              style="
-                display:block;
-                max-width:520px;
-                margin:0 auto;
-                padding:11px 18px;
-                border:1px solid #8ab4f8;
-                border-radius:10px;
-                background:#1877F2;
-                color:#ffffff;
-                text-decoration:none;
-                font-size:16px;
-                font-weight:700;
-                box-sizing:border-box;
-              "
-            >
-              בחזרה לסרטון האחרון שצפית בו
-            </a>
-          </div>
+          <!-- ================================== -->
+          <!-- לחצן כחול - הסרטון האחרון שנצפה -->
+          <!-- ================================== -->
+
+          ${
+            pardesLastVideoUrl
+              ? `
+                <div
+                  style="
+                    text-align:center;
+                    margin-top:10px;
+                  "
+                >
+                  <a
+                    href="${pardesLastVideoUrl}"
+                    style="
+                      display:block;
+                      width:100%;
+                      max-width:520px;
+                      margin:0 auto;
+
+                      padding:11px 18px;
+
+                      border:
+                        1px solid #8ab4f8;
+
+                      border-radius:10px;
+
+                      background:#1877F2;
+
+                      color:#ffffff;
+
+                      text-decoration:none;
+
+                      font-size:16px;
+
+                      line-height:1.35;
+
+                      font-weight:700;
+
+                      text-align:center;
+
+                      box-sizing:border-box;
+                    "
+                  >
+                    בחזרה לסרטון האחרון שצפית בו
+                  </a>
+                </div>
+              `
+              : ""
+          }
 
 
-          <!-- טקסט תחתון -->
+          <!-- ========================= -->
+          <!-- הוראות שליחת אישור תשלום -->
+          <!-- ========================= -->
+
           <div
             style="
+              width:100%;
               max-width:520px;
+
               margin:22px auto 0;
+
               padding-top:17px;
-              border-top:1px solid #d1d1d1;
+
+              border-top:
+                1px solid #d1d1d1;
+
               text-align:center;
+
               color:#777777;
+
               font-size:13px;
+
               line-height:1.65;
             "
           >
-            <strong>
+            <strong
+              style="
+                color:#555555;
+              "
+            >
               לשיתוף אישור התשלום שלך
             </strong>
+
             <br>
 
-            לחץ/י על
-            <strong>תשובה</strong>
-            ושלח/י לנו את אישור תשלום התרומה.
+            לחץ על
+            <strong>
+              תשובה
+            </strong>
+
+            ושלח לנו את אישור תשלום התרומה.
           </div>
 
         </div>
@@ -723,9 +844,9 @@ ${pardesLastVideoUrl}
 
 
       /*
-       * המייל שנשלח לערוץ:
+       * המייל לערוץ:
        * פרטים טכניים בלבד.
-       * אין בו לחצני חזרה.
+       * אין בו שום קישור חזרה.
        */
       const channelText =
 `בקשת תמיכה חדשה התקבלה באתר.
@@ -758,6 +879,7 @@ ${cleanText(input.userAgent, 500) || "לא נמסר"}
 זוהי הודעה שנשלחה לפני המעבר לאמצעי התשלום.
 אין לראות בה אישור שהתשלום בוצע או התקבל.`;
 
+
       /*
        * מייל לצופה.
        */
@@ -765,15 +887,20 @@ ${cleanText(input.userAgent, 500) || "לא נמסר"}
         from:
           `"פרשת השבוע - הפצת התורה" <${channelEmail}>`,
 
-        to: donorEmail,
+        to:
+          donorEmail,
 
-        replyTo: channelEmail,
+        replyTo:
+          channelEmail,
 
-        subject: donorSubject,
+        subject:
+          donorSubject,
 
-        text: donorText,
+        text:
+          donorText,
 
-        html: donorHtml
+        html:
+          donorHtml
       });
 
 
@@ -784,14 +911,17 @@ ${cleanText(input.userAgent, 500) || "לא נמסר"}
         from:
           `"אתר פרשת השבוע" <${channelEmail}>`,
 
-        to: channelEmail,
+        to:
+          channelEmail,
 
-        replyTo: donorEmail,
+        replyTo:
+          donorEmail,
 
         subject:
           `בקשת תמיכה חדשה - ${provider.toUpperCase()}`,
 
-        text: channelText
+        text:
+          channelText
       });
 
 
