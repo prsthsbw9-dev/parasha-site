@@ -408,10 +408,10 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 11px 15px;
+      padding: 10px 12px;
       direction: rtl;
       color: #ffffff;
-      font-size: clamp(16px, 4.2vw, 21px);
+      font-size: clamp(11px, 3.7vw, 21px);
       font-weight: 700;
       line-height: 1.55;
       text-align: center;
@@ -421,6 +421,14 @@
       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.34);
       backdrop-filter: blur(7px);
       -webkit-backdrop-filter: blur(7px);
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    .presenter-caption-text {
+      display: inline-block;
+      max-width: 100%;
+      white-space: nowrap;
     }
 
     .presenter-captions[hidden] {
@@ -458,6 +466,40 @@
       border: 1px solid rgba(255, 255, 255, 0.48);
       border-radius: 50%;
       background: rgba(0, 0, 0, 0.62);
+    }
+
+    .presenter-skip-btn {
+      position: absolute;
+      right: 12px;
+      bottom: 18px;
+      z-index: 4;
+      min-width: 78px;
+      min-height: 36px;
+      display: grid;
+      place-items: center;
+      padding: 7px 17px;
+      cursor: pointer;
+      color: #ffffff;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1;
+      border: 1px solid rgba(255, 255, 255, 0.68);
+      border-radius: 8px;
+      background: rgba(0, 0, 0, 0.58);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.28);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+    }
+
+    .presenter-skip-btn:hover,
+    .presenter-skip-btn:focus-visible {
+      border-color: rgba(255, 231, 166, 0.92);
+      background: rgba(0, 0, 0, 0.78);
+    }
+
+    #presenterView.is-compact .presenter-skip-btn {
+      display: none;
     }
 
     .presenter-end-note {
@@ -1244,6 +1286,15 @@
           <span id="presenterSoundIcon" aria-hidden="true">🔊</span>
         </button>
 
+        <button
+          class="presenter-skip-btn"
+          id="presenterSkipButton"
+          type="button"
+          aria-label="דילוג על קבלת הפנים"
+        >
+          דילוג
+        </button>
+
         <p class="presenter-end-note" id="presenterEndNote" hidden>
           לפני שנתחיל במסע, יש לקרוא את התקנון ולאשר אותו.
         </p>
@@ -1558,11 +1609,9 @@
         try {
           if (!soundEnabled) {
             /*
-             * מסנכרנים את האודיו לנקודה שבה הסרטון נמצא,
-             * בלי לשנות את currentTime של הסרטון עצמו.
+             * כאשר מפעילים קול, מתחילים מחדש את הסרטון ואת פס הקול
+             * כדי שאפשר יהיה לשמוע את כל ההקדמה מתחילתה.
              */
-            const videoTime = video.currentTime || 0;
-  
             if (audio.readyState < 1) {
               await new Promise((resolve) => {
                 audio.addEventListener(
@@ -1573,14 +1622,20 @@
               });
             }
   
-            audio.currentTime = Math.min(
-              videoTime,
-              Math.max(0, (audio.duration || videoTime) - 0.05)
-            );
-  
+            video.currentTime = 0;
+            audio.currentTime = 0;
             audio.volume = 1;
-            await audio.play();
             soundEnabled = true;
+            updateSoundButton();
+
+            const videoPlayPromise = video.play();
+            const audioPlayPromise = audio.play();
+
+            if (videoPlayPromise && typeof videoPlayPromise.then === "function") {
+              await videoPlayPromise;
+            }
+
+            await audioPlayPromise;
           } else {
             audio.pause();
             soundEnabled = false;
@@ -1689,6 +1744,7 @@
       const presenterCaptionText = document.getElementById("presenterCaptionText");
       const presenterSoundButton = document.getElementById("presenterSoundButton");
       const presenterSoundIcon = document.getElementById("presenterSoundIcon");
+      const presenterSkipButton = document.getElementById("presenterSkipButton");
       const presenterEndNote = document.getElementById("presenterEndNote");
       const termsPanel = document.getElementById("termsPanel");
       const termsList = document.getElementById("termsList");
@@ -1709,6 +1765,7 @@
         !presenterCaptionText ||
         !presenterSoundButton ||
         !presenterSoundIcon ||
+        !presenterSkipButton ||
         !presenterEndNote ||
         !termsPanel ||
         !termsList ||
@@ -2115,8 +2172,13 @@
         const today = getHebrewDateInfo(new Date());
         if (!birth || !today) return null;
         let age = today.year - birth.year;
-        const birthdayNotReached = today.monthOrder < birth.monthOrder ||
-          (today.monthOrder === birth.monthOrder && today.day < birth.day);
+        /*
+         * משווים לפי סדר השנה העברית מתשרי ועד אלול.
+         * כך החישוב אינו תלוי במספור המקראי שמתחיל בניסן.
+         */
+        const todayPosition = (today.monthOrder * 32) + today.day;
+        const birthdayPosition = (birth.monthOrder * 32) + birth.day;
+        const birthdayNotReached = todayPosition < birthdayPosition;
         if (birthdayNotReached) age -= 1;
         return age;
       }
@@ -2314,6 +2376,27 @@
         presenterCaptions.hidden = true;
       }
 
+      function fitPresenterCaption() {
+        const availableWidth = presenterCaptions.clientWidth - 24;
+        if (availableWidth <= 0) return;
+
+        const screenBasedMaximum = Math.min(
+          21,
+          Math.max(11, window.innerWidth * 0.037)
+        );
+
+        let fontSize = screenBasedMaximum;
+        presenterCaptions.style.fontSize = `${fontSize}px`;
+
+        while (
+          presenterCaptionText.scrollWidth > availableWidth &&
+          fontSize > 9
+        ) {
+          fontSize -= 0.5;
+          presenterCaptions.style.fontSize = `${fontSize}px`;
+        }
+      }
+
       function typePresenterCaption(text, cue) {
         if (!text || text === currentCaptionText) return;
 
@@ -2336,6 +2419,7 @@
           if (characterIndex >= text.length) return;
           characterIndex += 1;
           presenterCaptionText.textContent = text.slice(0, characterIndex);
+          fitPresenterCaption();
           captionTypingTimer = window.setTimeout(addNextCharacter, typingDelay);
         }
 
@@ -2387,6 +2471,7 @@
         presenterView.hidden = false;
         presenterView.classList.remove("is-compact");
         presenterEndNote.hidden = true;
+        presenterSkipButton.hidden = false;
         resetTerms();
 
         presenterVideo.pause();
@@ -2430,8 +2515,10 @@
         }
       });
 
-      presenterVideo.addEventListener("ended", () => {
+      function finishPresenterWelcome() {
         hidePresenterCaption();
+        presenterVideo.pause();
+        presenterSkipButton.hidden = true;
         presenterEndNote.textContent = "לפני שנתחיל במסע, יש לקרוא את התקנון ולאשר אותו.";
         presenterEndNote.hidden = false;
 
@@ -2439,7 +2526,11 @@
           presenterView.classList.add("is-compact");
           window.setTimeout(revealTerms, 700);
         }, 850);
-      });
+      }
+
+      presenterVideo.addEventListener("ended", finishPresenterWelcome);
+      presenterSkipButton.addEventListener("click", finishPresenterWelcome);
+      window.addEventListener("resize", fitPresenterCaption);
 
       termsCheckbox.addEventListener("change", () => {
         termsApproveButton.disabled = !termsCheckbox.checked;
