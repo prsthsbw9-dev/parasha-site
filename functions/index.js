@@ -466,8 +466,20 @@ exports.sendSupportEmails = onRequest(
       const channelEmail =
         "prsthsbw9@gmail.com";
 
+      /*
+       * הכפתור הירוק:
+       * חזרה לעץ הפרד״ס הראשי.
+       */
       const pardesHomeUrl =
         "https://prsthsbw9-dev.github.io/parasha-site/index.html";
+
+      /*
+       * הכפתור הכחול:
+       * העמוד הראשי יקרא lastVideo=1
+       * ויפתח את הסרטון האחרון שנשמר.
+       */
+      const pardesLastVideoUrl =
+        "https://prsthsbw9-dev.github.io/parasha-site/index.html?lastVideo=1";
 
       const transporter =
         nodemailer.createTransport({
@@ -487,6 +499,10 @@ exports.sendSupportEmails = onRequest(
       const donorSubject =
         "תודה רבה על תמיכתך בהפצת התורה";
 
+      /*
+       * גרסת טקסט רגילה למקרה שתוכנת המייל
+       * אינה מציגה HTML.
+       */
       const donorText = wantsPublicThanks
         ? `תודה רבה לך על תרומתך והמצווה החשובה שעשית.
 
@@ -507,7 +523,13 @@ exports.sendSupportEmails = onRequest(
 תבורך מהשמיים.
 
 חזרה לפרד״ס:
-${pardesHomeUrl}`
+${pardesHomeUrl}
+
+בחזרה לסרטון האחרון שצפית בו:
+${pardesLastVideoUrl}
+
+לשיתוף אישור התשלום שלך:
+לחץ/י על "תשובה" ושלח/י לנו את אישור תשלום התרומה.`
         : `תודה רבה לך על תרומתך והמצווה החשובה שעשית.
 
 פרטי הבקשה שלך:
@@ -524,8 +546,17 @@ ${pardesHomeUrl}`
 תבורך מהשמיים.
 
 חזרה לפרד״ס:
-${pardesHomeUrl}`;
+${pardesHomeUrl}
 
+בחזרה לסרטון האחרון שצפית בו:
+${pardesLastVideoUrl}
+
+לשיתוף אישור התשלום שלך:
+לחץ/י על "תשובה" ושלח/י לנו את אישור תשלום התרומה.`;
+
+      /*
+       * גרסת HTML של המייל לצופה.
+       */
       const donorHtml = `
         <div
           dir="rtl"
@@ -535,6 +566,7 @@ ${pardesHomeUrl}`;
             color:#202020;
           "
         >
+
           <p>
             תודה רבה לך על תרומתך והמצווה החשובה שעשית.
           </p>
@@ -548,10 +580,16 @@ ${pardesHomeUrl}`;
             "
           >
             <strong>פרטי הבקשה שלך:</strong><br>
-            אימייל: ${donorEmail}<br>
-            אמצעי התשלום שנבחר: ${providerLabel}<br>
+
+            אימייל:
+            ${donorEmail}<br>
+
+            אמצעי התשלום שנבחר:
+            ${providerLabel}<br>
+
             הופעה בדף התודה:
             ${wantsPublicThanks ? "כן" : "לא"}
+
             ${
               wantsPublicThanks
                 ? `<br>השם להצגה: ${publicName}`
@@ -572,14 +610,17 @@ ${pardesHomeUrl}`;
               `
               : `
                 <p>
-                  עצם זה שבחרת להישאר בעילום שם, זה רק מוכיח לנו איזה צדיקים יש בעולם הזה, ורק השם יודע את גודל המצווה שעשית.
+                  עצם זה שבחרת להישאר בעילום שם,
+                  זה רק מוכיח לנו איזה צדיקים יש בעולם הזה,
+                  ורק השם יודע את גודל המצווה שעשית.
                 </p>
               `
           }
 
           <p>
             <strong>חשוב:</strong>
-            הודעה זו נשלחה עם המעבר לאמצעי התשלום ואינה מהווה עדיין אישור שהתשלום התקבל.
+            הודעה זו נשלחה עם המעבר לאמצעי התשלום
+            ואינה מהווה עדיין אישור שהתשלום התקבל.
           </p>
 
           <p>
@@ -595,31 +636,97 @@ ${pardesHomeUrl}`;
             תבורך מהשמיים.
           </p>
 
+
+          <!-- לחצן ירוק -->
           <div
             style="
               text-align:center;
-              margin-top:30px;
+              margin-top:28px;
             "
           >
             <a
               href="${pardesHomeUrl}"
               style="
-                display:inline-block;
-                padding:14px 28px;
-                border-radius:999px;
-                background:#1f6b3a;
+                display:block;
+                max-width:520px;
+                margin:0 auto;
+                padding:11px 18px;
+                border:1px solid #d7f4dd;
+                border-radius:10px;
+                background:#21813b;
                 color:#ffffff;
                 text-decoration:none;
                 font-size:17px;
                 font-weight:700;
+                box-sizing:border-box;
               "
             >
               🌳 חזרה לפרד״ס
             </a>
           </div>
+
+
+          <!-- לחצן כחול -->
+          <div
+            style="
+              text-align:center;
+              margin-top:10px;
+            "
+          >
+            <a
+              href="${pardesLastVideoUrl}"
+              style="
+                display:block;
+                max-width:520px;
+                margin:0 auto;
+                padding:11px 18px;
+                border:1px solid #8ab4f8;
+                border-radius:10px;
+                background:#1877F2;
+                color:#ffffff;
+                text-decoration:none;
+                font-size:16px;
+                font-weight:700;
+                box-sizing:border-box;
+              "
+            >
+              בחזרה לסרטון האחרון שצפית בו
+            </a>
+          </div>
+
+
+          <!-- טקסט תחתון -->
+          <div
+            style="
+              max-width:520px;
+              margin:22px auto 0;
+              padding-top:17px;
+              border-top:1px solid #d1d1d1;
+              text-align:center;
+              color:#777777;
+              font-size:13px;
+              line-height:1.65;
+            "
+          >
+            <strong>
+              לשיתוף אישור התשלום שלך
+            </strong>
+            <br>
+
+            לחץ/י על
+            <strong>תשובה</strong>
+            ושלח/י לנו את אישור תשלום התרומה.
+          </div>
+
         </div>
       `;
 
+
+      /*
+       * המייל שנשלח לערוץ:
+       * פרטים טכניים בלבד.
+       * אין בו לחצני חזרה.
+       */
       const channelText =
 `בקשת תמיכה חדשה התקבלה באתר.
 
@@ -651,30 +758,49 @@ ${cleanText(input.userAgent, 500) || "לא נמסר"}
 זוהי הודעה שנשלחה לפני המעבר לאמצעי התשלום.
 אין לראות בה אישור שהתשלום בוצע או התקבל.`;
 
+      /*
+       * מייל לצופה.
+       */
       await transporter.sendMail({
         from:
           `"פרשת השבוע - הפצת התורה" <${channelEmail}>`,
+
         to: donorEmail,
+
         replyTo: channelEmail,
+
         subject: donorSubject,
+
         text: donorText,
+
         html: donorHtml
       });
 
+
+      /*
+       * מייל לערוץ.
+       */
       await transporter.sendMail({
         from:
           `"אתר פרשת השבוע" <${channelEmail}>`,
+
         to: channelEmail,
+
         replyTo: donorEmail,
+
         subject:
           `בקשת תמיכה חדשה - ${provider.toUpperCase()}`,
+
         text: channelText
       });
+
 
       return res.status(200).json({
         ok: true
       });
+
     } catch (err) {
+
       console.error(
         "sendSupportEmails error:",
         err
