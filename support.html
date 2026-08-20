@@ -1187,18 +1187,22 @@
             <span>להציג את שמי בדף תודה בסוף אחת העליות הקרובות</span>
           </label>
           <div id="thankNamePanel" class="support-option-panel" hidden>
-            <p class="support-option-note">
-              כאשר שמך יופיע, נוכל לעדכן אותך ולשלוח אליך קישור לעלייה שבה הוא מופיע.
-            </p>
-            <div class="field" style="margin-bottom:0">
-              <label for="publicSupportName">השם שיוצג</label>
-              <input id="publicSupportName" type="text" autocomplete="name"
-                     placeholder="הקלידו את השם כפי שתרצו שיופיע">
-            </div>
+          <p class="support-option-note">
+            כאשר שמך יופיע, נוכל לעדכן אותך ולשלוח אליך קישור לעלייה שבה הוא מופיע.
+          </p>
+          
+          <div class="field" style="margin-bottom:0">
+            <label for="publicSupportName">השם שיוצג</label>
+          
+            <input
+              id="publicSupportName"
+              type="text"
+              autocomplete="name"
+              enterkeyhint="done"
+              placeholder="הקלידו את השם כפי שתרצו שיופיע"
+            >
           </div>
-        </div>
-
-        
+          </div>    
       </div>
 
       <div class="checks">
@@ -1391,16 +1395,50 @@ const returnNavigation =
 
       showThankName.addEventListener("change",() => {
         thankNamePanel.hidden = !showThankName.checked;
+      
         if(showThankName.checked){
-          window.setTimeout(() => publicSupportName.focus({preventScroll:true}),0);
+          window.setTimeout(
+            () => publicSupportName.focus({preventScroll:true}),
+            0
+          );
         }else{
           publicSupportName.value = "";
         }
       });
-
-
-
-      /*
+      
+      publicSupportName.addEventListener("keydown",(event) => {
+        if(event.key !== "Enter") return;
+      
+        event.preventDefault();
+      
+        const publicName =
+          publicSupportName.value.trim();
+      
+        if(!publicName){
+          publicSupportName.focus();
+      
+          setPrePaymentStatus(
+            "יש להקליד את השם שיוצג בדף התודה.",
+            true
+          );
+      
+          return;
+        }
+      
+        publicSupportName.blur();
+      
+        window.setTimeout(() => {
+          termsConsent.scrollIntoView({
+            behavior:"smooth",
+            block:"center"
+          });
+      
+          termsConsent.focus({
+            preventScroll:true
+          });
+        },150);
+      });  
+    /*
        * החוזה הצפוי מהשרת:
        *
        * 1) מייל לתומך כאשר wantsPublicThanks=true:
