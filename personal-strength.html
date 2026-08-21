@@ -3676,6 +3676,7 @@
 
     const pendingProfileKey = "pardesPersonalStrengthPendingProfile";
     const emailForSignInKey = "pardesPersonalStrengthEmailForSignIn";
+    const pendingCodeModeKey = "pardesPersonalStrengthPendingCodeMode";
     const profileStorageKey = "pardesPersonalStrengthProfile";
     const journeyStorageKey = "pardesPersonalStrengthDraft";
     const pendingDeletionKey = "pardesPersonalStrengthPendingDeletion";
@@ -3766,6 +3767,7 @@
         JSON.stringify({ ...profile, email })
       );
       window.localStorage.setItem(emailForSignInKey, email);
+      window.localStorage.setItem(pendingCodeModeKey, "profile");
 
       await requestEmailCode(email);
 
@@ -3777,6 +3779,7 @@
       if (!email) throw new Error("auth/missing-email");
 
       window.localStorage.setItem(emailForSignInKey, email);
+      window.localStorage.setItem(pendingCodeModeKey, "returning");
       await requestEmailCode(email);
     }
 
@@ -3862,6 +3865,7 @@
         JSON.stringify(restoredProfile)
       );
       window.localStorage.removeItem(emailForSignInKey);
+      window.localStorage.removeItem(pendingCodeModeKey);
       window.sessionStorage.removeItem(forceOnboardingKey);
       showRegisteredMember(restoredProfile);
       return restoredProfile;
@@ -3884,6 +3888,7 @@
       [
         pendingProfileKey,
         emailForSignInKey,
+        pendingCodeModeKey,
         profileStorageKey,
         journeyStorageKey,
         pendingDeletionKey,
@@ -3898,6 +3903,7 @@
         "presenterView",
         "welcomeView",
         "chatView",
+        "pendingCodeVerificationView",
         "emailAuthenticationResultView"
       ].forEach((id) => {
         const view = document.getElementById(id);
@@ -4132,6 +4138,96 @@
       codeInput?.focus();
     }
 
+    function restorePendingCodeScreen() {
+      const email = String(
+        window.localStorage.getItem(emailForSignInKey) || ""
+      ).trim().toLowerCase();
+      const mode = window.localStorage.getItem(pendingCodeModeKey) || "";
+
+      if (!email || !["profile", "returning"].includes(mode)) {
+        return false;
+      }
+
+      if (typeof window.skipStrengthIntro === "function") {
+        window.skipStrengthIntro();
+      }
+
+      hideAllMainViews();
+
+      let view = document.getElementById("pendingCodeVerificationView");
+      if (!view) {
+        view = document.createElement("section");
+        view.id = "pendingCodeVerificationView";
+        view.className = "card view";
+        document.querySelector("main.page")?.appendChild(view);
+      }
+
+      view.innerHTML = `
+        <p class="preliminary-label">אימות כתובת הדוא״ל</p>
+        <h1>הקוד שלך מחכה לך</h1>
+        <p class="message">יש להקליד את הקוד בן 6 הספרות שנשלח לכתובת:</p>
+        <p class="message"><strong id="pendingCodeEmail"></strong></p>
+        <input class="name-input" id="pendingCodeInput" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" placeholder="000000" dir="ltr">
+        <button class="journey-btn primary" id="pendingCodeSubmit" type="button">אישור הקוד והמשך</button>
+        <button class="journey-btn secondary" id="pendingCodeResend" type="button">שליחת קוד חדש</button>
+        <p class="profile-help">אם ההודעה אינה מופיעה בדואר הנכנס, כדאי לבדוק בתיקיית הספאם. אם היא נמצאה שם, יש לסמן אותה כ״לא ספאם״.</p>
+        <p class="member-lookup-status" id="pendingCodeStatus" aria-live="polite"></p>
+      `;
+
+      const emailLabel = document.getElementById("pendingCodeEmail");
+      const codeInput = document.getElementById("pendingCodeInput");
+      const submitButton = document.getElementById("pendingCodeSubmit");
+      const resendButton = document.getElementById("pendingCodeResend");
+      const status = document.getElementById("pendingCodeStatus");
+      if (emailLabel) emailLabel.textContent = email;
+
+      const verifyRestoredCode = async () => {
+        submitButton.disabled = true;
+        setStatus(status, "בודק את הקוד ומחזיר אותך למסלול...");
+        try {
+          await completeCodeSignIn(
+            email,
+            codeInput?.value,
+            mode === "profile"
+          );
+        } catch (error) {
+          setStatus(status, messageForError(error), true);
+          submitButton.disabled = false;
+        }
+      };
+
+      codeInput?.addEventListener("input", () => {
+        codeInput.value = codeInput.value.replace(/\D/g, "").slice(0, 6);
+      });
+      codeInput?.addEventListener("keydown", (event) => {
+        if (event.key !== "Enter") return;
+        event.preventDefault();
+        verifyRestoredCode();
+      });
+      submitButton?.addEventListener("click", verifyRestoredCode);
+      resendButton?.addEventListener("click", async () => {
+        resendButton.disabled = true;
+        setStatus(status, "שולח קוד חדש...");
+        try {
+          await requestEmailCode(email);
+          setStatus(status, "קוד חדש נשלח. הקוד הקודם כבר אינו תקף.");
+        } catch (error) {
+          setStatus(status, messageForError(error), true);
+        } finally {
+          window.setTimeout(() => {
+            resendButton.disabled = false;
+          }, 60000);
+        }
+      });
+
+      view.hidden = false;
+      window.requestAnimationFrame(() => {
+        view.scrollIntoView({ behavior: "auto", block: "center" });
+        codeInput?.focus();
+      });
+      return true;
+    }
+
     function messageForError(error) {
       const code = error?.code || error?.message || "";
       const messages = {
@@ -4287,9 +4383,11 @@
 
     wireRegisteredMemberControls();
     wireReturningMemberControls();
+    const pendingCodeScreenRestored = restorePendingCodeScreen();
 
     onAuthStateChanged(auth, async (user) => {
       if (emailLinkFlowActive) return;
+      if (pendingCodeScreenRestored) return;
       if (window.sessionStorage.getItem(forceOnboardingKey) === "true") return;
       if (!user?.uid || !user.emailVerified) return;
 
