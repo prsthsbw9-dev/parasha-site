@@ -1923,13 +1923,12 @@
             </section>
 
             <section class="profile-step" data-profile-step="7" hidden>
-              <h2 class="profile-step-title">איך נוכל לשמור איתך על קשר?</h2>
-              <p class="profile-step-copy">מספיק למלא מספר נייד או דוא״ל אחד.</p>
-              <label class="profile-field"><span class="profile-label">מספר נייד</span><input class="profile-input" id="profilePhone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="05X-XXXXXXX"><small class="profile-help">המספר ישמש רק לשליחת התזכורות והעדכונים שבחרת. ניתן להפסיק בכל עת.</small></label>
-              <fieldset class="profile-field contact-channels" id="contactChannels"><legend class="profile-legend">כיצד ${genderText("אתה מעדיף", "את מעדיפה")} לקבל הודעות?</legend><div class="profile-options"><label class="profile-option"><input type="checkbox" name="channel" value="whatsapp">WhatsApp</label><label class="profile-option"><input type="checkbox" name="channel" value="sms">SMS</label></div></fieldset>
-              <label class="profile-field"><span class="profile-label">דוא״ל <small>(אם יש)</small></span><input class="profile-input" id="profileEmail" name="email" type="email" inputmode="email" autocomplete="email" placeholder="name@example.com"></label>
-              <label class="profile-option"><input type="checkbox" id="profileContactConsent" name="contactConsent">אני מסכים/ה לשמירת הפרטים ולשליחת הודעות ועדכונים בהתאם לבחירותיי. ידוע לי שניתן לבטל את ההסכמה בכל עת.</label>
-              <p class="profile-help">התשובות ישמשו להתאמת מסלול החיזוק האישי ולשליחת ההודעות שבחרת בלבד, בהתאם למדיניות הפרטיות.</p>
+              <h2 class="profile-step-title">שמירת המסלול וזיהוי מאובטח</h2>
+              <p class="profile-step-copy">כדי שנוכל לזהות אותך ולאפשר לך להמשיך מאותה נקודה גם לאחר מעבר למכשיר או לדפדפן אחר, יש למלא כתובת דוא״ל.</p>
+              <label class="profile-field"><span class="profile-label">כתובת דוא״ל</span><input class="profile-input" id="profileEmail" name="email" type="email" inputmode="email" autocomplete="email" placeholder="name@example.com" required><small class="profile-help">כתובת הדוא״ל תשמש לזיהוי מאובטח, לשמירת המסלול האישי שלך ולשחזורו במקרה הצורך.</small></label>
+              <label class="profile-option"><input type="checkbox" id="profileServiceConsent" name="serviceConsent">אני מסכים/ה לשמירת כתובת הדוא״ל ופרטי המסלול לצורך יצירת המסלול האישי, זיהוי מאובטח ושחזורו.</label>
+              <label class="profile-option"><input type="checkbox" id="profileEmailUpdatesConsent" name="emailUpdatesConsent">אני רוצה לקבל בדוא״ל חיזוקים אישיים, תזכורות ועדכונים בהתאם למסלול שבחרתי. ידוע לי שניתן להפסיק את קבלתם בכל עת.</label>
+              <p class="profile-help">ההסכמה לקבלת חיזוקים ועדכונים היא לבחירתך ואינה נדרשת לצורך יצירת המסלול ושמירתו.</p>
             </section>
 
             <p class="profile-error" id="profileError" role="alert" aria-live="assertive"></p>
@@ -1937,8 +1936,6 @@
           </form>`;
 
           const form = document.getElementById("personalProfileForm");
-          const phoneInput = document.getElementById("profilePhone");
-          const channels = document.getElementById("contactChannels");
           const birthDateInput = document.getElementById("profileBirthDate");
           const hebrewBirthDate = document.getElementById("hebrewBirthDate");
           const birthTimingUnknownHelp =
@@ -2048,8 +2045,6 @@
               );
             });
 
-        phoneInput.addEventListener("input", () => { channels.hidden = !phoneInput.value.trim(); });
-        channels.hidden = true;
         form.addEventListener("submit", handleProfileSubmit);
         
         function clearProfileErrorAfterCorrection() {
@@ -2281,16 +2276,18 @@
           profileDraft.pace = selectedValue(form, "pace");
           if (!profileDraft.pace) { error.textContent = "יש לבחור קצב שנראה לך מתאים."; return; }
         } else {
-          const phone = form.phone.value.trim();
           const email = form.email.value.trim();
-          const phoneDigits = phone.replace(/\D/g, "");
-          const channels = Array.from(form.querySelectorAll('[name="channel"]:checked'), (input) => input.value);
-          if (!phone && !email) { error.textContent = "יש למלא מספר נייד או כתובת דוא״ל אחת לפחות."; return; }
-          if (phone && (phoneDigits.length < 9 || phoneDigits.length > 10)) { error.textContent = "נראה שמספר הנייד אינו מלא. כדאי לבדוק אותו שוב."; return; }
-          if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { error.textContent = "נראה שכתובת הדוא״ל אינה תקינה. כדאי לבדוק אותה שוב."; return; }
-          if (phone && !channels.length) { error.textContent = "יש לבחור אם לקבל הודעות ב־WhatsApp, ב־SMS או בשניהם."; return; }
-          if (!form.contactConsent.checked) { error.textContent = "כדי לשמור את הפרטים ולשלוח הודעות, יש לאשר את ההסכמה שבתחתית הטופס."; return; }
-          Object.assign(profileDraft, { phone: phoneDigits, email, channels, contactConsent: true, termsAcceptedAt: new Date().toISOString() });
+          if (!email) { error.textContent = "כדי שנוכל לשמור ולשחזר את המסלול, יש למלא כתובת דוא״ל."; return; }
+          if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { error.textContent = "נראה שכתובת הדוא״ל אינה תקינה. כדאי לבדוק אותה שוב."; return; }
+          if (!form.serviceConsent.checked) { error.textContent = "כדי ליצור ולשמור את המסלול האישי, יש לאשר את שמירת כתובת הדוא״ל ופרטי המסלול."; return; }
+          Object.assign(profileDraft, {
+            email: email.toLowerCase(),
+            serviceConsent: true,
+            serviceConsentAt: new Date().toISOString(),
+            emailUpdatesConsent: form.emailUpdatesConsent.checked,
+            emailUpdatesConsentAt: form.emailUpdatesConsent.checked ? new Date().toISOString() : "",
+            termsAcceptedAt: new Date().toISOString()
+          });
           profileDraft.internalSummary = {
             beliefLevel: ({ "very-believing": 4, "generally-believing": 3, "unsure": 2, "not-believing": 1 })[profileDraft.belief],
             primaryFocus: profileDraft.focus,
