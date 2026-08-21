@@ -1,10 +1,20 @@
 const { onRequest } = require("firebase-functions/v2/https");
 const { defineSecret } = require("firebase-functions/params");
+const { initializeApp, getApps } = require("firebase-admin/app");
+const { getAuth } = require("firebase-admin/auth");
+const { getFirestore } = require("firebase-admin/firestore");
+const crypto = require("crypto");
 const OpenAI = require("openai");
 const nodemailer = require("nodemailer");
 
 const openaiApiKey = defineSecret("OPENAI_API_KEY");
 const gmailAppPassword = defineSecret("GMAIL_APP_PASSWORD");
+
+if (!getApps().length) {
+  initializeApp();
+}
+
+const adminDb = getFirestore();
 
 exports.createPersonalReading = onRequest(
   {
@@ -938,6 +948,493 @@ ${cleanText(input.userAgent, 500) || "לא נמסר"}
 
       return res.status(500).json({
         error: "Email sending failed"
+      });
+    }
+  }
+);
+
+/*
+ * ============================================================
+ * חיזוק אישי — כניסה מאובטחת באמצעות קוד חד־פעמי בדוא״ל
+ * ============================================================
+ * הקוד נשמר ב־Firestore רק כגיבוב מאובטח, תקף ל־10 דקות
+ * ומאפשר עד 5 ניסיונות אימות.
+ */
+
+const personalStrengthCors = [
+  "https://prsthsbw9-dev.github.io",
+  "https://hsbw9-dev.github.io",
+  "https://parasha-site-links.web.app",
+  "https://parasha-site-links.firebaseapp.com"
+];
+
+const personalStrengthCodeCollection =
+  "personalStrengthEmailCodes";
+
+const personalStrengthRateCollection =
+  "personalStrengthEmailCodeRateLimits";
+
+const personalStrengthCodeLifetimeMs =
+  10 * 60 * 1000;
+
+const personalStrengthResendDelayMs =
+  60 * 1000;
+
+const personalStrengthRateWindowMs =
+  60 * 60 * 1000;
+
+const personalStrengthMaxEmailRequestsPerHour = 5;
+const personalStrengthMaxIpRequestsPerHour = 12;
+const personalStrengthMaxVerificationAttempts = 5;
+
+function normalizeEmail(value) {
+  return String(value || "")
+    .trim()
+    .toLowerCase()
+    .slice(0, 254);
+}
+
+function isValidEmail(email) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+function sha256(value) {
+  return crypto
+    .createHash("sha256")
+    .update(String(value))
+    .digest("hex");
+}
+
+function createCodeHash(code, salt) {
+  return sha256(`${code}:${salt}`);
+}
+
+function safeHashesEqual(first, second) {
+  const firstBuffer = Buffer.from(String(first), "hex");
+  const secondBuffer = Buffer.from(String(second), "hex");
+
+  return (
+    firstBuffer.length === secondBuffer.length &&
+    crypto.timingSafeEqual(firstBuffer, secondBuffer)
+  );
+}
+
+function getRequestIp(req) {
+  const forwardedFor = String(
+    req.headers["x-forwarded-for"] || ""
+  ).split(",")[0].trim();
+
+  return forwardedFor || req.ip || "unknown";
+}
+
+function createPersonalStrengthTransporter() {
+  return nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: "prsthsbw9@gmail.com",
+      pass: gmailAppPassword.value()
+    }
+  });
+}
+
+exports.sendPersonalStrengthCode = onRequest(
+  {
+    region: "us-central1",
+    secrets: [gmailAppPassword],
+    cors: personalStrengthCors,
+    timeoutSeconds: 60,
+    maxInstances: 12
+  },
+  async (req, res) => {
+    if (req.method !== "POST") {
+      return res.status(405).json({
+        error: "Method not allowed"
+      });
+    }
+
+    const email = normalizeEmail(req.body?.email);
+
+    if (!isValidEmail(email)) {
+      return res.status(400).json({
+        error: "Invalid email"
+      });
+    }
+
+    const now = Date.now();
+    const emailKey = sha256(email);
+    const ipKey = sha256(getRequestIp(req));
+    const codeDocument = adminDb
+      .collection(personalStrengthCodeCollection)
+      .doc(emailKey);
+    const rateDocument = adminDb
+      .collection(personalStrengthRateCollection)
+      .doc(ipKey);
+
+    const code = String(
+      crypto.randomInt(100000, 1000000)
+    );
+    const salt = crypto.randomBytes(24).toString("hex");
+    const codeHash = createCodeHash(code, salt);
+
+    try {
+      await adminDb.runTransaction(async (transaction) => {
+        const [codeSnapshot, rateSnapshot] = await Promise.all([
+          transaction.get(codeDocument),
+          transaction.get(rateDocument)
+        ]);
+
+        const previousCode = codeSnapshot.exists
+          ? codeSnapshot.data()
+          : {};
+        const previousRate = rateSnapshot.exists
+          ? rateSnapshot.data()
+          : {};
+
+        const previousSentAt = Number(
+          previousCode.sentAtMs || 0
+        );
+
+        if (
+          previousSentAt &&
+          now - previousSentAt < personalStrengthResendDelayMs
+        ) {
+          const error = new Error("resend-too-soon");
+          error.statusCode = 429;
+          throw error;
+        }
+
+        const emailWindowStartedAt = Number(
+          previousCode.rateWindowStartedAtMs || now
+        );
+        const emailWindowExpired =
+          now - emailWindowStartedAt >=
+          personalStrengthRateWindowMs;
+        const emailRequestCount = emailWindowExpired
+          ? 1
+          : Number(previousCode.requestCount || 0) + 1;
+
+        if (
+          emailRequestCount >
+          personalStrengthMaxEmailRequestsPerHour
+        ) {
+          const error = new Error("email-rate-limit");
+          error.statusCode = 429;
+          throw error;
+        }
+
+        const ipWindowStartedAt = Number(
+          previousRate.windowStartedAtMs || now
+        );
+        const ipWindowExpired =
+          now - ipWindowStartedAt >=
+          personalStrengthRateWindowMs;
+        const ipRequestCount = ipWindowExpired
+          ? 1
+          : Number(previousRate.requestCount || 0) + 1;
+
+        if (
+          ipRequestCount >
+          personalStrengthMaxIpRequestsPerHour
+        ) {
+          const error = new Error("ip-rate-limit");
+          error.statusCode = 429;
+          throw error;
+        }
+
+        transaction.set(codeDocument, {
+          email,
+          salt,
+          codeHash,
+          attempts: 0,
+          sentAtMs: now,
+          expiresAtMs: now + personalStrengthCodeLifetimeMs,
+          requestCount: emailRequestCount,
+          rateWindowStartedAtMs: emailWindowExpired
+            ? now
+            : emailWindowStartedAt
+        });
+
+        transaction.set(rateDocument, {
+          requestCount: ipRequestCount,
+          windowStartedAtMs: ipWindowExpired
+            ? now
+            : ipWindowStartedAt,
+          updatedAtMs: now
+        });
+      });
+
+      const transporter = createPersonalStrengthTransporter();
+      const subject = "קוד הכניסה שלך לחיזוק האישי";
+      const textMessage = `קוד הכניסה שלך לחיזוק האישי הוא: ${code}
+
+הקוד תקף למשך 10 דקות ולשימוש חד־פעמי בלבד.
+
+אם לא ביקשת את הקוד, אפשר להתעלם מהודעה זו.
+
+עץ הפרד״ס החי`;
+      const htmlMessage = `
+        <div
+          dir="rtl"
+          style="
+            max-width:560px;
+            margin:0 auto;
+            padding:28px 22px;
+            font-family:Arial,sans-serif;
+            line-height:1.7;
+            color:#202020;
+            text-align:right;
+          "
+        >
+          <h2 style="margin:0 0 12px;color:#8a6500;">
+            קוד הכניסה שלך לחיזוק האישי
+          </h2>
+
+          <p>
+            יש להקליד באתר את הקוד הבא:
+          </p>
+
+          <div
+            dir="ltr"
+            style="
+              margin:22px 0;
+              padding:16px;
+              border:1px solid #d8b64c;
+              border-radius:10px;
+              background:#fff8df;
+              color:#171717;
+              font-size:34px;
+              font-weight:700;
+              letter-spacing:8px;
+              text-align:center;
+            "
+          >${code}</div>
+
+          <p>
+            הקוד תקף למשך <strong>10 דקות</strong>
+            ולשימוש חד־פעמי בלבד.
+          </p>
+
+          <p style="color:#666;font-size:14px;">
+            אם לא ביקשת את הקוד, אפשר להתעלם מהודעה זו.
+          </p>
+
+          <p style="margin-top:24px;">
+            עץ הפרד״ס החי
+          </p>
+        </div>
+      `;
+
+      await transporter.sendMail({
+        from:
+          `"עץ הפרד״ס החי - חיזוק אישי" <prsthsbw9@gmail.com>`,
+        to: email,
+        replyTo: "prsthsbw9@gmail.com",
+        subject,
+        text: textMessage,
+        html: htmlMessage
+      });
+
+      return res.status(200).json({
+        ok: true,
+        expiresInSeconds:
+          personalStrengthCodeLifetimeMs / 1000
+      });
+    } catch (err) {
+      console.error("sendPersonalStrengthCode error:", err);
+
+      if (
+        err.message === "resend-too-soon" ||
+        err.message === "email-rate-limit" ||
+        err.message === "ip-rate-limit"
+      ) {
+        return res.status(err.statusCode || 429).json({
+          error: err.message
+        });
+      }
+
+      return res.status(500).json({
+        error: "Code sending failed"
+      });
+    }
+  }
+);
+
+exports.verifyPersonalStrengthCode = onRequest(
+  {
+    region: "us-central1",
+    cors: personalStrengthCors,
+    timeoutSeconds: 60,
+    maxInstances: 12
+  },
+  async (req, res) => {
+    if (req.method !== "POST") {
+      return res.status(405).json({
+        error: "Method not allowed"
+      });
+    }
+
+    const email = normalizeEmail(req.body?.email);
+    const code = String(req.body?.code || "").trim();
+
+    if (!isValidEmail(email)) {
+      return res.status(400).json({
+        error: "Invalid email"
+      });
+    }
+
+    if (!/^\d{6}$/.test(code)) {
+      return res.status(400).json({
+        error: "Invalid code format"
+      });
+    }
+
+    const emailKey = sha256(email);
+    const codeDocument = adminDb
+      .collection(personalStrengthCodeCollection)
+      .doc(emailKey);
+    const now = Date.now();
+
+    try {
+      const verificationResult = await adminDb.runTransaction(
+        async (transaction) => {
+        const snapshot = await transaction.get(codeDocument);
+
+        if (!snapshot.exists) {
+          return {
+            ok: false,
+            error: "code-not-found",
+            statusCode: 400
+          };
+        }
+
+        const data = snapshot.data();
+        const attempts = Number(data.attempts || 0);
+
+        if (Number(data.expiresAtMs || 0) <= now) {
+          transaction.delete(codeDocument);
+          return {
+            ok: false,
+            error: "code-expired",
+            statusCode: 400
+          };
+        }
+
+        if (
+          attempts >= personalStrengthMaxVerificationAttempts
+        ) {
+          transaction.delete(codeDocument);
+          return {
+            ok: false,
+            error: "too-many-attempts",
+            statusCode: 429
+          };
+        }
+
+        const receivedHash = createCodeHash(
+          code,
+          data.salt
+        );
+        const isCorrect = safeHashesEqual(
+          receivedHash,
+          data.codeHash
+        );
+
+        if (!isCorrect) {
+          const nextAttempts = attempts + 1;
+
+          if (
+            nextAttempts >=
+            personalStrengthMaxVerificationAttempts
+          ) {
+            transaction.delete(codeDocument);
+          } else {
+            transaction.update(codeDocument, {
+              attempts: nextAttempts
+            });
+          }
+
+          return {
+            ok: false,
+            error: "incorrect-code",
+            statusCode: 400,
+            remainingAttempts: Math.max(
+              0,
+              personalStrengthMaxVerificationAttempts -
+                nextAttempts
+            )
+          };
+        }
+
+        transaction.delete(codeDocument);
+        return { ok: true };
+      });
+
+      if (!verificationResult.ok) {
+        return res
+          .status(verificationResult.statusCode || 400)
+          .json({
+            error: verificationResult.error,
+            remainingAttempts:
+              verificationResult.remainingAttempts
+          });
+      }
+
+      const adminAuth = getAuth();
+      let userRecord;
+
+      try {
+        userRecord = await adminAuth.getUserByEmail(email);
+
+        if (!userRecord.emailVerified) {
+          userRecord = await adminAuth.updateUser(
+            userRecord.uid,
+            { emailVerified: true }
+          );
+        }
+      } catch (err) {
+        if (err.code !== "auth/user-not-found") {
+          throw err;
+        }
+
+        userRecord = await adminAuth.createUser({
+          email,
+          emailVerified: true
+        });
+      }
+
+      const customToken = await adminAuth.createCustomToken(
+        userRecord.uid,
+        {
+          personalStrengthEmailVerified: true
+        }
+      );
+
+      return res.status(200).json({
+        ok: true,
+        customToken
+      });
+    } catch (err) {
+      console.error("verifyPersonalStrengthCode error:", err);
+
+      const expectedErrors = new Set([
+        "code-not-found",
+        "code-expired",
+        "too-many-attempts",
+        "incorrect-code"
+      ]);
+
+      if (expectedErrors.has(err.message)) {
+        return res.status(err.statusCode || 400).json({
+          error: err.message,
+          remainingAttempts:
+            Number.isFinite(err.remainingAttempts)
+              ? err.remainingAttempts
+              : undefined
+        });
+      }
+
+      return res.status(500).json({
+        error: "Code verification failed"
       });
     }
   }
