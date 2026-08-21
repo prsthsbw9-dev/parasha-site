@@ -2205,7 +2205,7 @@
         )}</p><a class="terms-approve-btn" style="display:grid;place-items:center;text-decoration:none" href="index.html">חזרה לעץ הפרד״ס</a></div>`;
       }
 
-      function handleProfileSubmit(event) {
+      async function handleProfileSubmit(event) {
         event.preventDefault();
         const form = event.currentTarget;
         const error = document.getElementById("profileError");
@@ -2295,8 +2295,39 @@
             motivations: profileDraft.reasons
           };
           try { localStorage.setItem("pardesPersonalStrengthProfile", JSON.stringify(profileDraft)); } catch (storageError) {}
-          presenterEndNote.textContent = genderText(`תודה ${profileDraft.firstName}, עכשיו אוכל להתאים לך דרך אישית.`, `תודה ${profileDraft.firstName}, עכשיו אוכל להתאים לך דרך אישית.`);
-          termsPanel.innerHTML = `<div class="profile-minor-message"><h2>תודה, ${escapeHtml(profileDraft.firstName)}</h2><p>${genderText("ענית על כל השאלות. הפרטים נשמרו בדפדפן, והשלב הבא יהיה בניית מסלול החיזוק האישי שמתאים לך.", "ענית על כל השאלות. הפרטים נשמרו בדפדפן, והשלב הבא יהיה בניית מסלול החיזוק האישי שמתאים לך.")}</p></div>`;
+          const nextButton = document.getElementById("profileNextButton");
+          if (nextButton) {
+            nextButton.disabled = true;
+            nextButton.textContent = "שולחים קישור אימות...";
+          }
+
+          try {
+            if (!window.pardesPersonalStrengthFirebase?.startEmailVerification) {
+              throw new Error("firebase-not-ready");
+            }
+
+            const result = await window.pardesPersonalStrengthFirebase.startEmailVerification({
+              ...profileDraft
+            });
+
+            presenterEndNote.textContent = genderText(
+              `תודה ${profileDraft.firstName}, נשאר רק לאמת את כתובת הדוא״ל.`,
+              `תודה ${profileDraft.firstName}, נשאר רק לאמת את כתובת הדוא״ל.`
+            );
+
+            termsPanel.innerHTML = result.savedImmediately
+              ? `<div class="profile-minor-message"><h2>המסלול נשמר בהצלחה</h2><p>הפרטים נשמרו בצורה מאובטחת. אפשר להמשיך לבניית מסלול החיזוק האישי שלך.</p></div>`
+              : `<div class="profile-minor-message"><h2>שלחנו אליך קישור אימות</h2><p>יש לפתוח את ההודעה שנשלחה לכתובת <strong>${escapeHtml(profileDraft.email)}</strong> וללחוץ על הקישור. לאחר האימות נחזור לכאן ונשמור את המסלול בצורה מאובטחת.</p><p class="profile-help">בפעם הראשונה מומלץ לפתוח את הקישור באותו מכשיר ובאותו דפדפן שבהם מילאת את השאלון.</p></div>`;
+          } catch (firebaseError) {
+            if (nextButton) {
+              nextButton.disabled = false;
+              nextButton.textContent = "סיום ובניית המסלול";
+            }
+
+            error.textContent = window.pardesPersonalStrengthFirebase?.messageForError
+              ? window.pardesPersonalStrengthFirebase.messageForError(firebaseError)
+              : "לא הצלחנו כרגע לשלוח את קישור האימות. כדאי לבדוק את החיבור ולנסות שוב.";
+          }
           return;
         }
 
@@ -3445,6 +3476,251 @@
 
       updateContinueButton();
     })();
+  </script>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+    import {
+      getAuth,
+      isSignInWithEmailLink,
+      sendSignInLinkToEmail,
+      signInWithEmailLink
+    } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+    import {
+      doc,
+      getDoc,
+      getFirestore,
+      serverTimestamp,
+      setDoc
+    } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDtrEyAnVMhCZWnSaUYut9LxNC17C3So1Y",
+      authDomain: "parasha-site-links.firebaseapp.com",
+      projectId: "parasha-site-links",
+      storageBucket: "parasha-site-links.firebasestorage.app",
+      messagingSenderId: "799400165769",
+      appId: "1:799400165769:web:1b5cf70eee80e772df6158",
+      measurementId: "G-2MGXGC1KB8"
+    };
+
+    const pendingProfileKey = "pardesPersonalStrengthPendingProfile";
+    const emailForSignInKey = "pardesPersonalStrengthEmailForSignIn";
+    const profileStorageKey = "pardesPersonalStrengthProfile";
+    const usersCollection = "personalStrengthUsers";
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    function cleanProfileForFirestore(profile, verifiedEmail, uid) {
+      const cleanProfile = JSON.parse(JSON.stringify(profile || {}));
+
+      return {
+        ...cleanProfile,
+        uid,
+        email: verifiedEmail,
+        emailVerified: true,
+        updatedAt: serverTimestamp()
+      };
+    }
+
+    async function saveVerifiedProfile(user, profile) {
+      if (!user?.uid || !user.email || !user.emailVerified) {
+        throw new Error("auth/email-not-verified");
+      }
+
+      const userDocument = doc(db, usersCollection, user.uid);
+      const existingDocument = await getDoc(userDocument);
+      const data = cleanProfileForFirestore(
+        profile,
+        user.email.toLowerCase(),
+        user.uid
+      );
+
+      if (!existingDocument.exists()) {
+        data.createdAt = serverTimestamp();
+      }
+
+      await setDoc(userDocument, data, { merge: true });
+
+      const localProfile = {
+        ...profile,
+        uid: user.uid,
+        email: user.email.toLowerCase(),
+        emailVerified: true
+      };
+
+      window.localStorage.setItem(
+        profileStorageKey,
+        JSON.stringify(localProfile)
+      );
+
+      return localProfile;
+    }
+
+    function buildReturnUrl() {
+      const returnUrl = new URL(window.location.href);
+      returnUrl.search = "";
+      returnUrl.hash = "";
+      returnUrl.searchParams.set("personalStrengthEmailSignIn", "1");
+      return returnUrl.href;
+    }
+
+    async function startEmailVerification(profile) {
+      const email = String(profile?.email || "").trim().toLowerCase();
+      if (!email) throw new Error("auth/missing-email");
+
+      if (
+        auth.currentUser?.emailVerified &&
+        auth.currentUser.email?.toLowerCase() === email
+      ) {
+        await saveVerifiedProfile(auth.currentUser, profile);
+        return { savedImmediately: true };
+      }
+
+      window.localStorage.setItem(
+        pendingProfileKey,
+        JSON.stringify({ ...profile, email })
+      );
+      window.localStorage.setItem(emailForSignInKey, email);
+
+      await sendSignInLinkToEmail(auth, email, {
+        url: buildReturnUrl(),
+        handleCodeInApp: true
+      });
+
+      return { savedImmediately: false };
+    }
+
+    function messageForError(error) {
+      const code = error?.code || error?.message || "";
+      const messages = {
+        "auth/invalid-email": "כתובת הדוא״ל אינה תקינה. כדאי לבדוק אותה ולנסות שוב.",
+        "auth/missing-email": "יש למלא כתובת דוא״ל כדי להמשיך.",
+        "auth/too-many-requests": "נשלחו יותר מדי בקשות בזמן קצר. כדאי להמתין מעט ולנסות שוב.",
+        "auth/quota-exceeded": "מכסת שליחת הודעות האימות הסתיימה זמנית. כדאי לנסות שוב מאוחר יותר.",
+        "auth/unauthorized-continue-uri": "כתובת החזרה של האתר עדיין אינה מורשית ב־Firebase.",
+        "auth/operation-not-allowed": "כניסה באמצעות קישור לדוא״ל עדיין אינה מופעלת ב־Firebase.",
+        "auth/email-not-verified": "כתובת הדוא״ל עדיין לא אומתה.",
+        "firebase-not-ready": "החיבור ל־Firebase עדיין לא נטען. כדאי לרענן את הדף ולנסות שוב."
+      };
+
+      return messages[code] ||
+        "לא הצלחנו כרגע להשלים את החיבור המאובטח. כדאי לבדוק את החיבור ולנסות שוב.";
+    }
+
+    function showEmailAuthenticationResult(title, message, isError = false) {
+      if (typeof window.skipStrengthIntro === "function") {
+        window.skipStrengthIntro();
+      }
+
+      [
+        "audienceChoiceView",
+        "presenterView",
+        "welcomeView",
+        "chatView"
+      ].forEach((id) => {
+        const view = document.getElementById(id);
+        if (view) view.hidden = true;
+      });
+
+      let resultView = document.getElementById("emailAuthenticationResultView");
+
+      if (!resultView) {
+        resultView = document.createElement("section");
+        resultView.id = "emailAuthenticationResultView";
+        resultView.className = "card view";
+        document.querySelector("main.page")?.appendChild(resultView);
+      }
+
+      resultView.hidden = false;
+      resultView.innerHTML = `
+        <h1>${isError ? "לא הצלחנו להשלים את האימות" : title}</h1>
+        <p class="message">${message}</p>
+        <a class="terms-approve-btn" style="display:grid;place-items:center;text-decoration:none" href="personal-strength.html">
+          ${isError ? "חזרה וניסיון נוסף" : "המשך לחיזוק האישי"}
+        </a>
+      `;
+    }
+
+    async function completeEmailLinkSignIn() {
+      if (!isSignInWithEmailLink(auth, window.location.href)) return;
+
+      let email = window.localStorage.getItem(emailForSignInKey) || "";
+
+      if (!email) {
+        email = window.prompt(
+          "כדי להשלים את הזיהוי במכשיר הזה, יש לרשום שוב את כתובת הדוא״ל שאליה נשלח הקישור."
+        ) || "";
+      }
+
+      email = email.trim().toLowerCase();
+
+      if (!email) {
+        showEmailAuthenticationResult(
+          "",
+          "לא הוזנה כתובת דוא״ל ולכן האימות לא הושלם.",
+          true
+        );
+        return;
+      }
+
+      try {
+        const credential = await signInWithEmailLink(
+          auth,
+          email,
+          window.location.href
+        );
+
+        const pendingProfileText = window.localStorage.getItem(pendingProfileKey);
+        const pendingProfile = pendingProfileText
+          ? JSON.parse(pendingProfileText)
+          : null;
+
+        if (
+          pendingProfile &&
+          String(pendingProfile.email || "").toLowerCase() === email
+        ) {
+          await saveVerifiedProfile(credential.user, pendingProfile);
+          window.localStorage.removeItem(pendingProfileKey);
+        } else {
+          const savedDocument = await getDoc(
+            doc(db, usersCollection, credential.user.uid)
+          );
+
+          if (savedDocument.exists()) {
+            window.localStorage.setItem(
+              profileStorageKey,
+              JSON.stringify(savedDocument.data())
+            );
+          } else {
+            throw new Error("profile/missing-on-this-device");
+          }
+        }
+
+        window.localStorage.removeItem(emailForSignInKey);
+        window.history.replaceState({}, document.title, buildReturnUrl().split("?")[0]);
+
+        showEmailAuthenticationResult(
+          "האימות הושלם והמסלול נשמר",
+          "כתובת הדוא״ל אומתה והפרטים נשמרו בצורה מאובטחת. כעת יהיה אפשר לזהות אותך ולשחזר את המסלול גם לאחר מעבר למכשיר או לדפדפן אחר."
+        );
+      } catch (error) {
+        const message = error?.message === "profile/missing-on-this-device"
+          ? "כתובת הדוא״ל אומתה, אך פרטי השאלון לא נמצאו במכשיר הזה. יש לחזור למכשיר שבו מילאת את השאלון ולהשלים ממנו את האימות."
+          : messageForError(error);
+
+        showEmailAuthenticationResult("", message, true);
+      }
+    }
+
+    window.pardesPersonalStrengthFirebase = {
+      startEmailVerification,
+      messageForError
+    };
+
+    completeEmailLinkSignIn();
   </script>
 </body>
 </html>
