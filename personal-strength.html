@@ -333,6 +333,38 @@
       background: rgba(0, 0, 0, 0.62);
     }
 
+    .audience-returning-panel {
+      width: min(100%, 410px);
+      margin: 14px auto 0;
+      padding: 15px;
+      text-align: right;
+      border: 1px solid rgba(255, 255, 255, 0.26);
+      border-radius: 13px;
+      background: rgba(0, 0, 0, 0.5);
+    }
+
+    .registered-member-actions {
+      width: min(100%, 430px);
+      display: grid;
+      gap: 11px;
+      margin: 22px auto 0;
+    }
+
+    .journey-btn.danger {
+      color: #ffe8e8;
+      border: 1px solid rgba(255, 132, 132, 0.64);
+      background: rgba(92, 10, 10, 0.52);
+    }
+
+    .registration-delete-panel {
+      width: min(100%, 470px);
+      margin: 18px auto 0;
+      padding: 16px;
+      border: 1px solid rgba(255, 132, 132, 0.48);
+      border-radius: 13px;
+      background: rgba(40, 0, 0, 0.58);
+    }
+
     .presenter-stage {
       position: relative;
       width: min(100%, 560px);
@@ -1234,6 +1266,79 @@
       <button class="already-registered-btn" id="alreadyRegisteredButton" type="button">
         אני כבר נרשמתי
       </button>
+
+      <div class="audience-returning-panel" id="audienceReturningPanel" hidden>
+        <label class="question-label" for="audienceReturningEmail">
+          כתובת הדוא״ל שאיתה נרשמת
+        </label>
+        <input
+          class="name-input"
+          id="audienceReturningEmail"
+          type="email"
+          inputmode="email"
+          autocomplete="email"
+          placeholder="name@example.com"
+        >
+        <button class="journey-btn primary" id="audienceReturningSubmit" type="button">
+          שליחת קוד כניסה
+        </button>
+        <div id="audienceReturningCodePanel" hidden>
+          <label class="question-label" for="audienceReturningCode">
+            קוד האימות בן 6 הספרות
+          </label>
+          <input
+            class="name-input"
+            id="audienceReturningCode"
+            type="text"
+            inputmode="numeric"
+            autocomplete="one-time-code"
+            maxlength="6"
+            pattern="[0-9]{6}"
+            placeholder="000000"
+            dir="ltr"
+          >
+          <button class="journey-btn primary" id="audienceReturningVerify" type="button">
+            אישור הקוד וכניסה
+          </button>
+          <p class="profile-help">אם ההודעה אינה מופיעה בדואר הנכנס, כדאי לבדוק בתיקיית הספאם. אם היא נמצאה שם, יש לסמן אותה כ״לא ספאם״.</p>
+        </div>
+        <p class="member-lookup-status" id="audienceReturningStatus" aria-live="polite"></p>
+      </div>
+    </section>
+
+    <section class="card view" id="registeredMemberView" aria-labelledby="registeredMemberTitle" hidden>
+      <p class="preliminary-label">המסלול האישי שלך</p>
+      <h1 id="registeredMemberTitle">טוב לראות אותך שוב</h1>
+      <p class="message" id="registeredMemberMessage"></p>
+
+      <div class="registered-member-actions">
+        <button class="journey-btn primary" id="registeredContinueButton" type="button">
+          המשך לתוכנית שלי
+        </button>
+        <button class="journey-btn secondary" id="registeredRestartButton" type="button">
+          התחלה מחדש
+        </button>
+        <button class="journey-btn secondary" id="registeredChangeProgramButton" type="button">
+          שינוי התוכנית
+        </button>
+        <button class="journey-btn danger" id="registeredDeleteButton" type="button">
+          ביטול הרישום למערכת
+        </button>
+      </div>
+
+      <div class="registration-delete-panel" id="registrationDeletePanel" hidden>
+        <h2 class="form-title">האם לבטל את הרישום ולמחוק את כל הנתונים?</h2>
+        <p class="profile-help">הפעולה תמחק את הפרופיל, המסלול וההתקדמות. לצורך הגנה על החשבון יישלח קישור אישור נוסף לדוא״ל.</p>
+        <div class="suggestion-actions">
+          <button class="journey-btn danger" id="confirmRegistrationDeleteButton" type="button">
+            כן, לשלוח קישור למחיקה
+          </button>
+          <button class="journey-btn secondary" id="cancelRegistrationDeleteButton" type="button">
+            חזרה ללא מחיקה
+          </button>
+        </div>
+        <p class="member-lookup-status" id="registrationDeleteStatus" aria-live="polite"></p>
+      </div>
     </section>
 
     <section
@@ -2298,7 +2403,7 @@
           const nextButton = document.getElementById("profileNextButton");
           if (nextButton) {
             nextButton.disabled = true;
-            nextButton.textContent = "שולחים קישור אימות...";
+            nextButton.textContent = "שולחים קוד אימות...";
           }
 
           try {
@@ -2317,7 +2422,13 @@
 
             termsPanel.innerHTML = result.savedImmediately
               ? `<div class="profile-minor-message"><h2>המסלול נשמר בהצלחה</h2><p>הפרטים נשמרו בצורה מאובטחת. אפשר להמשיך לבניית מסלול החיזוק האישי שלך.</p></div>`
-              : `<div class="profile-minor-message"><h2>שלחנו אליך קישור אימות</h2><p>יש לפתוח את ההודעה שנשלחה לכתובת <strong>${escapeHtml(profileDraft.email)}</strong> וללחוץ על הקישור. לאחר האימות נחזור לכאן ונשמור את המסלול בצורה מאובטחת.</p><p class="profile-help">בפעם הראשונה מומלץ לפתוח את הקישור באותו מכשיר ובאותו דפדפן שבהם מילאת את השאלון.</p></div>`;
+              : `<div class="profile-minor-message"><h2>שלחנו אליך קוד אימות</h2><p>יש להקליד את הקוד בן 6 הספרות שנשלח לכתובת <strong>${escapeHtml(profileDraft.email)}</strong>.</p><input class="name-input" id="profileVerificationCode" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" placeholder="000000" dir="ltr"><button class="journey-btn primary" id="profileVerificationSubmit" type="button">אישור הקוד</button><button class="journey-btn secondary" id="profileVerificationResend" type="button">שליחת קוד חדש</button><p class="profile-help">אם ההודעה אינה מופיעה בדואר הנכנס, כדאי לבדוק בתיקיית הספאם. אם היא נמצאה שם, יש לסמן אותה כ״לא ספאם״.</p><p class="member-lookup-status" id="profileVerificationStatus" aria-live="polite"></p></div>`;
+
+            if (!result.savedImmediately) {
+              window.pardesPersonalStrengthFirebase.bindProfileCodeForm?.(
+                profileDraft.email
+              );
+            }
           } catch (firebaseError) {
             if (nextButton) {
               nextButton.disabled = false;
@@ -2326,7 +2437,7 @@
 
             error.textContent = window.pardesPersonalStrengthFirebase?.messageForError
               ? window.pardesPersonalStrengthFirebase.messageForError(firebaseError)
-              : "לא הצלחנו כרגע לשלוח את קישור האימות. כדאי לבדוק את החיבור ולנסות שוב.";
+              : "לא הצלחנו כרגע לשלוח את קוד האימות. כדאי לבדוק את החיבור ולנסות שוב.";
           }
           return;
         }
@@ -3474,6 +3585,61 @@
           "זה בסדר. המסלול מחכה לך בלי לחץ ובלי שיפוטיות.";
       });
 
+      function beginProgramSelectionFromProfile(profile) {
+        const name = String(profile?.firstName || profile?.name || "").trim();
+        const gender = profile?.gender === "female" ? "female" : "male";
+        if (!name) return;
+
+        chatLog.querySelectorAll("[data-saved-identity], [data-saved-area], [data-flow-key]")
+          .forEach((bubble) => bubble.remove());
+
+        try {
+          localStorage.removeItem(storageKey);
+        } catch (error) {}
+
+        draft = null;
+        selectedAreas = [];
+        firstNameInput.value = name;
+        selectGender(gender);
+        updateAreaSelection();
+
+        identityForm.hidden = true;
+        areaQuestion.hidden = false;
+        focusQuestion.hidden = true;
+        currentStatusQuestion.hidden = true;
+        paceQuestion.hidden = true;
+        suggestionQuestion.hidden = true;
+        checkInQuestion.hidden = true;
+        completionSummary.hidden = true;
+        journeyDashboard.hidden = true;
+
+        saveDraft({
+          name,
+          gender,
+          areas: [],
+          areasConfirmed: false
+        });
+
+        showChat();
+        revealAreaQuestion(name, gender);
+      }
+
+      window.pardesPersonalJourney = {
+        open(profile) {
+          draft = loadDraft();
+
+          if (draft && draft.name && draft.gender) {
+            restoreDraft();
+            return;
+          }
+
+          beginProgramSelectionFromProfile(profile);
+        },
+        changeProgram(profile) {
+          beginProgramSelectionFromProfile(profile);
+        }
+      };
+
       updateContinueButton();
     })();
   </script>
@@ -3481,12 +3647,16 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
     import {
+      deleteUser,
       getAuth,
       isSignInWithEmailLink,
+      onAuthStateChanged,
       sendSignInLinkToEmail,
+      signInWithCustomToken,
       signInWithEmailLink
     } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
     import {
+      deleteDoc,
       doc,
       getDoc,
       getFirestore,
@@ -3507,11 +3677,21 @@
     const pendingProfileKey = "pardesPersonalStrengthPendingProfile";
     const emailForSignInKey = "pardesPersonalStrengthEmailForSignIn";
     const profileStorageKey = "pardesPersonalStrengthProfile";
+    const journeyStorageKey = "pardesPersonalStrengthDraft";
+    const pendingDeletionKey = "pardesPersonalStrengthPendingDeletion";
+    const forceOnboardingKey = "pardesPersonalStrengthForceOnboarding";
     const usersCollection = "personalStrengthUsers";
+    const sendCodeUrl = "https://us-central1-parasha-site-links.cloudfunctions.net/sendPersonalStrengthCode";
+    const verifyCodeUrl = "https://us-central1-parasha-site-links.cloudfunctions.net/verifyPersonalStrengthCode";
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
+    let currentRegisteredProfile = null;
+    const emailLinkFlowActive = isSignInWithEmailLink(
+      auth,
+      window.location.href
+    );
 
     function cleanProfileForFirestore(profile, verifiedEmail, uid) {
       const cleanProfile = JSON.parse(JSON.stringify(profile || {}));
@@ -3559,11 +3739,13 @@
       return localProfile;
     }
 
-    function buildReturnUrl() {
-      const returnUrl = new URL(window.location.href);
-      returnUrl.search = "";
-      returnUrl.hash = "";
+    function buildReturnUrl(action = "profile") {
+      const returnUrl = new URL(
+        "/parasha-site/personal-strength.html",
+        window.location.origin
+      );
       returnUrl.searchParams.set("personalStrengthEmailSignIn", "1");
+      returnUrl.searchParams.set("personalStrengthAction", action);
       return returnUrl.href;
     }
 
@@ -3585,12 +3767,369 @@
       );
       window.localStorage.setItem(emailForSignInKey, email);
 
-      await sendSignInLinkToEmail(auth, email, {
-        url: buildReturnUrl(),
-        handleCodeInApp: true
-      });
+      await requestEmailCode(email);
 
       return { savedImmediately: false };
+    }
+
+    async function sendReturningMemberCode(emailValue) {
+      const email = String(emailValue || "").trim().toLowerCase();
+      if (!email) throw new Error("auth/missing-email");
+
+      window.localStorage.setItem(emailForSignInKey, email);
+      await requestEmailCode(email);
+    }
+
+    async function requestEmailCode(email) {
+      const response = await fetch(sendCodeUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email })
+      });
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        const error = new Error(data.error || "code-sending-failed");
+        error.code = data.error || "code-sending-failed";
+        throw error;
+      }
+
+      return data;
+    }
+
+    async function verifyEmailCode(emailValue, codeValue) {
+      const email = String(emailValue || "").trim().toLowerCase();
+      const code = String(codeValue || "").replace(/\D/g, "").slice(0, 6);
+
+      if (!email) throw new Error("auth/missing-email");
+      if (!/^\d{6}$/.test(code)) throw new Error("invalid-code-format");
+
+      const response = await fetch(verifyCodeUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, code })
+      });
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok || !data.customToken) {
+        const error = new Error(data.error || "code-verification-failed");
+        error.code = data.error || "code-verification-failed";
+        error.remainingAttempts = data.remainingAttempts;
+        throw error;
+      }
+
+      return signInWithCustomToken(auth, data.customToken);
+    }
+
+    async function completeCodeSignIn(email, code, requirePendingProfile) {
+      const credential = await verifyEmailCode(email, code);
+      const pendingProfileText = window.localStorage.getItem(pendingProfileKey);
+      const pendingProfile = pendingProfileText
+        ? JSON.parse(pendingProfileText)
+        : null;
+      let restoredProfile = null;
+
+      if (
+        pendingProfile &&
+        String(pendingProfile.email || "").toLowerCase() === email.toLowerCase()
+      ) {
+        restoredProfile = await saveVerifiedProfile(
+          credential.user,
+          pendingProfile
+        );
+        window.localStorage.removeItem(pendingProfileKey);
+      } else {
+        const savedDocument = await getDoc(
+          doc(db, usersCollection, credential.user.uid)
+        );
+
+        if (!savedDocument.exists()) {
+          if (requirePendingProfile) {
+            throw new Error("profile/missing-on-this-device");
+          }
+          throw new Error("profile/not-found");
+        }
+
+        restoredProfile = profileForLocalStorage(
+          savedDocument.data(),
+          credential.user.uid
+        );
+      }
+
+      currentRegisteredProfile = restoredProfile;
+      window.localStorage.setItem(
+        profileStorageKey,
+        JSON.stringify(restoredProfile)
+      );
+      window.localStorage.removeItem(emailForSignInKey);
+      window.sessionStorage.removeItem(forceOnboardingKey);
+      showRegisteredMember(restoredProfile);
+      return restoredProfile;
+    }
+
+    async function requestFullRegistrationDeletion() {
+      const user = auth.currentUser;
+      if (!user?.email) throw new Error("auth/user-not-found");
+
+      window.localStorage.setItem(emailForSignInKey, user.email.toLowerCase());
+      window.localStorage.setItem(pendingDeletionKey, "true");
+
+      await sendSignInLinkToEmail(auth, user.email, {
+        url: buildReturnUrl("delete-registration"),
+        handleCodeInApp: true
+      });
+    }
+
+    function clearPersonalStrengthLocalData() {
+      [
+        pendingProfileKey,
+        emailForSignInKey,
+        profileStorageKey,
+        journeyStorageKey,
+        pendingDeletionKey,
+        forceOnboardingKey
+      ].forEach((key) => window.localStorage.removeItem(key));
+    }
+
+    function hideAllMainViews() {
+      [
+        "audienceChoiceView",
+        "registeredMemberView",
+        "presenterView",
+        "welcomeView",
+        "chatView",
+        "emailAuthenticationResultView"
+      ].forEach((id) => {
+        const view = document.getElementById(id);
+        if (view) view.hidden = true;
+      });
+    }
+
+    function showRegisteredMember(profile) {
+      if (!profile) return;
+
+      if (typeof window.skipStrengthIntro === "function") {
+        window.skipStrengthIntro();
+      }
+
+      hideAllMainViews();
+
+      const view = document.getElementById("registeredMemberView");
+      const title = document.getElementById("registeredMemberTitle");
+      const message = document.getElementById("registeredMemberMessage");
+      const deletePanel = document.getElementById("registrationDeletePanel");
+      const deleteStatus = document.getElementById("registrationDeleteStatus");
+
+      if (!view || !title || !message) return;
+
+      const firstName = String(profile.firstName || profile.name || "").trim();
+      title.textContent = firstName
+        ? `שלום ${firstName}, טוב לראות אותך שוב`
+        : "טוב לראות אותך שוב";
+      message.textContent = "המסלול האישי שלך מחכה לך. אפשר להמשיך מהמקום שבו עצרת, להתחיל מחדש או לשנות את התוכנית.";
+      if (deletePanel) deletePanel.hidden = true;
+      if (deleteStatus) deleteStatus.textContent = "";
+      view.hidden = false;
+
+      window.requestAnimationFrame(() => {
+        view.scrollIntoView({ behavior: "auto", block: "center" });
+      });
+    }
+
+    function showFreshOnboarding() {
+      hideAllMainViews();
+      window.sessionStorage.setItem(forceOnboardingKey, "true");
+      window.localStorage.removeItem(profileStorageKey);
+      window.localStorage.removeItem(journeyStorageKey);
+      const audienceView = document.getElementById("audienceChoiceView");
+      if (audienceView) audienceView.hidden = false;
+      window.scrollTo({ top: 0, behavior: "auto" });
+    }
+
+    function profileForLocalStorage(profile, uid) {
+      const cleanProfile = { ...(profile || {}), uid };
+      delete cleanProfile.createdAt;
+      delete cleanProfile.updatedAt;
+      return cleanProfile;
+    }
+
+    function setStatus(element, message, isError = false) {
+      if (!element) return;
+      element.textContent = message;
+      element.style.color = isError ? "#ffb4b4" : "#fff3c4";
+    }
+
+    function wireRegisteredMemberControls() {
+      const registeredView = document.getElementById("registeredMemberView");
+      const continueButton = document.getElementById("registeredContinueButton");
+      const restartButton = document.getElementById("registeredRestartButton");
+      const changeProgramButton = document.getElementById("registeredChangeProgramButton");
+      const deleteButton = document.getElementById("registeredDeleteButton");
+      const deletePanel = document.getElementById("registrationDeletePanel");
+      const confirmDeleteButton = document.getElementById("confirmRegistrationDeleteButton");
+      const cancelDeleteButton = document.getElementById("cancelRegistrationDeleteButton");
+      const deleteStatus = document.getElementById("registrationDeleteStatus");
+
+      continueButton?.addEventListener("click", () => {
+        if (!currentRegisteredProfile) return;
+        if (registeredView) registeredView.hidden = true;
+        window.pardesPersonalJourney?.open(currentRegisteredProfile);
+      });
+
+      restartButton?.addEventListener("click", () => {
+        showFreshOnboarding();
+      });
+
+      changeProgramButton?.addEventListener("click", () => {
+        if (!currentRegisteredProfile) return;
+        if (registeredView) registeredView.hidden = true;
+        window.pardesPersonalJourney?.changeProgram(currentRegisteredProfile);
+      });
+
+      deleteButton?.addEventListener("click", () => {
+        if (!deletePanel) return;
+        deletePanel.hidden = false;
+        setStatus(deleteStatus, "");
+        deletePanel.scrollIntoView({ behavior: "smooth", block: "center" });
+      });
+
+      cancelDeleteButton?.addEventListener("click", () => {
+        if (deletePanel) deletePanel.hidden = true;
+        setStatus(deleteStatus, "");
+      });
+
+      confirmDeleteButton?.addEventListener("click", async () => {
+        confirmDeleteButton.disabled = true;
+        setStatus(deleteStatus, "שולח קישור אבטחה לדוא״ל שלך...");
+
+        try {
+          await requestFullRegistrationDeletion();
+          setStatus(
+            deleteStatus,
+            "נשלח אליך קישור לדוא״ל. רק לאחר פתיחת הקישור יימחקו החשבון, הפרופיל והמסלול."
+          );
+        } catch (error) {
+          setStatus(deleteStatus, messageForError(error), true);
+          confirmDeleteButton.disabled = false;
+        }
+      });
+    }
+
+    function wireReturningMemberControls() {
+      const alreadyRegisteredButton = document.getElementById("alreadyRegisteredButton");
+      const returningPanel = document.getElementById("audienceReturningPanel");
+      const returningEmail = document.getElementById("audienceReturningEmail");
+      const returningSubmit = document.getElementById("audienceReturningSubmit");
+      const returningCodePanel = document.getElementById("audienceReturningCodePanel");
+      const returningCode = document.getElementById("audienceReturningCode");
+      const returningVerify = document.getElementById("audienceReturningVerify");
+      const returningStatus = document.getElementById("audienceReturningStatus");
+
+      alreadyRegisteredButton?.addEventListener("click", () => {
+        if (!returningPanel) return;
+        returningPanel.hidden = !returningPanel.hidden;
+        if (!returningPanel.hidden) {
+          returningEmail?.focus();
+          returningPanel.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+      });
+
+      const submitReturningEmail = async () => {
+        const email = String(returningEmail?.value || "").trim();
+        returningSubmit.disabled = true;
+        setStatus(returningStatus, "שולח קוד כניסה לדוא״ל...");
+
+        try {
+          await sendReturningMemberCode(email);
+          if (returningCodePanel) returningCodePanel.hidden = false;
+          returningCode?.focus();
+          setStatus(
+            returningStatus,
+            "קוד בן 6 ספרות נשלח. יש להקליד אותו כאן. אם ההודעה אינה בדואר הנכנס, כדאי לבדוק בספאם ולסמן אותה כלא ספאם."
+          );
+        } catch (error) {
+          setStatus(returningStatus, messageForError(error), true);
+          returningSubmit.disabled = false;
+        }
+      };
+
+      returningSubmit?.addEventListener("click", submitReturningEmail);
+      returningEmail?.addEventListener("keydown", (event) => {
+        if (event.key !== "Enter") return;
+        event.preventDefault();
+        submitReturningEmail();
+      });
+
+      const verifyReturningCode = async () => {
+        returningVerify.disabled = true;
+        setStatus(returningStatus, "בודק את הקוד ומחזיר את המסלול...");
+
+        try {
+          await completeCodeSignIn(
+            String(returningEmail?.value || "").trim().toLowerCase(),
+            returningCode?.value,
+            false
+          );
+        } catch (error) {
+          setStatus(returningStatus, messageForError(error), true);
+          returningVerify.disabled = false;
+        }
+      };
+
+      returningVerify?.addEventListener("click", verifyReturningCode);
+      returningCode?.addEventListener("input", () => {
+        returningCode.value = returningCode.value.replace(/\D/g, "").slice(0, 6);
+      });
+      returningCode?.addEventListener("keydown", (event) => {
+        if (event.key !== "Enter") return;
+        event.preventDefault();
+        verifyReturningCode();
+      });
+    }
+
+    function bindProfileCodeForm(email) {
+      const codeInput = document.getElementById("profileVerificationCode");
+      const submitButton = document.getElementById("profileVerificationSubmit");
+      const resendButton = document.getElementById("profileVerificationResend");
+      const status = document.getElementById("profileVerificationStatus");
+
+      const verifyProfileCode = async () => {
+        submitButton.disabled = true;
+        setStatus(status, "בודק את הקוד ושומר את המסלול...");
+
+        try {
+          await completeCodeSignIn(email, codeInput?.value, true);
+        } catch (error) {
+          setStatus(status, messageForError(error), true);
+          submitButton.disabled = false;
+        }
+      };
+
+      codeInput?.addEventListener("input", () => {
+        codeInput.value = codeInput.value.replace(/\D/g, "").slice(0, 6);
+      });
+      codeInput?.addEventListener("keydown", (event) => {
+        if (event.key !== "Enter") return;
+        event.preventDefault();
+        verifyProfileCode();
+      });
+      submitButton?.addEventListener("click", verifyProfileCode);
+      resendButton?.addEventListener("click", async () => {
+        resendButton.disabled = true;
+        setStatus(status, "שולח קוד חדש...");
+        try {
+          await requestEmailCode(email);
+          setStatus(status, "קוד חדש נשלח לדוא״ל.");
+        } catch (error) {
+          setStatus(status, messageForError(error), true);
+        } finally {
+          window.setTimeout(() => {
+            resendButton.disabled = false;
+          }, 60000);
+        }
+      });
+
+      codeInput?.focus();
     }
 
     function messageForError(error) {
@@ -3603,6 +4142,19 @@
         "auth/unauthorized-continue-uri": "כתובת החזרה של האתר עדיין אינה מורשית ב־Firebase.",
         "auth/operation-not-allowed": "כניסה באמצעות קישור לדוא״ל עדיין אינה מופעלת ב־Firebase.",
         "auth/email-not-verified": "כתובת הדוא״ל עדיין לא אומתה.",
+        "auth/user-not-found": "לא נמצא משתמש רשום במכשיר הזה.",
+        "invalid-code-format": "יש להקליד קוד בן 6 ספרות.",
+        "incorrect-code": "הקוד שהוקלד אינו נכון. כדאי לבדוק אותו ולנסות שוב.",
+        "code-not-found": "לא נמצא קוד פעיל. יש לבקש קוד חדש.",
+        "code-expired": "תוקף הקוד הסתיים. יש לבקש קוד חדש.",
+        "too-many-attempts": "בוצעו יותר מדי ניסיונות. יש לבקש קוד חדש.",
+        "resend-too-soon": "כבר נשלח קוד. יש להמתין דקה לפני שליחה נוספת.",
+        "email-rate-limit": "נשלחו יותר מדי קודים לכתובת הזאת. כדאי להמתין ולנסות מאוחר יותר.",
+        "ip-rate-limit": "נשלחו יותר מדי בקשות מהמכשיר הזה. כדאי להמתין ולנסות מאוחר יותר.",
+        "profile/not-found": "לא נמצא מסלול שמור לכתובת הזאת.",
+        "profile/missing-on-this-device": "פרטי ההרשמה לא נמצאו במכשיר הזה. יש להתחיל את ההרשמה מחדש.",
+        "code-sending-failed": "לא הצלחנו לשלוח את הקוד כרגע. כדאי לנסות שוב.",
+        "code-verification-failed": "לא הצלחנו לאמת את הקוד כרגע. כדאי לנסות שוב.",
         "firebase-not-ready": "החיבור ל־Firebase עדיין לא נטען. כדאי לרענן את הדף ולנסות שוב."
       };
 
@@ -3615,15 +4167,7 @@
         window.skipStrengthIntro();
       }
 
-      [
-        "audienceChoiceView",
-        "presenterView",
-        "welcomeView",
-        "chatView"
-      ].forEach((id) => {
-        const view = document.getElementById(id);
-        if (view) view.hidden = true;
-      });
+      hideAllMainViews();
 
       let resultView = document.getElementById("emailAuthenticationResultView");
 
@@ -3673,6 +4217,24 @@
           window.location.href
         );
 
+        const deletionRequested =
+          window.localStorage.getItem(pendingDeletionKey) === "true" ||
+          new URL(window.location.href).searchParams.get("personalStrengthAction") === "delete-registration";
+
+        if (deletionRequested) {
+          await deleteDoc(doc(db, usersCollection, credential.user.uid));
+          await deleteUser(credential.user);
+          clearPersonalStrengthLocalData();
+          window.sessionStorage.removeItem(forceOnboardingKey);
+          window.history.replaceState({}, document.title, buildReturnUrl().split("?")[0]);
+
+          showEmailAuthenticationResult(
+            "הרישום בוטל בהצלחה",
+            "הפרופיל, המסלול וחשבון הזיהוי נמחקו. אפשר להירשם מחדש ולהתחיל את כל התהליך מההתחלה."
+          );
+          return;
+        }
+
         const pendingProfileText = window.localStorage.getItem(pendingProfileKey);
         const pendingProfile = pendingProfileText
           ? JSON.parse(pendingProfileText)
@@ -3700,6 +4262,8 @@
         }
 
         window.localStorage.removeItem(emailForSignInKey);
+        window.localStorage.removeItem(pendingDeletionKey);
+        window.sessionStorage.removeItem(forceOnboardingKey);
         window.history.replaceState({}, document.title, buildReturnUrl().split("?")[0]);
 
         showEmailAuthenticationResult(
@@ -3717,8 +4281,38 @@
 
     window.pardesPersonalStrengthFirebase = {
       startEmailVerification,
+      bindProfileCodeForm,
       messageForError
     };
+
+    wireRegisteredMemberControls();
+    wireReturningMemberControls();
+
+    onAuthStateChanged(auth, async (user) => {
+      if (emailLinkFlowActive) return;
+      if (window.sessionStorage.getItem(forceOnboardingKey) === "true") return;
+      if (!user?.uid || !user.emailVerified) return;
+
+      try {
+        const savedDocument = await getDoc(
+          doc(db, usersCollection, user.uid)
+        );
+
+        if (!savedDocument.exists()) return;
+
+        currentRegisteredProfile = profileForLocalStorage(
+          savedDocument.data(),
+          user.uid
+        );
+        window.localStorage.setItem(
+          profileStorageKey,
+          JSON.stringify(currentRegisteredProfile)
+        );
+        showRegisteredMember(currentRegisteredProfile);
+      } catch (error) {
+        console.error("Could not restore the personal-strength profile.", error);
+      }
+    });
 
     completeEmailLinkSignIn();
   </script>
