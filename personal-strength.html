@@ -1002,7 +1002,7 @@
 
     .plan-preview-button {
       position: absolute;
-      bottom: 50px;
+      bottom: 43px;
       left: 12px;
       min-height: 28px;
       margin: 0;
@@ -4327,6 +4327,23 @@
       const areas = Array.isArray(journey?.areas)
         ? [...new Set(journey.areas.filter((area) => allowedAreas.has(area)))].slice(0, 3)
         : [];
+      const checkIn = ["מחר", "בעוד שלושה ימים", "בסוף השבוע", "בלי תזכורת כרגע"]
+        .includes(journey?.checkIn)
+        ? journey.checkIn
+        : "";
+      const profileSnapshot = await getDoc(
+        doc(db, usersCollection, user.uid)
+      );
+      const profileData = profileSnapshot.exists()
+        ? profileSnapshot.data()
+        : {};
+      const reminderEnabled =
+        profileData.emailUpdatesConsent === true &&
+        checkIn !== "" &&
+        checkIn !== "בלי תזכורת כרגע";
+      const nextCheckInAt = reminderEnabled
+        ? calculatePersonalStrengthCheckInDate(checkIn).toISOString()
+        : null;
       const safeJourney = {
         areas,
         focusArea: areas.includes(journey?.focusArea)
@@ -4336,10 +4353,13 @@
         stepPace: ["small", "balanced", "challenge"].includes(journey?.stepPace)
           ? journey.stepPace
           : "small",
-        checkIn: ["מחר", "בעוד שלושה ימים", "בסוף השבוע", "בלי תזכורת כרגע"]
-          .includes(journey?.checkIn)
-          ? journey.checkIn
-          : "",
+        checkIn,
+        reminderEnabled,
+        nextCheckInAt,
+        reminderStatus: reminderEnabled ? "pending" : "disabled",
+        reminderAttempts: 0,
+        reminderLockUntil: "",
+        lastReminderSentAt: null,
         suggestionAccepted: journey?.suggestionAccepted === true,
         dashboardOpened: journey?.dashboardOpened === true,
         lastProgress: ["completed", "not-yet"].includes(journey?.lastProgress)
@@ -4356,6 +4376,23 @@
       );
 
       return safeJourney;
+    }
+
+    function calculatePersonalStrengthCheckInDate(checkIn) {
+      const now = new Date();
+      const target = new Date(now);
+      target.setHours(10, 0, 0, 0);
+
+      if (checkIn === "מחר") {
+        target.setDate(target.getDate() + 1);
+      } else if (checkIn === "בעוד שלושה ימים") {
+        target.setDate(target.getDate() + 3);
+      } else if (checkIn === "בסוף השבוע") {
+        const daysUntilFriday = (5 - target.getDay() + 7) % 7;
+        target.setDate(target.getDate() + (daysUntilFriday || 7));
+      }
+
+      return target;
     }
 
     async function completeCodeSignIn(email, code, requirePendingProfile) {
