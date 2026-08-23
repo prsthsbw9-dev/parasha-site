@@ -1324,6 +1324,19 @@
       preload="auto"
       poster="personal-strength-promo-poster.jpg"
     >
+      <!-- גרסה אופקית למסכי לפטופ ומחשב -->
+      <source
+        src="personal-strength-promo-desktop.mp4"
+        type="video/mp4"
+        media="(min-width: 1000px) and (orientation: landscape)"
+      >
+    
+      <!-- גרסה אנכית לטלפונים ולמסכים קטנים -->
+      <source
+        src="personal-strength-promo-web.mp4"
+        type="video/mp4"
+      >
+    </video>
       <source
         src="personal-strength-promo-web.mp4"
         type="video/mp4"
@@ -1895,6 +1908,15 @@
       const audio = document.getElementById("strengthIntroAudio");
       const soundButton = document.getElementById("introSoundButton");
       const soundIcon = document.getElementById("introSoundIcon");
+      const useDesktopIntro = window.matchMedia(
+        "(min-width: 1000px) and (orientation: landscape)"
+      ).matches;
+      
+      if (video) {
+        video.poster = useDesktopIntro
+          ? "personal-strength-promo-desktop-poster.jpg"
+          : "personal-strength-promo-poster.jpg";
+      }     
   
       if (window.self !== window.top) {
         body.classList.add("is-embedded");
