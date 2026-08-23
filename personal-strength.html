@@ -1608,13 +1608,14 @@
         <div class="suggestion-box">
           <strong class="suggestion-title">הצעד הראשון שלך לשבוע הקרוב</strong>
           <span id="suggestionText"></span>
+          <p class="area-note" id="aiPlanStatus" aria-live="polite"></p>
         </div>
         <div class="suggestion-actions">
           <button class="journey-btn primary" id="acceptSuggestionButton" type="button">
             אני מקבל את הצעד הזה
           </button>
           <button class="journey-btn secondary" id="alternateSuggestionButton" type="button">
-            הציעו לי צעד אחר
+            בחירת רמת התחלה אחרת
           </button>
           <button class="journey-btn secondary" id="easierSuggestionButton" type="button">
             אני רוצה צעד קל יותר
@@ -1635,8 +1636,11 @@
       <div class="question-panel" id="completionSummary" hidden>
         <h3 class="route-summary-title">המסלול האישי שלך מוכן</h3>
         <div class="route-summary-list">
+          <div class="route-summary-row"><strong>החיזוק האישי:</strong> <span id="summaryWelcome"></span></div>
           <div class="route-summary-row"><strong>הנושא השבועי:</strong> <span id="summaryArea"></span></div>
           <div class="route-summary-row"><strong>הצעד שנבחר:</strong> <span id="summaryStep"></span></div>
+          <div class="route-summary-row"><strong>למה הצעד מתאים:</strong> <span id="summaryExplanation"></span></div>
+          <div class="route-summary-row"><strong>הכיוון מן המקור:</strong> <span id="summarySource"></span></div>
           <div class="route-summary-row"><strong>הבדיקה הבאה:</strong> <span id="summaryCheckIn"></span></div>
           <div class="route-summary-row"><strong>סטטוס:</strong> <span>השבוע הראשון שלי</span></div>
         </div>
@@ -1651,7 +1655,8 @@
         <h3 class="route-summary-title">המסלול האישי שלי</h3>
         <div class="route-summary-row" style="margin-bottom: 12px;"><strong>הנושא שלי השבוע:</strong> <span id="dashboardArea"></span></div>
         <div class="daily-step"><strong class="suggestion-title">הצעד שלי להיום</strong><span id="dashboardStep"></span></div>
-        <p class="encouragement-line">גם צעד קטן שנעשה בכוונה טובה יכול לפתוח דרך גדולה.</p>
+        <p class="encouragement-line" id="dashboardEncouragement">גם צעד קטן שנעשה בכוונה טובה יכול לפתוח דרך גדולה.</p>
+        <div class="route-summary-row" style="margin-top: 12px;"><strong>הכיוון מן המקור:</strong> <span id="dashboardSource"></span></div>
         <div class="suggestion-actions">
           <button class="journey-btn primary" id="completedTodayButton" type="button">ביצעתי היום</button>
           <button class="journey-btn secondary" id="notYetButton" type="button">עדיין לא, אנסה בהמשך</button>
@@ -2730,19 +2735,25 @@
       const paceQuestion = document.getElementById("paceQuestion");
       const suggestionQuestion = document.getElementById("suggestionQuestion");
       const suggestionText = document.getElementById("suggestionText");
+      const aiPlanStatus = document.getElementById("aiPlanStatus");
       const acceptSuggestionButton = document.getElementById("acceptSuggestionButton");
       const alternateSuggestionButton = document.getElementById("alternateSuggestionButton");
       const easierSuggestionButton = document.getElementById("easierSuggestionButton");
       const checkInQuestion = document.getElementById("checkInQuestion");
       const completionSummary = document.getElementById("completionSummary");
+      const summaryWelcome = document.getElementById("summaryWelcome");
       const summaryArea = document.getElementById("summaryArea");
       const summaryStep = document.getElementById("summaryStep");
+      const summaryExplanation = document.getElementById("summaryExplanation");
+      const summarySource = document.getElementById("summarySource");
       const summaryCheckIn = document.getElementById("summaryCheckIn");
       const openJourneyButton = document.getElementById("openJourneyButton");
       const changeStepButton = document.getElementById("changeStepButton");
       const journeyDashboard = document.getElementById("journeyDashboard");
       const dashboardArea = document.getElementById("dashboardArea");
       const dashboardStep = document.getElementById("dashboardStep");
+      const dashboardEncouragement = document.getElementById("dashboardEncouragement");
+      const dashboardSource = document.getElementById("dashboardSource");
       const dashboardCheckIn = document.getElementById("dashboardCheckIn");
       const savedAreasRow = document.getElementById("savedAreasRow");
       const dashboardSavedAreas = document.getElementById("dashboardSavedAreas");
@@ -2763,13 +2774,16 @@
         !areaSelectionNote || !focusQuestion ||
         !focusGrid || !currentStatusQuestion || !currentStatusTitle ||
         !paceQuestion || !suggestionQuestion || !suggestionText ||
+        !aiPlanStatus ||
         !acceptSuggestionButton || !alternateSuggestionButton ||
         !easierSuggestionButton || !checkInQuestion ||
         !returningMemberCheckbox || !returningMemberPanel ||
         !returningMemberName || !findJourneyButton || !memberLookupStatus ||
-        !completionSummary || !summaryArea || !summaryStep ||
+        !completionSummary || !summaryWelcome || !summaryArea ||
+        !summaryStep || !summaryExplanation || !summarySource ||
         !summaryCheckIn || !openJourneyButton || !changeStepButton ||
         !journeyDashboard || !dashboardArea || !dashboardStep ||
+        !dashboardEncouragement || !dashboardSource ||
         !dashboardCheckIn || !savedAreasRow || !dashboardSavedAreas ||
         !completedTodayButton || !notYetButton || !progressMessage
       ) return;
@@ -2955,12 +2969,37 @@
         paceQuestion.hidden = false;
       }
 
-      function choosePace(pace) {
-        const text = getSuggestion(draft.focusArea, pace);
+      function aiPlanDisplayText(plan, sourceGuide) {
+        if (!plan) return "";
+        const parts = [
+          plan.welcome,
+          plan.weeklyGoal,
+          plan.explanation,
+          sourceGuide?.source && sourceGuide?.principle
+            ? `${sourceGuide.source}: ${sourceGuide.principle}`
+            : "",
+          plan.encouragement,
+          plan.safetyNote
+        ];
+        return parts.filter(Boolean).join("\n\n");
+      }
+
+      function setAiPlanLoading(isLoading) {
+        acceptSuggestionButton.disabled = isLoading;
+        alternateSuggestionButton.disabled = isLoading;
+        easierSuggestionButton.disabled = isLoading;
+        paceButtons.forEach((button) => {
+          button.disabled = isLoading;
+        });
+      }
+
+      async function choosePace(pace) {
         saveDraft({
           ...draft,
           pace,
-          suggestionText: text,
+          aiPlan: null,
+          aiSourceGuide: null,
+          suggestionText: "",
           suggestionAccepted: false,
           checkIn: ""
         });
@@ -2970,10 +3009,61 @@
         } else {
           appendBubble(paceLabel(pace), "user", "pace-user");
         }
-        appendBubble("לפי הבחירות שלך, זו ההצעה הראשונה שמתאימה להתחלה:", "guide", "pace-guide");
-        suggestionText.textContent = text + "\n\nלא צריך להצליח בכל פעם. המטרה היא להתחיל לזהות את הרגע הנכון ולבנות הרגל שאפשר לשמור עליו.";
+        appendBubble("אני מכין עכשיו את הצעד הראשון שמתאים לבחירות שלך.", "guide", "pace-guide");
         paceQuestion.hidden = true;
         suggestionQuestion.hidden = false;
+        suggestionText.textContent = "התוכנית האישית שלך נוצרת כעת...";
+        aiPlanStatus.textContent = "התהליך עשוי להימשך כמה שניות. אין לסגור את הדף.";
+        setAiPlanLoading(true);
+
+        try {
+          const aiConnection = window.pardesPersonalStrengthAi;
+
+          if (!aiConnection?.createPlan) {
+            throw new Error("firebase-not-ready");
+          }
+
+          const result = await aiConnection.createPlan({
+            areas: Array.isArray(draft.areas) ? draft.areas : [],
+            focusArea: draft.focusArea,
+            currentStatus: draft.currentStatus,
+            stepPace: pace,
+            checkIn: ""
+          });
+          const plan = result?.plan;
+
+          if (!plan?.weeklyGoal) {
+            throw new Error("invalid-ai-plan");
+          }
+
+          saveDraft({
+            ...draft,
+            pace,
+            aiPlan: plan,
+            aiSourceGuide: result.sourceGuide || null,
+            suggestionText: plan.weeklyGoal,
+            suggestionAccepted: false,
+            checkIn: ""
+          });
+          suggestionText.textContent = aiPlanDisplayText(
+            plan,
+            result.sourceGuide
+          );
+          aiPlanStatus.textContent = result.cached
+            ? "התוכנית האישית השמורה שלך נטענה בהצלחה."
+            : "התוכנית האישית נוצרה ונשמרה בהצלחה.";
+          easierSuggestionButton.hidden = pace === "small";
+        } catch (error) {
+          console.error("Could not create the personal-strength plan.", error);
+          suggestionText.textContent =
+            "לא הצלחנו כרגע ליצור את התוכנית האישית. הפרטים שבחרת נשמרו ולא אבדו.";
+          aiPlanStatus.textContent =
+            "כדאי לבדוק את החיבור ולבחור שוב את רמת ההתחלה כדי לנסות מחדש.";
+          acceptSuggestionButton.disabled = true;
+        } finally {
+          setAiPlanLoading(false);
+          if (!draft?.aiPlan) acceptSuggestionButton.disabled = true;
+        }
       }
 
       function showCheckInQuestion() {
@@ -3000,17 +3090,28 @@
       function fillJourneyDetails() {
         if (!draft) return;
 
-        const step = draft.suggestionText ||
-          getSuggestion(draft.focusArea, draft.pace || "small");
+        const plan = draft.aiPlan || {};
+        const sourceGuide = draft.aiSourceGuide || {};
+        const step = plan.weeklyGoal || draft.suggestionText || "";
         const additionalAreas = Array.isArray(draft.areas)
           ? draft.areas.filter((area) => area !== draft.focusArea)
           : [];
 
+        summaryWelcome.textContent = plan.welcome || "";
         summaryArea.textContent = draft.focusArea || "";
         summaryStep.textContent = step;
+        summaryExplanation.textContent = plan.explanation || "";
+        summarySource.textContent = sourceGuide.source
+          ? `${sourceGuide.source}: ${sourceGuide.principle || ""}`
+          : "";
         summaryCheckIn.textContent = draft.checkIn || "טרם נקבע";
         dashboardArea.textContent = draft.focusArea || "";
         dashboardStep.textContent = step;
+        dashboardEncouragement.textContent = plan.encouragement ||
+          "גם צעד קטן שנעשה בכוונה טובה יכול לפתוח דרך גדולה.";
+        dashboardSource.textContent = sourceGuide.source
+          ? `${sourceGuide.source}: ${sourceGuide.principle || ""}`
+          : "";
         dashboardCheckIn.textContent = draft.checkIn || "טרם נקבע";
         dashboardSavedAreas.textContent = additionalAreas.join(" · ");
         savedAreasRow.hidden = additionalAreas.length === 0;
@@ -3237,10 +3338,20 @@
         }
 
         appendBubble(paceLabel(draft.pace), "user", "pace-user");
-        appendBubble("לפי הבחירות שלך, זו ההצעה הראשונה שמתאימה להתחלה:", "guide", "pace-guide");
-        suggestionText.textContent = (draft.suggestionText || getSuggestion(draft.focusArea, draft.pace)) +
-          "\n\nלא צריך להצליח בכל פעם. המטרה היא להתחיל לזהות את הרגע הנכון ולבנות הרגל שאפשר לשמור עליו.";
+        appendBubble("לפי הבחירות שלך, זו התוכנית האישית שמתאימה להתחלה:", "guide", "pace-guide");
         paceQuestion.hidden = true;
+
+        if (!draft.aiPlan?.weeklyGoal) {
+          choosePace(draft.pace);
+          return;
+        }
+
+        suggestionText.textContent = aiPlanDisplayText(
+          draft.aiPlan,
+          draft.aiSourceGuide
+        );
+        aiPlanStatus.textContent = "התוכנית האישית השמורה שלך נטענה בהצלחה.";
+        easierSuggestionButton.hidden = draft.pace === "small";
 
         if (!draft.suggestionAccepted) {
           suggestionQuestion.hidden = false;
@@ -3512,15 +3623,18 @@
 
       alternateSuggestionButton.addEventListener("click", () => {
         if (!draft || !draft.focusArea || !draft.pace) return;
-        const alternateText = getSuggestion(draft.focusArea, draft.pace, true);
         saveDraft({
           ...draft,
-          suggestionText: alternateText,
+          pace: "",
+          aiPlan: null,
+          aiSourceGuide: null,
+          suggestionText: "",
           suggestionAccepted: false,
           checkIn: ""
         });
-        suggestionText.textContent = alternateText +
-          "\n\nלא צריך להצליח בכל פעם. המטרה היא לבנות צעד שאפשר לשמור עליו.";
+        suggestionQuestion.hidden = true;
+        paceQuestion.hidden = false;
+        aiPlanStatus.textContent = "";
       });
 
       easierSuggestionButton.addEventListener("click", () => {
@@ -3537,7 +3651,7 @@
       });
 
       checkInButtons.forEach((button) => {
-        button.addEventListener("click", () => {
+        button.addEventListener("click", async () => {
           if (!draft || !draft.suggestionAccepted) return;
           const checkIn = button.dataset.checkIn || button.textContent.trim();
           saveDraft({
@@ -3558,6 +3672,21 @@
             "guide",
             "checkin-guide"
           );
+          try {
+            await window.pardesPersonalStrengthAi?.saveJourney?.({
+              areas: draft.areas,
+              focusArea: draft.focusArea,
+              currentStatus: draft.currentStatus,
+              stepPace: draft.pace,
+              checkIn: draft.checkIn,
+              suggestionAccepted: true,
+              dashboardOpened: false,
+              lastProgress: "",
+              lastProgressAt: ""
+            });
+          } catch (error) {
+            console.error("Could not save the personal journey in Firebase.", error);
+          }
           showCompletionSummary();
         });
       });
@@ -3658,6 +3787,37 @@
             return;
           }
 
+          const serverPlan = profile?.personalStrengthPlan;
+          const serverJourney = profile?.personalStrengthJourney || {};
+
+          if (serverPlan?.content?.weeklyGoal) {
+            const selections = serverPlan.selections || {};
+            saveDraft({
+              name: String(profile?.firstName || profile?.name || "").trim(),
+              gender: profile?.gender === "female" ? "female" : "male",
+              profilePace: selections.profilePace || profile?.pace || "",
+              areas: Array.isArray(serverJourney.areas)
+                ? serverJourney.areas
+                : (Array.isArray(selections.areas) ? selections.areas : []),
+              areasConfirmed: true,
+              focusArea: serverJourney.focusArea || selections.focusArea || "",
+              currentStatus: serverJourney.currentStatus || selections.currentStatus || "",
+              pace: serverJourney.stepPace || selections.stepPace || "small",
+              aiPlan: serverPlan.content,
+              aiSourceGuide: serverPlan.sourceGuide || null,
+              suggestionText: serverPlan.content.weeklyGoal,
+              suggestionAccepted: serverJourney.suggestionAccepted === true,
+              checkIn: serverJourney.checkIn || "",
+              isMember: true,
+              setupCompleted: Boolean(serverJourney.checkIn),
+              dashboardOpened: Boolean(serverJourney.checkIn),
+              lastProgress: serverJourney.lastProgress || "",
+              lastProgressAt: serverJourney.lastProgressAt || ""
+            });
+            restoreDraft();
+            return;
+          }
+
           beginProgramSelectionFromProfile(profile);
         },
         changeProgram(profile) {
@@ -3709,6 +3869,7 @@
     const usersCollection = "personalStrengthUsers";
     const sendCodeUrl = "https://us-central1-parasha-site-links.cloudfunctions.net/sendPersonalStrengthCode";
     const verifyCodeUrl = "https://us-central1-parasha-site-links.cloudfunctions.net/verifyPersonalStrengthCode";
+    const createPlanUrl = "https://us-central1-parasha-site-links.cloudfunctions.net/createPersonalStrengthPlan";
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
@@ -3847,6 +4008,82 @@
       }
 
       return signInWithCustomToken(auth, data.customToken);
+    }
+
+    async function createPersonalStrengthPlan(selections) {
+      const user = auth.currentUser;
+
+      if (!user?.uid || !user.emailVerified) {
+        throw new Error("auth/email-not-verified");
+      }
+
+      const idToken = await user.getIdToken();
+      const response = await fetch(createPlanUrl, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${idToken}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(selections || {})
+      });
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok || !data.plan) {
+        const error = new Error(
+          data.error || "personal-strength-plan-generation-failed"
+        );
+        error.code = data.error ||
+          "personal-strength-plan-generation-failed";
+        throw error;
+      }
+
+      return data;
+    }
+
+    async function savePersonalStrengthJourney(journey) {
+      const user = auth.currentUser;
+
+      if (!user?.uid || !user.emailVerified) {
+        throw new Error("auth/email-not-verified");
+      }
+
+      const allowedAreas = new Set([
+        "תפילה וברכות", "שבת", "לימוד תורה", "שמירת הלשון",
+        "כיבוד הורים", "חסד וצדקה", "אמונה וביטחון",
+        "שליטה בכעס", "זוגיות בונה", "תחום אחר"
+      ]);
+      const areas = Array.isArray(journey?.areas)
+        ? [...new Set(journey.areas.filter((area) => allowedAreas.has(area)))].slice(0, 3)
+        : [];
+      const safeJourney = {
+        areas,
+        focusArea: areas.includes(journey?.focusArea)
+          ? journey.focusArea
+          : "",
+        currentStatus: String(journey?.currentStatus || "").slice(0, 60),
+        stepPace: ["small", "balanced", "challenge"].includes(journey?.stepPace)
+          ? journey.stepPace
+          : "small",
+        checkIn: ["מחר", "בעוד שלושה ימים", "בסוף השבוע", "בלי תזכורת כרגע"]
+          .includes(journey?.checkIn)
+          ? journey.checkIn
+          : "",
+        suggestionAccepted: journey?.suggestionAccepted === true,
+        dashboardOpened: journey?.dashboardOpened === true,
+        lastProgress: ["completed", "not-yet"].includes(journey?.lastProgress)
+          ? journey.lastProgress
+          : "",
+        lastProgressAt: String(journey?.lastProgressAt || "").slice(0, 40),
+        updatedAt: serverTimestamp()
+      };
+
+      await setDoc(
+        doc(db, usersCollection, user.uid),
+        { personalStrengthJourney: safeJourney },
+        { merge: true }
+      );
+
+      return safeJourney;
     }
 
     async function completeCodeSignIn(email, code, requirePendingProfile) {
@@ -4404,6 +4641,11 @@
       startEmailVerification,
       bindProfileCodeForm,
       messageForError
+    };
+
+    window.pardesPersonalStrengthAi = {
+      createPlan: createPersonalStrengthPlan,
+      saveJourney: savePersonalStrengthJourney
     };
 
     wireRegisteredMemberControls();
