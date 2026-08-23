@@ -1000,6 +1000,102 @@
       background: transparent;
     }
 
+    .plan-preview-button {
+      justify-self: start;
+      min-height: 46px;
+      margin: -4px 0 2px;
+      padding: 10px 18px;
+      cursor: pointer;
+      color: #241a08;
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 800;
+      border: 1px solid rgba(255, 238, 190, 0.88);
+      border-radius: 13px;
+      background: linear-gradient(135deg, #fff0b7, #ddb143);
+      box-shadow: 0 8px 22px rgba(0, 0, 0, 0.28);
+    }
+
+    .plan-preview-button:disabled {
+      cursor: wait;
+      opacity: 0.62;
+    }
+
+    .plan-preview-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 12000;
+      display: grid;
+      place-items: center;
+      padding: calc(env(safe-area-inset-top, 0px) + 18px) 16px
+        calc(env(safe-area-inset-bottom, 0px) + 18px);
+      background: rgba(2, 5, 8, 0.9);
+    }
+
+    .plan-preview-modal[hidden] {
+      display: none;
+    }
+
+    .plan-preview-panel {
+      width: min(100%, 650px);
+      max-height: 88svh;
+      overflow-y: auto;
+      padding: 22px 18px;
+      color: #ffffff;
+      border: 1px solid rgba(255, 231, 166, 0.58);
+      border-radius: 17px;
+      background: #11130f;
+      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.65);
+    }
+
+    .plan-preview-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .plan-preview-title {
+      margin: 0;
+      color: #ffe7a6;
+      font-size: clamp(22px, 5vw, 30px);
+    }
+
+    .plan-preview-close {
+      flex: 0 0 auto;
+      width: 42px;
+      height: 42px;
+      padding: 0;
+      cursor: pointer;
+      color: #ffffff;
+      font-family: inherit;
+      font-size: 25px;
+      line-height: 1;
+      border: 1px solid rgba(255, 255, 255, 0.45);
+      border-radius: 50%;
+      background: #090b09;
+    }
+
+    .plan-preview-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .plan-preview-row {
+      padding: 12px 13px;
+      line-height: 1.65;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 11px;
+      background: #1a1c18;
+    }
+
+    .plan-preview-row strong {
+      display: block;
+      margin-bottom: 3px;
+      color: #fff0c8;
+    }
+
     /* פתיח חיזוק אישי */
     .strength-intro {
       position: fixed;
@@ -1088,8 +1184,21 @@
           background fixed גורם לריצוד בחלק מדפדפני Samsung
           כאשר גובה התוכן משתנה.
         */
+        background-image: none;
         background-attachment: scroll;
-        background-position: center top;
+      }
+
+      body::before {
+        position: absolute;
+        min-height: 100%;
+        background:
+          linear-gradient(
+            180deg,
+            rgba(0, 0, 0, 0.16) 0%,
+            rgba(0, 0, 0, 0.08) 34%,
+            rgba(0, 0, 0, 0.3) 100%
+          ),
+          url("personal-strength-background.webp") center top / cover no-repeat;
       }
 
       .chat-card {
@@ -1100,6 +1209,10 @@
         backdrop-filter: none;
         -webkit-backdrop-filter: none;
         background: rgba(0, 0, 0, 0.72);
+      }
+
+      .plan-preview-button {
+        width: min(100%, 310px);
       }
 
       .chat-log {
@@ -1670,6 +1783,28 @@
         חזרה למסך הפתיחה
       </button>
     </section>
+
+    <div
+      class="plan-preview-modal"
+      id="planPreviewModal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="planPreviewTitle"
+      hidden
+    >
+      <div class="plan-preview-panel">
+        <div class="plan-preview-header">
+          <h2 class="plan-preview-title" id="planPreviewTitle">התוכנית האישית שלי</h2>
+          <button
+            class="plan-preview-close"
+            id="planPreviewClose"
+            type="button"
+            aria-label="סגירת חלון התוכנית"
+          >×</button>
+        </div>
+        <div class="plan-preview-list" id="planPreviewList"></div>
+      </div>
+    </div>
   </main>
 
   <script>
@@ -2760,6 +2895,9 @@
       const completedTodayButton = document.getElementById("completedTodayButton");
       const notYetButton = document.getElementById("notYetButton");
       const progressMessage = document.getElementById("progressMessage");
+      const planPreviewModal = document.getElementById("planPreviewModal");
+      const planPreviewClose = document.getElementById("planPreviewClose");
+      const planPreviewList = document.getElementById("planPreviewList");
       const genderButtons = Array.from(document.querySelectorAll("[data-gender]"));
       const areaButtons = Array.from(document.querySelectorAll("#areaGrid .area-btn"));
       const currentStatusButtons = Array.from(document.querySelectorAll(".current-status-btn"));
@@ -2785,7 +2923,8 @@
         !journeyDashboard || !dashboardArea || !dashboardStep ||
         !dashboardEncouragement || !dashboardSource ||
         !dashboardCheckIn || !savedAreasRow || !dashboardSavedAreas ||
-        !completedTodayButton || !notYetButton || !progressMessage
+        !completedTodayButton || !notYetButton || !progressMessage ||
+        !planPreviewModal || !planPreviewClose || !planPreviewList
       ) return;
 
       let selectedGender = "";
@@ -2853,8 +2992,11 @@
       }
 
       function appendBubble(text, type, flowKey = "") {
-        if (flowKey && chatLog.querySelector(`[data-flow-key="${flowKey}"]`)) {
-          return;
+        const existingBubble = flowKey
+          ? chatLog.querySelector(`[data-flow-key="${flowKey}"]`)
+          : null;
+        if (existingBubble) {
+          return existingBubble;
         }
         const bubble = document.createElement("div");
         bubble.className = `chat-bubble ${type}`;
@@ -2862,7 +3004,106 @@
         if (flowKey) bubble.dataset.flowKey = flowKey;
         chatLog.appendChild(bubble);
         chatLog.scrollTop = chatLog.scrollHeight;
+        return bubble;
       }
+
+      function planPreviewButtonText() {
+        return (draft && draft.gender) === "female"
+          ? "צפי בתוכנית שלי כרגע"
+          : "צפה בתוכנית שלי כרגע";
+      }
+
+      function progressSummaryText() {
+        if (!draft?.lastProgress) {
+          return draft?.suggestionAccepted
+            ? "התוכנית נשמרה; עדיין לא נרשם עדכון ביצוע."
+            : "התוכנית עדיין נמצאת בשלב הבחירה.";
+        }
+
+        const actionText = draft.lastProgress === "completed"
+          ? "הצעד האחרון סומן כבוצע."
+          : "הצעד האחרון עדיין לא בוצע; המסלול נשמר להמשך.";
+        if (!draft.lastProgressAt) return actionText;
+
+        const date = new Date(draft.lastProgressAt);
+        if (Number.isNaN(date.getTime())) return actionText;
+        return `${actionText} העדכון האחרון: ${date.toLocaleDateString("he-IL")}.`;
+      }
+
+      function addPlanPreviewRow(label, value) {
+        if (!value) return;
+        const row = document.createElement("div");
+        row.className = "plan-preview-row";
+        const heading = document.createElement("strong");
+        const content = document.createElement("span");
+        heading.textContent = label;
+        content.textContent = value;
+        row.append(heading, content);
+        planPreviewList.appendChild(row);
+      }
+
+      function openPlanPreview() {
+        if (!draft) return;
+        const plan = draft.aiPlan || {};
+        const sourceGuide = draft.aiSourceGuide || {};
+        const selectedTopics = Array.isArray(draft.areas)
+          ? draft.areas.join(" · ")
+          : "";
+
+        planPreviewList.textContent = "";
+        addPlanPreviewRow("שם", draft.name || "");
+        addPlanPreviewRow("התחומים שבחרת", selectedTopics);
+        addPlanPreviewRow("התחום שבו מתחילים", draft.focusArea || "");
+        addPlanPreviewRow("רמת ההתחלה", paceLabel(draft.pace || ""));
+        addPlanPreviewRow("המצב הנוכחי", statusLabel(draft.currentStatus || ""));
+        addPlanPreviewRow("הצעד בתוכנית", plan.weeklyGoal || draft.suggestionText || "");
+        addPlanPreviewRow("למה הצעד מתאים", plan.explanation || "");
+        addPlanPreviewRow(
+          "הכיוון מן המקור",
+          sourceGuide.source
+            ? `${sourceGuide.source}: ${sourceGuide.principle || ""}`
+            : ""
+        );
+        addPlanPreviewRow("הבדיקה הבאה", draft.checkIn || "טרם נקבעה");
+        addPlanPreviewRow("ההתקדמות עד עכשיו", progressSummaryText());
+        planPreviewModal.hidden = false;
+        document.body.style.overflow = "hidden";
+        planPreviewClose.focus();
+      }
+
+      function closePlanPreview() {
+        if (planPreviewModal.hidden) return;
+        planPreviewModal.hidden = true;
+        document.body.style.overflow = "";
+        chatLog.querySelector(".plan-preview-button")?.focus();
+      }
+
+      function ensurePlanPreviewButton() {
+        const paceBubble = chatLog.querySelector('[data-flow-key="pace-guide"]');
+        if (!paceBubble || !draft?.aiPlan?.weeklyGoal) return;
+
+        paceBubble.textContent =
+          "לפי הבחירה שלך, זו התוכנית האישית שמתאימה להתחלה:";
+        let button = chatLog.querySelector(".plan-preview-button");
+        if (!button) {
+          button = document.createElement("button");
+          button.type = "button";
+          button.className = "plan-preview-button";
+          button.addEventListener("click", openPlanPreview);
+          paceBubble.insertAdjacentElement("afterend", button);
+        }
+        button.textContent = planPreviewButtonText();
+      }
+
+      planPreviewClose.addEventListener("click", closePlanPreview);
+      planPreviewModal.addEventListener("click", (event) => {
+        if (event.target === planPreviewModal) closePlanPreview();
+      });
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape" && !planPreviewModal.hidden) {
+          closePlanPreview();
+        }
+      });
 
       function statusLabel(statusCode) {
         const female = ((draft && draft.gender) || selectedGender) === "female";
@@ -2994,6 +3235,7 @@
       }
 
       async function choosePace(pace) {
+        chatLog.querySelector(".plan-preview-button")?.remove();
         saveDraft({
           ...draft,
           pace,
@@ -3009,7 +3251,13 @@
         } else {
           appendBubble(paceLabel(pace), "user", "pace-user");
         }
-        appendBubble("אני מכין עכשיו את הצעד הראשון שמתאים לבחירות שלך.", "guide", "pace-guide");
+        const paceGuideBubble = appendBubble(
+          "אני מכין עכשיו את הצעד הראשון שמתאים לבחירות שלך.",
+          "guide",
+          "pace-guide"
+        );
+        paceGuideBubble.textContent =
+          "אני מכין עכשיו את הצעד הראשון שמתאים לבחירות שלך.";
         paceQuestion.hidden = true;
         suggestionQuestion.hidden = false;
         suggestionText.textContent = "התוכנית האישית שלך נוצרת כעת...";
@@ -3053,6 +3301,7 @@
             ? "התוכנית האישית השמורה שלך נטענה בהצלחה."
             : "התוכנית האישית נוצרה ונשמרה בהצלחה.";
           easierSuggestionButton.hidden = pace === "small";
+          ensurePlanPreviewButton();
         } catch (error) {
           console.error("Could not create the personal-strength plan.", error);
           suggestionText.textContent =
@@ -3338,7 +3587,7 @@
         }
 
         appendBubble(paceLabel(draft.pace), "user", "pace-user");
-        appendBubble("לפי הבחירות שלך, זו התוכנית האישית שמתאימה להתחלה:", "guide", "pace-guide");
+        appendBubble("לפי הבחירה שלך, זו התוכנית האישית שמתאימה להתחלה:", "guide", "pace-guide");
         paceQuestion.hidden = true;
 
         if (!draft.aiPlan?.weeklyGoal) {
@@ -3352,6 +3601,7 @@
         );
         aiPlanStatus.textContent = "התוכנית האישית השמורה שלך נטענה בהצלחה.";
         easierSuggestionButton.hidden = draft.pace === "small";
+        ensurePlanPreviewButton();
 
         if (!draft.suggestionAccepted) {
           suggestionQuestion.hidden = false;
