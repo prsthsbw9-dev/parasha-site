@@ -1789,6 +1789,51 @@
         <div class="route-summary-row" id="savedAreasRow" style="margin-top: 10px;" hidden><strong>נושאים נוספים ששמרנו להמשך:</strong> <span id="dashboardSavedAreas"></span></div>
       </div>
 
+      <div class="question-panel" id="journeyFollowUp" hidden>
+        <h3 class="route-summary-title">ממשיכים בדרך האישית שלך</h3>
+        <p class="area-note" id="followUpStepCounter"></p>
+        <div class="daily-step">
+          <strong class="suggestion-title">הצעד האחרון שלך</strong>
+          <span id="followUpPreviousStep"></span>
+        </div>
+        <p class="question-label" id="followUpQuestionText" style="margin-top:18px;"></p>
+        <div class="area-grid" id="followUpChoices" role="group" aria-label="דיווח על הצעד האחרון">
+          <button class="area-btn follow-up-result-btn" type="button" data-result="completed">הצלחתי</button>
+          <button class="area-btn follow-up-result-btn" type="button" data-result="partly-completed">הצלחתי חלקית</button>
+          <button class="area-btn follow-up-result-btn" type="button" data-result="not-completed">עדיין לא הצלחתי</button>
+          <button class="area-btn follow-up-result-btn" type="button" data-result="different-step">אני רוצה צעד אחר</button>
+        </div>
+        <p class="progress-message" id="followUpStatus" aria-live="polite"></p>
+      </div>
+
+      <div class="question-panel" id="journeyNextStep" hidden>
+        <h3 class="route-summary-title" id="nextStepTitle">הצעד הבא שלך מוכן</h3>
+        <p class="area-note" id="nextStepCounter"></p>
+        <div class="daily-step"><strong class="suggestion-title">הצעד הבא</strong><span id="nextStepText"></span></div>
+        <div class="route-summary-row" style="margin-top:12px;"><strong>למה הוא מתאים עכשיו:</strong> <span id="nextStepExplanation"></span></div>
+        <p class="encouragement-line" id="nextStepEncouragement"></p>
+        <div class="suggestion-actions">
+          <button class="journey-btn primary" id="scheduleNextStepButton" type="button">קביעת זמן למעקב הבא</button>
+        </div>
+        <div class="area-grid" id="nextStepScheduleChoices" style="margin-top:14px;" hidden>
+          <button class="area-btn next-step-schedule-btn" type="button" data-check-in="מחר">מחר</button>
+          <button class="area-btn next-step-schedule-btn" type="button" data-check-in="בעוד שלושה ימים">בעוד שלושה ימים</button>
+          <button class="area-btn next-step-schedule-btn" type="button" data-check-in="בסוף השבוע">בסוף השבוע</button>
+          <button class="area-btn next-step-schedule-btn" type="button" data-check-in="בלי תזכורת כרגע">בלי תזכורת כרגע</button>
+        </div>
+        <p class="progress-message" id="nextStepScheduleStatus" aria-live="polite"></p>
+      </div>
+
+      <div class="question-panel" id="journeyCompleted" hidden>
+        <h3 class="route-summary-title">סיימת את המסלול שבחרת</h3>
+        <p class="encouragement-line">כל הכבוד על הדרך שעברת. מכאן אפשר לבחור כיצד להמשיך, בלי שמייל נוסף יישלח אוטומטית.</p>
+        <div class="suggestion-actions">
+          <button class="journey-btn primary" id="continueSameAreaButton" type="button">להמשיך באותו התחום</button>
+          <button class="journey-btn secondary" id="chooseNewAreaButton" type="button">לבחור תחום חדש</button>
+          <button class="journey-btn secondary" id="pauseJourneyButton" type="button">לצאת להפסקה</button>
+        </div>
+      </div>
+
       <button class="back-to-welcome" id="backToWelcomeButton" type="button">
         חזרה למסך הפתיחה
       </button>
@@ -4142,6 +4187,7 @@
     const sendCodeUrl = "https://us-central1-parasha-site-links.cloudfunctions.net/sendPersonalStrengthCode";
     const verifyCodeUrl = "https://us-central1-parasha-site-links.cloudfunctions.net/verifyPersonalStrengthCode";
     const createPlanUrl = "https://us-central1-parasha-site-links.cloudfunctions.net/createPersonalStrengthPlan";
+    const continueJourneyUrl = "https://us-central1-parasha-site-links.cloudfunctions.net/continuePersonalStrengthJourney";
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
@@ -4395,6 +4441,175 @@
       return target;
     }
 
+    function personalStrengthFollowUpRequested() {
+      return new URLSearchParams(window.location.search)
+        .get("personalStrengthFollowUp") === "1";
+    }
+
+    function showOnlyFollowUpPanel(panelId) {
+      hideAllMainViews();
+      const chatView = document.getElementById("chatView");
+      if (chatView) chatView.hidden = false;
+      [
+        "identityForm", "areaQuestion", "focusQuestion",
+        "currentStatusQuestion", "paceQuestion", "suggestionQuestion",
+        "checkInQuestion", "completionSummary", "journeyDashboard",
+        "journeyFollowUp", "journeyNextStep", "journeyCompleted"
+      ].forEach((id) => {
+        const element = document.getElementById(id);
+        if (element) element.hidden = id !== panelId;
+      });
+      const chatLog = document.getElementById("chatLog");
+      if (chatLog) chatLog.hidden = true;
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    async function openPersonalStrengthFollowUp(user) {
+      const snapshot = await getDoc(doc(db, usersCollection, user.uid));
+      if (!snapshot.exists()) throw new Error("profile/not-found");
+      const profile = snapshot.data() || {};
+      const journey = profile.personalStrengthJourney || {};
+      const plan = profile.personalStrengthPlan?.content || {};
+      const currentStep = Math.max(1, Number(journey.currentStep || 1));
+      const maximumSteps = Math.max(1, Number(
+        journey.maximumSteps ||
+        ({ gentle: 3, steady: 6, challenging: 9 })[
+          profile.pace || profile.internalSummary?.preferredPace
+        ] || 3
+      ));
+
+      if (journey.planStatus === "completed") {
+        showOnlyFollowUpPanel("journeyCompleted");
+        return;
+      }
+
+      document.getElementById("followUpStepCounter").textContent =
+        `צעד ${currentStep} מתוך ${maximumSteps}`;
+      document.getElementById("followUpPreviousStep").textContent =
+        plan.weeklyGoal || "הצעד האחרון שלך שמור במסלול.";
+      document.getElementById("followUpQuestionText").textContent =
+        plan.checkInQuestion || "איך הרגיש לך הצעד שבחרת?";
+      document.getElementById("followUpStatus").textContent = "";
+      showOnlyFollowUpPanel("journeyFollowUp");
+    }
+
+    async function submitPersonalStrengthFollowUp(result) {
+      const user = auth.currentUser;
+      if (!user?.uid || !user.emailVerified) {
+        throw new Error("auth/email-not-verified");
+      }
+      const response = await fetch(continueJourneyUrl, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${await user.getIdToken()}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ result })
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        const error = new Error(data.error || "follow-up-generation-failed");
+        error.code = data.error || "follow-up-generation-failed";
+        throw error;
+      }
+      return data;
+    }
+
+    async function schedulePersonalStrengthNextStep(checkIn) {
+      const user = auth.currentUser;
+      if (!user?.uid || !user.emailVerified) {
+        throw new Error("auth/email-not-verified");
+      }
+      const snapshot = await getDoc(doc(db, usersCollection, user.uid));
+      const profile = snapshot.exists() ? snapshot.data() : {};
+      const reminderEnabled =
+        profile.emailUpdatesConsent === true &&
+        checkIn !== "בלי תזכורת כרגע";
+      await setDoc(doc(db, usersCollection, user.uid), {
+        personalStrengthJourney: {
+          checkIn,
+          awaitingCheckIn: true,
+          reminderEnabled,
+          nextCheckInAt: reminderEnabled
+            ? calculatePersonalStrengthCheckInDate(checkIn).toISOString()
+            : null,
+          reminderStatus: reminderEnabled ? "pending" : "disabled",
+          reminderAttempts: 0,
+          reminderLockUntil: "",
+          updatedAt: serverTimestamp()
+        }
+      }, { merge: true });
+    }
+
+    function wirePersonalStrengthFollowUp() {
+      const status = document.getElementById("followUpStatus");
+      document.querySelectorAll(".follow-up-result-btn").forEach((button) => {
+        button.addEventListener("click", async () => {
+          const buttons = document.querySelectorAll(".follow-up-result-btn");
+          buttons.forEach((item) => { item.disabled = true; });
+          status.textContent = "מכינים עבורך את הצעד הבא...";
+          try {
+            const data = await submitPersonalStrengthFollowUp(button.dataset.result);
+            if (data.completed) {
+              showOnlyFollowUpPanel("journeyCompleted");
+              return;
+            }
+            document.getElementById("nextStepCounter").textContent =
+              `צעד ${data.currentStep} מתוך ${data.maximumSteps}`;
+            document.getElementById("nextStepText").textContent = data.plan.weeklyGoal;
+            document.getElementById("nextStepExplanation").textContent = data.plan.explanation;
+            document.getElementById("nextStepEncouragement").textContent = data.plan.encouragement;
+            showOnlyFollowUpPanel("journeyNextStep");
+          } catch (error) {
+            status.textContent = error.code === "check-in-already-processed"
+              ? "התשובה הזו כבר נשמרה. יש לרענן את הדף כדי לראות את הצעד הבא."
+              : "לא הצלחנו להכין את הצעד הבא כרגע. כדאי לנסות שוב בעוד רגע.";
+            buttons.forEach((item) => { item.disabled = false; });
+          }
+        });
+      });
+
+      const scheduleButton = document.getElementById("scheduleNextStepButton");
+      const scheduleChoices = document.getElementById("nextStepScheduleChoices");
+      scheduleButton.addEventListener("click", () => {
+        scheduleChoices.hidden = false;
+        scheduleButton.hidden = true;
+      });
+      document.querySelectorAll(".next-step-schedule-btn").forEach((button) => {
+        button.addEventListener("click", async () => {
+          const scheduleStatus = document.getElementById("nextStepScheduleStatus");
+          document.querySelectorAll(".next-step-schedule-btn")
+            .forEach((item) => { item.disabled = true; });
+          scheduleStatus.textContent = "שומרים את מועד המעקב...";
+          try {
+            await schedulePersonalStrengthNextStep(button.dataset.checkIn);
+            scheduleStatus.textContent = button.dataset.checkIn === "בלי תזכורת כרגע"
+              ? "הצעד נשמר ללא שליחת תזכורת נוספת."
+              : `הצעד נשמר. ניפגש כאן ${button.dataset.checkIn}.`;
+          } catch (error) {
+            scheduleStatus.textContent = "לא הצלחנו לשמור את המועד. כדאי לנסות שוב.";
+            document.querySelectorAll(".next-step-schedule-btn")
+              .forEach((item) => { item.disabled = false; });
+          }
+        });
+      });
+
+      document.getElementById("pauseJourneyButton").addEventListener("click", () => {
+        window.history.replaceState({}, document.title, window.location.pathname);
+        window.location.reload();
+      });
+      document.getElementById("chooseNewAreaButton").addEventListener("click", () => {
+        window.localStorage.removeItem(journeyStorageKey);
+        window.sessionStorage.setItem(forceOnboardingKey, "true");
+        window.location.href = window.location.pathname;
+      });
+      document.getElementById("continueSameAreaButton").addEventListener("click", () => {
+        window.localStorage.removeItem(journeyStorageKey);
+        window.sessionStorage.setItem(forceOnboardingKey, "true");
+        window.location.href = window.location.pathname;
+      });
+    }
+
     async function completeCodeSignIn(email, code, requirePendingProfile) {
       const credential = await verifyEmailCode(email, code);
       const pendingProfileText = window.localStorage.getItem(pendingProfileKey);
@@ -4438,7 +4653,11 @@
       window.localStorage.removeItem(emailForSignInKey);
       window.localStorage.removeItem(pendingCodeModeKey);
       window.sessionStorage.removeItem(forceOnboardingKey);
-      showRegisteredMember(restoredProfile);
+      if (personalStrengthFollowUpRequested()) {
+        await openPersonalStrengthFollowUp(credential.user);
+      } else {
+        showRegisteredMember(restoredProfile);
+      }
       return restoredProfile;
     }
 
@@ -4959,6 +5178,7 @@
 
     wireRegisteredMemberControls();
     wireReturningMemberControls();
+    wirePersonalStrengthFollowUp();
     const pendingCodeScreenRestored = restorePendingCodeScreen();
 
     onAuthStateChanged(auth, async (user) => {
@@ -4982,7 +5202,11 @@
           profileStorageKey,
           JSON.stringify(currentRegisteredProfile)
         );
-        showRegisteredMember(currentRegisteredProfile);
+        if (personalStrengthFollowUpRequested()) {
+          await openPersonalStrengthFollowUp(user);
+        } else {
+          showRegisteredMember(currentRegisteredProfile);
+        }
       } catch (error) {
         console.error("Could not restore the personal-strength profile.", error);
       }
