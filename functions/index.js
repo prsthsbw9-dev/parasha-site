@@ -1679,6 +1679,18 @@ exports.createPersonalStrengthPlan = onRequest(
         existingPlan?.fingerprint === fingerprint &&
         existingPlan?.content
       ) {
+        const existingJourney = profile.personalStrengthJourney || {};
+        if (!existingJourney.maximumSteps || !existingJourney.currentStep) {
+          await userDocument.set({
+            personalStrengthJourney: {
+              planStatus: "active",
+              currentStep: 1,
+              completedSteps: 0,
+              maximumSteps: ({ gentle: 3, steady: 6, challenging: 9 })[profilePace] || 3,
+              awaitingCheckIn: false
+            }
+          }, { merge: true });
+        }
         return res.status(200).json({
           ok: true,
           cached: true,
@@ -1845,6 +1857,13 @@ exports.createPersonalStrengthPlan = onRequest(
           promptVersion: "PERSONAL_STRENGTH_PLAN_V1",
           createdAt: new Date(),
           updatedAt: new Date()
+        },
+        personalStrengthJourney: {
+          planStatus: "active",
+          currentStep: 1,
+          completedSteps: 0,
+          maximumSteps: ({ gentle: 3, steady: 6, challenging: 9 })[profilePace] || 3,
+          awaitingCheckIn: false
         }
       }, { merge: true });
 
@@ -1884,9 +1903,233 @@ exports.createPersonalStrengthPlan = onRequest(
   }
 );
 
+/* חיזוק אישי — קבלת תשובת מעקב ויצירת הצעד הבא */
+const personalStrengthAllowedCheckInResults = new Set([
+  "completed",
+  "partly-completed",
+  "not-completed",
+  "different-step"
+]);
+
+exports.continuePersonalStrengthJourney = onRequest(
+  {
+    region: "us-central1",
+    secrets: [openaiApiKey],
+    cors: personalStrengthCors,
+    timeoutSeconds: 90,
+    memory: "256MiB",
+    maxInstances: 8
+  },
+  async (req, res) => {
+    if (req.method !== "POST") {
+      return res.status(405).json({ error: "Method not allowed" });
+    }
+
+    try {
+      const authenticatedUser = await authenticatePersonalStrengthRequest(req);
+      const result = cleanText(req.body?.result, 40);
+      if (!personalStrengthAllowedCheckInResults.has(result)) {
+        return res.status(400).json({ error: "invalid-check-in-result" });
+      }
+
+      const userDocument = adminDb
+        .collection("personalStrengthUsers")
+        .doc(authenticatedUser.uid);
+      const snapshot = await userDocument.get();
+      if (!snapshot.exists) {
+        return res.status(404).json({ error: "profile-not-found" });
+      }
+
+      const profile = snapshot.data() || {};
+      const journey = profile.personalStrengthJourney || {};
+      const existingPlan = profile.personalStrengthPlan || {};
+      const currentStep = Math.max(1, Number(journey.currentStep || 1));
+      const maximumSteps = Math.max(
+        1,
+        Number(
+          journey.maximumSteps ||
+          ({ gentle: 3, steady: 6, challenging: 9 })[
+            profile.pace || profile.internalSummary?.preferredPace
+          ] || 3
+        )
+      );
+
+      if (journey.planStatus === "completed") {
+        await userDocument.set({
+          personalStrengthJourney: {
+            planStatus: "completed",
+            currentStep: maximumSteps,
+            completedSteps: maximumSteps,
+            awaitingCheckIn: false,
+            reminderEnabled: false,
+            reminderStatus: "completed",
+            nextCheckInAt: null,
+            completedAt: new Date()
+          }
+        }, { merge: true });
+        return res.status(200).json({
+          ok: true,
+          completed: true,
+          currentStep: maximumSteps,
+          maximumSteps
+        });
+      }
+
+      if (currentStep >= maximumSteps) {
+        await userDocument.set({
+          personalStrengthJourney: {
+            planStatus: "completed",
+            currentStep: maximumSteps,
+            completedSteps: maximumSteps,
+            awaitingCheckIn: false,
+            lastCheckInResult: result,
+            lastResponseAt: new Date(),
+            reminderEnabled: false,
+            reminderStatus: "completed",
+            nextCheckInAt: null,
+            completedAt: new Date()
+          }
+        }, { merge: true });
+        return res.status(200).json({
+          ok: true,
+          completed: true,
+          currentStep: maximumSteps,
+          maximumSteps
+        });
+      }
+
+      const content = existingPlan.content || {};
+      const selections = existingPlan.selections || {};
+      const sourceGuide = existingPlan.sourceGuide ||
+        personalStrengthSourceGuides[selections.focusArea] ||
+        personalStrengthSourceGuides["תחום אחר"];
+      const resultLabels = {
+        completed: "הצלחתי לבצע את הצעד",
+        "partly-completed": "הצלחתי לבצע את הצעד באופן חלקי",
+        "not-completed": "עדיין לא הצלחתי לבצע את הצעד",
+        "different-step": "אני רוצה צעד אחר"
+      };
+      const gender = profile.gender === "female" ? "female" : "male";
+      const prompt = `
+אתה ממשיך מסלול חיזוק אישי קצר באתר יהודי.
+כתוב בעברית טבעית, חמה, לא שיפוטית ומעשית, בלשון ${gender === "female" ? "נקבה" : "זכר"}.
+אין לפסוק הלכה, להבטיח ישועה, לתת אבחון או להמציא מקורות.
+השתמש רק בעיקרון המאושר: ${sourceGuide.principle}
+המקור המאושר: ${sourceGuide.source}
+
+התחום: ${cleanText(selections.focusArea, 60)}
+הצעד הקודם: ${cleanText(content.weeklyGoal, 500)}
+תשובת המשתמש: ${resultLabels[result]}
+זהו צעד ${currentStep + 1} מתוך ${maximumSteps}.
+
+צור צעד המשך אחד בלבד. אם המשתמש לא הצליח, הקטן ופשט את הצעד.
+אם ביקש צעד אחר, צור פעולה שונה אך באותו תחום.
+אל תדרוש הוצאה, צום, שינוי תרופות או פעולה מסוכנת.
+`;
+
+      const client = new OpenAI({ apiKey: openaiApiKey.value() });
+      const completion = await client.responses.create({
+        model: "gpt-4.1-mini",
+        input: prompt,
+        text: {
+          format: {
+            type: "json_schema",
+            name: "personal_strength_follow_up",
+            strict: true,
+            schema: {
+              type: "object",
+              additionalProperties: false,
+              properties: {
+                weeklyGoal: { type: "string" },
+                explanation: { type: "string" },
+                checkInQuestion: { type: "string" },
+                encouragement: { type: "string" },
+                safetyNote: { type: "string" }
+              },
+              required: [
+                "weeklyGoal",
+                "explanation",
+                "checkInQuestion",
+                "encouragement",
+                "safetyNote"
+              ]
+            }
+          }
+        }
+      });
+
+      const generated = JSON.parse(String(completion.output_text || "{}"));
+      const nextContent = {
+        ...content,
+        weeklyGoal: cleanText(generated.weeklyGoal, 500),
+        explanation: cleanText(generated.explanation, 700),
+        checkInQuestion: cleanText(generated.checkInQuestion, 350),
+        encouragement: cleanText(generated.encouragement, 300),
+        safetyNote: cleanText(generated.safetyNote, 350)
+      };
+      if (!nextContent.weeklyGoal || !nextContent.checkInQuestion) {
+        throw new Error("incomplete-follow-up-plan");
+      }
+
+      const latestSnapshot = await userDocument.get();
+      const latestStep = Number(
+        latestSnapshot.data()?.personalStrengthJourney?.currentStep || 1
+      );
+      if (latestStep !== currentStep) {
+        return res.status(409).json({ error: "check-in-already-processed" });
+      }
+
+      const nextStep = currentStep + 1;
+      await userDocument.set({
+        personalStrengthPlan: {
+          ...existingPlan,
+          content: nextContent,
+          model: "gpt-4.1-mini",
+          promptVersion: "PERSONAL_STRENGTH_FOLLOW_UP_V1",
+          updatedAt: new Date()
+        },
+        personalStrengthJourney: {
+          planStatus: "active",
+          currentStep: nextStep,
+          completedSteps: currentStep,
+          maximumSteps,
+          awaitingCheckIn: false,
+          lastCheckInResult: result,
+          lastResponseAt: new Date(),
+          reminderEnabled: false,
+          reminderStatus: "awaiting-schedule",
+          nextCheckInAt: null
+        }
+      }, { merge: true });
+
+      return res.status(200).json({
+        ok: true,
+        completed: false,
+        currentStep: nextStep,
+        maximumSteps,
+        plan: nextContent,
+        sourceGuide
+      });
+    } catch (err) {
+      console.error("continuePersonalStrengthJourney error:", err);
+      if (
+        err.message === "missing-auth-token" ||
+        err.code === "auth/id-token-expired" ||
+        err.code === "auth/id-token-revoked"
+      ) {
+        return res.status(401).json({ error: "authentication-required" });
+      }
+      if (err.message === "email-not-verified") {
+        return res.status(403).json({ error: "email-not-verified" });
+      }
+      return res.status(500).json({ error: "follow-up-generation-failed" });
+    }
+  }
+);
+
 /* חיזוק אישי — תזכורת מתוזמנת ללא קריאה נוספת לבינה */
 const personalStrengthReminderSiteUrl =
-  "https://prsthsbw9-dev.github.io/parasha-site/personal-strength.html";
+  "https://prsthsbw9-dev.github.io/parasha-site/personal-strength.html?personalStrengthFollowUp=1";
 const personalStrengthReminderBatchSize = 25;
 const personalStrengthReminderMaximumAttempts = 3;
 
