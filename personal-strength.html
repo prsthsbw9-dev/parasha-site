@@ -1502,13 +1502,7 @@
     <section class="card chat-card view" id="chatView" aria-labelledby="chatTitle" hidden>
       <h2 class="chat-heading" id="chatTitle">הדרך האישית שלי</h2>
 
-      <div class="chat-log" id="chatLog" aria-live="polite">
-        <div class="chat-bubble guide">
-          <strong>ברוך הבא לחיזוק האישי.</strong><br>
-          לפני שנתחיל, אשמח להכיר אותך מעט כדי שהדרך שנבנה כאן באמת תתאים לך.<br>
-          כיצד תרצה או תרצי שאפנה אליך?
-        </div>
-      </div>
+      <div class="chat-log" id="chatLog" aria-live="polite"></div>
 
       <form class="question-panel" id="identityForm">
         <label class="question-label" for="firstName">השם הפרטי שלך</label>
@@ -1536,7 +1530,7 @@
       </form>
 
       <div class="question-panel" id="areaQuestion" hidden>
-        <span class="question-label">באילו תחומים היית רוצה להתחזק תחילה?</span>
+        <span class="question-label" id="areaQuestionLabel">איזה תחום הכי מדבר אליך כרגע?</span>
         <div class="area-grid" id="areaGrid">
           <button class="area-btn" type="button">תפילה וברכות</button>
           <button class="area-btn" type="button">שבת</button>
@@ -1550,13 +1544,10 @@
           <button class="area-btn" type="button">תחום אחר</button>
         </div>
 
-        <p class="area-note">
-          אם רק התחלת את הדרך, מומלץ להתמקד ולא לבחור הכול יחד.
-          בשלב זה אפשר לבחור עד 3 נושאים עיקריים, ובהמשך יהיה ניתן להוסיף נושאים נוספים.
-        </p>
+        <p class="area-note" id="areaSelectionNote"></p>
 
         <p class="area-selection-status" id="areaSelectionStatus" aria-live="polite">
-          נבחרו 0 מתוך 3 נושאים
+          נבחרו 0 נושאים
         </p>
 
         <button class="journey-btn primary question-submit" id="areaSubmit" type="button" disabled>
@@ -2730,6 +2721,8 @@
       const areaQuestion = document.getElementById("areaQuestion");
       const areaSubmit = document.getElementById("areaSubmit");
       const areaSelectionStatus = document.getElementById("areaSelectionStatus");
+      const areaQuestionLabel = document.getElementById("areaQuestionLabel");
+      const areaSelectionNote = document.getElementById("areaSelectionNote");
       const focusQuestion = document.getElementById("focusQuestion");
       const focusGrid = document.getElementById("focusGrid");
       const currentStatusQuestion = document.getElementById("currentStatusQuestion");
@@ -2766,7 +2759,8 @@
         !welcomeView || !chatView || !startButton || !continueButton ||
         !backButton || !status || !chatLog || !identityForm ||
         !firstNameInput || !identitySubmit || !areaQuestion ||
-        !areaSubmit || !areaSelectionStatus || !focusQuestion ||
+        !areaSubmit || !areaSelectionStatus || !areaQuestionLabel ||
+        !areaSelectionNote || !focusQuestion ||
         !focusGrid || !currentStatusQuestion || !currentStatusTitle ||
         !paceQuestion || !suggestionQuestion || !suggestionText ||
         !acceptSuggestionButton || !alternateSuggestionButton ||
@@ -2798,6 +2792,30 @@
           localStorage.setItem(storageKey, JSON.stringify(nextDraft));
         } catch (error) {}
         updateContinueButton();
+      }
+
+      function profileAreaLimit(profilePace = "") {
+        return ({ gentle: 1, steady: 2, challenging: 3 })[profilePace] || 3;
+      }
+
+      function savedProfilePace() {
+        if (draft?.profilePace) return draft.profilePace;
+        try {
+          const savedProfile = JSON.parse(
+            localStorage.getItem("pardesPersonalStrengthProfile") || "null"
+          );
+          return savedProfile?.pace || savedProfile?.internalSummary?.preferredPace || "";
+        } catch (error) {
+          return "";
+        }
+      }
+
+      function currentAreaLimit() {
+        return profileAreaLimit(savedProfilePace());
+      }
+
+      function areaLimitText(limit) {
+        return limit === 1 ? "תחום אחד מרכזי" : `עד ${limit} תחומים מרכזיים`;
       }
 
       function updateContinueButton() {
@@ -3121,19 +3139,14 @@
       function revealAreaQuestion(name, gender) {
         identityForm.hidden = true;
         areaQuestion.hidden = false;
-        const greeting = `נעים מאוד, ${name}. טוב שבחרת להתחיל.`;
+        const areaAddress = gender === "female" ? "אלייך" : "אליך";
+        areaQuestionLabel.textContent = `איזה תחום הכי מדבר ${areaAddress} כרגע?`;
 
         if (!chatLog.querySelector("[data-saved-identity]")) {
-          const userBubble = document.createElement("div");
-          userBubble.className = "chat-bubble user";
-          userBubble.dataset.savedIdentity = "true";
-          userBubble.textContent = `${name} · ${gender === "female" ? "לשון נקבה" : "לשון זכר"}`;
-          chatLog.appendChild(userBubble);
-
           const guideBubble = document.createElement("div");
           guideBubble.className = "chat-bubble guide";
           guideBubble.dataset.savedIdentity = "true";
-          guideBubble.textContent = `${greeting} באילו תחומים היית רוצה להתחזק תחילה?`;
+          guideBubble.textContent = `${name}, טוב שבחרת להתחיל. באילו תחומים היית רוצה שנתחיל?`;
           chatLog.appendChild(guideBubble);
         }
 
@@ -3141,15 +3154,18 @@
       }
 
       function updateAreaSelection(message = "") {
+        const limit = currentAreaLimit();
         areaButtons.forEach((button) => {
           const isSelected = selectedAreas.includes(button.textContent.trim());
           button.classList.toggle("is-selected", isSelected);
           button.setAttribute("aria-pressed", String(isSelected));
         });
         areaSubmit.disabled = selectedAreas.length === 0;
+        areaSelectionNote.textContent =
+          `כדי להתחיל בצורה ממוקדת, במסלול שבחרת אפשר לבחור בשלב זה ${areaLimitText(limit)}. בהמשך יהיה ניתן להוסיף נושאים נוספים.`;
         areaSelectionStatus.classList.toggle("is-warning", Boolean(message));
         areaSelectionStatus.textContent = message ||
-          `נבחרו ${selectedAreas.length} מתוך 3 נושאים`;
+          `נבחרו ${selectedAreas.length} מתוך ${limit} נושאים`;
       }
 
       function restoreDraft() {
@@ -3162,7 +3178,7 @@
         const savedAreas = Array.isArray(draft.areas)
           ? draft.areas
           : (draft.area ? [draft.area] : []);
-        selectedAreas = savedAreas.slice(0, 3);
+        selectedAreas = savedAreas.slice(0, currentAreaLimit());
         updateAreaSelection();
 
         const areasWereConfirmed = draft.areasConfirmed === true || Boolean(draft.area);
@@ -3411,8 +3427,13 @@
           if (selectedAreas.includes(area)) {
             selectedAreas = selectedAreas.filter((item) => item !== area);
             updateAreaSelection();
-          } else if (selectedAreas.length >= 3) {
-            updateAreaSelection("אפשר לבחור עד 3 נושאים בשלב הזה.");
+          } else if (selectedAreas.length >= currentAreaLimit()) {
+            const limit = currentAreaLimit();
+            updateAreaSelection(
+              limit === 1
+                ? "במסלול שבחרת אפשר לבחור תחום אחד בשלב הזה."
+                : `במסלול שבחרת אפשר לבחור עד ${limit} תחומים בשלב הזה.`
+            );
             return;
           } else {
             selectedAreas.push(area);
@@ -3588,6 +3609,9 @@
       function beginProgramSelectionFromProfile(profile) {
         const name = String(profile?.firstName || profile?.name || "").trim();
         const gender = profile?.gender === "female" ? "female" : "male";
+        const profilePace = String(
+          profile?.pace || profile?.internalSummary?.preferredPace || ""
+        );
         if (!name) return;
 
         chatLog.querySelectorAll("[data-saved-identity], [data-saved-area], [data-flow-key]")
@@ -3616,6 +3640,7 @@
         saveDraft({
           name,
           gender,
+          profilePace,
           areas: [],
           areasConfirmed: false
         });
