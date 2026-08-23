@@ -1001,19 +1001,28 @@
     }
 
     .plan-preview-button {
-      justify-self: start;
-      min-height: 46px;
-      margin: -4px 0 2px;
-      padding: 10px 18px;
+      position: absolute;
+      bottom: 10px;
+      left: 12px;
+      min-height: 28px;
+      margin: 0;
+      padding: 5px 10px;
       cursor: pointer;
       color: #241a08;
       font-family: inherit;
-      font-size: 15px;
+      font-size: 10px;
       font-weight: 800;
       border: 1px solid rgba(255, 238, 190, 0.88);
-      border-radius: 13px;
+      border-radius: 6px;
       background: linear-gradient(135deg, #fff0b7, #ddb143);
-      box-shadow: 0 8px 22px rgba(0, 0, 0, 0.28);
+      box-shadow: 0 5px 14px rgba(0, 0, 0, 0.25);
+      white-space: nowrap;
+    }
+
+    .chat-bubble.has-plan-preview {
+      position: relative;
+      min-height: 94px;
+      padding-bottom: 48px;
     }
 
     .plan-preview-button:disabled {
@@ -1211,16 +1220,15 @@
         background: rgba(0, 0, 0, 0.72);
       }
 
-      .plan-preview-button {
-        width: min(100%, 310px);
-      }
-
       .chat-log {
         /*
-          מונע התנגשות בין גלילת ההודעות לבין גלילת הדף.
+          במובייל גוללים את הדף כולו, ללא אזור גלילה פנימי נוסף.
+          כך נמנעים חיתוך וריצוד של הטקסט בזמן גרירה באצבע.
         */
+        max-height: none;
+        overflow: visible;
         scroll-behavior: auto;
-      } 
+      }
       
       .page {
         align-items: flex-start;
@@ -1255,7 +1263,8 @@
       }
 
       .chat-log {
-        max-height: 45vh;
+        max-height: none;
+        overflow: visible;
       }
 
       .chat-bubble {
@@ -3090,8 +3099,9 @@
           button.type = "button";
           button.className = "plan-preview-button";
           button.addEventListener("click", openPlanPreview);
-          paceBubble.insertAdjacentElement("afterend", button);
+          paceBubble.appendChild(button);
         }
+        paceBubble.classList.add("has-plan-preview");
         button.textContent = planPreviewButtonText();
       }
 
@@ -3236,6 +3246,8 @@
 
       async function choosePace(pace) {
         chatLog.querySelector(".plan-preview-button")?.remove();
+        chatLog.querySelector('[data-flow-key="pace-guide"]')
+          ?.classList.remove("has-plan-preview");
         saveDraft({
           ...draft,
           pace,
