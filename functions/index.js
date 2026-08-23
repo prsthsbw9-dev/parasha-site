@@ -100,6 +100,7 @@ exports.createPersonalReading = onRequest(
 אל תיתן ייעוץ רפואי, נפשי, משפטי או כלכלי.
 אל תמציא מקורות, פסוקים או ציטוטים מדויקים אם אינך בטוח.
 אם אתה מזכיר פסוק, עשה זאת רק אם הוא מוכר ובטוח.
+כלל כתיב מחייב: בכל אזכור של יהושוע בן נון או של הספר הנקרא על שמו, כתוב תמיד "יהושוע" ו"ספר יהושוע" עם ו׳ נוספת לאחר השי״ן. אין לכתוב את הכתיב החסר של שם זה, גם בכותרת, בהסבר או בהפניה למקור.
 
 חשוב במיוחד:
 אל תשתמש בגימטריית השם.
@@ -254,7 +255,9 @@ ${safeData.mitzvahParasha || safeData.parasha || "לא זוהתה"}
         input: prompt
       });
 
-      const message = completion.output_text || "";
+      const message = applyJewishJoshuaSpelling(
+        completion.output_text || ""
+      );
 
       return res.status(200).json({
         message
@@ -373,6 +376,7 @@ ${question}
 
 כללים חשובים מאוד:
 - השתמש רק בשפה של השראה יהודית כללית ומקורות יהודיים ידועים.
+- בכל אזכור של יהושוע בן נון או של הספר הנקרא על שמו, כתוב תמיד "יהושוע" ו"ספר יהושוע" עם ו׳ נוספת לאחר השי״ן.
 - אל תמציא מקורות.
 - אל תכתוב כאילו ${profile.title} עצמו מדבר.
 - אל תכתוב נבואה.
@@ -398,7 +402,9 @@ ${question}
         input: prompt
       });
 
-      const message = completion.output_text || "";
+      const message = applyJewishJoshuaSpelling(
+        completion.output_text || ""
+      );
 
       return res.status(200).json({
         message
@@ -1694,7 +1700,7 @@ exports.createPersonalStrengthPlan = onRequest(
         return res.status(200).json({
           ok: true,
           cached: true,
-          plan: existingPlan.content,
+          plan: applyJewishJoshuaSpelling(existingPlan.content),
           sourceGuide: existingPlan.sourceGuide ||
             personalStrengthSourceGuides[focusArea]
         });
@@ -1734,6 +1740,7 @@ exports.createPersonalStrengthPlan = onRequest(
 המשתמש אינו מבקש פסק הלכה. אל תפסוק הלכה, אל תציג נבואה,
 אל תבטיח ישועה ואל תיתן אבחון או טיפול רפואי או נפשי.
 אל תמציא מקורות, פסוקים, ציטוטים או עובדות.
+בכל אזכור של יהושוע בן נון או של הספר הנקרא על שמו, כתוב תמיד "יהושוע" ו"ספר יהושוע" עם ו׳ נוספת לאחר השי״ן.
 השתמש רק בעיקרון המאושר שמופיע בהמשך ואל תוסיף מקור אחר.
 אם הנושא מחייב הכרעה הלכתית, כתוב בהערת הבטיחות שיש לפנות לרב מוסמך.
 אם יש רמז למצוקה, סכנה או פגיעה, הפנה בעדינות לעזרה מקצועית מתאימה.
@@ -1795,8 +1802,8 @@ exports.createPersonalStrengthPlan = onRequest(
         }
       });
 
-      const outputText = String(
-        completion.output_text || ""
+      const outputText = applyJewishJoshuaSpelling(
+        String(completion.output_text || "")
       ).trim();
 
       if (!outputText) {
@@ -2014,6 +2021,7 @@ exports.continuePersonalStrengthJourney = onRequest(
 אתה ממשיך מסלול חיזוק אישי קצר באתר יהודי.
 כתוב בעברית טבעית, חמה, לא שיפוטית ומעשית, בלשון ${gender === "female" ? "נקבה" : "זכר"}.
 אין לפסוק הלכה, להבטיח ישועה, לתת אבחון או להמציא מקורות.
+בכל אזכור של יהושוע בן נון או של הספר הנקרא על שמו, כתוב תמיד "יהושוע" ו"ספר יהושוע" עם ו׳ נוספת לאחר השי״ן.
 השתמש רק בעיקרון המאושר: ${sourceGuide.principle}
 המקור המאושר: ${sourceGuide.source}
 
@@ -2058,7 +2066,9 @@ exports.continuePersonalStrengthJourney = onRequest(
         }
       });
 
-      const generated = JSON.parse(String(completion.output_text || "{}"));
+      const generated = JSON.parse(applyJewishJoshuaSpelling(
+        String(completion.output_text || "{}")
+      ));
       const nextContent = {
         ...content,
         weeklyGoal: cleanText(generated.weeklyGoal, 500),
@@ -2344,4 +2354,25 @@ function cleanText(value, maxLength) {
     .replace(/[<>]/g, "")
     .trim()
     .slice(0, maxLength);
+}
+
+function applyJewishJoshuaSpelling(value) {
+  if (typeof value === "string") {
+    return value.replace(/יהושע/g, "יהושוע");
+  }
+
+  if (Array.isArray(value)) {
+    return value.map(applyJewishJoshuaSpelling);
+  }
+
+  if (value && typeof value === "object") {
+    return Object.fromEntries(
+      Object.entries(value).map(([key, item]) => [
+        key,
+        applyJewishJoshuaSpelling(item)
+      ])
+    );
+  }
+
+  return value;
 }
