@@ -1863,6 +1863,31 @@
   </main>
 
   <script>
+    window.pardesNormalizeJewishJoshuaSpelling = function normalizeJewishJoshuaSpelling(value) {
+      if (typeof value === "string") {
+        return value.replace(/יהושע/g, "יהושוע");
+      }
+
+      if (Array.isArray(value)) {
+        return value.map(normalizeJewishJoshuaSpelling);
+      }
+
+      if (value && typeof value === "object") {
+        const prototype = Object.getPrototypeOf(value);
+        if (prototype !== Object.prototype && prototype !== null) {
+          return value;
+        }
+        return Object.fromEntries(
+          Object.entries(value).map(([key, item]) => [
+            key,
+            normalizeJewishJoshuaSpelling(item)
+          ])
+        );
+      }
+
+      return value;
+    };
+
     (() => {
       const body = document.body;
       const intro = document.getElementById("strengthIntro");
@@ -2989,16 +3014,19 @@
 
       function loadDraft() {
         try {
-          return JSON.parse(localStorage.getItem(storageKey) || "null");
+          const savedDraft = JSON.parse(
+            localStorage.getItem(storageKey) || "null"
+          );
+          return window.pardesNormalizeJewishJoshuaSpelling(savedDraft);
         } catch (error) {
           return null;
         }
       }
 
       function saveDraft(nextDraft) {
-        draft = nextDraft;
+        draft = window.pardesNormalizeJewishJoshuaSpelling(nextDraft);
         try {
-          localStorage.setItem(storageKey, JSON.stringify(nextDraft));
+          localStorage.setItem(storageKey, JSON.stringify(draft));
         } catch (error) {}
         updateContinueButton();
       }
@@ -4355,7 +4383,7 @@
         throw error;
       }
 
-      return data;
+      return window.pardesNormalizeJewishJoshuaSpelling(data);
     }
 
     async function savePersonalStrengthJourney(journey) {
@@ -4469,7 +4497,9 @@
       if (!snapshot.exists()) throw new Error("profile/not-found");
       const profile = snapshot.data() || {};
       const journey = profile.personalStrengthJourney || {};
-      const plan = profile.personalStrengthPlan?.content || {};
+      const plan = window.pardesNormalizeJewishJoshuaSpelling(
+        profile.personalStrengthPlan?.content || {}
+      );
       const currentStep = Math.max(1, Number(journey.currentStep || 1));
       const maximumSteps = Math.max(1, Number(
         journey.maximumSteps ||
@@ -4512,7 +4542,7 @@
         error.code = data.error || "follow-up-generation-failed";
         throw error;
       }
-      return data;
+      return window.pardesNormalizeJewishJoshuaSpelling(data);
     }
 
     async function schedulePersonalStrengthNextStep(checkIn) {
