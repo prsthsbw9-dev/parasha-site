@@ -5494,6 +5494,54 @@
       font-weight:700;
     }
 
+    .tiktok-gate-actions{
+      width:min(100%, 470px);
+      margin:0 auto 22px;
+      display:grid;
+      gap:10px;
+    }
+
+    .tiktok-gate-open-button,
+    .tiktok-gate-copy-button{
+      width:100%;
+      min-height:56px;
+      border-radius:16px;
+      font-family:inherit;
+      font-size:18px;
+      font-weight:900;
+      cursor:pointer;
+      -webkit-tap-highlight-color:transparent;
+    }
+
+    .tiktok-gate-open-button{
+      border:1px solid rgba(111,75,9,.22);
+      background:linear-gradient(135deg,#ffeaa0,#efbe3f);
+      color:#1c241d;
+      box-shadow:0 10px 24px rgba(144,99,14,.18);
+    }
+
+    .tiktok-gate-copy-button{
+      min-height:48px;
+      border:1px solid rgba(35,79,51,.32);
+      background:rgba(255,255,255,.78);
+      color:#234f33;
+      font-size:16px;
+    }
+
+    .tiktok-gate-open-button:active,
+    .tiktok-gate-copy-button:active{
+      transform:scale(.985);
+    }
+
+    .tiktok-gate-action-status{
+      min-height:22px;
+      margin:0;
+      color:#60451f;
+      font-size:14px;
+      line-height:1.45;
+      font-weight:800;
+    }
+
     .tiktok-gate-browser-demo{
       position:relative;
       width:min(100%, 470px);
@@ -5719,6 +5767,31 @@
         יש לפתוח את האתר בדפדפן החיצוני
       </p>
 
+      <div class="tiktok-gate-actions">
+        <button
+          id="tiktokOpenExternalBrowser"
+          class="tiktok-gate-open-button"
+          type="button"
+        >
+          פתיחת האתר בדפדפן החיצוני
+        </button>
+
+        <button
+          id="tiktokCopyExternalLink"
+          class="tiktok-gate-copy-button"
+          type="button"
+        >
+          העתקת הקישור
+        </button>
+
+        <p
+          id="tiktokExternalBrowserStatus"
+          class="tiktok-gate-action-status"
+          role="status"
+          aria-live="polite"
+        ></p>
+      </div>
+
       <div class="tiktok-gate-browser-demo" aria-hidden="true">
         <div class="tiktok-gate-browser-bar">
           <span class="tiktok-gate-browser-x">×</span>
@@ -5773,6 +5846,76 @@
       </p>
     </div>
   </section>
+
+  <script>
+  (function () {
+    "use strict";
+
+    const openButton = document.getElementById("tiktokOpenExternalBrowser");
+    const copyButton = document.getElementById("tiktokCopyExternalLink");
+    const status = document.getElementById("tiktokExternalBrowserStatus");
+
+    if (!openButton || !copyButton || !status) return;
+
+    function getPublicPageUrl() {
+      const url = new URL(window.location.href);
+      url.protocol = "https:";
+      return url.href;
+    }
+
+    function setStatus(message) {
+      status.textContent = message;
+    }
+
+    async function copyPageUrl() {
+      const pageUrl = getPublicPageUrl();
+
+      try {
+        await navigator.clipboard.writeText(pageUrl);
+      } catch (error) {
+        const temporaryInput = document.createElement("textarea");
+        temporaryInput.value = pageUrl;
+        temporaryInput.setAttribute("readonly", "");
+        temporaryInput.style.position = "fixed";
+        temporaryInput.style.opacity = "0";
+        document.body.appendChild(temporaryInput);
+        temporaryInput.select();
+        document.execCommand("copy");
+        temporaryInput.remove();
+      }
+
+      setStatus("הקישור הועתק. אפשר להדביק אותו בדפדפן שבמכשיר.");
+    }
+
+    openButton.addEventListener("click", function () {
+      const pageUrl = new URL(getPublicPageUrl());
+      const isAndroid = /Android/i.test(navigator.userAgent || "");
+
+      if (!isAndroid) {
+        copyPageUrl();
+        setStatus("במכשיר הזה לא ניתן לכפות פתיחה חיצונית. הקישור הועתק להדבקה בדפדפן.");
+        return;
+      }
+
+      const intentPath = pageUrl.host + pageUrl.pathname + pageUrl.search;
+      const intentUrl =
+        "intent://" + intentPath +
+        "#Intent;scheme=https;action=android.intent.action.VIEW;" +
+        "category=android.intent.category.BROWSABLE;end";
+
+      setStatus("פותח את הדפדפן שבמכשיר…");
+      window.location.href = intentUrl;
+
+      window.setTimeout(function () {
+        if (!document.hidden) {
+          setStatus("אם הדפדפן לא נפתח, לחצו על „העתקת הקישור” או השתמשו בהוראות שלמטה.");
+        }
+      }, 1400);
+    });
+
+    copyButton.addEventListener("click", copyPageUrl);
+  })();
+  </script>
 
 
 <!-- סרטון הכניסה לפרדס — לפני מסך ההגנה של טעינת האייקונים -->
