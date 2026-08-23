@@ -1440,6 +1440,449 @@ exports.verifyPersonalStrengthCode = onRequest(
   }
 );
 
+/*
+ * ============================================================
+ * חיזוק אישי — יצירת תוכנית ראשונה באמצעות בינה מלאכותית
+ * ============================================================
+ * הפונקציה זמינה רק למשתמש Firebase מאומת. היא קוראת את
+ * הפרופיל השמור של אותו משתמש, יוצרת תוכנית מובנית ושומרת
+ * אותה במסמך המשתמש. תוכנית זהה שכבר נוצרה מוחזרת מהשמירה
+ * כדי למנוע הפעלה וחיוב כפולים.
+ */
+
+const personalStrengthAllowedAreas = new Set([
+  "תפילה וברכות",
+  "שבת",
+  "לימוד תורה",
+  "שמירת הלשון",
+  "כיבוד הורים",
+  "חסד וצדקה",
+  "אמונה וביטחון",
+  "שליטה בכעס",
+  "זוגיות בונה",
+  "תחום אחר"
+]);
+
+const personalStrengthAllowedStatuses = new Set([
+  "beginner",
+  "sometimes",
+  "habit",
+  "specific",
+  "רק בתחילת הדרך",
+  "משתדל מדי פעם",
+  "משתדלת מדי פעם",
+  "יש לי כבר הרגל מסוים",
+  "רוצה לחזק נקודה מסוימת"
+]);
+
+const personalStrengthAllowedStepPaces = new Set([
+  "small",
+  "balanced",
+  "challenge"
+]);
+
+const personalStrengthAllowedProfilePaces = new Set([
+  "gentle",
+  "steady",
+  "challenging"
+]);
+
+const personalStrengthAllowedCheckIns = new Set([
+  "",
+  "מחר",
+  "בעוד שלושה ימים",
+  "בסוף השבוע",
+  "בלי תזכורת כרגע"
+]);
+
+const personalStrengthSourceGuides = {
+  "תפילה וברכות": {
+    source: "משנה ברכות ה׳, א׳",
+    principle: "להתכונן לתפילה ולעמוד בה מתוך רצינות וכוונת הלב."
+  },
+  "שבת": {
+    source: "שמות כ׳, ח׳",
+    principle: "לזכור את השבת ולקדש אותה באמצעות הכנה ומעשה."
+  },
+  "לימוד תורה": {
+    source: "יהושע א׳, ח׳",
+    principle: "לבנות קשר קבוע ומתמשך עם לימוד התורה."
+  },
+  "שמירת הלשון": {
+    source: "תהלים ל״ד, י״ד",
+    principle: "לשמור את הלשון מדיבור מזיק ולבחור בדיבור טוב."
+  },
+  "כיבוד הורים": {
+    source: "שמות כ׳, י״ב",
+    principle: "לתת כבוד להורים ולבטא אותו גם במעשים."
+  },
+  "חסד וצדקה": {
+    source: "מיכה ו׳, ח׳",
+    principle: "לאהוב חסד ולהפוך אותו למעשה פשוט בחיי היום־יום."
+  },
+  "אמונה וביטחון": {
+    source: "משלי ג׳, ה׳",
+    principle: "לבנות אמון בה׳ בלי להתעלם מאחריות ומעשייה נכונה."
+  },
+  "שליטה בכעס": {
+    source: "פרקי אבות ד׳, א׳",
+    principle: "גבורה פנימית מתבטאת ביכולת לעצור ולשלוט ביצר."
+  },
+  "זוגיות בונה": {
+    source: "פרקי אבות א׳, י״ב",
+    principle: "לבקש שלום, לאהוב שלום ולפעול לקשר מכבד."
+  },
+  "תחום אחר": {
+    source: "פרקי אבות א׳, י״ד",
+    principle: "לא לדחות את הצעד הנכון ולבחור התחלה שאפשר לקיים."
+  }
+};
+
+function cleanStringArray(value, allowedValues, maximumItems) {
+  if (!Array.isArray(value)) return [];
+
+  return [...new Set(
+    value
+      .map((item) => cleanText(item, 60))
+      .filter((item) => allowedValues.has(item))
+  )].slice(0, maximumItems);
+}
+
+async function authenticatePersonalStrengthRequest(req) {
+  const authorization = String(req.headers.authorization || "");
+  const match = authorization.match(/^Bearer\s+(.+)$/i);
+
+  if (!match) {
+    const error = new Error("missing-auth-token");
+    error.statusCode = 401;
+    throw error;
+  }
+
+  const decodedToken = await getAuth().verifyIdToken(match[1], true);
+
+  if (!decodedToken.uid || decodedToken.email_verified !== true) {
+    const error = new Error("email-not-verified");
+    error.statusCode = 403;
+    throw error;
+  }
+
+  return decodedToken;
+}
+
+function personalStrengthPlanFingerprint(data) {
+  return sha256(JSON.stringify({
+    areas: data.areas,
+    focusArea: data.focusArea,
+    currentStatus: data.currentStatus,
+    stepPace: data.stepPace,
+    checkIn: data.checkIn,
+    profilePace: data.profilePace
+  }));
+}
+
+exports.createPersonalStrengthPlan = onRequest(
+  {
+    region: "us-central1",
+    secrets: [openaiApiKey],
+    cors: personalStrengthCors,
+    timeoutSeconds: 90,
+    memory: "256MiB",
+    maxInstances: 12
+  },
+  async (req, res) => {
+    if (req.method !== "POST") {
+      return res.status(405).json({
+        error: "Method not allowed"
+      });
+    }
+
+    try {
+      const authenticatedUser =
+        await authenticatePersonalStrengthRequest(req);
+      const userDocument = adminDb
+        .collection("personalStrengthUsers")
+        .doc(authenticatedUser.uid);
+      const userSnapshot = await userDocument.get();
+
+      if (!userSnapshot.exists) {
+        return res.status(404).json({
+          error: "profile-not-found"
+        });
+      }
+
+      const profile = userSnapshot.data() || {};
+      const verifiedEmail = normalizeEmail(
+        authenticatedUser.email
+      );
+
+      if (
+        profile.uid !== authenticatedUser.uid ||
+        normalizeEmail(profile.email) !== verifiedEmail ||
+        profile.emailVerified !== true
+      ) {
+        return res.status(403).json({
+          error: "profile-ownership-mismatch"
+        });
+      }
+
+      const input = req.body || {};
+      const profilePace = cleanText(
+        profile.pace ||
+          profile.internalSummary?.preferredPace,
+        30
+      );
+      const maximumAreas = ({
+        gentle: 1,
+        steady: 2,
+        challenging: 3
+      })[profilePace] || 1;
+      const areas = cleanStringArray(
+        input.areas,
+        personalStrengthAllowedAreas,
+        maximumAreas
+      );
+      const focusArea = cleanText(input.focusArea, 60);
+      const currentStatus = cleanText(
+        input.currentStatus,
+        60
+      );
+      const stepPace = cleanText(input.stepPace, 30);
+      const checkIn = cleanText(input.checkIn, 80);
+
+      if (
+        !personalStrengthAllowedProfilePaces.has(profilePace) ||
+        !areas.length ||
+        !areas.includes(focusArea) ||
+        !personalStrengthAllowedStatuses.has(currentStatus) ||
+        !personalStrengthAllowedStepPaces.has(stepPace) ||
+        !personalStrengthAllowedCheckIns.has(checkIn)
+      ) {
+        return res.status(400).json({
+          error: "invalid-plan-selections"
+        });
+      }
+
+      const safeData = {
+        areas,
+        focusArea,
+        currentStatus,
+        stepPace,
+        checkIn,
+        profilePace
+      };
+      const fingerprint =
+        personalStrengthPlanFingerprint(safeData);
+      const existingPlan = profile.personalStrengthPlan;
+
+      if (
+        existingPlan?.fingerprint === fingerprint &&
+        existingPlan?.content
+      ) {
+        return res.status(200).json({
+          ok: true,
+          cached: true,
+          plan: existingPlan.content,
+          sourceGuide: existingPlan.sourceGuide ||
+            personalStrengthSourceGuides[focusArea]
+        });
+      }
+
+      const firstName = cleanText(
+        profile.firstName || profile.name,
+        40
+      );
+      const gender = profile.gender === "female"
+        ? "female"
+        : "male";
+      const age = Number(profile.age || 0);
+      const isMinor = gender === "female"
+        ? age > 0 && age < 12
+        : age > 0 && age < 13;
+      const sourceGuide =
+        personalStrengthSourceGuides[focusArea];
+      const statusLabels = {
+        beginner: "רק בתחילת הדרך",
+        sometimes: gender === "female"
+          ? "משתדלת מדי פעם"
+          : "משתדל מדי פעם",
+        habit: "יש לי כבר הרגל מסוים",
+        specific: "רוצה לחזק נקודה מסוימת"
+      };
+      const paceLabels = {
+        small: "קטן וקל להתחלה",
+        balanced: "מאוזן ומעשי",
+        challenge: "אתגר משמעותי"
+      };
+
+      const prompt = `
+אתה יוצר תוכנית התחלה קצרה למדור "חיזוק אישי" באתר יהודי.
+כתוב בעברית טבעית, חמה, מכבדת ומעשית, בלשון ${gender === "female" ? "נקבה" : "זכר"}.
+
+המשתמש אינו מבקש פסק הלכה. אל תפסוק הלכה, אל תציג נבואה,
+אל תבטיח ישועה ואל תיתן אבחון או טיפול רפואי או נפשי.
+אל תמציא מקורות, פסוקים, ציטוטים או עובדות.
+השתמש רק בעיקרון המאושר שמופיע בהמשך ואל תוסיף מקור אחר.
+אם הנושא מחייב הכרעה הלכתית, כתוב בהערת הבטיחות שיש לפנות לרב מוסמך.
+אם יש רמז למצוקה, סכנה או פגיעה, הפנה בעדינות לעזרה מקצועית מתאימה.
+
+שם פרטי: ${firstName}
+האם מדובר בקטין לפי סף האתר: ${isMinor ? "כן" : "לא"}
+המסלול הכללי שנבחר: ${profilePace}
+התחומים שנבחרו: ${areas.join("; ")}
+התחום הראשון: ${focusArea}
+המצב הנוכחי: ${statusLabels[currentStatus] || currentStatus}
+רמת הצעד: ${paceLabels[stepPace]}
+מועד המעקב המבוקש: ${checkIn || "לא נקבע"}
+
+המקור המאושר: ${sourceGuide.source}
+העיקרון המאושר: ${sourceGuide.principle}
+
+דרישות:
+- הצעד השבועי חייב להיות פעולה אחת ברורה, בטוחה ומדידה.
+- התאם את גודל הצעד לרמה שנבחרה, בלי להעמיס ובלי לעורר אשמה.
+- אין לדרוש הוצאה כספית, צום, שינוי תרופות או פעולה מסוכנת.
+- שאלת המעקב צריכה לאפשר תשובה אנושית ולא שיפוטית.
+- אל תוסיף כותרות בתוך הטקסט של השדות.
+`;
+
+      const client = new OpenAI({
+        apiKey: openaiApiKey.value()
+      });
+      const completion = await client.responses.create({
+        model: "gpt-4.1-mini",
+        input: prompt,
+        text: {
+          format: {
+            type: "json_schema",
+            name: "personal_strength_plan",
+            strict: true,
+            schema: {
+              type: "object",
+              additionalProperties: false,
+              properties: {
+                title: { type: "string" },
+                welcome: { type: "string" },
+                weeklyGoal: { type: "string" },
+                explanation: { type: "string" },
+                checkInQuestion: { type: "string" },
+                encouragement: { type: "string" },
+                safetyNote: { type: "string" }
+              },
+              required: [
+                "title",
+                "welcome",
+                "weeklyGoal",
+                "explanation",
+                "checkInQuestion",
+                "encouragement",
+                "safetyNote"
+              ]
+            }
+          }
+        }
+      });
+
+      const outputText = String(
+        completion.output_text || ""
+      ).trim();
+
+      if (!outputText) {
+        throw new Error("empty-ai-plan");
+      }
+
+      let generatedPlan;
+
+      try {
+        generatedPlan = JSON.parse(outputText);
+      } catch (error) {
+        throw new Error("invalid-ai-plan-json");
+      }
+
+      const plan = {
+        title: cleanText(generatedPlan.title, 100),
+        welcome: cleanText(generatedPlan.welcome, 300),
+        weeklyGoal: cleanText(
+          generatedPlan.weeklyGoal,
+          500
+        ),
+        explanation: cleanText(
+          generatedPlan.explanation,
+          700
+        ),
+        checkInQuestion: cleanText(
+          generatedPlan.checkInQuestion,
+          350
+        ),
+        encouragement: cleanText(
+          generatedPlan.encouragement,
+          300
+        ),
+        safetyNote: cleanText(
+          generatedPlan.safetyNote,
+          350
+        )
+      };
+
+      if (
+        !plan.title ||
+        !plan.welcome ||
+        !plan.weeklyGoal ||
+        !plan.explanation ||
+        !plan.checkInQuestion ||
+        !plan.encouragement
+      ) {
+        throw new Error("incomplete-ai-plan");
+      }
+
+      await userDocument.set({
+        personalStrengthPlan: {
+          fingerprint,
+          content: plan,
+          sourceGuide,
+          selections: safeData,
+          model: "gpt-4.1-mini",
+          promptVersion: "PERSONAL_STRENGTH_PLAN_V1",
+          createdAt: new Date(),
+          updatedAt: new Date()
+        }
+      }, { merge: true });
+
+      return res.status(200).json({
+        ok: true,
+        cached: false,
+        plan,
+        sourceGuide
+      });
+    } catch (err) {
+      console.error(
+        "createPersonalStrengthPlan error:",
+        err
+      );
+
+      if (
+        err.message === "missing-auth-token" ||
+        err.code === "auth/id-token-expired" ||
+        err.code === "auth/id-token-revoked" ||
+        err.code === "auth/argument-error"
+      ) {
+        return res.status(err.statusCode || 401).json({
+          error: "authentication-required"
+        });
+      }
+
+      if (err.message === "email-not-verified") {
+        return res.status(403).json({
+          error: "email-not-verified"
+        });
+      }
+
+      return res.status(500).json({
+        error: "personal-strength-plan-generation-failed"
+      });
+    }
+  }
+);
+
 function cleanText(value, maxLength) {
   return String(value || "")
     .replace(/[<>]/g, "")
