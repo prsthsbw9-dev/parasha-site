@@ -1002,7 +1002,7 @@
 
     .plan-preview-button {
       position: absolute;
-      bottom: 50px;
+      bottom: 43px;
       left: 12px;
       min-height: 28px;
       margin: 0;
@@ -1545,11 +1545,12 @@
         <video
           class="personal-strength-lion"
           id="personalStrengthLion"
+          autoplay
           muted
           loop
           playsinline
           webkit-playsinline
-          preload="none"
+          preload="auto"
         >
           <source src="lion-roar-loop-transparent.webm" type="video/webm">
         </video>
@@ -2853,6 +2854,7 @@
     (() => {
       const storageKey = "pardesPersonalStrengthDraft";
       const welcomeView = document.getElementById("welcomeView");
+      const personalStrengthLion = document.getElementById("personalStrengthLion");
       const chatView = document.getElementById("chatView");
       const startButton = document.getElementById("startJourneyButton");
       const continueButton = document.getElementById("continueJourneyButton");
@@ -2914,7 +2916,7 @@
       const checkInButtons = Array.from(document.querySelectorAll(".check-in-btn"));
 
       if (
-        !welcomeView || !chatView || !startButton || !continueButton ||
+        !welcomeView || !personalStrengthLion || !chatView || !startButton || !continueButton ||
         !backButton || !status || !chatLog || !identityForm ||
         !firstNameInput || !identitySubmit || !areaQuestion ||
         !areaSubmit || !areaSelectionStatus || !areaQuestionLabel ||
@@ -2997,6 +2999,14 @@
       function showWelcome() {
         chatView.hidden = true;
         welcomeView.hidden = false;
+        personalStrengthLion.muted = true;
+        if (personalStrengthLion.readyState === 0) {
+          personalStrengthLion.load();
+        }
+        const lionPlayPromise = personalStrengthLion.play();
+        if (lionPlayPromise && typeof lionPlayPromise.catch === "function") {
+          lionPlayPromise.catch(() => {});
+        }
         window.scrollTo({ top: 0, behavior: "smooth" });
       }
 
