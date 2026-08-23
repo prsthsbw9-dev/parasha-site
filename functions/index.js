@@ -1,4 +1,5 @@
 const { onRequest } = require("firebase-functions/v2/https");
+const { onSchedule } = require("firebase-functions/v2/scheduler");
 const { defineSecret } = require("firebase-functions/params");
 const { initializeApp, getApps } = require("firebase-admin/app");
 const { getAuth } = require("firebase-admin/auth");
@@ -1880,6 +1881,218 @@ exports.createPersonalStrengthPlan = onRequest(
         error: "personal-strength-plan-generation-failed"
       });
     }
+  }
+);
+
+/* חיזוק אישי — תזכורת מתוזמנת ללא קריאה נוספת לבינה */
+const personalStrengthReminderSiteUrl =
+  "https://prsthsbw9-dev.github.io/parasha-site/personal-strength.html";
+const personalStrengthReminderBatchSize = 25;
+const personalStrengthReminderMaximumAttempts = 3;
+
+function escapePersonalStrengthEmailHtml(value) {
+  return String(value || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+exports.sendScheduledPersonalStrengthReminders = onSchedule(
+  {
+    region: "us-central1",
+    schedule: "every 30 minutes",
+    timeZone: "Asia/Jerusalem",
+    secrets: [gmailAppPassword],
+    timeoutSeconds: 300,
+    memory: "256MiB",
+    maxInstances: 1
+  },
+  async () => {
+    const now = new Date();
+    const nowIso = now.toISOString();
+    const lockUntilIso = new Date(
+      now.getTime() + 15 * 60 * 1000
+    ).toISOString();
+    const snapshots = await adminDb
+      .collection("personalStrengthUsers")
+      .where("personalStrengthJourney.nextCheckInAt", "<=", nowIso)
+      .limit(personalStrengthReminderBatchSize)
+      .get();
+    const transporter = createPersonalStrengthTransporter();
+
+    for (const snapshot of snapshots.docs) {
+      const userReference = snapshot.ref;
+      let claimedData = null;
+
+      await adminDb.runTransaction(async (transaction) => {
+        const currentSnapshot = await transaction.get(userReference);
+        if (!currentSnapshot.exists) return;
+
+        const data = currentSnapshot.data() || {};
+        const journey = data.personalStrengthJourney || {};
+        const attempts = Number(journey.reminderAttempts || 0);
+        const lockIsActive =
+          journey.reminderStatus === "sending" &&
+          String(journey.reminderLockUntil || "") > nowIso;
+
+        if (
+          data.emailUpdatesConsent !== true ||
+          data.emailVerified !== true ||
+          !isValidEmail(normalizeEmail(data.email)) ||
+          journey.reminderEnabled !== true ||
+          !journey.nextCheckInAt ||
+          journey.nextCheckInAt > nowIso ||
+          journey.reminderStatus === "sent" ||
+          lockIsActive ||
+          attempts >= personalStrengthReminderMaximumAttempts
+        ) return;
+
+        const unsubscribeToken = crypto.randomBytes(32).toString("hex");
+        claimedData = {
+          uid: currentSnapshot.id,
+          email: normalizeEmail(data.email),
+          firstName: cleanText(data.firstName || data.name, 40),
+          weeklyGoal: cleanText(
+            data.personalStrengthPlan?.content?.weeklyGoal,
+            500
+          ),
+          checkInQuestion: cleanText(
+            data.personalStrengthPlan?.content?.checkInQuestion,
+            350
+          ),
+          attemptNumber: attempts + 1,
+          unsubscribeToken
+        };
+
+        transaction.set(userReference, {
+          personalStrengthJourney: {
+            reminderStatus: "sending",
+            reminderLockUntil: lockUntilIso,
+            reminderAttempts: attempts + 1,
+            unsubscribeTokenHash: sha256(unsubscribeToken)
+          }
+        }, { merge: true });
+      });
+
+      if (!claimedData) continue;
+
+      const unsubscribeUrl =
+        "https://us-central1-parasha-site-links.cloudfunctions.net/" +
+        "unsubscribePersonalStrengthEmails?uid=" +
+        encodeURIComponent(claimedData.uid) + "&token=" +
+        encodeURIComponent(claimedData.unsubscribeToken);
+      const name = claimedData.firstName || "שלום";
+      const goal = claimedData.weeklyGoal ||
+        "הצעד האישי שבחרת שמור ומחכה לך באתר.";
+      const question = claimedData.checkInQuestion ||
+        "איך הרגיש לך הצעד שבחרת?";
+
+      try {
+        await transporter.sendMail({
+          from: `"עץ הפרד״ס החי - חיזוק אישי" <prsthsbw9@gmail.com>`,
+          to: claimedData.email,
+          replyTo: "prsthsbw9@gmail.com",
+          subject: `${name}, הגיע הזמן לבדוק איך היה הצעד שלך`,
+          text: [
+            `${name}, שלום,`, "",
+            "קבענו לעצור לרגע ולבדוק איך מתקדם החיזוק האישי שלך.", "",
+            `הצעד שנבחר: ${goal}`,
+            `שאלת המעקב: ${question}`, "",
+            `להמשך המסלול: ${personalStrengthReminderSiteUrl}`, "",
+            `להפסקת הודעות: ${unsubscribeUrl}`
+          ].join("\n"),
+          html: `
+            <div dir="rtl" style="max-width:620px;margin:0 auto;padding:26px;font-family:Arial,sans-serif;line-height:1.75;color:#202020;text-align:right;">
+              <h2 style="color:#8a6500;">${escapePersonalStrengthEmailHtml(name)}, הגיע זמן המעקב שלך</h2>
+              <p>קבענו לעצור לרגע ולבדוק איך מתקדם החיזוק האישי שלך.</p>
+              <p><strong>הצעד שנבחר:</strong><br>${escapePersonalStrengthEmailHtml(goal)}</p>
+              <p><strong>שאלת המעקב:</strong><br>${escapePersonalStrengthEmailHtml(question)}</p>
+              <p><a href="${personalStrengthReminderSiteUrl}" style="display:inline-block;padding:12px 20px;background:#e6bd43;color:#171717;text-decoration:none;border-radius:6px;font-weight:700;">המשך המסלול האישי</a></p>
+              <p style="margin-top:28px;font-size:13px;color:#666;">אינך רוצה לקבל הודעות נוספות? <a href="${unsubscribeUrl}">הפסקת הודעות</a></p>
+            </div>`
+        });
+
+        await userReference.set({
+          personalStrengthJourney: {
+            reminderEnabled: false,
+            reminderStatus: "sent",
+            reminderLockUntil: "",
+            lastReminderSentAt: new Date().toISOString(),
+            nextCheckInAt: null
+          }
+        }, { merge: true });
+      } catch (error) {
+        console.error(
+          "sendScheduledPersonalStrengthReminders error:",
+          claimedData.uid,
+          error
+        );
+        await userReference.set({
+          personalStrengthJourney: {
+            reminderStatus:
+              claimedData.attemptNumber >=
+              personalStrengthReminderMaximumAttempts
+                ? "failed"
+                : "pending",
+            reminderLockUntil: "",
+            nextCheckInAt:
+              claimedData.attemptNumber >=
+              personalStrengthReminderMaximumAttempts
+                ? null
+                : snapshot.data()
+                    ?.personalStrengthJourney
+                    ?.nextCheckInAt || null,
+            lastReminderErrorAt: new Date().toISOString()
+          }
+        }, { merge: true });
+      }
+    }
+  }
+);
+
+exports.unsubscribePersonalStrengthEmails = onRequest(
+  {
+    region: "us-central1",
+    cors: false,
+    timeoutSeconds: 30,
+    maxInstances: 4
+  },
+  async (req, res) => {
+    const uid = cleanText(req.query?.uid, 128);
+    const token = cleanText(req.query?.token, 128);
+    if (!uid || !token) {
+      return res.status(400).send("הקישור אינו תקין.");
+    }
+
+    const userReference = adminDb
+      .collection("personalStrengthUsers")
+      .doc(uid);
+    const snapshot = await userReference.get();
+    const storedHash = snapshot.exists
+      ? snapshot.data()?.personalStrengthJourney?.unsubscribeTokenHash
+      : "";
+    if (!storedHash || sha256(token) !== storedHash) {
+      return res.status(400).send("הקישור אינו תקין או שכבר אינו פעיל.");
+    }
+
+    await userReference.set({
+      emailUpdatesConsent: false,
+      emailUpdatesConsentStoppedAt: new Date(),
+      personalStrengthJourney: {
+        reminderEnabled: false,
+        reminderStatus: "unsubscribed",
+        reminderLockUntil: "",
+        nextCheckInAt: null,
+        unsubscribeTokenHash: ""
+      }
+    }, { merge: true });
+
+    return res
+      .status(200)
+      .set("Content-Type", "text/html; charset=utf-8")
+      .send(`<!doctype html><html lang="he" dir="rtl"><meta charset="utf-8"><title>הפסקת הודעות</title><body style="font-family:Arial,sans-serif;text-align:center;padding:60px 20px;background:#111;color:#fff"><h1>ההודעות הופסקו</h1><p>לא יישלחו אליך חיזוקים ותזכורות נוספים בדוא״ל.</p><p><a href="${personalStrengthReminderSiteUrl}" style="color:#e6bd43">חזרה לחיזוק האישי</a></p></body></html>`);
   }
 );
 
