@@ -5783,7 +5783,7 @@
     
       /* האור שבי */
       --view-light-left:53%;
-      --view-light-top:54svh;
+      --view-light-top:57svh;
       --view-light-size:66px;
     
       /* מה שבלב */
@@ -6725,7 +6725,7 @@
 
       <img
         class="lion-guide-iphone-image iphone-transparent-icon"
-        src="lion-roar-iphone.webp"
+        src="lion-sitting-iphone.png"
         alt=""
         aria-hidden="true"
       >
@@ -10271,6 +10271,14 @@ if (sodGrapesVideo) {
       }
     }
 
+    const lionIPhoneImage = document.querySelector(
+      ".lion-guide-iphone-image"
+    );
+
+    if(lionIPhoneImage){
+      lionIPhoneImage.src = "lion-sitting-iphone.png";
+    }
+
     document.body.classList.remove("bird-transition-active");
   };
 
@@ -10668,36 +10676,51 @@ if (sodGrapesVideo) {
         introAudio.pause();
         introAudio.muted = true;
       }
+
+      const openLionDestination = function(){
+        if(typeof window.openPardesInternalPageById === "function"){
+          window.openPardesInternalPageById("lionGuideLink");
+        }else{
+          window.location.href = "personal-strength.html";
+        }
+      };
+
+      /*
+        באייפון מציגים בתחילה PNG שקוף של האריה היושב.
+        רק לאחר הלחיצה מחליפים אותו באנימציית השאגה השקופה.
+      */
+      if(document.body.classList.contains("is-iphone")){
+        const lionIPhoneImage = document.querySelector(
+          ".lion-guide-iphone-image"
+        );
+
+        if(!lionIPhoneImage){
+          openLionDestination();
+          return;
+        }
+
+        lionIPhoneImage.src = "";
+
+        window.requestAnimationFrame(function(){
+          lionIPhoneImage.src =
+            "lion-roar-iphone.webp?v=" + Date.now();
+        });
+
+        window.setTimeout(openLionDestination, 5100);
+        return;
+      }
   
       lionRoarVideo.loop = false;
       lionRoarVideo.currentTime = 0;
   
-      lionRoarVideo.onended = function(){
-        if(typeof window.openPardesInternalPageById === "function"){
-          window.openPardesInternalPageById("lionGuideLink");
-        }else{
-          window.location.href = "personal-strength.html";
-        }
-      };
+      lionRoarVideo.onended = openLionDestination;
   
-      lionRoarVideo.onerror = function(){
-        if(typeof window.openPardesInternalPageById === "function"){
-          window.openPardesInternalPageById("lionGuideLink");
-        }else{
-          window.location.href = "personal-strength.html";
-        }
-      };
+      lionRoarVideo.onerror = openLionDestination;
   
       const playPromise = lionRoarVideo.play();
   
       if(playPromise && typeof playPromise.catch === "function"){
-        playPromise.catch(function(){
-          if(typeof window.openPardesInternalPageById === "function"){
-            window.openPardesInternalPageById("lionGuideLink");
-          }else{
-            window.location.href = "personal-strength.html";
-          }
-        });
+        playPromise.catch(openLionDestination);
       }
     });
   }
