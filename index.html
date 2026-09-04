@@ -5796,6 +5796,29 @@
       --lion-bottom:18svh;
       --lion-size:145px;
     }    
+
+    /* =========================================================
+       העלייה הראשית — גרסת אייפון בלבד
+       ========================================================= */
+    
+    /* בכל המכשירים מסתירים את גרסת האייפון */
+    .main-aliyah-iphone-image{
+      display:none;
+      width:100%;
+      height:100%;
+      object-fit:contain;
+      pointer-events:none;
+    }
+    
+    /* רק באייפון מסתירים את ה-WebM */
+    body.device-iphone .main-aliyah-video{
+      display:none !important;
+    }
+    
+    /* רק באייפון מציגים את האנימציה השקופה החלופית */
+    body.device-iphone .main-aliyah-iphone-image{
+      display:block !important;
+    }
     
   </style>
 </head>
@@ -6536,34 +6559,48 @@
       </div>
 
        <!-- אייקון העלייה הראשית החי -->
-      <a
-        id="mainAliyahLive"
-        class="main-aliyah-live"
-        href="#"
-        aria-label="פתיחת הסרטון הראשי של העלייה"
-      >
-        <video
-          class="main-aliyah-video"
-          autoplay
-          muted
-          loop
-          playsinline
-          preload="auto"
-          aria-hidden="true"
+        <a
+          id="mainAliyahLive"
+          class="main-aliyah-live"
+          href="#"
+          aria-label="פתיחת הסרטון הראשי של העלייה"
         >
-          <source src="main-aliyah.webm" type="video/webm">
-        </video>
-      
-        <span class="main-aliyah-dynamic-text">
-          <span id="mainAliyahParashaText" class="main-aliyah-parasha-text">
-            כי תשא
+          <video
+            class="main-aliyah-video"
+            autoplay
+            muted
+            loop
+            playsinline
+            preload="auto"
+            aria-hidden="true"
+          >
+            <source src="main-aliyah.webm" type="video/webm">
+          </video>
+        
+          <!-- גרסה שקופה לאייפון בלבד -->
+          <img
+            class="main-aliyah-iphone-image"
+            src="main-aliyah-iphone.webp"
+            alt=""
+            aria-hidden="true"
+          >
+        
+          <span class="main-aliyah-dynamic-text">
+            <span
+              id="mainAliyahParashaText"
+              class="main-aliyah-parasha-text"
+            >
+              כי תשא
+            </span>
+        
+            <span
+              id="mainAliyahNumberText"
+              class="main-aliyah-number-text"
+            >
+              ראשון
+            </span>
           </span>
-      
-          <span id="mainAliyahNumberText" class="main-aliyah-number-text">
-            ראשון
-          </span>
-        </span>
-      </a>
+        </a>
 
       <!-- שמות — דרור חי בקן על העץ -->
     <a
