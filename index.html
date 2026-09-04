@@ -5819,6 +5819,23 @@
     body.device-iphone .main-aliyah-iphone-image{
       display:block !important;
     }
+
+    /* שמות — גרסת אייפון בלבד */
+    .dror-names-iphone-image{
+      display:none;
+      width:100%;
+      height:100%;
+      object-fit:contain;
+      pointer-events:none;
+    }
+    
+    body.device-iphone .dror-names-video{
+      display:none !important;
+    }
+    
+    body.device-iphone .dror-names-iphone-image{
+      display:block !important;
+    }
     
   </style>
 </head>
@@ -6603,27 +6620,34 @@
         </a>
 
       <!-- שמות — דרור חי בקן על העץ -->
-    <a
-      id="drorNamesLink"
-      class="dror-names-live"
-      href="names-intro.html"
-      aria-label="מעבר לעמוד שמות"
-    >
-      <video
-        id="drorNamesVideo"
-        class="dror-names-video"
-        autoplay
-        muted
-        loop
-        playsinline
-        preload="auto"
-        aria-hidden="true"
+      <a
+        id="drorNamesLink"
+        class="dror-names-live"
+        href="names-intro.html"
+        aria-label="מעבר לעמוד שמות"
       >
-        <source src="dror-names.webm" type="video/webm">
-      </video>
-    
-      <span class="dror-names-label">שמות</span>
-    </a>
+        <video
+          id="drorNamesVideo"
+          class="dror-names-video"
+          autoplay
+          muted
+          loop
+          playsinline
+          preload="auto"
+          aria-hidden="true"
+        >
+          <source src="dror-names.webm" type="video/webm">
+        </video>
+      
+        <img
+          class="dror-names-iphone-image"
+          src="dror-names-iphone.webp"
+          alt=""
+          aria-hidden="true"
+        >
+      
+        <span class="dror-names-label">שמות</span>
+      </a>
 
     <!-- מעבר הציפור השקוף — נייד אנכי בלבד -->
     <video
