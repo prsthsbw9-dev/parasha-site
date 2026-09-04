@@ -5739,6 +5739,64 @@
       }
     }
 
+    /* =========================================================
+       התאמה לאייפון בלבד — נייד אנכי
+       אינה משפיעה על אנדרואיד או על מחשבים
+       ========================================================= */
+    
+    body.device-iphone.orientation-portrait{
+      --icon-env-y:0px;
+    
+      /* שמות */
+      --dror-left:55%;
+      --dror-top:18svh;
+      --dror-size:68px;
+    
+      /* דרש */
+      --drash-left:14%;
+      --drash-top:27svh;
+      --drash-w:66px;
+      --drash-h:88px;
+    
+      /* רמז */
+      --remez-right:18%;
+      --remez-top:29svh;
+      --remez-w:58px;
+      --remez-h:88px;
+    
+      /* סוד */
+      --sod-left:10%;
+      --sod-top:44svh;
+      --sod-w:58px;
+      --sod-h:92px;
+    
+      /* פשט */
+      --pshat-right:8%;
+      --pshat-top:44svh;
+      --pshat-w:58px;
+      --pshat-h:96px;
+    
+      /* העלייה הראשית — מורמת כדי שלא תחפוף */
+      --main-left:52%;
+      --main-top:42svh;
+      --main-size:82px;
+    
+      /* האור שבי */
+      --view-light-left:53%;
+      --view-light-top:54svh;
+      --view-light-size:66px;
+    
+      /* מה שבלב */
+      --view-heart-left:53%;
+      --view-heart-top:66svh;
+      --view-heart-size:86px;
+    
+      /* האריה */
+      --lion-left:1%;
+      --lion-bottom:18svh;
+      --lion-size:145px;
+    }    
+    
   </style>
 </head>
   
@@ -6184,6 +6242,11 @@
   const platform = navigator.platform || "";
   const maxTouchPoints = navigator.maxTouchPoints || 0;
   const body = document.body;
+  const isIPhone = /iPhone|iPod/i.test(ua);
+
+  if(isIPhone){
+    body.classList.add("device-iphone");
+  }
 
   function addClass(name) {
     if (name) body.classList.add(name);
