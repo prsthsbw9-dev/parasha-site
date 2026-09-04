@@ -5825,6 +5825,11 @@
       display:block !important;
     }
 
+    /* Safari באייפון: מרווח קבוע בין העלייה הראשית להאור שבי */
+    body.is-iphone.orientation-portrait .haor-shebi-live{
+      top:calc(var(--view-light-top) + 32px) !important;
+    }
+
     /* שמירת ההתאמות החזותיות של האייקונים המקוריים */
     body.is-iphone .tree-pshat-iphone-image{
       transform:translateY(12px);
