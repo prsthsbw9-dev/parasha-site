@@ -5744,7 +5744,7 @@
        אינה משפיעה על אנדרואיד או על מחשבים
        ========================================================= */
     
-    body.device-iphone.orientation-portrait{
+    body.is-iphone.orientation-portrait{
       --icon-env-y:0px;
     
       /* שמות */
@@ -5798,43 +5798,46 @@
     }    
 
     /* =========================================================
-       העלייה הראשית — גרסת אייפון בלבד
+       כל האייקונים — גרסאות שקופות לאייפון בלבד
        ========================================================= */
-    
-    /* בכל המכשירים מסתירים את גרסת האייפון */
-    .main-aliyah-iphone-image{
+
+    .iphone-transparent-icon{
       display:none;
       width:100%;
       height:100%;
       object-fit:contain;
       pointer-events:none;
     }
-    
-    /* רק באייפון מסתירים את ה-WebM */
-    body.device-iphone .main-aliyah-video{
+
+    body.is-iphone .main-aliyah-video,
+    body.is-iphone .dror-names-video,
+    body.is-iphone .tree-remez-video,
+    body.is-iphone .tree-pshat-video,
+    body.is-iphone .tree-drash-video,
+    body.is-iphone .tree-sod-video,
+    body.is-iphone .haor-shebi-live > video,
+    body.is-iphone .ma-shebalev-live > video,
+    body.is-iphone .lion-guide-video{
       display:none !important;
     }
-    
-    /* רק באייפון מציגים את האנימציה השקופה החלופית */
-    body.device-iphone .main-aliyah-iphone-image{
+
+    body.is-iphone .iphone-transparent-icon{
       display:block !important;
     }
 
-    /* שמות — גרסת אייפון בלבד */
-    .dror-names-iphone-image{
-      display:none;
-      width:100%;
-      height:100%;
-      object-fit:contain;
-      pointer-events:none;
+    /* שמירת ההתאמות החזותיות של האייקונים המקוריים */
+    body.is-iphone .tree-pshat-iphone-image{
+      transform:translateY(12px);
     }
-    
-    body.device-iphone .dror-names-video{
-      display:none !important;
-    }
-    
-    body.device-iphone .dror-names-iphone-image{
-      display:block !important;
+
+    body.is-iphone .lion-guide-iphone-image{
+      position:absolute;
+      left:50%;
+      bottom:-18%;
+      width:137%;
+      height:137%;
+      transform:translateX(-50%);
+      transform-origin:center bottom;
     }
     
   </style>
@@ -6285,7 +6288,7 @@
   const isIPhone = /iPhone|iPod/i.test(ua);
 
   if(isIPhone){
-    body.classList.add("device-iphone");
+    body.classList.add("is-iphone");
   }
 
   function addClass(name) {
@@ -6596,7 +6599,7 @@
         
           <!-- גרסה שקופה לאייפון בלבד -->
           <img
-            class="main-aliyah-iphone-image"
+            class="main-aliyah-iphone-image iphone-transparent-icon"
             src="main-aliyah-iphone.webp"
             alt=""
             aria-hidden="true"
@@ -6640,7 +6643,7 @@
         </video>
       
         <img
-          class="dror-names-iphone-image"
+          class="dror-names-iphone-image iphone-transparent-icon"
           src="dror-names-iphone.webp"
           alt=""
           aria-hidden="true"
@@ -6719,6 +6722,13 @@
       >
       <source src="lion-roar-transparent.webm" type="video/webm">
       </video>
+
+      <img
+        class="lion-guide-iphone-image iphone-transparent-icon"
+        src="lion-roar-iphone.webp"
+        alt=""
+        aria-hidden="true"
+      >
     
       <span class="lion-guide-label">חיזוק אישי</span>
     
@@ -9939,8 +9949,13 @@ function normalizeParashaName(value){
 
   <!-- גרסה שקופה לאייפון בלבד -->
   <img
-    class="tree-remez-iphone saa-image"
- Heming? 
+    class="tree-remez-iphone-image iphone-transparent-icon"
+    src="remez-etrog-iphone.webp"
+    alt=""
+    aria-hidden="true"
+  >
+
+  <span class="tree-remez-label">רמז</span>
 </a>
   
 <!-- פשט — שיבולת שעורה חיה על העץ -->
@@ -9955,6 +9970,13 @@ function normalizeParashaName(value){
     aria-hidden="true">
     <source src="pshat-barley.webm" type="video/webm">
   </video>
+
+  <img
+    class="tree-pshat-iphone-image iphone-transparent-icon"
+    src="pshat-barley-iphone.webp"
+    alt=""
+    aria-hidden="true"
+  >
 
   <span class="tree-pshat-label">פשט</span>
 
@@ -9974,6 +9996,13 @@ function normalizeParashaName(value){
     <source src="fig-drash.webm" type="video/webm">
   </video>
 
+  <img
+    class="tree-drash-iphone-image iphone-transparent-icon"
+    src="fig-drash-iphone.webp"
+    alt=""
+    aria-hidden="true"
+  >
+
   <span class="tree-drash-label">דרש</span>
 
 </a>
@@ -9991,6 +10020,13 @@ function normalizeParashaName(value){
    <source src="./grapes-sod.webm?v=4" type="video/webm">
   </video>
 
+  <img
+    class="tree-sod-iphone-image iphone-transparent-icon"
+    src="grapes-sod-iphone.webp"
+    alt=""
+    aria-hidden="true"
+  >
+
   <span class="tree-sod-label">סוד</span>
 </a>
   
@@ -10000,6 +10036,13 @@ function normalizeParashaName(value){
     <source src="haor-shebi-transparent.webm" type="video/webm">
   </video>
 
+  <img
+    class="haor-shebi-iphone-image iphone-transparent-icon"
+    src="haor-shebi-iphone.webp"
+    alt=""
+    aria-hidden="true"
+  >
+
   <span class="haor-shebi-label">האור שבי</span>
 </a>
 
@@ -10008,6 +10051,13 @@ function normalizeParashaName(value){
   <video autoplay muted loop playsinline preload="metadata">
     <source src="ma-shebalev-transparent-fixed.webm" type="video/webm">
   </video>
+
+  <img
+    class="ma-shebalev-iphone-image iphone-transparent-icon"
+    src="ma-shebalev-iphone.webp"
+    alt=""
+    aria-hidden="true"
+  >
 
   <span class="ma-shebalev-label">מה שבלב</span>
 </a>
