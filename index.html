@@ -3799,7 +3799,7 @@
       /* האריה */
       --lion-left:-1%;
       --lion-bottom:18dvh;
-      --lion-size:160px;
+      --lion-size:145px;
     }
 
       @media (max-width:640px) and (orientation:portrait){
@@ -5843,6 +5843,13 @@
       height:137%;
       transform:translateX(-50%);
       transform-origin:center bottom;
+    }
+
+    /* הזזת העץ מעט ימינה בנייד אנכי בלבד */
+    @media (max-width:640px) and (orientation:portrait){
+      .sea-bg-image{
+        object-position:47% center;
+      }
     }
     
   </style>
