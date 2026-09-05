@@ -3765,7 +3765,7 @@
       /* שמות — קן הציפור */
       --dror-left:55%;
       --dror-top:20dvh;
-      --dror-size:70px;
+      --dror-size:62px;
     
       /* דרש — התאנה */
       --drash-left:13%;
@@ -5848,9 +5848,30 @@
     /* הזזת העץ מעט ימינה בנייד אנכי בלבד */
     @media (max-width:640px) and (orientation:portrait){
       .sea-bg-image{
-        object-position:47% center;
+        object-position:45% center;
       }
     }
+
+    /* לוגו הערוץ בצד ימין — בנייד אנכי בלבד */
+    .home-channel-logo{
+      display:none;
+    }
+    
+    @media (max-width:640px) and (orientation:portrait){
+      .home-channel-logo{
+        display:block;
+        position:fixed;
+        right:3%;
+        top:65%;
+        width:112px;
+        height:112px;
+        object-fit:cover;
+        border-radius:50%;
+        z-index:3;
+        pointer-events:none;
+        filter:drop-shadow(0 6px 14px rgba(0,0,0,.55));
+      }
+    }    
     
   </style>
 </head>
@@ -6492,6 +6513,12 @@
 </picture>
 
   <div class="sea-bg-overlay"></div>
+
+  <img
+    class="home-channel-logo"
+    src="logo.png"
+    alt="לוגו פרשת השבוע"
+  >  
 
   <button id="spiritualNavRight" class="spiritual-nav-arrow spiritual-nav-right" type="button" aria-label="מעבר ימינה לעמוד הבא">&lsaquo;</button>
   <button id="spiritualNavLeft" class="spiritual-nav-arrow spiritual-nav-left" type="button" aria-label="מעבר שמאלה לעמוד הקודם">&rsaquo;</button>
