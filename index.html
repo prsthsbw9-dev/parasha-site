@@ -5871,7 +5871,33 @@
         pointer-events:none;
         filter:drop-shadow(0 6px 14px rgba(0,0,0,.55));
       }
+    }
+
+    /* לוגו הערוץ במסך הרחב */
+    @media (min-width:641px){
+      .home-channel-logo{
+        display:block;
+        position:fixed;
+        right:4%;
+        top:70%;
+        width:150px;
+        height:150px;
+        object-fit:cover;
+        border-radius:50%;
+        z-index:3;
+        pointer-events:none;
+        filter:drop-shadow(0 8px 18px rgba(0,0,0,.55));
+      }
     }    
+
+    /* הזזת העץ הרחב מעט ימינה בלבד */
+    @media (min-width:641px){
+      .sea-bg-image{
+        object-position:center center;
+        transform:translateX(3%) scale(1.06);
+        transform-origin:center center;
+      }
+    }
     
   </style>
 </head>
