@@ -6238,10 +6238,10 @@
   <picture>
     <source
       media="(max-width:700px) and (orientation:portrait)"
-      srcset="transition-poster-mobile.jpg"
+      srcset="tree-background-mobile-golden.webp?v=2"
     >
     <img
-      src="transition-poster-desktop.jpg"
+      src="tree-background-desktop-golden.webp?v=2"
       alt=""
       fetchpriority="high"
       decoding="async"
@@ -10288,7 +10288,7 @@ if (sodGrapesVideo) {
   <img
     id="iconTransitionPoster"
     class="icon-transition-poster"
-    src="transition-poster-desktop.jpg"
+    src="tree-background-desktop-golden.webp?v=2"
     alt=""
     aria-hidden="true"
   >
@@ -10361,8 +10361,8 @@ if (sodGrapesVideo) {
 
   /* טעינה מוקדמת של שתי תמונות המעבר */
   [
-    "transition-poster-mobile.jpg",
-    "transition-poster-desktop.jpg"
+    "tree-background-mobile-golden.webp?v=2",
+    "tree-background-desktop-golden.webp?v=2"
   ].forEach(function(source){
     const image = new Image();
     image.src = source;
@@ -10398,8 +10398,8 @@ if (sodGrapesVideo) {
           : "lion-transition-desktop.mp4");
 
     const posterSource = mobile
-      ? "transition-poster-mobile.jpg"
-      : "transition-poster-desktop.jpg";
+      ? "tree-background-mobile-golden.webp?v=2"
+      : "tree-background-desktop-golden.webp?v=2";
 
     let minimumPosterTimePassed = false;
     let videoCanPlay = false;
