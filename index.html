@@ -6502,10 +6502,14 @@
 </div>  
 
 <picture class="tree-background-picture" aria-hidden="true">
-  <source media="(max-width: 640px)" srcset="tree-background-mobile-golden.webp">
+  <source
+    media="(max-width: 640px) and (orientation: portrait)"
+    srcset="tree-background-mobile-golden.webp"
+  >
+
   <img
     class="sea-bg-image"
-    src="tree-background-desktop-poster.jpg"
+    src="tree-background-desktop-golden.webp"
     alt=""
     decoding="async"
     fetchpriority="high"
