@@ -48,6 +48,22 @@
       pointer-events:none;
     }
 
+    /* סרטון הרקע של העץ */
+    .tree-background-video{
+      position:fixed;
+      inset:0;
+      width:100vw;
+      height:100dvh;
+      min-width:100%;
+      min-height:100%;
+      object-fit:cover;
+      object-position:center center;
+      display:block;
+      z-index:0;
+      pointer-events:none;
+      background:transparent;
+    }    
+
     .sea-bg-overlay{
       position:fixed;
       inset:0;
@@ -2227,7 +2243,7 @@
         transition-duration:.01ms !important;
       }
     
-      .tree-background-picture{
+      .tree-background-video{
         display:none !important;
       }
     }
@@ -5845,9 +5861,10 @@
       transform-origin:center bottom;
     }
 
-    /* הזזת העץ מעט ימינה בנייד אנכי בלבד */
+    /* הזזת תמונת וסרטון העץ ימינה בנייד אנכי */
     @media (max-width:640px) and (orientation:portrait){
-      .sea-bg-image{
+      .sea-bg-image,
+      .tree-background-video{
         object-position:45% center;
       }
     }
@@ -5898,9 +5915,10 @@
       }
     }
     
-    /* הזזת העץ הרחב מעט ימינה בלבד */
+    /* הזזת תמונת וסרטון העץ הרחבים ימינה */
     @media (min-width:641px){
-      .sea-bg-image{
+      .sea-bg-image,
+      .tree-background-video{
         object-position:center center;
         transform:translateX(3%) scale(1.06);
         transform-origin:center center;
@@ -6535,6 +6553,7 @@
   <a href="accessibility.html">הצהרת נגישות</a>
 </div>  
 
+<!-- תמונות גיבוי לרקע -->
 <picture class="tree-background-picture" aria-hidden="true">
   <source
     media="(max-width:640px) and (orientation:portrait)"
@@ -6550,7 +6569,31 @@
   >
 </picture>
 
-  <div class="sea-bg-overlay"></div>
+<!-- סרטון הרקע -->
+<video
+  id="treeBackgroundVideo"
+  class="tree-background-video"
+  autoplay
+  muted
+  loop
+  playsinline
+  preload="auto"
+  disablepictureinpicture
+  aria-hidden="true"
+>
+  <source
+    media="(max-width:640px) and (orientation:portrait)"
+    src="tree-background-mobile-animated.mp4?v=1"
+    type="video/mp4"
+  >
+
+  <source
+    src="tree-background-desktop-animated.mp4?v=1"
+    type="video/mp4"
+  >
+</video>
+
+<div class="sea-bg-overlay"></div>
 
   <img
     class="home-channel-logo"
