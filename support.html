@@ -1091,6 +1091,182 @@
     .open-support-intro:active{
       transform:scale(.985);
     }
+
+    /* ===== סמלי אמון בדף התרומות ===== */
+    .payment-trust{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:9px;
+      margin-top:20px;
+    }
+
+    .payment-trust-item{
+      min-height:92px;
+      padding:12px 8px;
+      border:1px solid rgba(255,229,162,.3);
+      border-radius:15px;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      gap:7px;
+      color:#eee9dc;
+      background:rgba(5,13,17,.78);
+      text-align:center;
+      font-size:.78rem;
+      line-height:1.35;
+      font-weight:750;
+    }
+
+    .payment-trust-icon{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      width:34px;
+      height:34px;
+      border:1px solid rgba(255,229,162,.38);
+      border-radius:50%;
+      color:#8df0b3;
+      background:rgba(14,80,48,.3);
+      font-size:1.08rem;
+      font-weight:950;
+    }
+
+    @media(max-width:560px){
+      .payment-trust{grid-template-columns:1fr;gap:8px}
+      .payment-trust-item{
+        min-height:58px;
+        padding:10px 13px;
+        flex-direction:row;
+        justify-content:flex-start;
+        text-align:right;
+        font-size:.86rem;
+      }
+      .payment-trust-icon{flex:0 0 34px}
+    }
+
+    /* ===== מסך מקדים שמופיע רק בתוך TikTok ===== */
+    .tiktok-donation-gate{
+      position:fixed;
+      inset:0;
+      z-index:500000;
+      overflow-y:auto;
+      padding:max(24px,env(safe-area-inset-top)) 16px max(28px,env(safe-area-inset-bottom));
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:#fff;
+      background:
+        linear-gradient(rgba(3,8,11,.84),rgba(3,8,11,.94)),
+        url("support-background-poster.jpg") center/cover no-repeat;
+    }
+
+    .tiktok-donation-gate[hidden]{display:none !important}
+
+    .tiktok-gate-card{
+      width:min(520px,100%);
+      padding:27px 19px;
+      border:1px solid rgba(255,229,162,.45);
+      border-radius:26px;
+      background:rgba(7,14,17,.94);
+      box-shadow:0 22px 55px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.08);
+      text-align:center;
+    }
+
+    .tiktok-gate-logo{
+      width:62px;
+      height:62px;
+      margin:0 auto 15px;
+      border:1px solid rgba(255,229,162,.55);
+      border-radius:50%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:rgba(77,58,17,.52);
+      font-size:29px;
+    }
+
+    .tiktok-gate-card h1{
+      margin:0 0 14px;
+      color:var(--gold-light);
+      font-size:clamp(1.65rem,7vw,2.15rem);
+      line-height:1.25;
+    }
+
+    .tiktok-gate-lead{
+      margin:0;
+      color:#f2eee4;
+      font-size:1rem;
+      font-weight:700;
+      line-height:1.65;
+    }
+
+    .tiktok-gate-instruction{
+      margin:20px 0;
+      padding:15px;
+      border:1px solid rgba(255,229,162,.34);
+      border-radius:17px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:12px;
+      color:#fff;
+      background:rgba(74,55,15,.32);
+      line-height:1.55;
+      font-weight:750;
+    }
+
+    .tiktok-three-dots{
+      flex:0 0 43px;
+      height:43px;
+      border:1px solid rgba(255,255,255,.5);
+      border-radius:50%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:29px;
+      line-height:1;
+    }
+
+    .tiktok-external-button,.tiktok-copy-button{
+      width:100%;
+      min-height:57px;
+      padding:12px 16px;
+      border-radius:17px;
+      font-family:inherit;
+      font-size:1.02rem;
+      font-weight:900;
+      cursor:pointer;
+    }
+
+    .tiktok-external-button{
+      border:1px solid rgba(255,255,255,.7);
+      color:#17200e;
+      background:linear-gradient(135deg,#ffe98b,#e9b932);
+      box-shadow:0 10px 27px rgba(220,168,30,.24);
+    }
+
+    .tiktok-copy-button{
+      margin-top:11px;
+      border:1px solid rgba(255,255,255,.34);
+      color:#fff;
+      background:rgba(9,25,28,.92);
+    }
+
+    .tiktok-copy-status{
+      min-height:1.4em;
+      margin:11px 0 0;
+      color:#8df0b3;
+      font-size:.9rem;
+      font-weight:800;
+    }
+
+    .tiktok-iphone-note{
+      margin:10px 0 0;
+      color:#cfcac0;
+      font-size:.82rem;
+      line-height:1.5;
+    }
     
   </style>
 </head>
@@ -1112,6 +1288,47 @@
   </video>
 
   <div class="support-background-overlay" aria-hidden="true"></div>
+
+  <section
+    id="tiktokDonationGate"
+    class="tiktok-donation-gate"
+    aria-labelledby="tiktokGateTitle"
+    hidden
+  >
+    <div class="tiktok-gate-card">
+      <div class="tiktok-gate-logo" aria-hidden="true">🔒</div>
+      <h1 id="tiktokGateTitle">כדי לעבור לתרומה</h1>
+
+      <p class="tiktok-gate-lead">
+        TikTok פתח את האתר בתוך הדפדפן הפנימי שלו.
+        כדי שכפתורי Bit,‏ PayBox ו־PayPal יפעלו בצורה תקינה,
+        יש לפתוח את דף התרומה בדפדפן החיצוני של הטלפון.
+      </p>
+
+      <div class="tiktok-gate-instruction">
+        <span class="tiktok-three-dots" aria-hidden="true">⋮</span>
+        <span>
+          לחצו על שלוש הנקודות למעלה ובחרו
+          <strong>„פתיחה בדפדפן”</strong>
+        </span>
+      </div>
+
+      <button id="openExternalSupport" class="tiktok-external-button" type="button">
+        פתיחת דף התרומה בדפדפן החיצוני
+      </button>
+
+      <button id="copySupportLink" class="tiktok-copy-button" type="button">
+        העתקת הקישור
+      </button>
+
+      <p id="copySupportStatus" class="tiktok-copy-status" role="status" aria-live="polite"></p>
+
+      <p class="tiktok-iphone-note">
+        באייפון, אם הדפדפן אינו נפתח אוטומטית, העתיקו את הקישור,
+        פתחו את Safari והדביקו אותו בשורת הכתובת.
+      </p>
+    </div>
+  </section>
 
   <section id="introShell" class="intro-shell" aria-label="הקדמה לתמיכה">
     <div id="stars" class="stars" aria-hidden="true"></div>
@@ -1299,6 +1516,23 @@
         התשלום מתבצע מחוץ לאתר ובהתאם לתנאי ספק התשלום שנבחר.
       </p>
 
+      <div class="payment-trust" aria-label="מידע על אבטחת התשלום">
+        <div class="payment-trust-item">
+          <span class="payment-trust-icon" aria-hidden="true">🔒</span>
+          <span>חיבור מוצפן באמצעות HTTPS</span>
+        </div>
+
+        <div class="payment-trust-item">
+          <span class="payment-trust-icon" aria-hidden="true">🛡️</span>
+          <span>פרטי התשלום אינם נשמרים באתר</span>
+        </div>
+
+        <div class="payment-trust-item">
+          <span class="payment-trust-icon" aria-hidden="true">✓</span>
+          <span>התשלום מתבצע ישירות אצל ספק התשלום</span>
+        </div>
+      </div>
+
         <button
         id="openSupportIntro"
         class="open-support-intro"
@@ -1322,6 +1556,64 @@
   <script>
     (() => {
       "use strict";
+
+      const SUPPORT_PUBLIC_URL =
+        "https://prsthsbw9-dev.github.io/parasha-site/support.html";
+
+      const tiktokDonationGate =
+        document.getElementById("tiktokDonationGate");
+      const openExternalSupport =
+        document.getElementById("openExternalSupport");
+      const copySupportLink =
+        document.getElementById("copySupportLink");
+      const copySupportStatus =
+        document.getElementById("copySupportStatus");
+      const browserUserAgent = navigator.userAgent || "";
+
+      const isTikTokBrowser =
+        /TikTok|musical_ly|BytedanceWebview|Bytedance|Aweme/i.test(
+          browserUserAgent
+        ) || /tiktok\.com/i.test(document.referrer || "");
+
+      if(isTikTokBrowser && tiktokDonationGate){
+        tiktokDonationGate.hidden = false;
+        document.body.style.overflow = "hidden";
+      }
+
+      openExternalSupport?.addEventListener("click",() => {
+        const isAndroid = /Android/i.test(browserUserAgent);
+
+        if(isAndroid){
+          const fallbackUrl = encodeURIComponent(SUPPORT_PUBLIC_URL);
+          const androidExternalUrl =
+            "intent://prsthsbw9-dev.github.io/parasha-site/support.html" +
+            "#Intent;" +
+            "scheme=https;" +
+            "package=com.android.chrome;" +
+            `S.browser_fallback_url=${fallbackUrl};` +
+            "end";
+
+          if(window.top && window.top !== window){
+            window.top.location.href = androidExternalUrl;
+          }else{
+            window.location.href = androidExternalUrl;
+          }
+          return;
+        }
+
+        window.open(SUPPORT_PUBLIC_URL,"_blank","noopener,noreferrer");
+      });
+
+      copySupportLink?.addEventListener("click",async () => {
+        try{
+          await navigator.clipboard.writeText(SUPPORT_PUBLIC_URL);
+          copySupportStatus.textContent =
+            "הקישור הועתק — עכשיו פתחו את הדפדפן והדביקו אותו.";
+        }catch(error){
+          copySupportStatus.textContent =
+            "לא ניתן היה להעתיק אוטומטית. לחצו על שלוש הנקודות ובחרו „פתיחה בדפדפן”.";
+        }
+      });
 
       const VIDEO_RETURN_STORAGE_KEY =
         "pardesSupportVideoReturnV1";
