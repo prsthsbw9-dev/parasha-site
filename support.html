@@ -1573,7 +1573,9 @@
       const isTikTokBrowser =
         /TikTok|musical_ly|BytedanceWebview|Bytedance|Aweme/i.test(
           browserUserAgent
-        ) || /tiktok\.com/i.test(document.referrer || "");
+        ) ||
+        /tiktok\.com/i.test(document.referrer || "") ||
+        new URLSearchParams(window.location.search).get("tiktokTest") === "1";
 
       if(isTikTokBrowser && tiktokDonationGate){
         tiktokDonationGate.hidden = false;
