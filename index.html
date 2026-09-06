@@ -6164,6 +6164,47 @@
         transform-origin:center center;
       }
     }
+
+    /* כפתור Play של YouTube במחשב ובלפטופ בלבד */
+    @media (min-width:901px){
+    
+      .pardes-youtube-preview-button{
+        margin:0;
+        padding:0;
+        border:0;
+        font:inherit;
+        cursor:pointer;
+      }
+    
+      .pardes-youtube-preview-button
+      .pardes-inapp-youtube-shade{
+        background:rgba(0,0,0,.16);
+      }
+    
+      .pardes-youtube-preview-button
+      .pardes-inapp-youtube-button{
+        width:86px;
+        height:60px;
+        min-height:0;
+        padding:0 0 0 6px;
+    
+        border:0;
+        border-radius:16px;
+        background:#ff0000;
+    
+        color:#fff;
+        font-size:34px;
+        line-height:1;
+    
+        box-shadow:0 8px 24px rgba(0,0,0,.45);
+      }
+    
+      .pardes-youtube-preview-button:hover
+      .pardes-inapp-youtube-button{
+        background:#d90000;
+        transform:scale(1.05);
+      }
+    }
     
   </style>
 </head>
@@ -9181,11 +9222,10 @@ function normalizeParashaName(value){
             
           /* במחשב נשמרת ההתנהגות הקיימת ללא שינוי. */
           empty.innerHTML = `
-            <a
-              class="pardes-inapp-youtube-link"
-              href="${youtubeLaunchUrl}"
-              rel="noopener noreferrer"
-              aria-label="פתיחת הסרטון ב-YouTube ללייק, תגובה ושיתוף"
+            <button
+              type="button"
+              class="pardes-inapp-youtube-link pardes-youtube-preview-button"
+              aria-label="הפעלת הסרטון בתוך האתר"
             >
               <img
                 class="pardes-inapp-youtube-image"
@@ -9193,14 +9233,33 @@ function normalizeParashaName(value){
                 alt=""
                 aria-hidden="true"
               >
-
+          
               <span class="pardes-inapp-youtube-shade">
-                <span class="pardes-inapp-youtube-button">
-                  ▶ לצפייה, לייק, תגובה ושיתוף ב־YouTube
+                <span
+                  class="pardes-inapp-youtube-button"
+                  aria-hidden="true"
+                >
+                  ▶
                 </span>
               </span>
-            </a>
+            </button>
           `;
+          
+          const desktopYoutubePreview =
+            empty.querySelector(".pardes-youtube-preview-button");
+          
+          desktopYoutubePreview?.addEventListener("click", () => {
+            empty.innerHTML = `
+              <iframe
+                class="pardes-inapp-youtube-link"
+                src="https://www.youtube.com/embed/${youtubeId}?autoplay=1&playsinline=1&rel=0&modestbranding=1&enablejsapi=1&start=${Math.floor(requestedResumeTime)}"
+                title="${layerName}"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowfullscreen
+                referrerpolicy="strict-origin-when-cross-origin"
+              ></iframe>
+            `;
+          });
         }
 
         if(youtubeOpenBtn){
