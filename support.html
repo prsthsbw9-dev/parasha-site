@@ -1570,12 +1570,11 @@
         document.getElementById("copySupportStatus");
       const browserUserAgent = navigator.userAgent || "";
 
-      const isTikTokBrowser =
-        /TikTok|musical_ly|BytedanceWebview|Bytedance|Aweme/i.test(
-          browserUserAgent
-        ) ||
-        /tiktok\.com/i.test(document.referrer || "") ||
-        new URLSearchParams(window.location.search).get("tiktokTest") === "1";
+    const isTikTokBrowser =
+      /TikTok|musical_ly|BytedanceWebview|Bytedance|Aweme/i.test(
+        browserUserAgent
+      ) ||
+      /tiktok\.com/i.test(document.referrer || "");
 
       if(isTikTokBrowser && tiktokDonationGate){
         tiktokDonationGate.hidden = false;
