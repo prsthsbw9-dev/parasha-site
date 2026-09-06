@@ -5340,6 +5340,246 @@
         padding-bottom:calc(78px + env(safe-area-inset-bottom)) !important;
       }
     }
+
+    /* =========================================================
+       חלון סרטוני YouTube במחשב ובלפטופ
+       מסך מלא לרוחב, עם אותם כפתורים כמו בנייד
+       ========================================================= */
+    @media (min-width:901px){
+    
+      body.pardes-video-open{
+        overflow:hidden !important;
+      }
+    
+      /* הכיסוי של כל המסך */
+      body.pardes-video-open .pardes-video-panel{
+        position:fixed !important;
+        inset:0 !important;
+        z-index:100000 !important;
+        display:flex !important;
+        align-items:stretch !important;
+        justify-content:stretch !important;
+        padding:0 !important;
+        background:#05090e !important;
+        backdrop-filter:none !important;
+        -webkit-backdrop-filter:none !important;
+      }
+    
+      /* ביטול החלון האנכי הצר */
+      body.pardes-video-open .pardes-video-card{
+        width:100vw !important;
+        height:100dvh !important;
+        max-width:none !important;
+        max-height:none !important;
+        border:0 !important;
+        border-radius:0 !important;
+        box-shadow:none !important;
+        overflow:hidden !important;
+        background:#05090e !important;
+      }
+    
+      /* במחשב משתמשים בכפתור החזרה התחתון */
+      body.pardes-video-open .pardes-video-head{
+        display:none !important;
+      }
+    
+      /* אזור הסרטון */
+      body.pardes-video-open .pardes-video-body{
+        width:100% !important;
+        height:100dvh !important;
+        min-height:100dvh !important;
+        display:flex !important;
+        align-items:center !important;
+        justify-content:center !important;
+        padding:14px 20px 88px !important;
+      }
+    
+      /* סרטון רגיל */
+      body.pardes-video-open .pardes-video-body > .pardes-video-player{
+        width:min(
+          92vw,
+          calc((100dvh - 112px) * 16 / 9),
+          1280px
+        ) !important;
+        max-width:1280px !important;
+        height:auto !important;
+        max-height:calc(100dvh - 112px) !important;
+        aspect-ratio:16 / 9 !important;
+        margin:auto !important;
+        border-radius:14px !important;
+        object-fit:contain !important;
+        background:#000 !important;
+      }
+    
+      /* נגן YouTube */
+      body.pardes-video-open .pardes-youtube-viewport{
+        width:min(
+          92vw,
+          calc((100dvh - 112px) * 16 / 9),
+          1280px
+        ) !important;
+        max-width:1280px !important;
+        height:auto !important;
+        max-height:calc(100dvh - 112px) !important;
+        aspect-ratio:16 / 9 !important;
+        margin:auto !important;
+        border-radius:14px !important;
+        overflow:hidden !important;
+        background:#000 !important;
+      }
+    
+      body.pardes-video-open .pardes-youtube-player{
+        position:static !important;
+        width:100% !important;
+        height:100% !important;
+        max-width:none !important;
+        max-height:none !important;
+        aspect-ratio:16 / 9 !important;
+        transform:none !important;
+        border:0 !important;
+        border-radius:0 !important;
+      }
+    
+      /* תמונת התצוגה של YouTube לפני ההפעלה */
+      body.pardes-video-open .pardes-video-empty.is-inapp-youtube,
+      body.pardes-video-open .pardes-video-empty.is-inapp-youtube.is-horizontal{
+        width:min(
+          92vw,
+          calc((100dvh - 112px) * 16 / 9),
+          1280px
+        ) !important;
+        max-width:1280px !important;
+        height:auto !important;
+        max-height:calc(100dvh - 112px) !important;
+        aspect-ratio:16 / 9 !important;
+        margin:auto !important;
+        border-radius:14px !important;
+        overflow:hidden !important;
+        background:#000 !important;
+      }
+    
+      body.pardes-video-open iframe.pardes-inapp-youtube-link{
+        width:100% !important;
+        height:100% !important;
+        border:0 !important;
+      }
+    
+      /* שורת הכפתורים התחתונה */
+      body.pardes-video-open .pardes-fullscreen-actions{
+        position:fixed !important;
+        left:50% !important;
+        bottom:0 !important;
+        z-index:100005 !important;
+        width:100% !important;
+        min-height:72px !important;
+        display:flex !important;
+        flex-direction:row !important;
+        align-items:center !important;
+        justify-content:center !important;
+        gap:12px !important;
+        padding:10px 20px !important;
+        transform:translateX(-50%) !important;
+        direction:ltr !important;
+        background:#020609 !important;
+        box-shadow:0 -12px 30px rgba(0,0,0,.72) !important;
+      }
+    
+      body.pardes-video-open .pardes-fullscreen-bottom-row{
+        display:contents !important;
+      }
+    
+      body.pardes-video-open .pardes-fullscreen-button{
+        height:52px !important;
+        min-height:52px !important;
+        display:flex !important;
+        align-items:center !important;
+        justify-content:center !important;
+        color:#fff !important;
+        text-decoration:none !important;
+        font-family:inherit !important;
+        font-weight:900 !important;
+      }
+    
+      /* חזרה לעץ */
+      body.pardes-video-open .pardes-fullscreen-button.is-back{
+        order:3 !important;
+        flex:0 0 52px !important;
+        width:52px !important;
+        min-width:52px !important;
+        border-radius:50% !important;
+        background:linear-gradient(135deg,#2563a9,#123f78) !important;
+        font-size:25px !important;
+      }
+    
+      /* תמיכה */
+      body.pardes-video-open .pardes-fullscreen-button.is-support{
+        order:2 !important;
+        flex:0 1 486px !important;
+        width:min(486px,60vw) !important;
+        padding:5px 14px !important;
+        direction:rtl !important;
+        flex-direction:column !important;
+        gap:2px !important;
+        border-radius:12px !important;
+        background:linear-gradient(135deg,#34843c,#176027) !important;
+      }
+    
+      body.pardes-video-open .support-button-main{
+        font-size:16px !important;
+        line-height:1.05 !important;
+        white-space:nowrap !important;
+      }
+    
+      body.pardes-video-open .support-button-sub{
+        font-size:10px !important;
+        line-height:1.05 !important;
+        white-space:nowrap !important;
+        opacity:.92 !important;
+      }
+    
+      /* כפתור הלב לפתיחה ב־YouTube */
+      body.pardes-video-open
+      .pardes-fullscreen-actions
+      .pardes-youtube-open-btn{
+        order:1 !important;
+        position:static !important;
+        flex:0 0 52px !important;
+        display:flex !important;
+        align-items:center !important;
+        justify-content:center !important;
+        width:52px !important;
+        min-width:52px !important;
+        max-width:52px !important;
+        height:52px !important;
+        min-height:52px !important;
+        margin:0 !important;
+        padding:0 !important;
+        transform:none !important;
+        border-radius:50% !important;
+        background:#b80000 !important;
+      }
+    
+      body.pardes-video-open
+      .pardes-fullscreen-actions
+      .pardes-youtube-open-btn[hidden]{
+        display:none !important;
+      }
+    
+      body.pardes-video-open .youtube-mobile-heart{
+        display:block !important;
+        color:#fff !important;
+        font-family:Arial,sans-serif !important;
+        font-size:29px !important;
+        font-weight:900 !important;
+        line-height:1 !important;
+        transform:translateY(1px) scaleX(1.32) !important;
+      }
+    
+      body.pardes-video-open .youtube-desktop-label{
+        display:none !important;
+      }
+    }
+    
     /* חלון פנימי לדפי האתר */
     .internal-page-overlay{
       position:fixed;
