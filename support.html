@@ -1051,10 +1051,51 @@
       color:#ffe2df;
     }
 
+    /* כפתור פתיחת ההסבר על מטרת התרומה */
+    .open-support-intro{
+      width:100%;
+      min-height:56px;
+      margin-top:22px;
+      padding:12px 18px;
+    
+      border:1px solid rgba(255,229,162,.58);
+      border-radius:18px;
+    
+      color:var(--gold-light);
+      background:rgba(8,14,18,.88);
+    
+      font-family:inherit;
+      font-size:1.08rem;
+      font-weight:900;
+      text-align:center;
+    
+      box-shadow:
+        0 10px 26px rgba(0,0,0,.28),
+        inset 0 1px 0 rgba(255,255,255,.08);
+    
+      cursor:pointer;
+      transition:
+        transform .18s ease,
+        background .18s ease,
+        border-color .18s ease;
+    }
+    
+    .open-support-intro:hover,
+    .open-support-intro:focus-visible{
+      background:rgba(72,54,17,.72);
+      border-color:var(--gold-light);
+      transform:translateY(-2px);
+      outline:none;
+    }
+    
+    .open-support-intro:active{
+      transform:scale(.985);
+    }
+    
   </style>
 </head>
 
-<body class="intro-mode">
+<body class="final-mode">
 
   <video
     class="support-background-video"
@@ -1257,6 +1298,14 @@
       <p class="legal-hint">
         התשלום מתבצע מחוץ לאתר ובהתאם לתנאי ספק התשלום שנבחר.
       </p>
+
+        <button
+        id="openSupportIntro"
+        class="open-support-intro"
+        type="button"
+      >
+        למה התרומה שלי נועדה?
+      </button>      
 
       <div class="optional-contact">
         <p>יש לך שאלה או בקשה מיוחדת? אפשר לפנות אלינו גם ללא ביצוע תשלום.</p>
@@ -1689,6 +1738,8 @@ const returnNavigation =
       /* ===== בקר מסכי ההקדמה ===== */
       const introShell = document.getElementById("introShell");
       const skipIntro = document.getElementById("skipIntro");
+      const openSupportIntro =
+        document.getElementById("openSupportIntro");      
       const slides = [...document.querySelectorAll(".intro-slide")];
       const progressDots = [...document.querySelectorAll(".intro-progress-dot")];
       const typedLead = document.getElementById("introTypedLead");
@@ -1843,10 +1894,27 @@ const returnNavigation =
       next2?.addEventListener("click",() => showSlide(3));
       goToSupport?.addEventListener("click",showFinalSupport);
       skipIntro?.addEventListener("click",showFinalSupport);
+      
+      openSupportIntro?.addEventListener("click",() => {
+        clearIntroTimers();
+      
+        document.body.classList.remove("final-mode");
+        document.body.classList.add("intro-mode");
+      
+        introShell.hidden = false;
+        skipIntro.hidden = false;
+        skipIntro.textContent = "חזרה לתרומה ›";
+      
+        window.scrollTo({
+          top:0,
+          behavior:"auto"
+        });
+      
+        showSlide(0);
+      });
 
       buildStars();
-      showSlide(0);
-
+      updatePaymentLinks();
 
       setupReturnNavigation();
       updatePaymentLinks();
