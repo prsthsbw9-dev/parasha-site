@@ -11315,7 +11315,7 @@ if (sodGrapesVideo) {
       }
       return;
     }
-
+    
     closeInternalPage();
   }
 
@@ -11475,6 +11475,14 @@ if (sodGrapesVideo) {
     }
   });
 
+  window.addEventListener("message", function(event){
+    if(event.origin !== window.location.origin) return;
+    if(event.data?.type !== "pardes-return-to-tree") return;
+  
+    supportOpenedFromVideo = false;
+    closeInternalPage();
+  });
+  
   document.addEventListener("keydown", function(event){
     if(event.key === "Escape"){
       handleInternalBack();
