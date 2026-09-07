@@ -11448,6 +11448,16 @@ if (sodGrapesVideo) {
           return;
         }
 
+        if(link.id === "supportTreeReturn"){
+          event.preventDefault();
+          event.stopPropagation();
+          event.stopImmediatePropagation();
+        
+          supportOpenedFromVideo = false;
+          closeInternalPage();
+          return;
+        }
+        
         if(
           href === "index.html" ||
           href.startsWith("index.html?") ||
