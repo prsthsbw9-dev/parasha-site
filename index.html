@@ -11252,6 +11252,9 @@ if (sodGrapesVideo) {
             preparedReturnUrl
           );
 
+          supportUrl.searchParams.set("support", "1");
+          supportUrl.searchParams.set("from", "video");         
+
           resolvedPageSrc =
             supportUrl.pathname +
             supportUrl.search +
