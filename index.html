@@ -6149,6 +6149,148 @@
         height:82px;
       }
     }
+
+    /* =========================================================
+       איזון דינמי סופי — iPhone ו-iPad בלבד
+
+       המיקומים בנויים כשרשרת: העלייה הראשית היא נקודת העוגן,
+       והאור שבי ומה שבלב נשמרים מתחתיה במרווחים מוגבלים.
+       שורת החיפוש והאריה נגזרים מאותו עוגן תחתון כדי שלא יחפפו.
+       הבלוק נמצא בסוף ה-CSS ולכן הוא גובר על הגדרות המכשיר הישנות.
+       ========================================================= */
+
+    /* iPhone — מצב אנכי */
+    body.is-iphone.device-phone.orientation-portrait{
+      --ios-search-bottom:clamp(128px,17svh,150px);
+
+      --main-left:52%;
+      --main-top:clamp(238px,32.5svh,292px);
+      --main-size:clamp(74px,9.5svh,82px);
+
+      --view-light-left:50%;
+      --view-light-top:calc(var(--main-top) + clamp(112px,14.5svh,132px));
+      --view-light-size:clamp(58px,7.7svh,66px);
+
+      --view-heart-left:50%;
+      --view-heart-top:calc(var(--view-light-top) + clamp(88px,11.5svh,104px));
+      --view-heart-size:clamp(76px,10svh,86px);
+
+      --view-search-left:50%;
+      --view-search-bottom:calc(env(safe-area-inset-bottom,0px) + var(--ios-search-bottom));
+      --view-search-width:min(94vw,390px);
+      --view-message-left:50%;
+      --view-message-bottom:calc(env(safe-area-inset-bottom,0px) + var(--ios-search-bottom) - 35px);
+      --view-message-width:min(92vw,390px);
+
+      --lion-left:1%;
+      --lion-bottom:calc(env(safe-area-inset-bottom,0px) + var(--ios-search-bottom) + clamp(70px,8.5svh,84px));
+      --lion-size:clamp(118px,17svh,145px);
+    }
+
+    /* מבטלים את תוספת ה-18px הישנה; המרווח מחושב כעת בשרשרת */
+    body.is-iphone.device-phone.orientation-portrait .haor-shebi-live{
+      top:var(--view-light-top) !important;
+    }
+
+    /* iPhone — מצב לרוחב */
+    body.is-iphone.device-phone.orientation-landscape{
+      --ios-search-bottom-landscape:clamp(38px,10dvh,58px);
+
+      --main-left:52%;
+      --main-top:clamp(94px,27dvh,126px);
+      --main-size:clamp(62px,18dvh,74px);
+
+      --view-light-left:50%;
+      --view-light-top:calc(var(--main-top) + clamp(62px,18dvh,82px));
+      --view-light-size:clamp(42px,12dvh,52px);
+
+      --view-heart-left:50%;
+      --view-heart-top:calc(var(--view-light-top) + clamp(52px,15dvh,68px));
+      --view-heart-size:clamp(54px,16dvh,66px);
+
+      --view-search-left:52%;
+      --view-search-bottom:calc(env(safe-area-inset-bottom,0px) + var(--ios-search-bottom-landscape));
+      --view-search-width:min(64vw,560px);
+      --view-message-left:52%;
+      --view-message-bottom:calc(env(safe-area-inset-bottom,0px) + var(--ios-search-bottom-landscape) - 30px);
+      --view-message-width:min(64vw,560px);
+
+      --lion-left:2%;
+      --lion-bottom:calc(env(safe-area-inset-bottom,0px) + var(--ios-search-bottom-landscape) + 52px);
+      --lion-size:clamp(76px,24dvh,96px);
+    }
+
+    /* iPad — מצב אנכי */
+    body.device-tablet.orientation-portrait{
+      --ipad-search-bottom:clamp(105px,11dvh,150px);
+
+      --main-left:52%;
+      --main-top:clamp(330px,34dvh,445px);
+      --main-size:clamp(88px,8.5dvh,108px);
+
+      --view-light-left:51%;
+      --view-light-top:calc(var(--main-top) + clamp(142px,13dvh,174px));
+      --view-light-size:clamp(70px,6.5dvh,84px);
+
+      --view-heart-left:51%;
+      --view-heart-top:calc(var(--view-light-top) + clamp(118px,10.5dvh,146px));
+      --view-heart-size:clamp(92px,8.5dvh,112px);
+
+      --view-search-left:50%;
+      --view-search-bottom:calc(env(safe-area-inset-bottom,0px) + var(--ipad-search-bottom));
+      --view-search-width:min(76vw,620px);
+      --view-message-left:50%;
+      --view-message-bottom:calc(env(safe-area-inset-bottom,0px) + var(--ipad-search-bottom) - 38px);
+      --view-message-width:min(74vw,620px);
+
+      --lion-left:4%;
+      --lion-bottom:calc(env(safe-area-inset-bottom,0px) + var(--ipad-search-bottom) + clamp(78px,7dvh,98px));
+      --lion-size:clamp(120px,12dvh,154px);
+    }
+
+    /* iPad — מצב לרוחב */
+    body.device-tablet.orientation-landscape{
+      --ipad-search-bottom-landscape:clamp(58px,8dvh,86px);
+
+      --main-left:52%;
+      --main-top:clamp(205px,31dvh,300px);
+      --main-size:clamp(82px,12dvh,100px);
+
+      --view-light-left:51%;
+      --view-light-top:calc(var(--main-top) + clamp(105px,14dvh,132px));
+      --view-light-size:clamp(62px,9dvh,76px);
+
+      --view-heart-left:51%;
+      --view-heart-top:calc(var(--view-light-top) + clamp(88px,12dvh,112px));
+      --view-heart-size:clamp(78px,11dvh,98px);
+
+      --view-search-left:52%;
+      --view-search-bottom:calc(env(safe-area-inset-bottom,0px) + var(--ipad-search-bottom-landscape));
+      --view-search-width:min(64vw,680px);
+      --view-message-left:52%;
+      --view-message-bottom:calc(env(safe-area-inset-bottom,0px) + var(--ipad-search-bottom-landscape) - 34px);
+      --view-message-width:min(62vw,680px);
+
+      --lion-left:4%;
+      --lion-bottom:calc(env(safe-area-inset-bottom,0px) + var(--ipad-search-bottom-landscape) + clamp(64px,8dvh,84px));
+      --lion-size:clamp(104px,15dvh,130px);
+    }
+
+    /* התאמת רקע ולוגו למצבי הרוחב של מכשירי Apple */
+    body.is-iphone.orientation-landscape .sea-bg-image,
+    body.is-iphone.orientation-landscape .tree-background-video,
+    body.device-tablet.orientation-landscape .sea-bg-image,
+    body.device-tablet.orientation-landscape .tree-background-video{
+      object-position:center center;
+    }
+
+    body.is-iphone.orientation-landscape .home-channel-logo,
+    body.device-tablet.orientation-landscape .home-channel-logo{
+      width:clamp(68px,15dvh,88px);
+      height:clamp(68px,15dvh,88px);
+      top:auto;
+      bottom:calc(env(safe-area-inset-bottom,0px) + 12px);
+    }
     
     /* הזזת תמונת וסרטון העץ הרחבים ימינה */
     @media (min-width:641px){
