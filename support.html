@@ -331,7 +331,9 @@
           אם האפשרות אינה מופיעה, העתיקו את הקישור ופתחו אותו ב־Chrome או ב־Safari.
         </p>
 
-        <button class="back-button" data-back-to-welcome type="button">חזרה למסך הכניסה</button>
+        <a class="back-button" href="index.html">
+         חזרה לעץ הפרד״ס החי
+        </a>
       </section>
 
       <section id="paymentPanel" class="action-panel" aria-labelledby="paymentTitle" hidden>
@@ -367,7 +369,7 @@
 
         <nav class="small-links" aria-label="קישורים נוספים">
           <a href="support-terms.html">תקנון התמיכה</a>
-          <a href="index.html">כניסה לעץ הפרד״ס החי</a>
+          <a id="supportReturnLink" href="index.html">כניסה לעץ הפרד״ס החי</a>
           <a href="mailto:prsthsbw9@gmail.com?subject=%D7%A9%D7%90%D7%9C%D7%94%20%D7%91%D7%A0%D7%95%D7%92%D7%A2%20%D7%9C%D7%AA%D7%9E%D7%99%D7%9B%D7%94">שאלה באימייל</a>
         </nav>
 
@@ -375,7 +377,9 @@
           התשלום מתבצע ישירות אצל ספק התשלום הנבחר. פרטי התשלום אינם נשמרים באתר.
         </p>
 
-        <button class="back-button" data-back-to-welcome type="button">חזרה למסך הכניסה</button>
+        <a id="supportTreeReturn" class="back-button" href="index.html">
+          חזרה לעץ הפרד״ס החי
+        </a>
       </section>
     </div>
   </main>
@@ -422,22 +426,48 @@
         window.scrollTo({top:0,behavior:"smooth"});
       }
 
+      const pageParameters = new URLSearchParams(window.location.search);
+      
       const supportWasRequested =
-        new URLSearchParams(window.location.search).get("support") === "1";
+        pageParameters.get("support") === "1";
+      
+      const openedFromVideo =
+        pageParameters.get("from") === "video";
+      
+      const videoReturnUrl =
+        pageParameters.get("returnUrl") || "";
 
-      if(supportWasRequested && !isTikTokBrowser){
-        showOnly(paymentPanel);
-        const cleanUrl = `${window.location.pathname}${window.location.hash || ""}`;
-        window.history.replaceState({},"",cleanUrl);
+      const supportReturnLink =
+        document.getElementById("supportReturnLink");
+      
+      if(openedFromVideo && supportReturnLink){
+        supportReturnLink.textContent = "חזרה לצפייה בסרטון";
+      
+        if(videoReturnUrl){
+          try{
+            const returnAddress = new URL(videoReturnUrl, window.location.href);
+      
+            supportReturnLink.href =
+              returnAddress.pathname.split("/").pop() +
+              returnAddress.search +
+              returnAddress.hash;
+          }catch(error){
+            supportReturnLink.href = "index.html";
+          }
+        }
+      }      
+
+      if(supportWasRequested){
+        if(isTikTokBrowser){
+          showOnly(tiktokPanel);
+        }else{
+          showOnly(paymentPanel);
+        }
       }else{
         showWelcome();
       }
 
       chooseSupport?.addEventListener("click",showSupport);
-
-      document.querySelectorAll("[data-back-to-welcome]").forEach((button) => {
-        button.addEventListener("click",showWelcome);
-      });
 
       /*
        * TikTok ודפדפנים בנייד עשויים לשמור צילום של מצב העמוד האחרון.
