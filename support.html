@@ -212,6 +212,10 @@
       cursor:pointer;
     }
 
+    .back-button[hidden]{
+      display:none !important;
+    }    
+
     .payment-button{
       display:flex;
       align-items:center;
@@ -332,12 +336,14 @@
         </p>
 
         <a
+          id="paymentTreeReturn"
           class="back-button"
           data-return-to-tree
           href="index.html"
         >
           חזרה לעץ הפרד״ס החי
         </a>
+       
       </section>
 
       <section id="paymentPanel" class="action-panel" aria-labelledby="paymentTitle" hidden>
@@ -453,6 +459,17 @@
 
       const supportReturnLink =
         document.getElementById("supportReturnLink");
+
+      const paymentTreeReturn =
+        document.getElementById("paymentTreeReturn");
+      
+      /*
+       * הקישור התחתון מוצג רק כשהכניסה לדף התמיכה
+       * התבצעה מתוך סרטון באתר.
+       */
+      if(paymentTreeReturn){
+        paymentTreeReturn.hidden = !openedFromVideo;
+      }      
       
       if(openedFromVideo && supportReturnLink){
         supportReturnLink.textContent = "חזרה לצפייה בסרטון";
