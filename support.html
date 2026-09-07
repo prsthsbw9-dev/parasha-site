@@ -331,8 +331,12 @@
           אם האפשרות אינה מופיעה, העתיקו את הקישור ופתחו אותו ב־Chrome או ב־Safari.
         </p>
 
-        <a class="back-button" href="index.html">
-         חזרה לעץ הפרד״ס החי
+        <a
+          class="back-button"
+          data-return-to-tree
+          href="index.html"
+        >
+          חזרה לעץ הפרד״ס החי
         </a>
       </section>
 
@@ -378,18 +382,9 @@
         </p>
 
         <a
-          id="supportTreeReturn"
           class="back-button"
+          data-return-to-tree
           href="index.html"
-          onclick="
-            if(window.parent !== window){
-              event.preventDefault();
-              window.parent.postMessage(
-                { type: 'pardes-return-to-tree' },
-                window.location.origin
-              );
-            }
-          "
         >
           חזרה לעץ הפרד״ס החי
         </a>
