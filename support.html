@@ -396,8 +396,14 @@
     (() => {
       "use strict";
 
-      const SUPPORT_PUBLIC_URL =
-        "https://prsthsbw9-dev.github.io/parasha-site/support.html?support=1";
+      function getSupportPublicUrl(){
+        const url = new URL(window.location.href);
+      
+        url.protocol = "https:";
+        url.searchParams.set("support","1");
+      
+        return url.href;
+      }
 
       const userAgent = navigator.userAgent || "";
       const isTikTokBrowser =
@@ -476,6 +482,34 @@
       }
 
       chooseSupport?.addEventListener("click",showSupport);
+       document.querySelectorAll("[data-return-to-tree]").forEach((link) => {
+        link.addEventListener("click", (event) => {
+          /*
+           * כאשר דף התמיכה מוצג בתוך העמוד הראשי,
+           * מודיעים לעמוד הראשי שצריך לסגור גם את הסרטון.
+           * בכניסה רגילה לדף התמיכה הקישור index.html ממשיך לעבוד כרגיל.
+           */
+          if(window.parent !== window){
+            event.preventDefault();
+      
+            window.parent.postMessage(
+              { type:"pardes-return-to-tree" },
+              window.location.origin
+            );
+          }
+        });
+      });
+
+      supportReturnLink?.addEventListener("click", (event) => {
+        if(!openedFromVideo || window.parent === window) return;
+      
+        event.preventDefault();
+      
+        window.parent.postMessage(
+          { type:"pardes-return-to-video" },
+          window.location.origin
+        );
+      });  
 
       /*
        * TikTok ודפדפנים בנייד עשויים לשמור צילום של מצב העמוד האחרון.
@@ -504,7 +538,7 @@
 
       copyButton?.addEventListener("click",async () => {
         try{
-          await navigator.clipboard.writeText(SUPPORT_PUBLIC_URL);
+          await navigator.clipboard.writeText(getSupportPublicUrl());
           copyStatus.textContent =
             "הקישור הועתק ✓ כעת פתחו את Chrome או Safari והדביקו אותו בשורת הכתובת.";
         }catch(error){
