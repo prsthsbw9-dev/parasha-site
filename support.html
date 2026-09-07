@@ -406,6 +406,7 @@
 
       function showWelcome(){
         showOnly(welcomePanel);
+        if(copyStatus) copyStatus.textContent = "";
         const cleanUrl = `${window.location.pathname}${window.location.hash || ""}`;
         window.history.replaceState({},"",cleanUrl);
         window.scrollTo({top:0,behavior:"smooth"});
@@ -426,8 +427,10 @@
 
       if(supportWasRequested && !isTikTokBrowser){
         showOnly(paymentPanel);
+        const cleanUrl = `${window.location.pathname}${window.location.hash || ""}`;
+        window.history.replaceState({},"",cleanUrl);
       }else{
-        showOnly(welcomePanel);
+        showWelcome();
       }
 
       chooseSupport?.addEventListener("click",showSupport);
@@ -435,6 +438,31 @@
       document.querySelectorAll("[data-back-to-welcome]").forEach((button) => {
         button.addEventListener("click",showWelcome);
       });
+
+      /*
+       * TikTok ודפדפנים בנייד עשויים לשמור צילום של מצב העמוד האחרון.
+       * בכל חזרה לעמוד מאפליקציה אחרת או מזיכרון הניווט,
+       * מחזירים את הצופה למסך קבלת הפנים ומנקים את סימון התמיכה.
+       */
+      let pageWasHidden = false;
+
+      document.addEventListener("visibilitychange",() => {
+        if(document.visibilityState === "hidden"){
+          pageWasHidden = true;
+          return;
+        }
+
+        if(document.visibilityState === "visible" && pageWasHidden){
+          pageWasHidden = false;
+          showWelcome();
+        }
+      });
+
+      window.addEventListener("pageshow",(event) => {
+        if(event.persisted) showWelcome();
+      });
+
+      window.addEventListener("popstate",showWelcome);
 
       copyButton?.addEventListener("click",async () => {
         try{
