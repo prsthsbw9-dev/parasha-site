@@ -377,7 +377,20 @@
           התשלום מתבצע ישירות אצל ספק התשלום הנבחר. פרטי התשלום אינם נשמרים באתר.
         </p>
 
-        <a id="supportTreeReturn" class="back-button" href="index.html">
+        <a
+          id="supportTreeReturn"
+          class="back-button"
+          href="index.html"
+          onclick="
+            if(window.parent !== window){
+              event.preventDefault();
+              window.parent.postMessage(
+                { type: 'pardes-return-to-tree' },
+                window.location.origin
+              );
+            }
+          "
+        >
           חזרה לעץ הפרד״ס החי
         </a>
       </section>
