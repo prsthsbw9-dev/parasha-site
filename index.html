@@ -6153,41 +6153,79 @@
     /* =========================================================
        איזון דינמי סופי — iPhone ו-iPad בלבד
 
-       המיקומים בנויים כשרשרת: העלייה הראשית היא נקודת העוגן,
-       והאור שבי ומה שבלב נשמרים מתחתיה במרווחים מוגבלים.
-       שורת החיפוש והאריה נגזרים מאותו עוגן תחתון כדי שלא יחפפו.
+       באייפון אנכי קיימות שלוש קבוצות גובה נפרדות.
+       כך כל קבוצה מקבלת מיקום יציב ביחס לציור העץ.
+       האריה ושורת החיפוש אינם תלויים זה בזה.
        הבלוק נמצא בסוף ה-CSS ולכן הוא גובר על הגדרות המכשיר הישנות.
        ========================================================= */
 
-    /* iPhone — מצב אנכי */
+    /* iPhone אנכי — ערכים משותפים לכל הדגמים */
     body.is-iphone.device-phone.orientation-portrait{
-      --ios-search-bottom:clamp(128px,17svh,150px);
-
       --main-left:52%;
-      --main-top:clamp(238px,32.5svh,292px);
-      --main-size:clamp(74px,9.5svh,82px);
-
       --view-light-left:50%;
-      --view-light-top:calc(var(--main-top) + clamp(112px,14.5svh,132px));
-      --view-light-size:clamp(58px,7.7svh,66px);
-
       --view-heart-left:50%;
-      --view-heart-top:calc(var(--view-light-top) + clamp(88px,11.5svh,104px));
-      --view-heart-size:clamp(76px,10svh,86px);
-
       --view-search-left:50%;
-      --view-search-bottom:calc(env(safe-area-inset-bottom,0px) + var(--ios-search-bottom));
       --view-search-width:min(94vw,390px);
       --view-message-left:50%;
-      --view-message-bottom:calc(env(safe-area-inset-bottom,0px) + var(--ios-search-bottom) - 35px);
       --view-message-width:min(92vw,390px);
-
       --lion-left:1%;
-      --lion-bottom:calc(env(safe-area-inset-bottom,0px) + var(--ios-search-bottom) + clamp(70px,8.5svh,84px));
-      --lion-size:clamp(118px,17svh,145px);
     }
 
-    /* מבטלים את תוספת ה-18px הישנה; המרווח מחושב כעת בשרשרת */
+    /* iPhone קצר — עד 700px גובה */
+    body.is-iphone.device-phone.orientation-portrait.iphone-height-short{
+        --main-top:38svh;
+        --main-size:70px;
+
+        --view-light-top:55svh;
+        --view-light-size:54px;
+
+        --view-heart-top:67svh;
+        --view-heart-size:64px;
+
+        --view-search-bottom:calc(env(safe-area-inset-bottom,0px) + 70px);
+        --view-message-bottom:calc(env(safe-area-inset-bottom,0px) + 35px);
+
+        --lion-bottom:calc(env(safe-area-inset-bottom,0px) + 150px);
+        --lion-size:78px;
+    }
+
+    /* iPhone בינוני — 701px עד 850px גובה */
+    body.is-iphone.device-phone.orientation-portrait.iphone-height-medium{
+        --main-top:36svh;
+        --main-size:78px;
+
+        --view-light-top:52svh;
+        --view-light-size:60px;
+
+        --view-heart-top:64svh;
+        --view-heart-size:76px;
+
+        --view-search-bottom:calc(env(safe-area-inset-bottom,0px) + 110px);
+        --view-message-bottom:calc(env(safe-area-inset-bottom,0px) + 75px);
+
+        --lion-bottom:calc(env(safe-area-inset-bottom,0px) + 190px);
+        --lion-size:100px;
+    }
+
+    /* iPhone ארוך — מעל 850px גובה */
+    body.is-iphone.device-phone.orientation-portrait.iphone-height-long{
+        --main-top:35svh;
+        --main-size:82px;
+
+        --view-light-top:50svh;
+        --view-light-size:66px;
+
+        --view-heart-top:62svh;
+        --view-heart-size:84px;
+
+        --view-search-bottom:calc(env(safe-area-inset-bottom,0px) + 135px);
+        --view-message-bottom:calc(env(safe-area-inset-bottom,0px) + 100px);
+
+        --lion-bottom:calc(env(safe-area-inset-bottom,0px) + 215px);
+        --lion-size:108px;
+    }
+
+    /* מבטלים את תוספת ה-18px הישנה; הגובה נקבע בכל קבוצת iPhone */
     body.is-iphone.device-phone.orientation-portrait .haor-shebi-live{
       top:var(--view-light-top) !important;
     }
@@ -6819,7 +6857,7 @@
   }
 
   function applyEnvironmentClasses() {
-    removeClasses(["device-", "orientation-", "browser-", "app-"]);
+    removeClasses(["device-", "orientation-", "browser-", "app-", "iphone-height-"]);
     body.classList.remove("in-app-browser", "regular-browser", "regular-mobile-browser");
 
     const device = detectDevice();
@@ -6871,6 +6909,25 @@
     addClass("device-" + device);
     addClass("orientation-" + orientation);
     addClass("browser-" + browser);
+
+    /*
+      סיווג iPhone לפי גובה המסך של המכשיר עצמו ולא לפי גובה Safari.
+      כך פתיחה וסגירה של סרגל הכתובת אינן משנות את קבוצת העיצוב.
+    */
+    if(isIPhone){
+      const iphoneScreenHeight = Math.max(
+        window.screen?.width || 0,
+        window.screen?.height || 0
+      );
+
+      if(iphoneScreenHeight <= 700){
+        addClass("iphone-height-short");
+      }else if(iphoneScreenHeight <= 850){
+        addClass("iphone-height-medium");
+      }else{
+        addClass("iphone-height-long");
+      }
+    }
 
     if (app) {
       addClass("in-app-browser");
