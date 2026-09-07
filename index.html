@@ -6025,7 +6025,7 @@
     
       /* העלייה הראשית — מורמת כדי שלא תחפוף */
       --main-left:52%;
-      --main-top:38svh;
+      --main-top:36svh;
       --main-size:82px;
     
       /* האור שבי */
@@ -6037,7 +6037,11 @@
       --view-heart-left:53%;
       --view-heart-top:67svh;
       --view-heart-size:86px;
-    
+
+      /* שורת החיפוש וההודעה שמתחתיה — מעט גבוה יותר באייפון */
+      --view-search-bottom:calc(env(safe-area-inset-bottom, 0px) + 140px);
+      --view-message-bottom:calc(env(safe-area-inset-bottom, 0px) + 105px);
+      
       /* האריה */
       --lion-left:1%;
       --lion-bottom:21svh;
