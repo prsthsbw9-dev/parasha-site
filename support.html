@@ -160,6 +160,58 @@
       margin-top:18px;
     }
 
+    .choice-buttons{
+      display:grid;
+      gap:12px;
+      margin-top:19px;
+    }
+
+    .choice-button{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      width:100%;
+      min-height:58px;
+      padding:13px 18px;
+      border-radius:18px;
+      color:#fff;
+      text-decoration:none;
+      font-size:clamp(1.04rem,4.3vw,1.2rem);
+      font-weight:900;
+      cursor:pointer;
+      box-shadow:0 10px 25px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.18);
+    }
+
+    .choice-button.enter{
+      border:1px solid rgba(111,241,160,.68);
+      background:linear-gradient(135deg,#1eb764,#08743c);
+    }
+
+    .choice-button.support{
+      border:1px solid rgba(255,225,143,.65);
+      background:linear-gradient(135deg,#b9831e,#79520f);
+    }
+
+    .free-note{
+      margin:10px 0 0;
+      color:#a9dfbd;
+      font-size:.78rem;
+      line-height:1.45;
+      font-weight:700;
+    }
+
+    .back-button{
+      margin:14px auto 0;
+      padding:5px 10px;
+      border:0;
+      color:#c9c4b8;
+      background:transparent;
+      font-size:.8rem;
+      text-decoration:underline;
+      text-underline-offset:3px;
+      cursor:pointer;
+    }
+
     .payment-button{
       display:flex;
       align-items:center;
@@ -232,6 +284,28 @@
     >
 
     <div class="action-area">
+      <section id="welcomePanel" class="action-panel" aria-labelledby="welcomeTitle" hidden>
+        <p class="panel-kicker">עץ הפרד״ס החי</p>
+        <h1 id="welcomeTitle">ברוכים הבאים לעץ הפרד״ס החי 🌳</h1>
+
+        <p class="panel-lead">
+          כל התכנים באתר פתוחים לכולם ללא תשלום.
+          כאן תוכלו להכיר את פרשות התורה בדרך ברורה, עמוקה ומחוברת לחיים.
+        </p>
+
+        <div class="choice-buttons">
+          <a class="choice-button enter" href="index.html">
+            כניסה חופשית לעץ הפרד״ס החי
+          </a>
+
+          <button id="chooseSupport" class="choice-button support" type="button">
+            אני רוצה לחזק את הערוץ 🤍
+          </button>
+        </div>
+
+        <p class="free-note">הכניסה לכל תכני הפרד״ס חופשית ואינה מחייבת תרומה.</p>
+      </section>
+
       <section id="tiktokPanel" class="action-panel" aria-labelledby="tiktokTitle" hidden>
         <p class="panel-kicker">עץ הפרד״ס החי</p>
         <h1 id="tiktokTitle">רק צעד קטן לפני שממשיכים</h1>
@@ -256,6 +330,8 @@
         <p class="browser-note">
           אם האפשרות אינה מופיעה, העתיקו את הקישור ופתחו אותו ב־Chrome או ב־Safari.
         </p>
+
+        <button class="back-button" data-back-to-welcome type="button">חזרה למסך הכניסה</button>
       </section>
 
       <section id="paymentPanel" class="action-panel" aria-labelledby="paymentTitle" hidden>
@@ -298,6 +374,8 @@
         <p class="privacy-note">
           התשלום מתבצע ישירות אצל ספק התשלום הנבחר. פרטי התשלום אינם נשמרים באתר.
         </p>
+
+        <button class="back-button" data-back-to-welcome type="button">חזרה למסך הכניסה</button>
       </section>
     </div>
   </main>
@@ -307,22 +385,56 @@
       "use strict";
 
       const SUPPORT_PUBLIC_URL =
-        "https://prsthsbw9-dev.github.io/parasha-site/support.html";
+        "https://prsthsbw9-dev.github.io/parasha-site/support.html?support=1";
 
       const userAgent = navigator.userAgent || "";
       const isTikTokBrowser =
         /TikTok|musical_ly|BytedanceWebview|Bytedance|Aweme/i.test(userAgent);
 
+      const welcomePanel = document.getElementById("welcomePanel");
       const tiktokPanel = document.getElementById("tiktokPanel");
       const paymentPanel = document.getElementById("paymentPanel");
+      const chooseSupport = document.getElementById("chooseSupport");
       const copyButton = document.getElementById("copySupportLink");
       const copyStatus = document.getElementById("copyStatus");
 
-      if(isTikTokBrowser){
-        tiktokPanel.hidden = false;
-      }else{
-        paymentPanel.hidden = false;
+      function showOnly(panel){
+        [welcomePanel,tiktokPanel,paymentPanel].forEach((item) => {
+          if(item) item.hidden = item !== panel;
+        });
       }
+
+      function showWelcome(){
+        showOnly(welcomePanel);
+        const cleanUrl = `${window.location.pathname}${window.location.hash || ""}`;
+        window.history.replaceState({},"",cleanUrl);
+        window.scrollTo({top:0,behavior:"smooth"});
+      }
+
+      function showSupport(){
+        if(isTikTokBrowser){
+          showOnly(tiktokPanel);
+          window.history.replaceState({},"","?support=1");
+        }else{
+          showOnly(paymentPanel);
+        }
+        window.scrollTo({top:0,behavior:"smooth"});
+      }
+
+      const supportWasRequested =
+        new URLSearchParams(window.location.search).get("support") === "1";
+
+      if(supportWasRequested && !isTikTokBrowser){
+        showOnly(paymentPanel);
+      }else{
+        showOnly(welcomePanel);
+      }
+
+      chooseSupport?.addEventListener("click",showSupport);
+
+      document.querySelectorAll("[data-back-to-welcome]").forEach((button) => {
+        button.addEventListener("click",showWelcome);
+      });
 
       copyButton?.addEventListener("click",async () => {
         try{
