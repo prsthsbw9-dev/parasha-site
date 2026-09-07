@@ -2,1604 +2,305 @@
 <html lang="he" dir="rtl">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#07090d">
-  <title>לתמיכה בעץ הפרד״ס החי</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#080a08">
+  <title>תמיכה בעץ הפרד״ס החי</title>
 
   <style>
     :root{
       color-scheme:dark;
-      --gold:#e5b74f;
-      --gold-light:#ffe5a2;
-      --green:#18a85b;
-      --green-dark:#087c3c;
-      --ink:#f8f4e8;
-      --muted:#d4d0c6;
-      --panel:rgba(8,14,18,.86);
-      --field:rgba(3,16,19,.88);
-      --border:rgba(255,225,153,.42);
-      --danger:#ffb2ad;
+      --gold:#f0c85e;
+      --gold-light:#ffe8a4;
+      --green:#179d55;
+      --green-dark:#08743c;
+      --ink:#fffaf0;
+      --muted:#c9c4b8;
     }
 
     *{box-sizing:border-box}
 
-    html{min-height:100%;background:#05070a}
+    html{
+      min-height:100%;
+      background:#070908;
+    }
 
     body{
       min-height:100vh;
       min-height:100svh;
       margin:0;
-      font-family:Arial,"Noto Sans Hebrew",sans-serif;
+      overflow-x:hidden;
       color:var(--ink);
-      background:#05070a;
+      background:#070908;
+      font-family:Arial,"Noto Sans Hebrew",sans-serif;
     }
 
-    body::before{
-      content:"";
-      position:fixed;
-      inset:0;
-      z-index:2;
-      pointer-events:none;
-      background:
-        linear-gradient(
-          115deg,
-          transparent 0 43%,
-          rgba(255,225,157,.07) 50%,
-          transparent 57%
-        ),
-        repeating-linear-gradient(
-          90deg,
-          rgba(255,255,255,.012) 0 1px,
-          transparent 1px 5px
-        );
-    }
+    button,a{font:inherit}
 
-    button,input,textarea,select{font:inherit}
-
-    a{color:var(--gold-light)}
-
-    .page{
-      width:min(760px,100%);
+    .support-page{
+      position:relative;
+      width:min(100%,620px);
+      min-height:100vh;
+      min-height:100svh;
       margin:0 auto;
-      padding:
-        max(18px,env(safe-area-inset-top))
-        16px
-        max(30px,env(safe-area-inset-bottom));
+      overflow:hidden;
+      background:#070908;
+      box-shadow:0 0 48px rgba(0,0,0,.5);
     }
 
-    .topbar{
-      display:flex;
-      align-items:center;
-      justify-content:flex-start;
-      margin-bottom:18px;
-    }
-
-    .return-navigation{
+    .hero-image{
+      display:block;
       width:100%;
-      display:grid;
-      grid-template-columns:repeat(2,minmax(0,1fr));
-      gap:10px;
+      height:auto;
     }
 
-    .return-navigation.is-single{
-      grid-template-columns:1fr;
-    }
-
-    .back-link{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      min-height:44px;
-      padding:10px 16px;
-      border:1px solid rgba(255,255,255,.2);
-      border-radius:999px;
-      color:#fff;
-      background:rgba(4,12,16,.72);
-      text-decoration:none;
-      font-weight:700;
-      box-shadow:0 8px 24px rgba(0,0,0,.25);
-      justify-content:center;
+    .action-area{
+      position:relative;
+      z-index:2;
+      width:100%;
+      margin-top:clamp(-46%, -40vw, -34%);
+      padding:0 18px max(30px,env(safe-area-inset-bottom));
       text-align:center;
     }
 
-    .back-link.is-video-return{
-      background:linear-gradient(135deg,#168fca,#0867ad);
+    .action-panel{
+      width:100%;
+      padding:22px 18px 18px;
+      border:1px solid rgba(255,229,162,.32);
+      border-radius:24px;
+      background:linear-gradient(165deg,rgba(8,18,17,.94),rgba(5,10,11,.96));
+      box-shadow:0 18px 45px rgba(0,0,0,.42),inset 0 1px 0 rgba(255,255,255,.06);
+      backdrop-filter:blur(5px);
     }
 
-    .back-link.is-next-layer{
-      background:linear-gradient(135deg,#20aa5a,#087d3f);
-    }
+    .action-panel[hidden]{display:none!important}
 
-    .back-link[hidden]{display:none}
-
-    .hero{
-      text-align:center;
-      padding:8px 5px 23px;
-    }
-
-    .eyebrow{
-      margin:0 0 8px;
-      color:var(--gold-light);
-      font-size:clamp(.98rem,3.4vw,1.1rem);
-      font-weight:800;
-      letter-spacing:.02em;
+    .panel-kicker{
+      margin:0 0 7px;
+      color:#83e6aa;
+      font-size:.82rem;
+      font-weight:900;
+      letter-spacing:.03em;
     }
 
     h1{
       margin:0;
-      font-size:clamp(2rem,8vw,3.65rem);
-      line-height:1.12;
-      text-shadow:0 3px 16px rgba(0,0,0,.72);
-    }
-
-    .hero-text{
-      max-width:650px;
-      margin:17px auto 0;
-      color:#f4efe3;
-      font-size:clamp(1.05rem,4.2vw,1.27rem);
-      line-height:1.72;
-      font-weight:600;
-    }
-
-    .quote{
-      margin:20px auto 0;
-      padding:14px 4px;
-      border-block:1px solid rgba(229,183,79,.42);
       color:var(--gold-light);
-      font-size:clamp(.65rem,3.1vw,1.25rem);
-      line-height:1.55;
-      font-weight:800;
-      white-space:nowrap;
+      font-size:clamp(1.45rem,6.2vw,2rem);
+      line-height:1.3;
+      text-shadow:0 2px 12px rgba(0,0,0,.55);
     }
 
-    .quote small{
-      display:block;
-      margin-top:4px;
-      color:var(--muted);
-      font-size:.8em;
-      font-weight:600;
-    }
-
-    .source-opening{
-      max-width:680px;
-      margin:0 auto 22px;
-      text-align:center;
-    }
-
-    .source-opening .source-lead,
-    .source-opening .source-explanation{
-      margin:0 auto;
-      color:#fff;
-      font-size:clamp(1rem,4vw,1.2rem);
-      line-height:1.8;
-      font-weight:650;
-    }
-
-    .source-opening .source-verse{
-      margin:18px auto;
-      padding:17px 12px;
-      border-block:1px solid rgba(24,168,91,.55);
-      color:#58e392;
-      font-size:clamp(1.45rem,6vw,2.25rem);
-      line-height:1.45;
-      font-weight:900;
-      text-shadow:0 2px 15px rgba(0,0,0,.7);
-    }
-
-    .source-opening .source-ref{
-      display:block;
-      margin-top:5px;
-      color:var(--muted);
-      font-size:.82rem;
-      font-weight:650;
-    }
-
-    .source-opening .opportunity{
-      margin:22px auto 0;
-      color:#fff;
-      font-size:clamp(1.05rem,4.2vw,1.28rem);
-      line-height:1.8;
-      font-weight:700;
-    }
-
-    .source-opening .opportunity strong{
-      color:var(--gold-light);
-    }
-
-    .support-options{
-      display:grid;
-      gap:12px;
-      margin:24px 0 0;
-    }
-
-    .support-option{
-      border:1px solid rgba(255,255,255,.22);
-      border-radius:17px;
-      background:rgba(3,15,18,.75);
-      overflow:hidden;
-    }
-
-    .support-option .check-row{
-      border:0;
-      border-radius:0;
-      background:transparent;
-    }
-
-    .support-option-panel{
-      padding:0 14px 15px;
-    }
-
-    .support-option-panel[hidden]{display:none}
-
-    .support-option-note{
-      margin:0 0 12px;
-      color:var(--muted);
-      font-size:.9rem;
-      line-height:1.55;
-    }
-.donation-confirm-wrap{
-      margin-top:20px;
-    }
-
-    .donation-confirm-wrap .check-row{
-      border-color:rgba(24,168,91,.45);
-    }
-
-    .email-required-note{
-      margin:8px 2px 0;
-      color:var(--muted);
-      font-size:.86rem;
-      line-height:1.5;
-      text-align:center;
-    }
-
-    .meaning-grid{
-      display:grid;
-      grid-template-columns:repeat(3,1fr);
-      gap:10px;
-      margin:0 0 20px;
-    }
-
-    .meaning-card{
-      padding:16px 10px;
-      border:1px solid rgba(229,183,79,.27);
-      border-radius:18px;
-      background:rgba(8,13,17,.69);
-      text-align:center;
-      box-shadow:0 12px 26px rgba(0,0,0,.22);
-    }
-
-    .meaning-card .icon{display:block;font-size:1.55rem;margin-bottom:7px}
-    .meaning-card strong{display:block;color:var(--gold-light);margin-bottom:4px}
-    .meaning-card span{color:var(--muted);font-size:.9rem;line-height:1.4}
-
-    .form-card{
-      padding:clamp(19px,5vw,32px);
-      border:1px solid var(--border);
-      border-radius:28px;
-      background:var(--panel);
-      box-shadow:0 20px 55px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.06);
-      backdrop-filter:blur(8px);
-    }
-
-    .form-card h2{
-      margin:0 0 6px;
-      text-align:center;
-      font-size:clamp(1.45rem,5.5vw,2rem);
-    }
-
-    .form-note{
-      margin:0 0 23px;
-      text-align:center;
-      color:var(--muted);
-      line-height:1.55;
-    }
-
-    .field{margin-bottom:18px}
-
-    label,.field-title{
-      display:block;
-      margin-bottom:8px;
-      color:#fff;
-      font-weight:800;
-      line-height:1.4;
-    }
-
-    .optional{color:var(--muted);font-size:.85em;font-weight:500}
-
-    input[type="text"],input[type="email"],input[type="number"],textarea,select{
-      width:100%;
-      min-height:54px;
-      padding:13px 15px;
-      border:1px solid rgba(255,255,255,.38);
-      border-radius:16px;
-      outline:none;
-      color:#fff;
-      background:var(--field);
-      box-shadow:inset 0 2px 8px rgba(0,0,0,.3);
-      transition:border-color .2s,box-shadow .2s;
-    }
-
-    input:focus,textarea:focus,select:focus{
-      border-color:var(--gold);
-      box-shadow:0 0 0 3px rgba(229,183,79,.15);
-    }
-
-    textarea{min-height:115px;resize:vertical}
-
-    .choices{display:grid;gap:10px}
-
-    .choice,.check-row{
-      display:flex;
-      align-items:flex-start;
-      gap:11px;
-      margin:0;
-      padding:13px 14px;
-      border:1px solid rgba(255,255,255,.22);
-      border-radius:15px;
-      background:rgba(3,15,18,.75);
-      cursor:pointer;
-      font-weight:650;
-      line-height:1.45;
-    }
-
-    .choice:has(input:checked),.check-row:has(input:checked){
-      border-color:rgba(229,183,79,.8);
-      background:rgba(82,62,17,.32);
-    }
-
-    input[type="radio"],input[type="checkbox"]{
-      flex:0 0 auto;
-      width:21px;
-      height:21px;
-      margin:0;
-      accent-color:var(--gold);
-    }
-
-    .public-name-wrap[hidden]{display:none}
-
-    .checks{
-      display:grid;
-      gap:11px;
-      margin-top:23px;
-    }
-
-    .terms-link{font-weight:900;text-underline-offset:3px}
-
-    .submit-button{
-      width:100%;
-      min-height:62px;
-      margin-top:21px;
-      border:1px solid rgba(255,255,255,.52);
-      border-radius:18px;
-      color:#fff;
-      background:linear-gradient(180deg,var(--green),var(--green-dark));
-      font-size:clamp(1.15rem,4.7vw,1.42rem);
-      font-weight:900;
-      cursor:pointer;
-      box-shadow:0 10px 28px rgba(0,145,69,.3),inset 0 1px 0 rgba(255,255,255,.25);
-    }
-
-    .submit-button:disabled{opacity:.58;cursor:not-allowed;filter:grayscale(.25)}
-
-    .support-intro{
-      margin:0 auto 20px;
-      max-width:620px;
-      text-align:center;
-      color:#f4efe3;
+    .panel-lead{
+      margin:12px auto 0;
+      max-width:500px;
+      color:#f5f0e5;
+      font-size:clamp(.94rem,3.8vw,1.05rem);
       line-height:1.65;
       font-weight:650;
     }
 
-    .support-disclosure{
-      margin:0 0 20px;
-      padding:14px 15px;
-      border:1px solid rgba(229,183,79,.38);
-      border-radius:16px;
-      color:var(--gold-light);
-      background:rgba(82,62,17,.22);
-      text-align:center;
-      line-height:1.55;
-      font-weight:750;
-    }
-
-    .payment-methods{
-      display:grid;
+    .browser-instruction{
+      display:flex;
+      align-items:center;
+      justify-content:center;
       gap:12px;
-      margin-top:20px;
-    }
-
-    .payment-link{
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      min-height:62px;
-      padding:13px 18px;
-      border:1px solid rgba(255,255,255,.5);
-      border-radius:18px;
-      color:#fff;
-      text-decoration:none;
-      font-size:clamp(1.08rem,4.5vw,1.35rem);
-      font-weight:900;
-      box-shadow:0 10px 25px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.22);
-      transition:transform .16s,filter .16s,opacity .16s;
-    }
-
-    .payment-link.bit{background:linear-gradient(135deg,#4258ff,#2533bd)}
-    .payment-link.paybox{background:linear-gradient(135deg,#6a3df0,#3e20aa)}
-    .payment-link.paypal{background:linear-gradient(135deg,#0877d1,#034b91)}
-    .payment-link:hover{filter:brightness(1.08);transform:translateY(-1px)}
-    .payment-link.is-disabled{opacity:.45;filter:grayscale(.35);cursor:not-allowed;transform:none}
-
-    .payment-help{
-      margin:15px 2px 0;
-      color:var(--muted);
-      text-align:center;
-      font-size:.9rem;
-      line-height:1.55;
-    }
-
-    .tiktok-copy-help{
-      margin:16px 0 0;
-      padding:16px;
-      border:1px solid rgba(229,183,79,.38);
-      border-radius:16px;
-      background:rgba(82,62,17,.2);
-      text-align:center;
-    }
-
-    .tiktok-copy-help[hidden]{display:none}
-
-    .tiktok-copy-help p{
-      margin:0 0 12px;
-      color:#f4efe3;
-      line-height:1.55;
-      font-weight:650;
-    }
-
-    .copy-phone-button{
-      width:100%;
-      min-height:52px;
-      padding:11px 16px;
-      border:1px solid rgba(255,255,255,.45);
-      border-radius:15px;
-      color:#fff;
-      background:linear-gradient(135deg,#c18a23,#80550c);
-      font-weight:900;
-      cursor:pointer;
-      box-shadow:0 8px 22px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.2);
-    }
-
-    .copy-phone-button:disabled{
-      opacity:.48;
-      filter:grayscale(.3);
-      cursor:not-allowed;
-    }
-
-    .copy-phone-status{
-      min-height:1.45em;
-      margin:10px 0 0!important;
-      color:var(--gold-light)!important;
-      font-size:.9rem;
-    }
-
-    .optional-contact{
-      margin-top:16px;
-      text-align:center;
-    }
-
-    .optional-contact p{
-      margin:0 0 8px;
-      color:#aaa69e;
-      font-size:.82rem;
-      line-height:1.45;
-    }
-
-    .contact-link{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      min-height:34px;
-      padding:6px 13px;
-      border:1px solid rgba(255,255,255,.2);
-      border-radius:999px;
-      color:#d8d4cb;
-      background:rgba(4,12,16,.48);
-      text-decoration:none;
-      font-size:.8rem;
-      font-weight:700;
-    }
-
-    .pardes-entry{
-      margin-top:24px;
-      padding-top:22px;
-      border-top:1px solid rgba(255,255,255,.17);
-      text-align:center;
-    }
-
-    .pardes-entry-text{
-      max-width:610px;
-      margin:0 auto 17px;
-      color:#f4efe3;
-      font-size:clamp(.98rem,3.9vw,1.12rem);
-      line-height:1.75;
-      font-weight:650;
-    }
-
-    .pardes-entry-text strong{
-      display:block;
-      margin-top:4px;
-      color:var(--gold-light);
-      font-weight:900;
-    }
-
-    .pardes-entry-button{
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      width:100%;
-      min-height:56px;
-      padding:13px 20px;
-      border:1px solid rgba(119,244,163,.62);
-      border-radius:17px;
-      color:#fff;
-      background:linear-gradient(135deg,var(--green),var(--green-dark));
-      text-decoration:none;
-      font-size:1.08rem;
-      font-weight:900;
-      box-shadow:0 10px 25px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.22);
-    }
-
-    .legal-hint{
-      margin:13px 3px 0;
-      color:var(--muted);
-      text-align:center;
-      font-size:.86rem;
-      line-height:1.5;
-    }
-
-    .message{
-      display:none;
-      margin-top:17px;
-      padding:13px 15px;
-      border-radius:14px;
-      text-align:center;
-      font-weight:800;
-      line-height:1.5;
-    }
-
-    .message.show{display:block}
-    .message.success{color:#d9ffe8;background:rgba(12,120,61,.35);border:1px solid #51dc8e}
-    .message.error{color:#ffe2df;background:rgba(132,28,25,.35);border:1px solid #ff8177}
-
-    .footer-note{
-      margin:20px auto 0;
-      max-width:630px;
-      color:#bbb7ae;
-      text-align:center;
-      font-size:.84rem;
-      line-height:1.55;
-    }
-
-    @media(max-width:560px){
-      .page{padding-inline:12px}
-      .hero{padding-top:72px}
-      .meaning-grid{grid-template-columns:1fr}
-      .meaning-card{display:grid;grid-template-columns:42px 1fr;text-align:right;align-items:center;padding:12px 14px}
-      .meaning-card .icon{grid-row:1/3;margin:0}
-      .meaning-card strong,.meaning-card span{margin-right:4px}
-      .form-card{border-radius:23px}
-      .return-navigation{grid-template-columns:1fr}
-    }
-
-    @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
-
-    .support-background-video{
-      position:fixed;
-      inset:0;
-      z-index:0;
-    
-      width:100%;
-      height:100%;
-      width:100vw;
-      height:100dvh;
-    
-      object-fit:cover;
-      object-position:center center;
-    
-      display:block;
-      background:#05070a;
-    
-      pointer-events:none;
-    }
-    
-    /* שכבה כהה ששומרת על קריאות הטקסט */
-    .support-background-overlay{
-      position:fixed;
-      inset:0;
-      z-index:1;
-    
-      width:100%;
-      height:100%;
-      width:100vw;
-      height:100dvh;
-    
-      background:
-        radial-gradient(
-          circle at 50% 20%,
-          rgba(229,183,79,.08),
-          transparent 40%
-        ),
-        linear-gradient(
-          180deg,
-          rgba(2,5,8,.56),
-          rgba(2,5,8,.68)
-        );
-    
-      pointer-events:none;
-    }
-    
-    /* תוכן הדף תמיד מעל הרקע */
-    .page{
-      position:relative;
-      z-index:3;
-    }
-    
-  
-    /* ===== מסכי ההקדמה החדשים ===== */
-    body.intro-mode{
-      overflow:hidden;
-      background:#000;
-    }
-
-    .support-background-video{
-      transition:opacity .9s ease, filter .9s ease;
-    }
-
-    body.intro-mode .support-background-video{
-      opacity:0;
-    }
-
-    body.intro-mode.intro-video-soft .support-background-video{
-      opacity:.28;
-      filter:brightness(.72) saturate(.82);
-    }
-
-    body.final-mode .support-background-video{
-      opacity:1;
-      filter:none;
-    }
-
-    body.intro-mode .support-background-overlay{
-      background:rgba(0,0,0,.54);
-    }
-
-    .intro-shell{
-      position:relative;
-      z-index:4;
-      width:100%;
-      min-height:100svh;
-      overflow:hidden;
-      background:#000;
-    }
-
-    .intro-shell[hidden]{display:none}
-
-    .stars{
-      position:fixed;
-      inset:0;
-      z-index:0;
-      overflow:hidden;
-      pointer-events:none;
-      background:
-        radial-gradient(circle at 50% 35%, rgba(24,80,65,.08), transparent 38%),
-        linear-gradient(#000,#020406 70%,#000);
-      transition:opacity .8s ease;
-    }
-
-    .star{
-      position:absolute;
-      width:2px;
-      height:2px;
-      border-radius:50%;
-      background:#fff;
-      opacity:.22;
-      box-shadow:0 0 7px rgba(255,255,255,.75);
-      animation:starTwinkle 2.8s ease-in-out infinite;
-    }
-
-    @keyframes starTwinkle{
-      0%,100%{opacity:.14;transform:scale(.75)}
-      50%{opacity:.95;transform:scale(1.35)}
-    }
-
-    .intro-stage{
-      position:relative;
-      z-index:2;
-      min-height:100svh;
-      display:grid;
-      place-items:center;
-      padding:
-        max(78px,calc(env(safe-area-inset-top) + 64px))
-        20px
-        max(92px,calc(env(safe-area-inset-bottom) + 72px));
-    }
-
-    .intro-slide{
-      position:absolute;
-      inset:0;
-      display:grid;
-      place-items:center;
-      padding:
-        max(78px,calc(env(safe-area-inset-top) + 64px))
-        20px
-        max(92px,calc(env(safe-area-inset-bottom) + 72px));
-      opacity:0;
-      visibility:hidden;
-      transform:translateY(18px) scale(.985);
-      transition:opacity .55s ease,transform .55s ease,visibility .55s;
-      overflow-y:auto;
-      overscroll-behavior:contain;
-    }
-
-    .intro-slide.is-active{
-      opacity:1;
-      visibility:visible;
-      transform:none;
-    }
-
-    .slide-inner{
-      width:min(650px,100%);
-      margin:auto;
-      text-align:center;
-    }
-
-    .skip-intro{
-      position:fixed;
-      z-index:20;
-      top:max(18px,env(safe-area-inset-top));
-      left:16px;
-      min-height:42px;
-      padding:9px 14px;
-      border:1px solid rgba(255,255,255,.28);
-      border-radius:999px;
-      background:rgba(7,10,13,.58);
-      color:rgba(255,255,255,.86);
-      backdrop-filter:blur(8px);
-      font-weight:800;
-      font-size:.91rem;
-      cursor:pointer;
-      box-shadow:0 8px 24px rgba(0,0,0,.3);
-    }
-
-    .skip-intro[hidden]{display:none}
-
-    .intro-kicker{
-      margin:0 0 15px;
-      color:var(--gold-light);
-      font-size:clamp(.95rem,3.5vw,1.08rem);
-      font-weight:850;
-      letter-spacing:.02em;
-    }
-
-    .typed-line{
-      min-height:4.4em;
-      margin:0 auto;
-      color:#fff;
-      font-size:clamp(1.25rem,5.1vw,1.7rem);
-      line-height:1.75;
-      font-weight:800;
-      text-shadow:0 3px 16px rgba(0,0,0,.85);
-    }
-
-    .typed-line::after{
-      content:"";
-      display:inline-block;
-      width:2px;
-      height:1.05em;
-      margin-right:4px;
-      vertical-align:-.08em;
-      background:rgba(255,255,255,.85);
-      animation:cursorBlink .75s steps(1) infinite;
-    }
-
-    .typed-line.is-done::after{display:none}
-
-    @keyframes cursorBlink{50%{opacity:0}}
-
-    .intro-verse{
-      margin:22px auto 0;
-      padding:18px 8px;
-      border-block:1px solid rgba(77,226,142,.5);
-      color:#62e796;
-      font-size:clamp(1.45rem,6.3vw,2.25rem);
-      line-height:1.5;
-      font-weight:950;
-      opacity:0;
-      transform:scale(.9);
-      text-shadow:0 0 22px rgba(50,220,120,.17),0 3px 18px rgba(0,0,0,.92);
-    }
-
-    .intro-verse.is-visible{
-      animation:verseReveal .8s cubic-bezier(.2,.9,.2,1) forwards;
-    }
-
-    @keyframes verseReveal{
-      0%{opacity:0;transform:scale(.88);filter:blur(5px)}
-      70%{opacity:1;transform:scale(1.025);filter:blur(0)}
-      100%{opacity:1;transform:scale(1)}
-    }
-
-    .intro-verse small{
-      display:block;
-      margin-top:7px;
-      color:rgba(255,255,255,.68);
-      font-size:.48em;
-      font-weight:650;
-    }
-
-    .slide-title{
-      margin:0 0 25px;
-      color:#fff;
-      font-size:clamp(1.5rem,6vw,2.15rem);
-      line-height:1.35;
-      font-weight:950;
-      text-shadow:0 3px 18px rgba(0,0,0,.8);
-    }
-
-    .slide-title .gold{color:var(--gold-light)}
-
-    .intro-cards{
-      display:grid;
-      gap:13px;
-      width:min(610px,100%);
-      margin:0 auto;
-    }
-
-    .intro-card{
-      display:grid;
-      grid-template-columns:58px 1fr;
-      align-items:center;
-      gap:12px;
-      padding:16px 18px;
-      border:1px solid rgba(229,183,79,.34);
-      border-radius:20px;
-      background:rgba(7,12,15,.88);
-      text-align:right;
-      box-shadow:0 18px 36px rgba(0,0,0,.32);
-      opacity:0;
-      transform:scale(.68) translateY(16px);
-    }
-
-    .intro-card.pop{
-      animation:cardPop .62s cubic-bezier(.16,1.25,.28,1) forwards;
-    }
-
-    @keyframes cardPop{
-      0%{opacity:0;transform:scale(.68) translateY(18px)}
-      72%{opacity:1;transform:scale(1.055) translateY(-2px)}
-      100%{opacity:1;transform:scale(1) translateY(0)}
-    }
-
-    .intro-card .icon{
-      font-size:2rem;
-      text-align:center;
-    }
-
-    .intro-card strong{
-      display:block;
-      margin-bottom:4px;
-      color:var(--gold-light);
-      font-size:1.18rem;
-    }
-
-    .intro-card span{
-      color:#e1ddd2;
-      line-height:1.45;
-    }
-
-    .meaning-copy{
-      display:grid;
-      gap:16px;
-      width:min(620px,100%);
-      margin:0 auto;
-    }
-
-    .meaning-line{
-      margin:0;
-      padding:0 4px;
-      color:#f7f4ec;
-      font-size:clamp(1.08rem,4.3vw,1.34rem);
-      line-height:1.8;
-      font-weight:720;
-      opacity:0;
-      transform:translateY(14px);
-    }
-
-    .meaning-line.reveal{
-      animation:softReveal .65s ease forwards;
-    }
-
-    .meaning-line.emphasis{
-      color:var(--gold-light);
-      font-weight:900;
-    }
-
-    @keyframes softReveal{
-      to{opacity:1;transform:none}
-    }
-
-    .cta-heading{
-      margin:0 0 16px;
-      color:#fff;
-      font-size:clamp(1.75rem,7vw,2.65rem);
-      line-height:1.25;
-      font-weight:950;
-      opacity:0;
-      transform:translateY(18px);
-    }
-
-    .cta-heading.reveal,
-    .cta-copy.reveal{
-      animation:softReveal .75s ease forwards;
-    }
-
-    .cta-copy{
-      margin:0 auto;
-      max-width:590px;
-      color:#eee9dc;
-      font-size:clamp(1.08rem,4.3vw,1.32rem);
-      line-height:1.8;
-      font-weight:700;
-      opacity:0;
-      transform:translateY(16px);
-    }
-
-    .intro-next{
-      min-width:190px;
-      min-height:55px;
-      margin-top:28px;
-      padding:12px 25px;
-      border:1px solid rgba(255,255,255,.48);
-      border-radius:999px;
-      color:#fff;
-      background:linear-gradient(180deg,#19a85b,#087b3c);
-      font-weight:950;
-      font-size:1.08rem;
-      cursor:pointer;
-      box-shadow:0 12px 32px rgba(0,130,62,.26);
-      opacity:0;
-      pointer-events:none;
-      transform:translateY(10px);
-      transition:opacity .35s ease,transform .35s ease,filter .2s;
-    }
-
-    .intro-next.is-ready{
-      opacity:1;
-      pointer-events:auto;
-      transform:none;
-    }
-
-    .intro-next:active{transform:scale(.98)}
-
-    .intro-progress{
-      position:fixed;
-      z-index:19;
-      right:50%;
-      bottom:max(20px,env(safe-area-inset-bottom));
-      transform:translateX(50%);
-      display:flex;
-      gap:7px;
-    }
-
-    .intro-progress-dot{
-      width:7px;
-      height:7px;
-      border-radius:50%;
-      background:rgba(255,255,255,.28);
-      transition:width .3s ease,background .3s ease;
-    }
-
-    .intro-progress-dot.is-active{
-      width:22px;
-      border-radius:999px;
-      background:rgba(255,229,162,.9);
-    }
-
-    .final-page{
-      display:none;
-      position:relative;
-      z-index:4;
-      width:min(760px,100%);
-      margin:0 auto;
-      padding:
-        max(18px,env(safe-area-inset-top))
-        12px
-        max(30px,env(safe-area-inset-bottom));
-    }
-
-    body.final-mode{
-      overflow:auto;
-    }
-
-    body.final-mode .intro-shell{display:none}
-    body.final-mode .final-page{display:block}
-
-    .final-page .topbar{
-      margin-bottom:16px;
-    }
-
-    .final-heading{
-      margin:20px auto 20px;
-      text-align:center;
-    }
-
-    .final-heading .eyebrow{
-      margin-bottom:8px;
-    }
-
-    .final-heading h1{
-      margin:0;
-      font-size:clamp(1.7rem,7vw,2.7rem);
-      line-height:1.25;
-    }
-
-    @media(max-width:560px){
-      .intro-slide{
-        padding-inline:16px;
-      }
-
-      .skip-intro{
-        left:10px;
-        top:max(12px,env(safe-area-inset-top));
-        font-size:.82rem;
-        padding:8px 11px;
-      }
-
-      .intro-card{
-        grid-template-columns:48px 1fr;
-        padding:14px 15px;
-      }
-
-      .intro-card .icon{font-size:1.7rem}
-    }
-
-    @media(prefers-reduced-motion:reduce){
-      .star{animation:none;opacity:.55}
-      .intro-card,.meaning-line,.cta-heading,.cta-copy,.intro-verse{
-        opacity:1!important;
-        transform:none!important;
-        filter:none!important;
-        animation:none!important;
-      }
-    }
-
-  
-    .prepayment-status{
-      display:none;
-      margin:14px 2px 0;
-      padding:12px 14px;
-      border:1px solid rgba(229,183,79,.35);
-      border-radius:14px;
-      background:rgba(10,18,20,.82);
-      color:#f4efe3;
-      text-align:center;
-      font-size:.92rem;
-      line-height:1.55;
-      font-weight:700;
-    }
-
-    .prepayment-status.show{display:block}
-    .prepayment-status.error{
-      border-color:rgba(255,129,119,.65);
-      color:#ffe2df;
-    }
-
-    /* כפתור פתיחת ההסבר על מטרת התרומה */
-    .open-support-intro{
-      width:100%;
-      min-height:56px;
-      margin-top:22px;
-      padding:12px 18px;
-    
-      border:1px solid rgba(255,229,162,.58);
-      border-radius:18px;
-    
-      color:var(--gold-light);
-      background:rgba(8,14,18,.88);
-    
-      font-family:inherit;
-      font-size:1.08rem;
-      font-weight:900;
-      text-align:center;
-    
-      box-shadow:
-        0 10px 26px rgba(0,0,0,.28),
-        inset 0 1px 0 rgba(255,255,255,.08);
-    
-      cursor:pointer;
-      transition:
-        transform .18s ease,
-        background .18s ease,
-        border-color .18s ease;
-    }
-    
-    .open-support-intro:hover,
-    .open-support-intro:focus-visible{
-      background:rgba(72,54,17,.72);
-      border-color:var(--gold-light);
-      transform:translateY(-2px);
-      outline:none;
-    }
-    
-    .open-support-intro:active{
-      transform:scale(.985);
-    }
-
-    /* ===== סמלי אמון בדף התרומות ===== */
-    .payment-trust{
-      display:grid;
-      grid-template-columns:repeat(3,1fr);
-      gap:9px;
-      margin-top:20px;
-    }
-
-    .payment-trust-item{
-      min-height:92px;
-      padding:12px 8px;
-      border:1px solid rgba(255,229,162,.3);
-      border-radius:15px;
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      justify-content:center;
-      gap:7px;
-      color:#eee9dc;
-      background:rgba(5,13,17,.78);
-      text-align:center;
-      font-size:.78rem;
-      line-height:1.35;
-      font-weight:750;
-    }
-
-    .payment-trust-icon{
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      width:34px;
-      height:34px;
+      margin:18px 0 14px;
+      padding:14px;
       border:1px solid rgba(255,229,162,.38);
-      border-radius:50%;
-      color:#8df0b3;
-      background:rgba(14,80,48,.3);
-      font-size:1.08rem;
-      font-weight:950;
-    }
-
-    @media(max-width:560px){
-      .payment-trust{grid-template-columns:1fr;gap:8px}
-      .payment-trust-item{
-        min-height:58px;
-        padding:10px 13px;
-        flex-direction:row;
-        justify-content:flex-start;
-        text-align:right;
-        font-size:.86rem;
-      }
-      .payment-trust-icon{flex:0 0 34px}
-    }
-
-    /* ===== מסך מקדים שמופיע רק בתוך TikTok ===== */
-    .tiktok-donation-gate{
-      position:fixed;
-      inset:0;
-      z-index:500000;
-      overflow-y:auto;
-      padding:max(24px,env(safe-area-inset-top)) 16px max(28px,env(safe-area-inset-bottom));
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      color:#fff;
-      background:
-        linear-gradient(rgba(3,8,11,.84),rgba(3,8,11,.94)),
-        url("support-background-poster.jpg") center/cover no-repeat;
-    }
-
-    .tiktok-donation-gate[hidden]{display:none !important}
-
-    .tiktok-gate-card{
-      width:min(520px,100%);
-      padding:27px 19px;
-      border:1px solid rgba(255,229,162,.45);
-      border-radius:26px;
-      background:rgba(7,14,17,.94);
-      box-shadow:0 22px 55px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.08);
-      text-align:center;
-    }
-
-    .tiktok-gate-logo{
-      width:62px;
-      height:62px;
-      margin:0 auto 15px;
-      border:1px solid rgba(255,229,162,.55);
-      border-radius:50%;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      background:rgba(77,58,17,.52);
-      font-size:29px;
-    }
-
-    .tiktok-gate-card h1{
-      margin:0 0 14px;
-      color:var(--gold-light);
-      font-size:clamp(1.65rem,7vw,2.15rem);
-      line-height:1.25;
-    }
-
-    .tiktok-gate-lead{
-      margin:0;
-      color:#f2eee4;
-      font-size:1rem;
-      font-weight:700;
-      line-height:1.65;
-    }
-
-    .tiktok-gate-instruction{
-      margin:20px 0;
-      padding:15px;
-      border:1px solid rgba(255,229,162,.34);
       border-radius:17px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      gap:12px;
       color:#fff;
-      background:rgba(74,55,15,.32);
+      background:rgba(91,65,15,.3);
+      font-weight:800;
       line-height:1.55;
-      font-weight:750;
     }
 
-    .tiktok-three-dots{
-      flex:0 0 43px;
-      height:43px;
-      border:1px solid rgba(255,255,255,.5);
-      border-radius:50%;
+    .dots-icon{
       display:flex;
+      flex:0 0 44px;
       align-items:center;
       justify-content:center;
+      height:44px;
+      border:1px solid rgba(255,255,255,.52);
+      border-radius:50%;
       font-size:29px;
       line-height:1;
     }
 
-    .tiktok-external-button,.tiktok-copy-button{
+    .copy-button{
       width:100%;
-      min-height:57px;
-      padding:12px 16px;
+      min-height:54px;
+      padding:12px 17px;
+      border:1px solid rgba(112,238,160,.58);
       border-radius:17px;
-      font-family:inherit;
-      font-size:1.02rem;
+      color:#fff;
+      background:linear-gradient(135deg,var(--green),var(--green-dark));
       font-weight:900;
       cursor:pointer;
+      box-shadow:0 10px 25px rgba(5,88,44,.25),inset 0 1px 0 rgba(255,255,255,.16);
     }
 
-    .tiktok-external-button{
-      border:1px solid rgba(255,255,255,.7);
-      color:#17200e;
-      background:linear-gradient(135deg,#ffe98b,#e9b932);
-      box-shadow:0 10px 27px rgba(220,168,30,.24);
-    }
-
-    .tiktok-copy-button{
-      margin-top:11px;
-      border:1px solid rgba(255,255,255,.34);
-      color:#fff;
-      background:rgba(9,25,28,.92);
-    }
-
-    .tiktok-copy-status{
+    .copy-status{
       min-height:1.4em;
-      margin:11px 0 0;
+      margin:10px 0 0;
       color:#8df0b3;
-      font-size:.9rem;
+      font-size:.88rem;
       font-weight:800;
     }
 
-    .tiktok-iphone-note{
-      margin:10px 0 0;
-      color:#cfcac0;
-      font-size:.82rem;
+    .browser-note{
+      margin:7px 0 0;
+      color:var(--muted);
+      font-size:.8rem;
       line-height:1.5;
     }
-    
+
+    .payment-buttons{
+      display:grid;
+      gap:11px;
+      margin-top:18px;
+    }
+
+    .payment-button{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      width:100%;
+      min-height:56px;
+      padding:12px 18px;
+      border:1px solid rgba(255,255,255,.44);
+      border-radius:17px;
+      color:#fff;
+      text-decoration:none;
+      font-size:clamp(1.02rem,4.2vw,1.18rem);
+      font-weight:900;
+      box-shadow:0 10px 24px rgba(0,0,0,.27),inset 0 1px 0 rgba(255,255,255,.18);
+      transition:transform .15s,filter .15s;
+    }
+
+    .payment-button:active{transform:scale(.985)}
+    .payment-button.bit{background:linear-gradient(135deg,#4258ff,#2736bd)}
+    .payment-button.paybox{background:linear-gradient(135deg,#7042ef,#4322aa)}
+    .payment-button.paypal{background:linear-gradient(135deg,#087bd5,#034e95)}
+
+    .small-links{
+      display:flex;
+      flex-wrap:wrap;
+      justify-content:center;
+      gap:7px 14px;
+      margin-top:16px;
+      padding-top:14px;
+      border-top:1px solid rgba(255,255,255,.14);
+    }
+
+    .small-links a{
+      color:#cfcabe;
+      font-size:.78rem;
+      line-height:1.4;
+      text-underline-offset:3px;
+    }
+
+    .privacy-note{
+      margin:12px 0 0;
+      color:#aaa69d;
+      font-size:.75rem;
+      line-height:1.45;
+    }
+
+    @media(min-width:621px){
+      .action-area{margin-top:-285px}
+    }
+
+    @media(max-height:690px) and (max-width:620px){
+      .action-panel{padding-block:17px 14px}
+      .panel-lead{margin-top:8px;line-height:1.5}
+      .browser-instruction{margin-block:13px 10px;padding:11px}
+      .payment-buttons{margin-top:13px;gap:9px}
+      .payment-button{min-height:50px}
+    }
   </style>
 </head>
 
-<body class="final-mode">
+<body>
+  <main class="support-page">
+    <img
+      class="hero-image"
+      src="support-donation-hero.jpg"
+      alt="עץ הפרד״ס המואר, ספר קודש על סטנדר ואור התורה המתפשט למשפחות ולבתים"
+      width="1365"
+      height="2048"
+      decoding="async"
+    >
 
-  <video
-    class="support-background-video"
-    autoplay
-    muted
-    loop
-    playsinline
-    webkit-playsinline
-    preload="metadata"
-    poster="support-background-poster.jpg"
-    aria-hidden="true"
-  >
-    <source src="support-background.mp4" type="video/mp4">
-  </video>
+    <div class="action-area">
+      <section id="tiktokPanel" class="action-panel" aria-labelledby="tiktokTitle" hidden>
+        <p class="panel-kicker">עץ הפרד״ס החי</p>
+        <h1 id="tiktokTitle">רק צעד קטן לפני שממשיכים</h1>
 
-  <div class="support-background-overlay" aria-hidden="true"></div>
-
-  <section
-    id="tiktokDonationGate"
-    class="tiktok-donation-gate"
-    aria-labelledby="tiktokGateTitle"
-    hidden
-  >
-    <div class="tiktok-gate-card">
-      <div class="tiktok-gate-logo" aria-hidden="true">🔒</div>
-      <h1 id="tiktokGateTitle">כדי לעבור לתרומה</h1>
-
-      <p class="tiktok-gate-lead">
-        TikTok פתח את האתר בתוך הדפדפן הפנימי שלו.
-        כדי שכפתורי Bit,‏ PayBox ו־PayPal יפעלו בצורה תקינה,
-        יש לפתוח את דף התרומה בדפדפן החיצוני של הטלפון.
-      </p>
-
-      <div class="tiktok-gate-instruction">
-        <span class="tiktok-three-dots" aria-hidden="true">⋮</span>
-        <span>
-          לחצו על שלוש הנקודות למעלה ובחרו
-          <strong>„פתיחה בדפדפן”</strong>
-        </span>
-      </div>
-
-      <button id="openExternalSupport" class="tiktok-external-button" type="button">
-        פתיחת דף התרומה בדפדפן החיצוני
-      </button>
-
-      <button id="copySupportLink" class="tiktok-copy-button" type="button">
-        העתקת הקישור
-      </button>
-
-      <p id="copySupportStatus" class="tiktok-copy-status" role="status" aria-live="polite"></p>
-
-      <p class="tiktok-iphone-note">
-        באייפון, אם הדפדפן אינו נפתח אוטומטית, העתיקו את הקישור,
-        פתחו את Safari והדביקו אותו בשורת הכתובת.
-      </p>
-    </div>
-  </section>
-
-  <section id="introShell" class="intro-shell" aria-label="הקדמה לתמיכה">
-    <div id="stars" class="stars" aria-hidden="true"></div>
-
-    <button id="skipIntro" class="skip-intro" type="button">דילוג על ההקדמה ›</button>
-
-    <div class="intro-stage">
-      <section class="intro-slide is-active" data-slide="0">
-        <div class="slide-inner">
-          <p id="introTypedLead" class="typed-line"></p>
-
-          <div id="introVerse" class="intro-verse">
-            ״עֵץ חַיִּים הִיא לַמַּחֲזִיקִים בָּהּ<br>
-            וְתֹמְכֶיהָ מְאֻשָּׁר״
-            <small>משלי ג׳, י״ח</small>
-          </div>
-
-          <button id="next0" class="intro-next" type="button">להמשיך</button>
-        </div>
-      </section>
-
-      <section class="intro-slide" data-slide="1">
-        <div class="slide-inner">
-          <h2 class="slide-title">תרומתך עוזרת לנו:</h2>
-
-          <div class="intro-cards">
-            <div class="intro-card">
-              <span class="icon">🎬</span>
-              <div><strong>יצירה</strong><span>הפקת תכנים וסרטונים חדשים</span></div>
-            </div>
-            <div class="intro-card">
-              <span class="icon">🌿</span>
-              <div><strong>הנגשה</strong><span>חיבור התורה לשפה של היום</span></div>
-            </div>
-            <div class="intro-card">
-              <span class="icon">✨</span>
-              <div><strong>הפצה</strong><span>הגעה לעוד אנשים ולעוד לבבות</span></div>
-            </div>
-          </div>
-
-          <button id="next1" class="intro-next" type="button">להמשיך</button>
-        </div>
-      </section>
-
-      <section class="intro-slide" data-slide="2">
-        <div class="slide-inner">
-          <div class="meaning-copy">
-            <p class="meaning-line">
-              לימוד התורה והפצתה אינם מתקיימים רק בזכות מי שלומד ומלמד,
-              אלא גם בזכות מי שמסייע לדברי התורה להמשיך ולהגיע לאחרים.
-            </p>
-            <p class="meaning-line">
-              לפעמים תמיכה אחת מאפשרת לעוד שיעור לצאת לאור, לעוד אדם להיחשף לדברי תורה,
-              ולעוד נשמה לגלות את העומק, החכמה והמשמעות שבתורתנו הקדושה לחיים שלנו היום.
-            </p>
-            <p class="meaning-line emphasis">
-              כאשר דברי התורה ממשיכים מאדם לאדם — גם מי שסייע להפצתם נעשה שותף בדרך שאפשרה להם להגיע הלאה.
-            </p>
-          </div>
-
-          <button id="next2" class="intro-next" type="button">להמשיך</button>
-        </div>
-      </section>
-
-      <section class="intro-slide" data-slide="3">
-        <div class="slide-inner">
-          <h2 class="cta-heading">גם לך יש הזדמנות להיות חלק מזיכוי הרבים</h2>
-          <p class="cta-copy">
-            בכל סכום שתבחרו, תוכלו לסייע לנו להמשיך להפיץ את התורה ולהביא את דבריה
-            לעוד ועוד אנשים בארץ ובעולם, כדי שיגלו את עומקה ויבינו את משמעותה
-            במציאות של חיינו.
-          </p>
-
-          <button id="goToSupport" class="intro-next" type="button">אני רוצה לקחת חלק</button>
-        </div>
-      </section>
-    </div>
-
-    <div class="intro-progress" aria-hidden="true">
-      <span class="intro-progress-dot is-active"></span>
-      <span class="intro-progress-dot"></span>
-      <span class="intro-progress-dot"></span>
-      <span class="intro-progress-dot"></span>
-    </div>
-  </section>
-
-  <main id="finalPage" class="final-page">
-    <nav class="topbar" aria-label="ניווט">
-      <div id="returnNavigation" class="return-navigation is-single">
-        <a id="returnToVideoButton" class="back-link is-video-return" href="#" hidden>
-          ▶ חזרה לסרטון
-        </a>
-        <a id="nextLayerButton" class="back-link is-next-layer" href="#" hidden>
-          מעבר לחלק הבא ←
-        </a>
-      </div>
-    </nav>
-<section class="form-card" aria-labelledby="supportFormTitle">
-      <h2 id="supportFormTitle">תמיכה בהפצת התורה</h2>
-
-      <p class="support-intro">
-        מלאו כתובת אימייל, אשרו את התקנון ובחרו את אמצעי התמיכה הנוח לכם.
-      </p>
-<div class="field">
-        <label for="supportEmail">כתובת אימייל</label>
-        <input id="supportEmail" type="email" autocomplete="email"
-               placeholder="לדוגמה: name@example.com" required>
-      </div>
-
-      <div class="support-options">
-        <div class="support-option">
-          <label class="check-row">
-            <input id="showThankName" type="checkbox">
-            <span>להציג את שמי בדף תודה בסוף אחת העליות הקרובות</span>
-          </label>
-          <div id="thankNamePanel" class="support-option-panel" hidden>
-          <p class="support-option-note">
-            כאשר שמך יופיע, נוכל לעדכן אותך ולשלוח אליך קישור לעלייה שבה הוא מופיע.
-          </p>
-          
-          <div class="field" style="margin-bottom:0">
-            <label for="publicSupportName">השם שיוצג</label>
-          
-            <input
-              id="publicSupportName"
-              type="text"
-              autocomplete="name"
-              enterkeyhint="done"
-              placeholder="הקלידו את השם כפי שתרצו שיופיע"
-            >
-          </div>
-          </div>    
-      </div>
-
-      <div class="checks">
-
-        <label class="check-row">
-          <input id="termsConsent" type="checkbox">
-          <span>
-            קראתי ואישרתי את
-            <a id="termsLink" class="terms-link" href="support-terms.html">תקנון התמיכה</a>.
-          </span>
-        </label>
-      </div>
-
-      <p class="email-required-note">
-        לאחר הזנת אימייל ואישור התקנון ייפתחו אמצעי התמיכה.
-      </p>
-      <p id="prePaymentStatus" class="prepayment-status" role="status" aria-live="polite"></p>
-
-      <div class="payment-methods" aria-label="בחירת אמצעי תמיכה">
-        <a
-          class="payment-link bit is-disabled"
-          data-payment-provider="bit"
-          href="https://www.bitpay.co.il/app/me/4A7D7360-AF51-7846-5E67-60FACACD37C54857?v=2"
-          target="_top"
-          rel="noopener noreferrer"
-          aria-disabled="true"
-        >תמיכה באמצעות Bit</a>
-
-        <a
-          class="payment-link paybox is-disabled"
-          data-payment-provider="paybox"
-          href="https://3ydbh.app.link/c9hSuB5Xq1b?_p=c11331dc9a006ceee61490fceeb4"
-          target="_top"
-          rel="noopener noreferrer"
-          aria-disabled="true"
-        >תמיכה באמצעות PayBox</a>
-
-        <a
-          class="payment-link paypal is-disabled"
-          data-payment-provider="paypal"
-          href="https://paypal.me/RonenTorah"
-          target="_top"
-          rel="noopener noreferrer"
-          aria-disabled="true"
-        >תמיכה באמצעות PayPal</a>
-      </div>
-
-      <p id="paymentHelp" class="payment-help" role="status" aria-live="polite">
-        יש להזין אימייל תקין ולאשר את התקנון כדי לפתוח את אמצעי התמיכה.
-      </p>
-
-      <p class="legal-hint">
-        התשלום מתבצע מחוץ לאתר ובהתאם לתנאי ספק התשלום שנבחר.
-      </p>
-
-      <div class="payment-trust" aria-label="מידע על אבטחת התשלום">
-        <div class="payment-trust-item">
-          <span class="payment-trust-icon" aria-hidden="true">🔒</span>
-          <span>חיבור מוצפן באמצעות HTTPS</span>
-        </div>
-
-        <div class="payment-trust-item">
-          <span class="payment-trust-icon" aria-hidden="true">🛡️</span>
-          <span>פרטי התשלום אינם נשמרים באתר</span>
-        </div>
-
-        <div class="payment-trust-item">
-          <span class="payment-trust-icon" aria-hidden="true">✓</span>
-          <span>התשלום מתבצע ישירות אצל ספק התשלום</span>
-        </div>
-      </div>
-
-      <div class="pardes-entry">
-        <p class="pardes-entry-text">
-          התכנים ב״עץ הפרד״ס החי״ פתוחים לכולם ללא תשלום.<br>
-          תרומתכם מאפשרת לנו להמשיך ליצור ולהפיץ את אור התורה לרבים.
-          <strong>היו שותפים בזיכוי הרבים 🤍</strong>
+        <p class="panel-lead">
+          כדי שאמצעי התמיכה ייפתחו בצורה תקינה, יש לפתוח את העמוד בדפדפן של הטלפון.
         </p>
 
-        <a class="pardes-entry-button" href="index.html">
-          כניסה לעץ הפרד״ס החי
-        </a>
-      </div>
+        <div class="browser-instruction">
+          <span class="dots-icon" aria-hidden="true">⋮</span>
+          <span>
+            לחצו על שלוש הנקודות למעלה ובחרו
+            <strong>„פתיחה בדפדפן”</strong>
+          </span>
+        </div>
 
-      <div class="optional-contact">
-        <p>יש לך שאלה או בקשה מיוחדת? אפשר לפנות אלינו גם ללא ביצוע תשלום.</p>
-        <a class="contact-link" href="mailto:prsthsbw9@gmail.com?subject=%D7%A9%D7%90%D7%9C%D7%94%20%D7%91%D7%A0%D7%95%D7%92%D7%A2%20%D7%9C%D7%AA%D7%9E%D7%99%D7%9B%D7%94%20%D7%91%D7%A2%D7%A5%20%D7%94%D7%A4%D7%A8%D7%93%D7%B4%D7%A1%20%D7%94%D7%97%D7%99">שליחת שאלה באימייל</a>
-      </div>
-    </section>
+        <button id="copySupportLink" class="copy-button" type="button">
+          העתקת הקישור 📋
+        </button>
 
-    <p class="footer-note">
-      תודה על הרצון לקחת חלק בהמשך היצירה, ההנגשה והפצת התורה.
-    </p>
+        <p id="copyStatus" class="copy-status" role="status" aria-live="polite"></p>
+        <p class="browser-note">
+          אם האפשרות אינה מופיעה, העתיקו את הקישור ופתחו אותו ב־Chrome או ב־Safari.
+        </p>
+      </section>
+
+      <section id="paymentPanel" class="action-panel" aria-labelledby="paymentTitle" hidden>
+        <p class="panel-kicker">שותפים בהפצת אור התורה</p>
+        <h1 id="paymentTitle">בחרו את הדרך הנוחה לכם להיות שותפים</h1>
+
+        <p class="panel-lead">
+          התכנים פתוחים לכולם ללא תשלום. תמיכתכם מאפשרת לנו להמשיך ליצור ולהפיץ את אור התורה לרבים.
+        </p>
+
+        <div class="payment-buttons" aria-label="בחירת אמצעי תמיכה">
+          <a
+            class="payment-button bit"
+            data-payment-provider="bit"
+            href="https://www.bitpay.co.il/app/me/4A7D7360-AF51-7846-5E67-60FACACD37C54857?v=2"
+            rel="noopener noreferrer"
+          >תמיכה באמצעות Bit</a>
+
+          <a
+            class="payment-button paybox"
+            data-payment-provider="paybox"
+            href="https://3ydbh.app.link/c9hSuB5Xq1b?_p=c11331dc9a006ceee61490fceeb4"
+            rel="noopener noreferrer"
+          >תמיכה באמצעות PayBox</a>
+
+          <a
+            class="payment-button paypal"
+            data-payment-provider="paypal"
+            href="https://paypal.me/RonenTorah"
+            rel="noopener noreferrer"
+          >תמיכה באמצעות PayPal</a>
+        </div>
+
+        <nav class="small-links" aria-label="קישורים נוספים">
+          <a href="support-terms.html">תקנון התמיכה</a>
+          <a href="index.html">כניסה לעץ הפרד״ס החי</a>
+          <a href="mailto:prsthsbw9@gmail.com?subject=%D7%A9%D7%90%D7%9C%D7%94%20%D7%91%D7%A0%D7%95%D7%92%D7%A2%20%D7%9C%D7%AA%D7%9E%D7%99%D7%9B%D7%94">שאלה באימייל</a>
+        </nav>
+
+        <p class="privacy-note">
+          התשלום מתבצע ישירות אצל ספק התשלום הנבחר. פרטי התשלום אינם נשמרים באתר.
+        </p>
+      </section>
+    </div>
   </main>
-
 
   <script>
     (() => {
@@ -1608,659 +309,43 @@
       const SUPPORT_PUBLIC_URL =
         "https://prsthsbw9-dev.github.io/parasha-site/support.html";
 
-      const tiktokDonationGate =
-        document.getElementById("tiktokDonationGate");
-      const openExternalSupport =
-        document.getElementById("openExternalSupport");
-      const copySupportLink =
-        document.getElementById("copySupportLink");
-      const copySupportStatus =
-        document.getElementById("copySupportStatus");
-      const browserUserAgent = navigator.userAgent || "";
+      const userAgent = navigator.userAgent || "";
+      const isTikTokBrowser =
+        /TikTok|musical_ly|BytedanceWebview|Bytedance|Aweme/i.test(userAgent);
 
-    const isTikTokBrowser =
-      /TikTok|musical_ly|BytedanceWebview|Bytedance|Aweme/i.test(
-        browserUserAgent
-      ) ||
-      /tiktok\.com/i.test(document.referrer || "");
+      const tiktokPanel = document.getElementById("tiktokPanel");
+      const paymentPanel = document.getElementById("paymentPanel");
+      const copyButton = document.getElementById("copySupportLink");
+      const copyStatus = document.getElementById("copyStatus");
 
-      if(isTikTokBrowser && tiktokDonationGate){
-        tiktokDonationGate.hidden = false;
-        document.body.style.overflow = "hidden";
+      if(isTikTokBrowser){
+        tiktokPanel.hidden = false;
+      }else{
+        paymentPanel.hidden = false;
       }
 
-      openExternalSupport?.addEventListener("click",() => {
-        const isAndroid = /Android/i.test(browserUserAgent);
-
-        if(isAndroid){
-          const fallbackUrl = encodeURIComponent(SUPPORT_PUBLIC_URL);
-          const androidExternalUrl =
-            "intent://prsthsbw9-dev.github.io/parasha-site/support.html" +
-            "#Intent;" +
-            "scheme=https;" +
-            "package=com.android.chrome;" +
-            `S.browser_fallback_url=${fallbackUrl};` +
-            "end";
-
-          if(window.top && window.top !== window){
-            window.top.location.href = androidExternalUrl;
-          }else{
-            window.location.href = androidExternalUrl;
-          }
-          return;
-        }
-
-        window.open(SUPPORT_PUBLIC_URL,"_blank","noopener,noreferrer");
-      });
-
-      copySupportLink?.addEventListener("click",async () => {
+      copyButton?.addEventListener("click",async () => {
         try{
           await navigator.clipboard.writeText(SUPPORT_PUBLIC_URL);
-          copySupportStatus.textContent =
-            "הקישור הועתק — עכשיו פתחו את הדפדפן והדביקו אותו.";
+          copyStatus.textContent =
+            "הקישור הועתק ✓ כעת פתחו את Chrome או Safari והדביקו אותו בשורת הכתובת.";
         }catch(error){
-          copySupportStatus.textContent =
+          copyStatus.textContent =
             "לא ניתן היה להעתיק אוטומטית. לחצו על שלוש הנקודות ובחרו „פתיחה בדפדפן”.";
         }
       });
 
-      const VIDEO_RETURN_STORAGE_KEY =
-        "pardesSupportVideoReturnV1";
-
-      const termsLink = document.getElementById("termsLink");
-      const ageConfirm = { checked:true, addEventListener(){} };
-      const termsConsent = document.getElementById("termsConsent");
-      const supportEmail = document.getElementById("supportEmail");
-      const donationIntentConfirm = { checked:true, addEventListener(){} };
-      const showThankName = document.getElementById("showThankName");
-      const thankNamePanel = document.getElementById("thankNamePanel");
-      const publicSupportName = document.getElementById("publicSupportName");
-      const paymentHelp = document.getElementById("paymentHelp");
-      const paymentLinks = [...document.querySelectorAll(".payment-link")];
-      const prePaymentStatus = document.getElementById("prePaymentStatus");
-
-      /*
-       * כתובת שירות השרת ששולח את שני המיילים לפני המעבר לתשלום.
-       * יש להחליף בכתובת ה-HTTPS של ה-Cloud Function / השרת שלך.
-       */
-      const SUPPORT_NOTIFY_ENDPOINT = "https://us-central1-parasha-site-links.cloudfunctions.net/sendSupportEmails";
-const returnNavigation =
-        document.getElementById("returnNavigation");
-      const returnToVideoButton =
-        document.getElementById("returnToVideoButton");
-      const nextLayerButton =
-        document.getElementById("nextLayerButton");
-      const nextLayerMap = {
-        main:{layer:"pshat",label:"מעבר לפשט ←"},
-        pshat:{layer:"remez",label:"מעבר לרמז ←"},
-        remez:{layer:"drash",label:"מעבר לדרש ←"},
-        drash:{layer:"sod",label:"מעבר לסוד ←"},
-        sod:{layer:"main",label:"מעבר לעלייה הראשית ←"}
-      };
-
-      function setupReturnNavigation(){
-        let videoState = null;
-
-        try{
-          videoState = JSON.parse(
-            sessionStorage.getItem(
-              VIDEO_RETURN_STORAGE_KEY
-            ) || "null"
-          );
-        }catch(error){
-          videoState = null;
-        }
-
-        if(!videoState?.returnUrl){
-          returnNavigation.hidden = true;
-          return;
-        }
-
-        try{
-          const videoReturnUrl =
-            new URL(videoState.returnUrl);
-
-          if(Number(videoState.stoppedAt) > 0){
-            videoReturnUrl.searchParams.set(
-              "resume",
-              String(Math.floor(videoState.stoppedAt))
-            );
-          }
-
-          returnToVideoButton.href =
-            videoReturnUrl.href;
-
-          returnToVideoButton.hidden = false;
-          returnNavigation.hidden = false;
-
-          const nextLayer =
-            nextLayerMap[videoState.layer];
-
-          if(nextLayer){
-            nextLayerButton.href =
-              `index.html?openLayer=${encodeURIComponent(nextLayer.layer)}`;
-
-            nextLayerButton.textContent =
-              nextLayer.label;
-
-            nextLayerButton.hidden = false;
-            returnNavigation.classList.remove("is-single");
-          }
-        }catch(error){
-          returnToVideoButton.hidden = true;
-          nextLayerButton.hidden = true;
-          returnNavigation.hidden = true;
-        }
-      }
-
-      function isValidSupportEmail(){
-        return supportEmail.value.trim() !== "" && supportEmail.checkValidity();
-      }
-
-      function updatePaymentLinks(){
-        const enabled =
-          ageConfirm.checked &&
-          termsConsent.checked &&
-          donationIntentConfirm.checked &&
-          isValidSupportEmail();
-
-        paymentLinks.forEach((link) => {
-          link.classList.toggle("is-disabled",!enabled);
-          link.setAttribute("aria-disabled",String(!enabled));
-        });
-
-        paymentHelp.textContent = enabled
-          ? "אפשר לבחור כעת את אמצעי התמיכה הנוח לך."
-          : "יש להזין אימייל תקין ולאשר את התקנון כדי לפתוח את אמצעי התמיכה.";
-      }
-
-
-
-      [ageConfirm,termsConsent,donationIntentConfirm].forEach((checkbox) => {
-        checkbox.addEventListener("change",updatePaymentLinks);
-      });
-
-      supportEmail.addEventListener("input",updatePaymentLinks);
-      supportEmail.addEventListener("change",updatePaymentLinks);
-
-      showThankName.addEventListener("change",() => {
-        thankNamePanel.hidden = !showThankName.checked;
-      
-        if(showThankName.checked){
-          window.setTimeout(
-            () => publicSupportName.focus({preventScroll:true}),
-            0
-          );
-        }else{
-          publicSupportName.value = "";
-        }
-      });
-      
-      publicSupportName.addEventListener("keydown",(event) => {
-        if(event.key !== "Enter") return;
-      
-        event.preventDefault();
-      
-        const publicName =
-          publicSupportName.value.trim();
-      
-        if(!publicName){
-          publicSupportName.focus();
-      
-          setPrePaymentStatus(
-            "יש להקליד את השם שיוצג בדף התודה.",
-            true
-          );
-      
-          return;
-        }
-      
-        publicSupportName.blur();
-      
-        window.setTimeout(() => {
-          termsConsent.scrollIntoView({
-            behavior:"smooth",
-            block:"center"
-          });
-      
-          termsConsent.focus({
-            preventScroll:true
-          });
-        },150);
-      });  
-    /*
-       * החוזה הצפוי מהשרת:
-       *
-       * 1) מייל לתומך כאשר wantsPublicThanks=true:
-       *    "תודה רבה לך על תרומתך והמצווה החשובה שעשית.
-       *     בחרת ששמך יופיע בעלייה הבאה בדף התודה לכל המחזקים.
-       *     לאחר אישור תרומתך מצידנו נפרסם את שמך בעז״ה בעלייה הקרובה."
-       *
-       * 2) מייל לתומך כאשר wantsPublicThanks=false:
-       *    "תודה רבה לך על תרומתך והמצווה החשובה שעשית.
-       *     עצם זה שבחרת להישאר בעילום שם, זה רק מוכיח לנו איזה צדיקים יש בעולם הזה,
-       *     ורק השם יודע את גודל המצווה שעשית.
-       *     לאחר וידוא התשלום נשלח אליך שוב הודעה שהתשלום התקבל.
-       *     תבורך מהשמיים."
-       *
-       * 3) מייל לערוץ:
-       *    donorEmail, provider, wantsPublicThanks, publicName (אם קיים),
-       *    sentAt, pageUrl, language, userAgent, screen.
-       *
-       * חשוב: המייל הראשון נשלח לפני אישור עסקה ולכן אינו אומר שהתשלום התקבל.
-       * לאחר בדיקת התשלום בפועל ניתן לשלוח מייל אישור נוסף.
-       */
-
-      let preparedSupportReturnUrl = "";
-
-      function readReturnUrlFromSupportPage(){
-        try{
-          return String(
-            new URLSearchParams(window.location.search)
-              .get("returnUrl") ||
-            ""
-          );
-        }catch(error){
-          return "";
-        }
-      }
-
-      function prepareSupportReturnUrl(provider){
-        preparedSupportReturnUrl =
-          readReturnUrlFromSupportPage();
-
-        try{
-          if(
-            !preparedSupportReturnUrl &&
-            window.parent &&
-            window.parent !== window
-          ){
-            if(
-              typeof window.parent.savePardesVideoReturnForPayment ===
-              "function"
-            ){
-              preparedSupportReturnUrl = String(
-                window.parent.savePardesVideoReturnForPayment(provider) ||
-                ""
-              );
-            }
-
-            if(
-              !preparedSupportReturnUrl &&
-              typeof window.parent.getPardesEmailReturnUrl ===
-                "function"
-            ){
-              preparedSupportReturnUrl = String(
-                window.parent.getPardesEmailReturnUrl(provider) ||
-                ""
-              );
-            }
-
-            if(!preparedSupportReturnUrl){
-              window.parent.postMessage(
-                {
-                  type:"pardes-support-payment-start",
-                  provider
-                },
-                window.location.origin
-              );
-            }
-          }
-        }catch(error){
-          preparedSupportReturnUrl = "";
-        }
-
-        return preparedSupportReturnUrl;
-      }
-
-      function getSupportEmailReturnUrl(provider){
-        if(preparedSupportReturnUrl){
-          return preparedSupportReturnUrl;
-        }
-
-        const returnUrlFromPage =
-          readReturnUrlFromSupportPage();
-
-        if(returnUrlFromPage){
-          return returnUrlFromPage;
-        }
-
-        try{
-          if(
-            window.parent &&
-            window.parent !== window &&
-            typeof window.parent.getPardesEmailReturnUrl ===
-              "function"
-          ){
-            return String(
-              window.parent.getPardesEmailReturnUrl(provider) ||
-              ""
-            );
-          }
-        }catch(error){}
-
-        return "";
-      }
-
-      function buildSupportNotificationPayload(provider){
-        const wantsPublicThanks = Boolean(showThankName?.checked);
-        const publicName = wantsPublicThanks
-          ? (publicSupportName?.value || "").trim()
-          : "";
-
-        return {
-          donorEmail: supportEmail.value.trim(),
-          provider,
-          wantsPublicThanks,
-          publicName,
-          returnUrl:getSupportEmailReturnUrl(provider),
-          pageUrl: window.location.href,
-          userAgent: navigator.userAgent || "",
-          language: navigator.language || "",
-          screen: {
-            width: window.screen?.width || null,
-            height: window.screen?.height || null
-          },
-          sentAt: new Date().toISOString()
-        };
-      }
-
-      async function sendSupportNotificationBeforePayment(provider){
-        if(
-          !SUPPORT_NOTIFY_ENDPOINT ||
-          SUPPORT_NOTIFY_ENDPOINT === "PASTE_YOUR_SUPPORT_NOTIFY_ENDPOINT_HERE"
-        ){
-          throw new Error("support_notify_endpoint_missing");
-        }
-
-        const payload = buildSupportNotificationPayload(provider);
-
-        const response = await fetch(SUPPORT_NOTIFY_ENDPOINT,{
-          method:"POST",
-          headers:{
-            "Content-Type":"application/json"
-          },
-          body:JSON.stringify(payload)
-        });
-
-        if(!response.ok){
-          throw new Error(`support_notify_failed_${response.status}`);
-        }
-
-        return true;
-      }
-
-      function setPrePaymentStatus(text,isError=false){
-        if(!prePaymentStatus) return;
-        prePaymentStatus.textContent = text;
-        prePaymentStatus.classList.add("show");
-        prePaymentStatus.classList.toggle("error",Boolean(isError));
-      }
-
-      paymentLinks.forEach((link) => {
-        link.addEventListener("click",async (event) => {
-          if(!(ageConfirm.checked && termsConsent.checked && donationIntentConfirm.checked && isValidSupportEmail())){
-            event.preventDefault();
-            paymentHelp.textContent = "לפני המעבר לתשלום יש להזין אימייל תקין ולאשר את התקנון.";
-            paymentHelp.scrollIntoView({behavior:"smooth",block:"center"});
-            return;
-          }
-
-          if(showThankName?.checked && !(publicSupportName?.value || "").trim()){
-            event.preventDefault();
-            thankNamePanel.hidden = false;
-            publicSupportName.focus();
-            setPrePaymentStatus("בחרת ששמך יופיע בדף התודה — יש להקליד את השם שיוצג.",true);
-            publicSupportName.scrollIntoView({behavior:"smooth",block:"center"});
-            return;
-          }
-
-          event.preventDefault();
-
+      document.querySelectorAll("[data-payment-provider]").forEach((link) => {
+        link.addEventListener("click",() => {
           const provider = link.dataset.paymentProvider || "unknown";
-          const destinationUrl = link.href;
-
-          paymentLinks.forEach((item) => {
-            item.classList.add("is-disabled");
-            item.setAttribute("aria-disabled","true");
-          });
-
-          /*
-            קודם שומרים את הסרטון, החלק והשנייה שבהם הצופה עצר.
-            כך returnUrl כבר קיים בזמן שהמייל נשלח.
-          */
-          prepareSupportReturnUrl(provider);
-
-          setPrePaymentStatus("שולחים אליך ואלינו את פרטי התמיכה…");
-
-          try{
-            await sendSupportNotificationBeforePayment(provider);
-          }catch(error){
-            console.error("Support notification failed:",error);
-            paymentLinks.forEach((item) => {
-              item.classList.remove("is-disabled");
-              item.setAttribute("aria-disabled","false");
-            });
-
-            setPrePaymentStatus(
-              "לא הצלחנו לשלוח כרגע את הודעת האימייל. אמצעי התשלום לא נפתח כדי שלא נאבד את פרטי התמיכה.",
-              true
-            );
-            return;
-          }
-
-          setPrePaymentStatus("ההודעה נשלחה ✓ מעבירים אותך כעת לאמצעי התשלום שבחרת…");
-
-
-
           window.dataLayer = window.dataLayer || [];
           window.dataLayer.push({
             event:"support_payment_click",
             payment_provider:provider,
-            wants_public_thanks:showThankName.checked
+            source:isTikTokBrowser ? "tiktok_webview" : "external_browser"
           });
-
-          window.setTimeout(() => {
-            /*
-              דף התמיכה עצמו מוצג בתוך iframe של האתר הראשי.
-              לכן אין לפתוח את ספק התשלום בתוך אותו iframe,
-              אלא להחליף את החלון העליון של הדפדפן.
-            */
-            if(window.top && window.top !== window){
-              window.top.location.href = destinationUrl;
-            }else{
-              window.location.href = destinationUrl;
-            }
-          },450);
         });
       });
-
-
-      /* ===== בקר מסכי ההקדמה ===== */
-      const introShell = document.getElementById("introShell");
-      const skipIntro = document.getElementById("skipIntro");
-      const openSupportIntro =
-        document.getElementById("openSupportIntro");      
-      const slides = [...document.querySelectorAll(".intro-slide")];
-      const progressDots = [...document.querySelectorAll(".intro-progress-dot")];
-      const typedLead = document.getElementById("introTypedLead");
-      const introVerse = document.getElementById("introVerse");
-      const next0 = document.getElementById("next0");
-      const next1 = document.getElementById("next1");
-      const next2 = document.getElementById("next2");
-      const goToSupport = document.getElementById("goToSupport");
-      const introCards = [...document.querySelectorAll(".intro-card")];
-      const meaningLines = [...document.querySelectorAll(".meaning-line")];
-      const ctaHeading = document.querySelector(".cta-heading");
-      const ctaCopy = document.querySelector(".cta-copy");
-      const stars = document.getElementById("stars");
-      let currentSlide = 0;
-      let introTimers = [];
-
-      function clearIntroTimers(){
-        introTimers.forEach((timer) => window.clearTimeout(timer));
-        introTimers = [];
-      }
-
-      function later(fn,delay){
-        const timer = window.setTimeout(fn,delay);
-        introTimers.push(timer);
-        return timer;
-      }
-
-      function buildStars(){
-        if(!stars || stars.childElementCount) return;
-        const count = window.innerWidth < 600 ? 48 : 72;
-
-        for(let i=0;i<count;i++){
-          const star = document.createElement("span");
-          star.className = "star";
-          const size = 1 + Math.random()*2.2;
-          star.style.width = `${size}px`;
-          star.style.height = `${size}px`;
-          star.style.left = `${Math.random()*100}%`;
-          star.style.top = `${Math.random()*100}%`;
-          star.style.animationDelay = `${Math.random()*2.8}s`;
-          star.style.animationDuration = `${2.1 + Math.random()*2.6}s`;
-          stars.appendChild(star);
-        }
-      }
-
-      function typeText(element,text,speed=43,done){
-        element.textContent = "";
-        element.classList.remove("is-done");
-        let index = 0;
-
-        function step(){
-          if(index >= text.length){
-            element.classList.add("is-done");
-            if(typeof done === "function") done();
-            return;
-          }
-
-          element.textContent += text.charAt(index++);
-          later(step,speed);
-        }
-
-        step();
-      }
-
-      function updateProgress(){
-        progressDots.forEach((dot,index) => {
-          dot.classList.toggle("is-active",index === currentSlide);
-        });
-      }
-
-      function resetSlideAnimations(){
-        introCards.forEach((card) => card.classList.remove("pop"));
-        meaningLines.forEach((line) => line.classList.remove("reveal"));
-        ctaHeading?.classList.remove("reveal");
-        ctaCopy?.classList.remove("reveal");
-        [next0,next1,next2,goToSupport].forEach((button) => button?.classList.remove("is-ready"));
-      }
-
-      function animateSlide(index){
-        clearIntroTimers();
-
-        if(index === 0){
-          document.body.classList.remove("intro-video-soft");
-          introVerse.classList.remove("is-visible");
-          typedLead.textContent = "";
-          typedLead.classList.remove("is-done");
-
-          later(() => {
-            typeText(
-              typedLead,
-              "בספר משלי, פרק ג׳ פסוק י״ח, נאמר על התורה ועל המחזיקים בה:",
-              46,
-              () => {
-                later(() => introVerse.classList.add("is-visible"),350);
-                later(() => next0.classList.add("is-ready"),1200);
-              }
-            );
-          },1000);
-        }
-
-        if(index === 1){
-          document.body.classList.add("intro-video-soft");
-          introCards.forEach((card,cardIndex) => {
-            later(() => card.classList.add("pop"),450 + cardIndex*430);
-          });
-          later(() => next1.classList.add("is-ready"),1950);
-        }
-
-        if(index === 2){
-          document.body.classList.add("intro-video-soft");
-          meaningLines.forEach((line,lineIndex) => {
-            later(() => line.classList.add("reveal"),300 + lineIndex*650);
-          });
-          later(() => next2.classList.add("is-ready"),2350);
-        }
-
-        if(index === 3){
-          document.body.classList.add("intro-video-soft");
-          later(() => ctaHeading?.classList.add("reveal"),250);
-          later(() => ctaCopy?.classList.add("reveal"),850);
-          later(() => goToSupport.classList.add("is-ready"),1500);
-        }
-      }
-
-      function showSlide(index){
-        if(index < 0 || index >= slides.length) return;
-        clearIntroTimers();
-        currentSlide = index;
-
-        slides.forEach((slide,slideIndex) => {
-          slide.classList.toggle("is-active",slideIndex === index);
-          slide.setAttribute("aria-hidden",String(slideIndex !== index));
-        });
-
-        resetSlideAnimations();
-        updateProgress();
-        animateSlide(index);
-      }
-
-      function showFinalSupport(){
-        clearIntroTimers();
-        document.body.classList.remove("intro-mode","intro-video-soft");
-        document.body.classList.add("final-mode");
-        introShell.hidden = true;
-        skipIntro.hidden = true;
-        window.scrollTo({top:0,behavior:"auto"});
-        updatePaymentLinks();
-      }
-
-      next0?.addEventListener("click",() => showSlide(1));
-      next1?.addEventListener("click",() => showSlide(2));
-      next2?.addEventListener("click",() => showSlide(3));
-      goToSupport?.addEventListener("click",showFinalSupport);
-      skipIntro?.addEventListener("click",showFinalSupport);
-      
-      openSupportIntro?.addEventListener("click",() => {
-        clearIntroTimers();
-      
-        document.body.classList.remove("final-mode");
-        document.body.classList.add("intro-mode");
-      
-        introShell.hidden = false;
-        skipIntro.hidden = false;
-        skipIntro.textContent = "חזרה לתרומה ›";
-      
-        window.scrollTo({
-          top:0,
-          behavior:"auto"
-        });
-      
-        showSlide(0);
-      });
-
-      buildStars();
-      updatePaymentLinks();
-
-      setupReturnNavigation();
-      updatePaymentLinks();
-
-      window.addEventListener("pageshow",updatePaymentLinks);
     })();
   </script>
 </body>
