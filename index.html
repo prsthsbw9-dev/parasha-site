@@ -11448,7 +11448,7 @@ if (sodGrapesVideo) {
           return;
         }
 
-        if(link.id === "supportTreeReturn"){
+        if(link.hasAttribute("data-return-to-tree")){
           event.preventDefault();
           event.stopPropagation();
           event.stopImmediatePropagation();
@@ -11473,14 +11473,6 @@ if (sodGrapesVideo) {
     }catch(error){
       /* אותו דומיין מאפשר את הבדיקה; במקרה חריג הכפתור החיצוני נשאר פעיל. */
     }
-  });
-
-  window.addEventListener("message", function(event){
-    if(event.origin !== window.location.origin) return;
-    if(event.data?.type !== "pardes-return-to-tree") return;
-  
-    supportOpenedFromVideo = false;
-    closeInternalPage();
   });
   
   document.addEventListener("keydown", function(event){
