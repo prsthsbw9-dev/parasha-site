@@ -6238,32 +6238,46 @@
         --lion-size:110px;
     }
 
-    /* iPhone ארוך — מעל 880px גובה מסך CSS */
-    body.is-iphone.device-phone.orientation-portrait.iphone-height-long{
-        --dror-size:72px;
-        --drash-w:66px; --drash-h:88px;
-        --remez-w:58px; --remez-h:88px;
-        --sod-w:58px; --sod-h:92px;
-        --pshat-w:58px; --pshat-h:96px;
-
-        --main-left:50%;
-        --main-top:43svh;
-        --main-size:82px;
-
-        --view-light-left:50%;
-        --view-light-top:50.5svh;
-        --view-light-size:66px;
-
-        --view-heart-left:50%;
-        --view-heart-top:64svh;
-        --view-heart-size:84px;
-
-        --view-search-bottom:calc(env(safe-area-inset-bottom,0px) + 135px);
-        --view-message-bottom:calc(env(safe-area-inset-bottom,0px) + 100px);
-
-        --lion-bottom:calc(env(safe-area-inset-bottom,0px) + 210px);
-        --lion-size:114px;
-    }
+        /* iPhone ארוך — מעל 880px גובה מסך CSS */
+        body.is-iphone.device-phone.orientation-portrait.iphone-height-long{
+          --dror-size:72px;
+          --drash-w:66px;
+          --drash-h:88px;
+          --remez-w:58px;
+          --remez-h:88px;
+          --sod-w:58px;
+          --sod-h:92px;
+          --pshat-w:58px;
+          --pshat-h:96px;
+        
+          /* העלייה הראשית */
+          --main-left:50%;
+          --main-top:43svh;
+          --main-size:82px;
+        
+          /* האור שבי — נמוך בכ־8px */
+          --view-light-left:50%;
+          --view-light-top:51.5svh;
+          --view-light-size:66px;
+        
+          /* מה שבלב */
+          --view-heart-left:50%;
+          --view-heart-top:64svh;
+          --view-heart-size:84px;
+        
+          /* שורת החיפוש וההודעה — נמוכות יחד ב־35px */
+          --view-search-bottom:
+            calc(env(safe-area-inset-bottom,0px) + 100px);
+        
+          --view-message-bottom:
+            calc(env(safe-area-inset-bottom,0px) + 65px);
+        
+          /* האריה — גדול ונמוך יותר */
+          --lion-bottom:
+            calc(env(safe-area-inset-bottom,0px) + 170px);
+        
+          --lion-size:130px;
+        }
 
     /* iPhone בינוני — הזזת ציור העץ שמאלה לפני איזון האייקונים */
     body.is-iphone.device-phone.orientation-portrait.iphone-height-medium .sea-bg-image,
