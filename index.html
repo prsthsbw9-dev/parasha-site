@@ -6202,8 +6202,8 @@
         --view-search-bottom:calc(env(safe-area-inset-bottom,0px) + 70px);
         --view-message-bottom:calc(env(safe-area-inset-bottom,0px) + 35px);
 
-        --lion-bottom:calc(env(safe-area-inset-bottom,0px) + 142px);
-        --lion-size:102px;
+        --lion-bottom:calc(env(safe-area-inset-bottom,0px) + 132px);
+        --lion-size:112px;
     }
 
     /* iPhone רגיל — 737px עד 880px; כולל iPhone 12/13/14 */
@@ -6298,6 +6298,14 @@
       height:100px;
     }
 
+    /* לוגו הערוץ — iPhone קצר */
+    body.is-iphone.device-phone.orientation-portrait.iphone-height-short .home-channel-logo{
+      right:3%;
+      top:58%;
+      width:88px;
+      height:88px;
+    }
+    
     /* מבטלים את תוספת ה-18px הישנה; הגובה נקבע בכל קבוצת iPhone */
     body.is-iphone.device-phone.orientation-portrait .haor-shebi-live{
       top:var(--view-light-top) !important;
