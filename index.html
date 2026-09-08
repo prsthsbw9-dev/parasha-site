@@ -6161,68 +6161,93 @@
 
     /* iPhone אנכי — ערכים משותפים לכל הדגמים */
     body.is-iphone.device-phone.orientation-portrait{
+      /* מפת הייחוס נמדדה מתצוגת Android בגודל 397x712 */
+      --icon-env-y:0px;
+      --dror-left:53%; --dror-top:15svh;
+      --drash-left:14%; --drash-top:27svh;
+      --remez-right:18%; --remez-top:27svh;
+      --sod-left:12%; --sod-top:45svh;
+      --pshat-right:8%; --pshat-top:42svh;
       --main-left:52%;
-      --view-light-left:50%;
-      --view-heart-left:50%;
+      --view-light-left:53%;
+      --view-heart-left:53%;
       --view-search-left:50%;
       --view-search-width:min(94vw,390px);
-      --view-message-left:50%;
+      --view-message-left:53%;
       --view-message-width:min(92vw,390px);
       --lion-left:1%;
     }
 
-    /* iPhone קצר — עד 700px גובה */
+    /* iPhone קצר — למשל iPhone SE: עד 736px גובה מסך CSS */
     body.is-iphone.device-phone.orientation-portrait.iphone-height-short{
-        --main-top:38svh;
-        --main-size:70px;
+        --dror-size:62px;
+        --drash-w:56px; --drash-h:74px;
+        --remez-w:50px; --remez-h:74px;
+        --sod-w:48px; --sod-h:76px;
+        --pshat-w:48px; --pshat-h:80px;
 
-        --view-light-top:55svh;
+        --main-top:44svh;
+        --main-size:68px;
+
+        --view-light-top:52svh;
         --view-light-size:54px;
 
-        --view-heart-top:67svh;
-        --view-heart-size:64px;
+        --view-heart-top:66svh;
+        --view-heart-size:62px;
 
         --view-search-bottom:calc(env(safe-area-inset-bottom,0px) + 70px);
         --view-message-bottom:calc(env(safe-area-inset-bottom,0px) + 35px);
 
-        --lion-bottom:calc(env(safe-area-inset-bottom,0px) + 150px);
-        --lion-size:78px;
+        --lion-bottom:calc(env(safe-area-inset-bottom,0px) + 142px);
+        --lion-size:72px;
     }
 
-    /* iPhone בינוני — 701px עד 850px גובה */
+    /* iPhone רגיל — 737px עד 880px; כולל iPhone 12/13/14 */
     body.is-iphone.device-phone.orientation-portrait.iphone-height-medium{
-        --main-top:36svh;
-        --main-size:78px;
+        --dror-size:68px;
+        --drash-w:62px; --drash-h:82px;
+        --remez-w:54px; --remez-h:82px;
+        --sod-w:54px; --sod-h:86px;
+        --pshat-w:54px; --pshat-h:90px;
+
+        --main-top:43.5svh;
+        --main-size:76px;
 
         --view-light-top:52svh;
         --view-light-size:60px;
 
-        --view-heart-top:64svh;
-        --view-heart-size:76px;
+        --view-heart-top:66svh;
+        --view-heart-size:74px;
 
         --view-search-bottom:calc(env(safe-area-inset-bottom,0px) + 110px);
         --view-message-bottom:calc(env(safe-area-inset-bottom,0px) + 75px);
 
-        --lion-bottom:calc(env(safe-area-inset-bottom,0px) + 190px);
-        --lion-size:100px;
+        --lion-bottom:calc(env(safe-area-inset-bottom,0px) + 186px);
+        --lion-size:94px;
     }
 
-    /* iPhone ארוך — מעל 850px גובה */
+    /* iPhone ארוך — מעל 880px גובה מסך CSS */
     body.is-iphone.device-phone.orientation-portrait.iphone-height-long{
-        --main-top:35svh;
+        --dror-size:72px;
+        --drash-w:66px; --drash-h:88px;
+        --remez-w:58px; --remez-h:88px;
+        --sod-w:58px; --sod-h:92px;
+        --pshat-w:58px; --pshat-h:96px;
+
+        --main-top:43svh;
         --main-size:82px;
 
-        --view-light-top:50svh;
+        --view-light-top:52svh;
         --view-light-size:66px;
 
-        --view-heart-top:62svh;
+        --view-heart-top:66svh;
         --view-heart-size:84px;
 
         --view-search-bottom:calc(env(safe-area-inset-bottom,0px) + 135px);
         --view-message-bottom:calc(env(safe-area-inset-bottom,0px) + 100px);
 
-        --lion-bottom:calc(env(safe-area-inset-bottom,0px) + 215px);
-        --lion-size:108px;
+        --lion-bottom:calc(env(safe-area-inset-bottom,0px) + 210px);
+        --lion-size:106px;
     }
 
     /* מבטלים את תוספת ה-18px הישנה; הגובה נקבע בכל קבוצת iPhone */
@@ -6920,9 +6945,9 @@
         window.screen?.height || 0
       );
 
-      if(iphoneScreenHeight <= 700){
+      if(iphoneScreenHeight <= 736){
         addClass("iphone-height-short");
-      }else if(iphoneScreenHeight <= 850){
+      }else if(iphoneScreenHeight <= 880){
         addClass("iphone-height-medium");
       }else{
         addClass("iphone-height-long");
