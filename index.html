@@ -6186,44 +6186,56 @@
         --sod-w:48px; --sod-h:76px;
         --pshat-w:48px; --pshat-h:80px;
 
-        --main-top:44svh;
+        --main-left:51%;
+        --main-top:45.5svh;
         --main-size:68px;
 
+        --view-light-left:52%;
         --view-light-top:52svh;
         --view-light-size:54px;
 
-        --view-heart-top:66svh;
+        --view-heart-left:52%;
+        --view-heart-top:63.5svh;
         --view-heart-size:62px;
 
+        --view-search-width:min(90vw,338px);
         --view-search-bottom:calc(env(safe-area-inset-bottom,0px) + 70px);
         --view-message-bottom:calc(env(safe-area-inset-bottom,0px) + 35px);
 
         --lion-bottom:calc(env(safe-area-inset-bottom,0px) + 142px);
-        --lion-size:72px;
+        --lion-size:102px;
     }
 
     /* iPhone רגיל — 737px עד 880px; כולל iPhone 12/13/14 */
     body.is-iphone.device-phone.orientation-portrait.iphone-height-medium{
+        --dror-left:52%;
         --dror-size:68px;
+        --drash-left:12%;
         --drash-w:62px; --drash-h:82px;
+        --remez-right:20%;
         --remez-w:54px; --remez-h:82px;
+        --sod-left:10%;
         --sod-w:54px; --sod-h:86px;
+        --pshat-right:10%;
         --pshat-w:54px; --pshat-h:90px;
 
+        --main-left:51%;
         --main-top:43.5svh;
         --main-size:76px;
 
+        --view-light-left:52%;
         --view-light-top:52svh;
         --view-light-size:60px;
 
+        --view-heart-left:52%;
         --view-heart-top:66svh;
         --view-heart-size:74px;
 
-        --view-search-bottom:calc(env(safe-area-inset-bottom,0px) + 110px);
-        --view-message-bottom:calc(env(safe-area-inset-bottom,0px) + 75px);
+        --view-search-bottom:calc(env(safe-area-inset-bottom,0px) + 90px);
+        --view-message-bottom:calc(env(safe-area-inset-bottom,0px) + 55px);
 
-        --lion-bottom:calc(env(safe-area-inset-bottom,0px) + 186px);
-        --lion-size:94px;
+        --lion-bottom:calc(env(safe-area-inset-bottom,0px) + 170px);
+        --lion-size:110px;
     }
 
     /* iPhone ארוך — מעל 880px גובה מסך CSS */
@@ -6234,20 +6246,42 @@
         --sod-w:58px; --sod-h:92px;
         --pshat-w:58px; --pshat-h:96px;
 
+        --main-left:50%;
         --main-top:43svh;
         --main-size:82px;
 
-        --view-light-top:52svh;
+        --view-light-left:50%;
+        --view-light-top:50.5svh;
         --view-light-size:66px;
 
-        --view-heart-top:66svh;
+        --view-heart-left:50%;
+        --view-heart-top:64svh;
         --view-heart-size:84px;
 
         --view-search-bottom:calc(env(safe-area-inset-bottom,0px) + 135px);
         --view-message-bottom:calc(env(safe-area-inset-bottom,0px) + 100px);
 
         --lion-bottom:calc(env(safe-area-inset-bottom,0px) + 210px);
-        --lion-size:106px;
+        --lion-size:114px;
+    }
+
+    /* iPhone בינוני — הזזת ציור העץ שמאלה לפני איזון האייקונים */
+    body.is-iphone.device-phone.orientation-portrait.iphone-height-medium .sea-bg-image,
+    body.is-iphone.device-phone.orientation-portrait.iphone-height-medium .tree-background-video{
+      object-position:50% center;
+    }
+
+    /* מידות לוגו הערוץ שסוכמו עבור iPhone בינוני וארוך */
+    body.is-iphone.device-phone.orientation-portrait.iphone-height-medium .home-channel-logo{
+      width:100px;
+      height:100px;
+    }
+
+    body.is-iphone.device-phone.orientation-portrait.iphone-height-long .home-channel-logo{
+      right:3%;
+      top:63%;
+      width:100px;
+      height:100px;
     }
 
     /* מבטלים את תוספת ה-18px הישנה; הגובה נקבע בכל קבוצת iPhone */
