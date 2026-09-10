@@ -5697,14 +5697,6 @@
         max(28px, env(safe-area-inset-bottom));
     }
 
-    body.in-app-browser.app-tiktok .tiktok-browser-gate{
-      display:block;
-    }
-
-    body.in-app-browser.app-tiktok{
-      overflow:hidden !important;
-    }
-
     .tiktok-browser-gate-inner{
       width:min(100%, 560px);
       margin:0 auto;
@@ -6466,145 +6458,6 @@
 </head>
   
 <body>
-  <!-- מסך הנחיה שמופיע רק בדפדפן הפנימי של TikTok -->
-  <section
-    id="tiktokBrowserGate"
-    class="tiktok-browser-gate"
-    aria-label="פתיחת האתר בדפדפן החיצוני"
-    aria-hidden="true"
-  >
-    <div class="tiktok-browser-gate-inner">
-      <img
-        class="tiktok-gate-logo"
-        src="logo.png"
-        alt="לוגו עץ הפרד״ס החי"
-      >
-
-      <p class="tiktok-gate-brand">עץ הפרד״ס החי</p>
-
-      <h2 class="tiktok-gate-title">
-        כדי להשתמש בכל האפשרויות באתר בצורה הטובה ביותר
-      </h2>
-
-      <p class="tiktok-gate-subtitle">
-        יש לפתוח את האתר בדפדפן החיצוני
-      </p>
-
-        <button
-          id="tiktokCopyExternalLink"
-          class="tiktok-gate-copy-button"
-          type="button"
-        >
-          העתקת הקישור
-        </button>
-
-        <p
-          id="tiktokExternalBrowserStatus"
-          class="tiktok-gate-action-status"
-          role="status"
-          aria-live="polite"
-        ></p>
-      </div>
-
-      <div class="tiktok-gate-browser-demo" aria-hidden="true">
-        <div class="tiktok-gate-browser-bar">
-          <span class="tiktok-gate-browser-x">×</span>
-
-          <div class="tiktok-gate-browser-center">
-            <strong>עץ הפרד״ס החי</strong>
-            <span>HAPARDES-ENTRY</span>
-          </div>
-
-          <span class="tiktok-gate-share">↗</span>
-          <span class="tiktok-gate-dots">⋮</span>
-          <span class="tiktok-gate-arrow">↗</span>
-        </div>
-      </div>
-
-      <h3 class="tiktok-gate-how">איך עושים את זה?</h3>
-
-      <div class="tiktok-gate-steps">
-        <div class="tiktok-gate-step">
-          <span class="tiktok-gate-step-number">1</span>
-          <span>
-            לחצו על <strong>שלוש הנקודות</strong> בחלק העליון של המסך.
-          </span>
-        </div>
-
-        <div class="tiktok-gate-step">
-          <span class="tiktok-gate-step-number">2</span>
-          <span>
-            בחרו באפשרות <strong>„פתח בדפדפן”</strong>.
-          </span>
-        </div>
-
-        <div class="tiktok-gate-step">
-          <span class="tiktok-gate-step-number">3</span>
-          <span>
-            האתר ייפתח בדפדפן החיצוני וכל האפשרויות יעבדו כרגיל.
-          </span>
-        </div>
-      </div>
-
-      <div class="tiktok-gate-note">
-        <span class="tiktok-gate-note-title">💡 למה זה חשוב?</span>
-        <p class="tiktok-gate-note-text">
-          הדפדפן הפנימי של TikTok מגביל פעולות מסוימות, ובהן העלאת תמונות.
-          פתיחה בדפדפן החיצוני מאפשרת להשתמש באתר בצורה מלאה.
-        </p>
-      </div>
-
-      <p class="tiktok-gate-thanks">
-        תודה שבחרתם להתחזק.<br>
-        צוות עץ הפרד״ס החי 💚
-      </p>
-    </div>
-  </section>
-
-  <script>
-  (function () {
-    "use strict";
-
-    const copyButton = document.getElementById("tiktokCopyExternalLink");
-    const status = document.getElementById("tiktokExternalBrowserStatus");
-    
-    if (!copyButton || !status) return;
-
-    function getPublicPageUrl() {
-      const url = new URL(window.location.href);
-      url.protocol = "https:";
-      return url.href;
-    }
-
-    function setStatus(message) {
-      status.textContent = message;
-    }
-
-    async function copyPageUrl() {
-      const pageUrl = getPublicPageUrl();
-
-      try {
-        await navigator.clipboard.writeText(pageUrl);
-      } catch (error) {
-        const temporaryInput = document.createElement("textarea");
-        temporaryInput.value = pageUrl;
-        temporaryInput.setAttribute("readonly", "");
-        temporaryInput.style.position = "fixed";
-        temporaryInput.style.opacity = "0";
-        document.body.appendChild(temporaryInput);
-        temporaryInput.select();
-        document.execCommand("copy");
-        temporaryInput.remove();
-      }
-
-      setStatus("הקישור הועתק. אפשר להדביק אותו בדפדפן שבמכשיר.");
-    }
-
-    copyButton.addEventListener("click", copyPageUrl);
-  })();
-  </script>
-
-
 <!-- סרטון הכניסה לפרדס — לפני מסך ההגנה של טעינת האייקונים -->
 <div id="pardesIntroOverlay" class="pardes-intro-overlay" aria-hidden="true">
   <picture>
@@ -11514,38 +11367,7 @@ if (sodGrapesVideo) {
       typeof window.pausePardesVideoForSupport === "function" &&
       window.pausePardesVideoForSupport();
 
-    let resolvedPageSrc = page.src;
-
-    if(
-      id === "pardesFullscreenSupport" &&
-      supportOpenedFromVideo &&
-      typeof window.savePardesVideoReturnForPayment === "function"
-    ){
-      try{
-        const preparedReturnUrl =
-          window.savePardesVideoReturnForPayment("support");
-
-        if(preparedReturnUrl){
-          const supportUrl = new URL(
-            page.src,
-            window.location.href
-          );
-
-          supportUrl.searchParams.set(
-            "returnUrl",
-            preparedReturnUrl
-          );
-
-          supportUrl.searchParams.set("support", "1");
-          supportUrl.searchParams.set("from", "video");         
-
-          resolvedPageSrc =
-            supportUrl.pathname +
-            supportUrl.search +
-            supportUrl.hash;
-        }
-      }catch(error){}
-    }
+    const resolvedPageSrc = page.src;
 
     overlay.classList.toggle(
       "show-names-skip",
@@ -11822,29 +11644,5 @@ if (sodGrapesVideo) {
   });
   })();
   </script>
-
-
-  <script>
-  (function(){
-    "use strict";
-
-    const gate = document.getElementById("tiktokBrowserGate");
-    if(!gate) return;
-
-    function syncTikTokGate(){
-      const active =
-        document.body.classList.contains("in-app-browser") &&
-        document.body.classList.contains("app-tiktok");
-
-      gate.setAttribute("aria-hidden", active ? "false" : "true");
-    }
-
-    syncTikTokGate();
-    window.addEventListener("pageshow", syncTikTokGate);
-    window.setTimeout(syncTikTokGate, 250);
-    window.setTimeout(syncTikTokGate, 800);
-  })();
-  </script>
-
 </body>
 </html>
