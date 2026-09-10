@@ -72,8 +72,6 @@
       backdrop-filter:blur(5px);
     }
 
-    .action-panel[hidden]{display:none!important}
-
     .panel-kicker{
       margin:0 0 7px;
       color:#83e6aa;
@@ -99,97 +97,10 @@
       font-weight:650;
     }
 
-    .browser-instruction{
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      gap:12px;
-      margin:18px 0 14px;
-      padding:14px;
-      border:1px solid rgba(255,229,162,.38);
-      border-radius:17px;
-      color:#fff;
-      background:rgba(91,65,15,.3);
-      font-weight:800;
-      line-height:1.55;
-    }
-
-    .dots-icon{
-      display:flex;
-      flex:0 0 44px;
-      align-items:center;
-      justify-content:center;
-      height:44px;
-      border:1px solid rgba(255,255,255,.52);
-      border-radius:50%;
-      font-size:29px;
-      line-height:1;
-    }
-
-    .copy-button{
-      width:100%;
-      min-height:54px;
-      padding:12px 17px;
-      border:1px solid rgba(112,238,160,.58);
-      border-radius:17px;
-      color:#fff;
-      background:linear-gradient(135deg,var(--green),var(--green-dark));
-      font-weight:900;
-      cursor:pointer;
-      box-shadow:0 10px 25px rgba(5,88,44,.25),inset 0 1px 0 rgba(255,255,255,.16);
-    }
-
-    .copy-status{
-      min-height:1.4em;
-      margin:10px 0 0;
-      color:#8df0b3;
-      font-size:.88rem;
-      font-weight:800;
-    }
-
-    .browser-note{
-      margin:7px 0 0;
-      color:var(--muted);
-      font-size:.8rem;
-      line-height:1.5;
-    }
-
     .payment-buttons{
       display:grid;
       gap:11px;
       margin-top:18px;
-    }
-
-    .choice-buttons{
-      display:grid;
-      gap:12px;
-      margin-top:19px;
-    }
-
-    .choice-button{
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      width:100%;
-      min-height:58px;
-      padding:13px 18px;
-      border-radius:18px;
-      color:#fff;
-      text-decoration:none;
-      font-size:clamp(1.04rem,4.3vw,1.2rem);
-      font-weight:900;
-      cursor:pointer;
-      box-shadow:0 10px 25px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.18);
-    }
-
-    .choice-button.enter{
-      border:1px solid rgba(111,241,160,.68);
-      background:linear-gradient(135deg,#1eb764,#08743c);
-    }
-
-    .choice-button.support{
-      border:1px solid rgba(255,225,143,.65);
-      background:linear-gradient(135deg,#b9831e,#79520f);
     }
 
     .free-note{
@@ -198,22 +109,6 @@
       font-size:.78rem;
       line-height:1.45;
       font-weight:700;
-    }
-
-    .back-button{
-      margin:14px auto 0;
-      padding:5px 10px;
-      border:0;
-      color:#c9c4b8;
-      background:transparent;
-      font-size:.8rem;
-      text-decoration:underline;
-      text-underline-offset:3px;
-      cursor:pointer;
-    }
-
-    .back-button[hidden]{
-      display:none !important;
     }
 
     .payment-button{
@@ -237,6 +132,14 @@
     .payment-button.bit{background:linear-gradient(135deg,#4258ff,#2736bd)}
     .payment-button.paybox{background:linear-gradient(135deg,#7042ef,#4322aa)}
     .payment-button.paypal{background:linear-gradient(135deg,#087bd5,#034e95)}
+
+    .payment-button small{
+      display:block;
+      margin-inline-start:7px;
+      font-size:.72em;
+      font-weight:700;
+      opacity:.9;
+    }
 
     .small-links{
       display:flex;
@@ -269,7 +172,6 @@
     @media(max-height:690px) and (max-width:620px){
       .action-panel{padding-block:17px 14px}
       .panel-lead{margin-top:8px;line-height:1.5}
-      .browser-instruction{margin-block:13px 10px;padding:11px}
       .payment-buttons{margin-top:13px;gap:9px}
       .payment-button{min-height:50px}
     }
@@ -288,63 +190,7 @@
     >
 
     <div class="action-area">
-      <section id="welcomePanel" class="action-panel" aria-labelledby="welcomeTitle" hidden>
-        <p class="panel-kicker">עץ הפרד״ס החי</p>
-        <h1 id="welcomeTitle">ברוכים הבאים לעץ הפרד״ס החי 🌳</h1>
-
-        <p class="panel-lead">
-          כל התכנים באתר פתוחים לכולם ללא תשלום.
-          כאן תוכלו להכיר את פרשות התורה בדרך ברורה, עמוקה ומחוברת לחיים.
-        </p>
-
-        <div class="choice-buttons">
-          <a class="choice-button enter" href="index.html">
-            כניסה חופשית לעץ הפרד״ס החי
-          </a>
-
-          <button id="chooseSupport" class="choice-button support" type="button">
-            אני רוצה לחזק את הערוץ 🤍
-          </button>
-        </div>
-
-        <p class="free-note">הכניסה לכל תכני הפרד״ס חופשית ואינה מחייבת תרומה.</p>
-      </section>
-
-      <section id="tiktokPanel" class="action-panel" aria-labelledby="tiktokTitle" hidden>
-        <p class="panel-kicker">עץ הפרד״ס החי</p>
-        <h1 id="tiktokTitle">רק צעד קטן לפני שממשיכים</h1>
-
-        <p class="panel-lead">
-          כדי שאמצעי התמיכה ייפתחו בצורה תקינה, יש לפתוח את העמוד בדפדפן של הטלפון.
-        </p>
-
-        <div class="browser-instruction">
-          <span class="dots-icon" aria-hidden="true">⋮</span>
-          <span>
-            לחצו על שלוש הנקודות למעלה ובחרו
-            <strong>„פתיחה בדפדפן”</strong>
-          </span>
-        </div>
-
-        <button id="copySupportLink" class="copy-button" type="button">
-          העתקת הקישור 📋
-        </button>
-
-        <p id="copyStatus" class="copy-status" role="status" aria-live="polite"></p>
-        <p class="browser-note">
-          אם האפשרות אינה מופיעה, העתיקו את הקישור ופתחו אותו ב־Chrome או ב־Safari.
-        </p>
-
-        <a
-          class="back-button"
-          data-return-to-tree
-          href="index.html"
-        >
-          חזרה לעץ הפרד״ס החי
-        </a>
-      </section>
-
-      <section id="paymentPanel" class="action-panel" aria-labelledby="paymentTitle" hidden>
+      <section class="action-panel" aria-labelledby="paymentTitle">
         <p class="panel-kicker">שותפים בהפצת אור התורה</p>
         <h1 id="paymentTitle">בחרו את הדרך הנוחה לכם להיות שותפים</h1>
 
@@ -354,34 +200,33 @@
 
         <div class="payment-buttons" aria-label="בחירת אמצעי תמיכה">
           <a
+            class="payment-button paypal"
+            data-payment-provider="paypal"
+            href="https://www.paypal.com/paypalme/RonenTorah"
+            target="_self"
+            rel="noopener noreferrer"
+          >תמיכה באמצעות PayPal <small>תשלום בדפדפן</small></a>
+
+          <a
             class="payment-button bit"
             data-payment-provider="bit"
             href="https://www.bitpay.co.il/app/me/4A7D7360-AF51-7846-5E67-60FACACD37C54857?v=2"
+            target="_self"
             rel="noopener noreferrer"
-          >תמיכה באמצעות Bit</a>
+          >תמיכה באמצעות Bit <small>המשך מאובטח ב־Bit</small></a>
 
           <a
             class="payment-button paybox"
             data-payment-provider="paybox"
             href="https://3ydbh.app.link/c9hSuB5Xq1b?_p=c11331dc9a006ceee61490fceeb4"
+            target="_self"
             rel="noopener noreferrer"
-          >תמיכה באמצעות PayBox</a>
-
-          <a
-            class="payment-button paypal"
-            data-payment-provider="paypal"
-            href="https://paypal.me/RonenTorah"
-            rel="noopener noreferrer"
-          >תמיכה באמצעות PayPal</a>
+          >תמיכה באמצעות PayBox <small>המשך מאובטח ב־PayBox</small></a>
         </div>
 
         <nav class="small-links" aria-label="קישורים נוספים">
           <a href="support-terms.html">
             תקנון התמיכה
-          </a>
-        
-          <a id="supportReturnLink" href="index.html">
-            כניסה לעץ הפרד״ס החי
           </a>
         
           <a
@@ -396,14 +241,6 @@
           התשלום מתבצע ישירות אצל ספק התשלום הנבחר. פרטי התשלום אינם נשמרים באתר.
         </p>
 
-        <a
-          id="paymentTreeReturn"
-          class="back-button"
-          data-return-to-tree
-          href="index.html"
-        >
-          חזרה לעץ הפרד״ס החי
-        </a>
       </section>
     </div>
   </main>
@@ -412,152 +249,9 @@
     (() => {
       "use strict";
 
-      function getSupportPublicUrl(){
-        const url = new URL(window.location.href);
-        url.protocol = "https:";
-        url.searchParams.set("support","1");
-        return url.href;
-      }
-
       const userAgent = navigator.userAgent || "";
       const isTikTokBrowser =
         /TikTok|musical_ly|BytedanceWebview|Bytedance|Aweme/i.test(userAgent);
-
-      const welcomePanel = document.getElementById("welcomePanel");
-      const tiktokPanel = document.getElementById("tiktokPanel");
-      const paymentPanel = document.getElementById("paymentPanel");
-      const chooseSupport = document.getElementById("chooseSupport");
-      const copyButton = document.getElementById("copySupportLink");
-      const copyStatus = document.getElementById("copyStatus");
-
-      function showOnly(panel){
-        [welcomePanel,tiktokPanel,paymentPanel].forEach((item) => {
-          if(item) item.hidden = item !== panel;
-        });
-      }
-
-      function showWelcome(){
-        showOnly(welcomePanel);
-        if(copyStatus) copyStatus.textContent = "";
-        const cleanUrl = `${window.location.pathname}${window.location.hash || ""}`;
-        window.history.replaceState({},"",cleanUrl);
-        window.scrollTo({top:0,behavior:"smooth"});
-      }
-
-      function showSupport(){
-        if(isTikTokBrowser){
-          const supportUrl = new URL(window.location.href);
-          supportUrl.searchParams.set("support","1");
-
-          /* ניווט אמיתי שומר את מסלול התמיכה גם בפתיחה החיצונית של TikTok. */
-          if(new URL(window.location.href).searchParams.get("support") !== "1"){
-            window.location.replace(supportUrl.href);
-            return;
-          }
-
-          showOnly(tiktokPanel);
-        }else{
-          showOnly(paymentPanel);
-        }
-        window.scrollTo({top:0,behavior:"smooth"});
-      }
-
-      const pageParameters = new URLSearchParams(window.location.search);
-      const supportWasRequested = pageParameters.get("support") === "1";
-      const openedFromVideo = pageParameters.get("from") === "video";
-      const videoReturnUrl = pageParameters.get("returnUrl") || "";
-
-      const supportReturnLink = document.getElementById("supportReturnLink");
-      const paymentTreeReturn = document.getElementById("paymentTreeReturn");
-
-      /* הקישור התחתון במסך התשלום נדרש רק בכניסה מתוך סרטון. */
-      if(paymentTreeReturn){
-        paymentTreeReturn.hidden = !openedFromVideo;
-      }
-
-      if(openedFromVideo && supportReturnLink){
-        supportReturnLink.textContent = "חזרה לצפייה בסרטון";
-
-        if(videoReturnUrl){
-          try{
-            const returnAddress = new URL(videoReturnUrl,window.location.href);
-            supportReturnLink.href =
-              returnAddress.pathname.split("/").pop() +
-              returnAddress.search +
-              returnAddress.hash;
-          }catch(error){
-            supportReturnLink.href = "index.html";
-          }
-        }
-      }
-
-      if(supportWasRequested){
-        if(isTikTokBrowser){
-          showOnly(tiktokPanel);
-        }else{
-          showOnly(paymentPanel);
-        }
-      }else{
-        showWelcome();
-      }
-
-      chooseSupport?.addEventListener("click",showSupport);
-
-      document.querySelectorAll("[data-return-to-tree]").forEach((link) => {
-        link.addEventListener("click",(event) => {
-          if(window.parent === window) return;
-          event.preventDefault();
-          window.parent.postMessage(
-            {type:"pardes-return-to-tree"},
-            window.location.origin
-          );
-        });
-      });
-
-      supportReturnLink?.addEventListener("click",(event) => {
-        if(!openedFromVideo || window.parent === window) return;
-        event.preventDefault();
-        window.parent.postMessage(
-          {type:"pardes-return-to-video"},
-          window.location.origin
-        );
-      });
-
-      /*
-       * TikTok ודפדפנים בנייד עשויים לשמור צילום של מצב העמוד האחרון.
-       * בכל חזרה לעמוד מאפליקציה אחרת או מזיכרון הניווט,
-       * מחזירים את הצופה למסך קבלת הפנים ומנקים את סימון התמיכה.
-       */
-      let pageWasHidden = false;
-
-      document.addEventListener("visibilitychange",() => {
-        if(document.visibilityState === "hidden"){
-          pageWasHidden = true;
-          return;
-        }
-
-        if(document.visibilityState === "visible" && pageWasHidden){
-          pageWasHidden = false;
-          showWelcome();
-        }
-      });
-
-      window.addEventListener("pageshow",(event) => {
-        if(event.persisted) showWelcome();
-      });
-
-      window.addEventListener("popstate",showWelcome);
-
-      copyButton?.addEventListener("click",async () => {
-        try{
-          await navigator.clipboard.writeText(getSupportPublicUrl());
-          copyStatus.textContent =
-            "הקישור הועתק ✓ כעת פתחו את Chrome או Safari והדביקו אותו בשורת הכתובת.";
-        }catch(error){
-          copyStatus.textContent =
-            "לא ניתן היה להעתיק אוטומטית. לחצו על שלוש הנקודות ובחרו „פתיחה בדפדפן”.";
-        }
-      });
 
       document.querySelectorAll("[data-payment-provider]").forEach((link) => {
         link.addEventListener("click",() => {
