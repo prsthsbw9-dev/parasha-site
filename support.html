@@ -103,6 +103,11 @@
       margin-top:18px;
     }
 
+    .payment-option{
+      display:grid;
+      gap:7px;
+    }
+
     .free-note{
       margin:10px 0 0;
       color:#a9dfbd;
@@ -132,6 +137,7 @@
     .payment-button.bit{background:linear-gradient(135deg,#4258ff,#2736bd)}
     .payment-button.paybox{background:linear-gradient(135deg,#7042ef,#4322aa)}
     .payment-button.paypal{background:linear-gradient(135deg,#087bd5,#034e95)}
+    .payment-button.bank{background:linear-gradient(135deg,#b9831e,#79520f)}
 
     .payment-button small{
       display:block;
@@ -139,6 +145,37 @@
       font-size:.72em;
       font-weight:700;
       opacity:.9;
+    }
+
+    .payment-note{
+      margin:0;
+      color:#c9c4b8;
+      font-size:.78rem;
+      line-height:1.45;
+    }
+
+    .copy-link-button{
+      width:100%;
+      min-height:40px;
+      padding:8px 12px;
+      border:1px solid rgba(255,255,255,.25);
+      border-radius:13px;
+      color:#f5f0e5;
+      background:rgba(255,255,255,.07);
+      font-size:.82rem;
+      font-weight:800;
+      cursor:pointer;
+    }
+
+    .copy-link-button:active{transform:scale(.99)}
+
+    .copy-status{
+      min-height:1.35em;
+      margin:2px 0 0;
+      color:#8df0b3;
+      font-size:.76rem;
+      line-height:1.4;
+      font-weight:800;
     }
 
     .small-links{
@@ -199,29 +236,67 @@
         </p>
 
         <div class="payment-buttons" aria-label="בחירת אמצעי תמיכה">
-          <a
-            class="payment-button paypal"
-            data-payment-provider="paypal"
-            href="https://www.paypal.com/paypalme/RonenTorah"
-            target="_self"
-            rel="noopener noreferrer"
-          >תמיכה באמצעות PayPal <small>תשלום בדפדפן</small></a>
+          <div class="payment-option">
+            <a
+              class="payment-button paypal"
+              data-payment-provider="paypal"
+              href="https://www.paypal.com/paypalme/RonenTorah"
+              target="_self"
+              rel="noopener noreferrer"
+            >תמיכה באמצעות PayPal <small>תשלום בדפדפן</small></a>
+          </div>
 
-          <a
-            class="payment-button bit"
-            data-payment-provider="bit"
-            href="https://www.bitpay.co.il/app/me/4A7D7360-AF51-7846-5E67-60FACACD37C54857?v=2"
-            target="_self"
-            rel="noopener noreferrer"
-          >תמיכה באמצעות Bit <small>המשך מאובטח ב־Bit</small></a>
+          <div class="payment-option">
+            <a
+              class="payment-button bit"
+              data-payment-provider="bit"
+              href="https://www.bitpay.co.il/app/me/4A7D7360-AF51-7846-5E67-60FACACD37C54857?v=2"
+              target="_self"
+              rel="noopener noreferrer"
+            >תמיכה באמצעות Bit <small>פתיחה באפליקציה</small></a>
+            <p class="payment-note">אם Bit אינו נפתח מתוך TikTok, העתיקו את הקישור ופתחו אותו בדפדפן הטלפון.</p>
+            <button
+              class="copy-link-button"
+              type="button"
+              data-copy-value="https://www.bitpay.co.il/app/me/4A7D7360-AF51-7846-5E67-60FACACD37C54857?v=2"
+              data-copy-label="קישור Bit"
+            >העתקת קישור Bit 📋</button>
+          </div>
 
-          <a
-            class="payment-button paybox"
-            data-payment-provider="paybox"
-            href="https://3ydbh.app.link/c9hSuB5Xq1b?_p=c11331dc9a006ceee61490fceeb4"
-            target="_self"
-            rel="noopener noreferrer"
-          >תמיכה באמצעות PayBox <small>המשך מאובטח ב־PayBox</small></a>
+          <div class="payment-option">
+            <a
+              class="payment-button paybox"
+              data-payment-provider="paybox"
+              href="https://3ydbh.app.link/c9hSuB5Xq1b?_p=c11331dc9a006ceee61490fceeb4"
+              target="_self"
+              rel="noopener noreferrer"
+            >תמיכה באמצעות PayBox <small>פתיחה באפליקציה</small></a>
+            <p class="payment-note">אם PayBox אינו נפתח מתוך TikTok, העתיקו את הקישור ופתחו אותו בדפדפן הטלפון.</p>
+            <button
+              class="copy-link-button"
+              type="button"
+              data-copy-value="https://3ydbh.app.link/c9hSuB5Xq1b?_p=c11331dc9a006ceee61490fceeb4"
+              data-copy-label="קישור PayBox"
+            >העתקת קישור PayBox 📋</button>
+          </div>
+
+          <div class="payment-option">
+            <a
+              class="payment-button bank"
+              data-payment-provider="bank_transfer_email"
+              href="mailto:prsthsbw9@gmail.com?subject=%D7%91%D7%A7%D7%A9%D7%94%20%D7%9C%D7%A4%D7%A8%D7%98%D7%99%20%D7%94%D7%A2%D7%91%D7%A8%D7%94%20%D7%91%D7%A0%D7%A7%D7%90%D7%99%D7%AA%20%E2%80%93%20%D7%AA%D7%9E%D7%99%D7%9B%D7%94%20%D7%91%D7%A2%D7%A5%20%D7%94%D7%A4%D7%A8%D7%93%D7%B4%D7%A1%20%D7%94%D7%97%D7%99&amp;body=%D7%A9%D7%9C%D7%95%D7%9D%2C%0A%D7%91%D7%A8%D7%A6%D7%95%D7%A0%D7%99%20%D7%9C%D7%A7%D7%91%D7%9C%20%D7%90%D7%AA%20%D7%A4%D7%A8%D7%98%D7%99%20%D7%94%D7%97%D7%A9%D7%91%D7%95%D7%9F%20%D7%9C%D7%A6%D7%95%D7%A8%D7%9A%20%D7%94%D7%A2%D7%91%D7%A8%D7%94%20%D7%91%D7%A0%D7%A7%D7%90%D7%99%D7%AA%20%D7%95%D7%AA%D7%9E%D7%99%D7%9B%D7%94%20%D7%91%D7%9E%D7%99%D7%96%D7%9D%20%D7%A2%D7%A5%20%D7%94%D7%A4%D7%A8%D7%93%D7%B4%D7%A1%20%D7%94%D7%97%D7%99.%0A%D7%AA%D7%95%D7%93%D7%94."
+              target="_self"
+            >העברה בנקאית <small>קבלת פרטים במייל</small></a>
+            <p class="payment-note">פרטי החשבון יימסרו באופן אישי במענה לפנייה.</p>
+            <button
+              class="copy-link-button"
+              type="button"
+              data-copy-value="prsthsbw9@gmail.com"
+              data-copy-label="כתובת המייל"
+            >העתקת כתובת המייל 📋</button>
+          </div>
+
+          <p id="copyStatus" class="copy-status" role="status" aria-live="polite"></p>
         </div>
 
         <nav class="small-links" aria-label="קישורים נוספים">
@@ -262,6 +337,41 @@
             payment_provider:provider,
             source:isTikTokBrowser ? "tiktok_webview" : "external_browser"
           });
+        });
+      });
+
+      const copyStatus = document.getElementById("copyStatus");
+
+      async function copyText(value){
+        if(navigator.clipboard && window.isSecureContext){
+          await navigator.clipboard.writeText(value);
+          return;
+        }
+
+        const textArea = document.createElement("textarea");
+        textArea.value = value;
+        textArea.setAttribute("readonly","");
+        textArea.style.position = "fixed";
+        textArea.style.opacity = "0";
+        document.body.appendChild(textArea);
+        textArea.select();
+        const copied = document.execCommand("copy");
+        textArea.remove();
+        if(!copied) throw new Error("copy_failed");
+      }
+
+      document.querySelectorAll("[data-copy-value]").forEach((button) => {
+        button.addEventListener("click",async () => {
+          try{
+            await copyText(button.dataset.copyValue || "");
+            if(copyStatus){
+              copyStatus.textContent = `${button.dataset.copyLabel || "הפרטים"} הועתקו בהצלחה ✓`;
+            }
+          }catch(error){
+            if(copyStatus){
+              copyStatus.textContent = "לא ניתן היה להעתיק אוטומטית במכשיר זה.";
+            }
+          }
         });
       });
     })();
