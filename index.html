@@ -4536,6 +4536,8 @@
     body.browser-firefox{ --icon-env-y:1px; --browser-search-adjust:0px; --browser-message-adjust:0px; }
     body.browser-safari{ --icon-env-y:2px; --browser-search-adjust:0px; --browser-message-adjust:0px; }
     body.browser-samsung{ --icon-env-y:2px; --browser-search-adjust:0px; --browser-message-adjust:0px; }
+    body.browser-google{ --icon-env-y:2px; --browser-search-adjust:0px; --browser-message-adjust:0px; }
+    body.browser-webview{ --icon-env-y:4px; --browser-search-adjust:0px; --browser-message-adjust:0px; }
     body.browser-opera{ --icon-env-y:1px; --browser-search-adjust:0px; --browser-message-adjust:0px; }
     body.browser-other{ --icon-env-y:0px; --browser-search-adjust:0px; --browser-message-adjust:0px; }
 
@@ -4546,6 +4548,7 @@
     body.app-facebook,
     body.app-messenger{ --icon-env-y:7px; --app-search-adjust:0px; --app-message-adjust:0px; }
     body.app-youtube,
+    body.app-google,
     body.app-whatsapp,
     body.app-telegram{ --icon-env-y:6px; --app-search-adjust:0px; --app-message-adjust:0px; }
     body.app-x,
@@ -4556,6 +4559,33 @@
 
     /* בדפדפן פנימי בנייד מפצים על הסרגל התחתון */
     body.in-app-browser.device-phone{ --icon-env-y:-4px; }
+
+    /* Samsung Internet — מיקומים יציבים שאינם משתנים עם סרגלי הדפדפן. */
+    body.regular-browser.browser-samsung.device-phone.orientation-portrait{
+      --view-heart-top:63svh;
+      --view-light-top:51svh;
+      --dror-top:15svh;
+      --drash-top:17svh;
+      --remez-top:27svh;
+      --sod-top:43svh;
+      --pshat-top:43svh;
+      --main-top:44svh;
+      --lion-bottom:18svh;
+    }
+
+    /* בדפדפן Samsung הסרגל התחתון כבר גורע מגובה התצוגה. */
+    @media (max-width:900px){
+      body.regular-browser.browser-samsung.pardes-video-open .pardes-fullscreen-actions{
+        bottom:0 !important;
+        transform:translateX(-50%) !important;
+      }
+
+      body.regular-browser.browser-samsung.pardes-video-open .pardes-video-body,
+      body.regular-browser.browser-samsung.pardes-video-open .pardes-video-card{
+        min-height:100svh !important;
+        height:100svh !important;
+      }
+    }
 
     /* =========================================================
        יישום המשתנים על האלמנטים
@@ -6744,6 +6774,8 @@
 
   function detectBrowser() {
     if (/SamsungBrowser/i.test(ua)) return "samsung";
+    if (/\bGSA\//i.test(ua)) return "google";
+    if (/; wv\)|\bwv\b|WebView/i.test(ua)) return "webview";
     if (/EdgA|EdgiOS|Edg\//i.test(ua)) return "edge";
     if (/OPR\/|Opera|OPT\//i.test(ua)) return "opera";
     if (/Firefox|FxiOS/i.test(ua)) return "firefox";
@@ -6759,6 +6791,7 @@
       ["messenger", /Messenger|FB_IAB\/MESSENGER/i],
       ["facebook", /FBAN|FBAV|FB_IAB/i],
       ["youtube", /YouTube/i],
+      ["google", /\bGSA\//i],
       ["whatsapp", /WhatsApp/i],
       ["telegram", /Telegram/i],
       ["x", /Twitter|TwitterAndroid|XApp/i],
@@ -7383,6 +7416,7 @@
               id="pardesFullscreenSupport"
               class="pardes-fullscreen-button is-support"
               href="support.html"
+              target="_top"
             >
               <span class="support-button-main">לתמיכה במצוות הפצת התורה</span>
               <span class="support-button-sub">כדי שיגלו את עומקה ומשמעותה בחיינו</span>
@@ -11275,10 +11309,6 @@ if (sodGrapesVideo) {
     lionGuideLink: {
       src:"personal-strength.html",
       title:"חיזוק אישי"
-    },
-    pardesFullscreenSupport: {
-      src:"support.html",
-      title:"לתמיכה בעץ הפרד״ס החי"
     }
   };
 
