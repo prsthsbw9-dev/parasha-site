@@ -103,6 +103,16 @@
       margin-top:18px;
     }
 
+    .support-message{
+      max-width:520px;
+      margin:0 auto 3px;
+      color:#83e6aa;
+      font-size:clamp(.94rem,3.8vw,1.08rem);
+      line-height:1.55;
+      font-weight:900;
+      text-align:center;
+    }
+
     .payment-option{
       display:grid;
       gap:7px;
@@ -195,6 +205,11 @@
       text-underline-offset:3px;
     }
 
+    .small-links #recognitionEmailLink{
+      color:#83e6aa;
+      font-weight:900;
+    }
+
     .privacy-note{
       margin:12px 0 0;
       color:#aaa69d;
@@ -230,6 +245,16 @@
       color:#f5f0e5;
       font-size:1rem;
       line-height:1.65;
+    }
+
+    .recognition-modal-title{
+      max-width:360px;
+      margin:0 auto 12px;
+      color:#83e6aa;
+      font-size:clamp(1rem,4.5vw,1.18rem);
+      line-height:1.5;
+      font-weight:900;
+      text-align:center;
     }
 
     .recognition-email{
@@ -303,7 +328,8 @@
     <div class="action-area">
       <section class="action-panel" aria-label="בחירת אמצעי תמיכה">
         <div class="payment-buttons" aria-label="אמצעי תשלום">
-    
+          <p class="support-message">תרומתך נותנת לנו כוח להמשיך בהפצת התורה בכל העולם ומזכה אותך במצוות זיכוי הרבים</p>
+
           <div class="payment-option">
             <a
               class="payment-button paypal"
@@ -377,7 +403,7 @@
             id="recognitionEmailLink"
             href="mailto:prsthsbw9@gmail.com?subject=%D7%91%D7%A7%D7%A9%D7%94%20%D7%9C%D7%94%D7%95%D7%A1%D7%A4%D7%AA%20%D7%A9%D7%9D%20%D7%9C%D7%93%D7%A3%20%D7%94%D7%AA%D7%95%D7%9E%D7%9B%D7%99%D7%9D&amp;body=%D7%A9%D7%9C%D7%95%D7%9D%2C%0A%0A%D7%9E%D7%91%D7%A7%D7%A9%20%D7%9C%D7%94%D7%95%D7%A1%D7%99%D7%A3%20%D7%90%D7%AA%20%D7%A9%D7%9E%D7%99%20%D7%9C%D7%93%D7%A3%20%D7%94%D7%AA%D7%95%D7%9E%D7%9B%D7%99%D7%9D%20%2F%20%D7%91%D7%A7%D7%A9%D7%94%20%D7%90%D7%99%D7%A9%D7%99%D7%AA%20%D7%90%D7%97%D7%A8%D7%AA%3A%0A%0A%D7%A9%D7%9D%20%D7%9C%D7%94%D7%95%D7%A1%D7%A4%D7%94%3A%20________%0A%D7%91%D7%A7%D7%A9%D7%94%20%D7%90%D7%99%D7%A9%D7%99%D7%AA%20%D7%90%D7%97%D7%A8%D7%AA%3A%20________%0A%0A%D7%AA%D7%95%D7%93%D7%94."
           >
-            שם להוקרה
+            הוסיפו שם להוקרה
           </a>
         </nav>
 
@@ -394,10 +420,12 @@
     class="recognition-modal"
     role="dialog"
     aria-modal="true"
-    aria-labelledby="recognitionModalText"
+    aria-labelledby="recognitionModalTitle"
+    aria-describedby="recognitionModalText"
     hidden
   >
     <div class="recognition-modal-card">
+      <h2 id="recognitionModalTitle" class="recognition-modal-title">הוסיפו את שמכם לדף תודה (הוקרה) מיוחד שיוצג בסוף העלייה הבאה</h2>
       <p id="recognitionModalText">במידה ולא נפתח לכם הדף המבוקש, יש ללחוץ על ״פתח בדפדפן״ / להעתיק את כתובת המייל, ואז לשלוח לנו בקשה.</p>
       <b class="recognition-email">prsthsbw9@gmail.com</b>
       <div class="recognition-modal-actions">
