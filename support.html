@@ -378,7 +378,7 @@
         
           <a
             id="recognitionEmailLink"
-            href="mailto:prsthsbw9@gmail.com?subject=%D7%91%D7%A7%D7%A9%D7%94%20%D7%9C%D7%94%D7%95%D7%A1%D7%A4%D7%AA%20%D7%A9%D7%9D%20%D7%9C%D7%93%D7%A3%20%D7%94%D7%AA%D7%95%D7%9E%D7%9B%D7%99%D7%9D&amp;body=%D7%A9%D7%9C%D7%95%D7%9D%2C%0A%0A%D7%9E%D7%91%D7%A7%D7%A9%20%D7%9C%D7%94%D7%95%D7%A1%D7%99%D7%A3%20%D7%90%D7%AA%20%D7%A9%D7%9E%D7%99%20%D7%9C%D7%93%D7%A3%20%D7%94%D7%AA%D7%95%D7%9E%D7%9B%D7%99%D7%9D%20%2F%20%D7%91%D7%A7%D7%A9%D7%94%20%D7%90%D7%99%D7%A9%D7%99%D7%AA%20%D7%90%D7%97%D7%A8%D7%AA%3A%0A%0A%D7%A9%D7%9D%20%D7%9C%D7%94%D7%95%D7%A1%D7%A4%D7%94%3A%20________%0A%D7%91%D7%A7%D7%A9%D7%94%20%D7%90%D7%99%D7%A9%D7%99%D7%AA%20%D7%90%D7%97%D7%A8%D7%AA%3A%20________%0A%0A%D7%AA%D7%95%D7%93%D7%94."
+            href="#recognitionModal"
           >
             הוסיפו שם להוקרה
           </a>
@@ -467,7 +467,7 @@
             await copyText(button.dataset.copyValue || "");
             if(copyStatus){
               copyStatus.textContent = button.dataset.copyType === "donation_phone"
-                ? "המספר הועתק ✓"
+                ? "✓ המספר הועתק בהצלחה"
                 : `${button.dataset.copyLabel || "הפרטים"} הועתקו בהצלחה ✓`;
             }
             window.dataLayer = window.dataLayer || [];
@@ -511,7 +511,8 @@
         try{
           await copyText("prsthsbw9@gmail.com");
           if(recognitionModalStatus){
-           recognitionModalStatus.textContent = " ✓ כתובת המייל הועתקה";
+            recognitionModalStatus.textContent = "✓ כתובת המייל הועתקה בהצלחה";
+          }
         }catch(error){
           if(recognitionModalStatus){
             recognitionModalStatus.textContent = "לא ניתן היה להעתיק אוטומטית במכשיר זה.";
