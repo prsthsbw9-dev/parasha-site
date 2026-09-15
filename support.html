@@ -113,6 +113,20 @@
       text-align:center;
     }
 
+    .meaning-link-button{
+      width:100%;
+      padding:5px 8px;
+      border:0;
+      color:#83e6aa;
+      background:transparent;
+      font-size:clamp(.94rem,3.8vw,1.08rem);
+      line-height:1.5;
+      font-weight:900;
+      text-decoration:underline;
+      text-underline-offset:4px;
+      cursor:pointer;
+    }
+
     .payment-option{
       display:grid;
       gap:7px;
@@ -318,6 +332,97 @@
       font-weight:800;
     }
 
+    .meaning-modal{
+      position:fixed;
+      inset:0;
+      z-index:1100;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:14px;
+      background:rgba(0,0,0,.78);
+    }
+
+    .meaning-modal[hidden]{display:none}
+
+    .meaning-modal-card{
+      width:min(100%,500px);
+      max-height:calc(100svh - 28px);
+      overflow-y:auto;
+      overscroll-behavior:contain;
+      padding:20px 17px 16px;
+      border:1px solid rgba(255,229,162,.32);
+      border-radius:20px;
+      color:#f5f0e5;
+      background:linear-gradient(165deg,#10201a,#090d0b);
+      box-shadow:0 18px 55px rgba(0,0,0,.62);
+      text-align:right;
+    }
+
+    .meaning-modal-title{
+      margin:0 0 12px;
+      color:#83e6aa;
+      font-size:clamp(1.08rem,4.8vw,1.3rem);
+      line-height:1.45;
+      text-align:center;
+    }
+
+    .meaning-modal-intro,
+    .meaning-modal-closing{
+      margin:0;
+      font-size:clamp(.88rem,3.65vw,1rem);
+      line-height:1.65;
+    }
+
+    .meaning-list{
+      margin:14px 0;
+      padding-inline-start:22px;
+    }
+
+    .meaning-list li{
+      margin-bottom:14px;
+      padding-inline-start:4px;
+      font-size:clamp(.88rem,3.65vw,1rem);
+      line-height:1.65;
+    }
+
+    .meaning-source{
+      display:block;
+      margin-bottom:6px;
+      color:var(--gold-light);
+      font-weight:900;
+    }
+
+    .meaning-verse{
+      display:block;
+      margin:7px 0;
+      color:#fffaf0;
+      font-weight:800;
+    }
+
+    .meaning-modal-closing{
+      color:#a9dfbd;
+      font-weight:800;
+      text-align:center;
+    }
+
+    .meaning-modal-close{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      width:100%;
+      min-height:48px;
+      margin-top:16px;
+      padding:10px 14px;
+      border:1px solid rgba(131,230,170,.45);
+      border-radius:13px;
+      color:#fff;
+      background:linear-gradient(135deg,#179d55,#08743c);
+      font:inherit;
+      font-weight:900;
+      cursor:pointer;
+    }
+
     @media(min-width:621px){
       .action-area{margin-top:-285px}
     }
@@ -345,7 +450,7 @@
     <div class="action-area">
       <section class="action-panel" aria-label="בחירת אמצעי תמיכה">
         <div class="payment-buttons" aria-label="אמצעי תשלום">
-          <p class="support-message">תמיכתך נותנת לנו כוח להמשיך בהפצת התורה בכל העולם ומזכה אותך במצווה גדולה מאוד של זיכוי הרבים</p>
+          <button id="meaningLink" class="meaning-link-button" type="button">מה המשמעות בכלל של התמיכה הזאת?</button>
 
           <div class="payment-option">
             <a
@@ -401,6 +506,38 @@
   </main>
 
   <div
+    id="meaningModal"
+    class="meaning-modal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="meaningModalTitle"
+    hidden
+  >
+    <div class="meaning-modal-card">
+      <h2 id="meaningModalTitle" class="meaning-modal-title">מה המשמעות של התמיכה הזאת?</h2>
+
+      <p class="meaning-modal-intro">תמיכתך חשובה מאוד ומאפשרת לנו להמשיך בהפצת תורתנו הקדושה בדרך שתהיה מובנת לכולם, בארץ ובעולם, ולחשוף את עומקיה וסודותיה. בכך אתם נעשים שותפים בשתי זכויות גדולות:</p>
+
+      <ol class="meaning-list">
+        <li>
+          <span class="meaning-source">שותפות בהפצת דעת ה׳ ברוח נבואת אחרית הימים — ישעיהו, פרק י״א, פסוק ט׳:</span>
+          <span class="meaning-verse">״לֹא יָרֵעוּ וְלֹא יַשְׁחִיתוּ בְּכָל הַר קָדְשִׁי, כִּי מָלְאָה הָאָרֶץ דֵּעָה אֶת־ה׳ כַּמַּיִם לַיָּם מְכַסִּים״.</span>
+          זהו אחד הפסוקים הידועים המתארים את ימות המשיח — זמן שבו דעת ה׳ תהיה נפוצה בעולם כולו.
+        </li>
+        <li>
+          <span class="meaning-source">שותפות בזיכוי הרבים — דניאל, פרק י״ב, פסוק ג׳:</span>
+          <span class="meaning-verse">״וּמַצְדִּיקֵי הָרַבִּים כַּכּוֹכָבִים לְעוֹלָם וָעֶד״.</span>
+          חז״ל והמפרשים ראו בכך שבח עצום למי שמביא אחרים לדרך טובה.
+        </li>
+      </ol>
+
+      <p class="meaning-modal-closing">כל סכום מתקבל בברכה. שתבוא הברכה עליכם ועל יקיריכם — בין אם תמכתם ובין אם לא. עצם הגעתכם לעמוד הזה מעידה שיש לכם לב של זהב.</p>
+
+      <button id="meaningModalClose" class="meaning-modal-close" type="button">חזרה לדף התרומה</button>
+    </div>
+  </div>
+
+  <div
     id="recognitionModal"
     class="recognition-modal"
     role="dialog"
@@ -442,6 +579,27 @@
       });
 
       const copyStatus = document.getElementById("copyStatus");
+
+      const meaningLink = document.getElementById("meaningLink");
+      const meaningModal = document.getElementById("meaningModal");
+      const meaningModalClose = document.getElementById("meaningModalClose");
+
+      meaningLink?.addEventListener("click",() => {
+        meaningModal?.removeAttribute("hidden");
+        meaningModalClose?.focus();
+      });
+
+      meaningModalClose?.addEventListener("click",() => {
+        meaningModal?.setAttribute("hidden","");
+        meaningLink?.focus();
+      });
+
+      meaningModal?.addEventListener("click",(event) => {
+        if(event.target === meaningModal){
+          meaningModal.setAttribute("hidden","");
+          meaningLink?.focus();
+        }
+      });
 
       async function copyText(value){
         if(navigator.clipboard && window.isSecureContext){
