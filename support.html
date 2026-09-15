@@ -179,6 +179,23 @@
 
     .copy-link-button:active{transform:scale(.99)}
 
+    .copy-link-button.phone-copy{
+      min-height:54px;
+      padding:12px 18px;
+      border-color:rgba(131,230,170,.5);
+      border-radius:17px;
+      color:#fff;
+      background:linear-gradient(135deg,#179d55,#08743c);
+      font-size:clamp(1rem,4.1vw,1.16rem);
+      font-weight:900;
+      box-shadow:0 10px 24px rgba(0,0,0,.27),inset 0 1px 0 rgba(255,255,255,.16);
+    }
+
+    .payment-button.paypal{
+      min-height:66px;
+      font-size:clamp(1.12rem,4.7vw,1.32rem);
+    }
+
     .copy-status{
       min-height:1.35em;
       margin:2px 0 0;
@@ -341,54 +358,14 @@
           </div>
 
           <div class="payment-option">
-            <a
-              class="payment-button bit"
-              data-payment-provider="bit"
-              href="https://www.bitpay.co.il/app/me/4A7D7360-AF51-7846-5E67-60FACACD37C54857?v=2"
-              target="_top"
-              rel="noopener noreferrer"
-            >תמיכה באמצעות Bit <small>פתיחה באפליקציה</small></a>
-            <p class="payment-note">אם Bit אינו נפתח מתוך TikTok, פתחו את הדפדפן / העתיקו את המספר והדביקו אצלכם בתוך האפליקציה.</p>
             <button
-              class="copy-link-button"
+              class="copy-link-button phone-copy"
               type="button"
               data-copy-value="+972508618789"
-              data-copy-label="מספר הטלפון ל-Bit"
-            >העתקת מספר ל-Bit 📋</button>
-          </div>
-
-          <div class="payment-option">
-            <a
-              class="payment-button paybox"
-              data-payment-provider="paybox"
-              href="https://3ydbh.app.link/c9hSuB5Xq1b?_p=c11331dc9a006ceee61490fceeb4"
-              target="_top"
-              rel="noopener noreferrer"
-            >תמיכה באמצעות PayBox <small>פתיחה באפליקציה</small></a>
-            <p class="payment-note">אם PayBox אינו נפתח מתוך TikTok, פתחו את הדפדפן / העתיקו את המספר והדביקו אצלכם בתוך האפליקציה.</p>
-            <button
-              class="copy-link-button"
-              type="button"
-              data-copy-value="+972508618789"
-              data-copy-label="מספר הטלפון ל-PayBox"
-            >העתקת מספר ל-PayBox 📋</button>
-          </div>
-
-          <div class="payment-option">
-            <a
-              class="payment-button bank"
-              data-payment-provider="bank_transfer_email"
-              href="mailto:prsthsbw9@gmail.com?subject=%D7%91%D7%A7%D7%A9%D7%94%20%D7%9C%D7%A4%D7%A8%D7%98%D7%99%20%D7%94%D7%A2%D7%91%D7%A8%D7%94%20%D7%91%D7%A0%D7%A7%D7%90%D7%99%D7%AA%20%E2%80%93%20%D7%AA%D7%9E%D7%99%D7%9B%D7%94%20%D7%91%D7%A2%D7%A5%20%D7%94%D7%A4%D7%A8%D7%93%D7%B4%D7%A1%20%D7%94%D7%97%D7%99&amp;body=%D7%A9%D7%9C%D7%95%D7%9D%2C%0A%D7%91%D7%A8%D7%A6%D7%95%D7%A0%D7%99%20%D7%9C%D7%A7%D7%91%D7%9C%20%D7%90%D7%AA%20%D7%A4%D7%A8%D7%98%D7%99%20%D7%94%D7%97%D7%A9%D7%91%D7%95%D7%9F%20%D7%9C%D7%A6%D7%95%D7%A8%D7%9A%20%D7%94%D7%A2%D7%91%D7%A8%D7%94%20%D7%91%D7%A0%D7%A7%D7%90%D7%99%D7%AA%20%D7%95%D7%AA%D7%9E%D7%99%D7%9B%D7%94%20%D7%91%D7%9E%D7%99%D7%96%D7%9D%20%D7%A2%D7%A5%20%D7%94%D7%A4%D7%A8%D7%93%D7%B4%D7%A1%20%D7%94%D7%97%D7%99.%0A%D7%AA%D7%95%D7%93%D7%94."
-              target="_top"
-            >העברה בנקאית <small>קבלת פרטים במייל</small></a>
-            <p class="payment-note">פרטי החשבון יימסרו באופן אישי במענה לפנייה.</p>
-            <p class="payment-note">במידה והלחצן אינו נפתח מתוך TikTok, פתחו את הדפדפן / העתיקו את כתובת המייל והדביקו אצלכם בתוך האפליקציה.</p>
-            <button
-              class="copy-link-button"
-              type="button"
-              data-copy-value="prsthsbw9@gmail.com"
-              data-copy-label="כתובת המייל"
-            >העתקת כתובת המייל 📋</button>
+              data-copy-label="המספר"
+              data-copy-type="donation_phone"
+            >העתקת מספר לתרומה 📋</button>
+            <p class="payment-note">העתיקו את המספר לתרומה לשימוש באפליקציה שתבחרו.</p>
           </div>
 
           <p id="copyStatus" class="copy-status" role="status" aria-live="polite"></p>
@@ -494,8 +471,16 @@
           try{
             await copyText(button.dataset.copyValue || "");
             if(copyStatus){
-              copyStatus.textContent = `${button.dataset.copyLabel || "הפרטים"} הועתקו בהצלחה ✓`;
+              copyStatus.textContent = button.dataset.copyType === "donation_phone"
+                ? "המספר הועתק ✓"
+                : `${button.dataset.copyLabel || "הפרטים"} הועתקו בהצלחה ✓`;
             }
+            window.dataLayer = window.dataLayer || [];
+            window.dataLayer.push({
+              event:"support_copy_click",
+              copy_type:button.dataset.copyType || "other",
+              source:isTikTokBrowser ? "tiktok_webview" : "external_browser"
+            });
           }catch(error){
             if(copyStatus){
               copyStatus.textContent = "לא ניתן היה להעתיק אוטומטית במכשיר זה.";
