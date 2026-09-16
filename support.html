@@ -6,6 +6,14 @@
   <meta name="theme-color" content="#080a08">
   <title>תמיכה בעץ הפרד״ס החי</title>
 
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-2MGXGC1KB8"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag("js", new Date());
+    gtag("config", "G-2MGXGC1KB8");
+  </script>
+
   <style>
     :root{
       color-scheme:dark;
@@ -569,9 +577,7 @@
       document.querySelectorAll("[data-payment-provider]").forEach((link) => {
         link.addEventListener("click",() => {
           const provider = link.dataset.paymentProvider || "unknown";
-          window.dataLayer = window.dataLayer || [];
-          window.dataLayer.push({
-            event:"support_payment_click",
+          window.gtag?.("event","support_payment_click",{
             payment_provider:provider,
             source:isTikTokBrowser ? "tiktok_webview" : "external_browser"
           });
@@ -628,9 +634,7 @@
                 ? "✓ המספר הועתק בהצלחה"
                 : `${button.dataset.copyLabel || "הפרטים"} הועתקו בהצלחה ✓`;
             }
-            window.dataLayer = window.dataLayer || [];
-            window.dataLayer.push({
-              event:"support_copy_click",
+            window.gtag?.("event","support_copy_click",{
               copy_type:button.dataset.copyType || "other",
               source:isTikTokBrowser ? "tiktok_webview" : "external_browser"
             });
